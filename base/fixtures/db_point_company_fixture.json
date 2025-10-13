@@ -1,0 +1,163 @@
+[
+    {
+        "model": "base.pointcompany",
+        "pk": 1,
+        "fields": {
+            "name": "Mlekarna Pragolaktos, a.s."
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 2,
+        "fields": {
+            "name": "Lidl Italia SRL"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 3,
+        "fields": {
+            "name": "DHL Lego Production Ltd."
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 4,
+        "fields": {
+            "name": "Sia Sistema Italia Srl"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 5,
+        "fields": {
+            "name": "DeltaApp"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 6,
+        "fields": {
+            "name": "Нова Пошта"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 8,
+        "fields": {
+            "name": "Big Box Lenex SRO"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 9,
+        "fields": {
+            "name": "Geodis Logistics Spa"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 10,
+        "fields": {
+            "name": "Lidl Italia"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 11,
+        "fields": {
+            "name": "IKEA Deposito centrale DC2"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 12,
+        "fields": {
+            "name": "Lidl Italia (NEW)"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 13,
+        "fields": {
+            "name": "NEWLAT FOOD SpA"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 14,
+        "fields": {
+            "name": "Lidl Italia (NEW222)"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 15,
+        "fields": {
+            "name": "Coop Italia. Polo Logistico Prato"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 16,
+        "fields": {
+            "name": "УКРПОШТА"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 17,
+        "fields": {
+            "name": "Glatfelter Gernsbach GmbH"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 18,
+        "fields": {
+            "name": "Clarios Česká Lípa spol. s r.o."
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 19,
+        "fields": {
+            "name": "Evonik Superabsorber GmbH"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 21,
+        "fields": {
+            "name": "Damco Czech Republic S.r.o."
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 22,
+        "fields": {
+            "name": "Rootvin, spol. S R.O."
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 23,
+        "fields": {
+            "name": "Krušovice Royal Brewery"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 24,
+        "fields": {
+            "name": "Bohnen Logistik GmbH"
+        }
+    },
+    {
+        "model": "base.pointcompany",
+        "pk": 25,
+        "fields": {
+            "name": "HORNBACH"
+        }
+    }
+]

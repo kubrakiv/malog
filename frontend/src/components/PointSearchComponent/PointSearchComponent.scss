@@ -1,0 +1,34 @@
+@import "../../styles/utils/vars";
+
+.point-search-container {
+    display: flex;
+    gap: 10px;
+    width: 600px;
+    margin-bottom: 10px;
+    align-items: center;
+}
+
+.point-search-title {
+    font-weight: 700;
+}
+
+.input-point-search {
+    width: 100%;
+    align-items: center;
+    border-radius: 4px;
+    padding-left: 10px;
+    height: 36px;
+}
+
+.point-search-close-btn {
+    // width: 100%;
+    // color: darkred;
+    opacity: 0.8;
+    transition: all 0.5s ease;
+    font-size: 1rem;
+    &:hover {
+        cursor: pointer;
+        transform: scale(1.5);
+        opacity: 1;
+    }
+}

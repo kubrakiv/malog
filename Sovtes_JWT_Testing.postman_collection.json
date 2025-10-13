@@ -1,0 +1,282 @@
+{
+  "info": {
+    "name": "Sovtes JWT Authentication Testing",
+    "description": "Complete test collection for Sovtes JWT authentication with subscription management",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "sovtes_jwt_token",
+      "value": "eyJhbGciOiJub25lIiwidHlwIjoiSldUIn0.eyJzdWIiOiJhdXRoIiwiaWF0IjoxNzU5ODYxNDcyLCJleHAiOjE3NjAwMzQyNzIsInVzZXIiOnsiaWQiOjIzODQsImNsaWVudCI6MTgwLCJuYW1lIjoicG9zdG1hbl90ZXN0X3VzZXIiLCJ1c2VydHlwZSI6Miwic3lzdGVtbGFuZ3VhZ2UiOjJ9fQ."
+    },
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000"
+    },
+    {
+      "key": "access_token",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "1. Sovtes JWT Login",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// Test that login was successful",
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "// Extract access token for subsequent requests",
+              "pm.test(\"Response has access token\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('access_token');",
+              "    pm.collectionVariables.set('access_token', jsonData.access_token);",
+              "});",
+              "",
+              "// Test subscription info is included",
+              "pm.test(\"Response includes subscription info\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('subscription');",
+              "    pm.expect(jsonData.subscription).to.have.property('plan_name');",
+              "    pm.expect(jsonData.subscription).to.have.property('truck_limit');",
+              "});",
+              "",
+              "// Display subscription details",
+              "pm.test(\"Subscription details\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    var subscription = jsonData.subscription;",
+              "    console.log('Plan:', subscription.plan_display_name);",
+              "    console.log('Status:', subscription.status);",
+              "    console.log('Truck Limit:', subscription.truck_limit);",
+              "    console.log('Billing:', subscription.billing_cycle);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"token\": \"{{sovtes_jwt_token}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/sovtes-auth/login/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "sovtes-auth", "login", ""]
+        },
+        "description": "Authenticate with Sovtes JWT token and receive Malog access tokens"
+      },
+      "response": []
+    },
+    {
+      "name": "2. Sovtes Token Verification",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"token\": \"{{sovtes_jwt_token}}\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/sovtes-auth/verify/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "sovtes-auth", "verify", ""]
+        },
+        "description": "Verify Sovtes JWT token without creating a session"
+      },
+      "response": []
+    },
+    {
+      "name": "3. Get User Profile (Authenticated)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"User has Sovtes client\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData).to.have.property('client');",
+              "    pm.expect(jsonData.client.slug).to.include('sovtes-');",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/users/profile/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "users", "profile", ""]
+        },
+        "description": "Get authenticated user profile using the access token from Sovtes login"
+      },
+      "response": []
+    },
+    {
+      "name": "4. Check Subscription Status",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Has active subscription\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.subscription.status).to.eql('active');",
+              "});",
+              "",
+              "// Display subscription usage info",
+              "pm.test(\"Subscription usage info\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    console.log('Current trucks:', jsonData.current_truck_count);",
+              "    console.log('Truck limit:', jsonData.subscription.truck_limit);",
+              "    console.log('Can add truck:', jsonData.can_add_truck);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/subscriptions/status/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "subscriptions", "status", ""]
+        },
+        "description": "Check current subscription status and usage limits"
+      },
+      "response": []
+    },
+    {
+      "name": "5. List Trucks (Test Tenant Isolation)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test(\"Status code is 200\", function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "",
+              "pm.test(\"Only shows client's trucks\", function () {",
+              "    var jsonData = pm.response.json();",
+              "    // Should only see trucks for this Sovtes client",
+              "    console.log('Number of trucks:', jsonData.length || 0);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/trucks/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "trucks", ""]
+        },
+        "description": "List trucks (should only show trucks for this Sovtes client due to tenant isolation)"
+      },
+      "response": []
+    },
+    {
+      "name": "6. Test Truck Creation (Subscription Limits)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "// This should either succeed (if under limit) or fail with subscription limit message",
+              "pm.test(\"Response is valid\", function () {",
+              "    pm.expect([200, 201, 403]).to.include(pm.response.code);",
+              "});",
+              "",
+              "if (pm.response.code === 403) {",
+              "    pm.test(\"Subscription limit enforced\", function () {",
+              "        var jsonData = pm.response.json();",
+              "        pm.expect(jsonData.error).to.include('limit');",
+              "    });",
+              "} else if (pm.response.code === 201) {",
+              "    pm.test(\"Truck created successfully\", function () {",
+              "        var jsonData = pm.response.json();",
+              "        pm.expect(jsonData).to.have.property('id');",
+              "    });",
+              "}"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"license_plate\": \"TEST-001\",\n    \"brand\": \"Test Brand\",\n    \"model\": \"Test Model\",\n    \"year\": 2024,\n    \"capacity\": 1000\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/trucks/",
+          "host": ["{{base_url}}"],
+          "path": ["api", "trucks", ""]
+        },
+        "description": "Try to create a truck (will test subscription limits)"
+      },
+      "response": []
+    }
+  ]
+}

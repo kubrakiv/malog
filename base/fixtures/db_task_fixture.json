@@ -1,0 +1,359 @@
+[
+    {
+        "model": "base.task",
+        "pk": 19,
+        "fields": {
+            "title": "CZ-19800 Prague",
+            "start_date": "2023-11-01",
+            "start_time": "16:21:10",
+            "end_date": null,
+            "end_time": null,
+            "order": 1,
+            "point": 1,
+            "truck": 9,
+            "driver": 2,
+            "type": 1,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 20,
+        "fields": {
+            "title": "IT-37040 Arcole",
+            "start_date": "2023-11-02",
+            "start_time": "22:00:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 1,
+            "point": 2,
+            "truck": 9,
+            "driver": 2,
+            "type": 2,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 21,
+        "fields": {
+            "title": "IT-20861 Mediglia",
+            "start_date": "2023-10-29",
+            "start_time": "16:21:10",
+            "end_date": null,
+            "end_time": null,
+            "order": 2,
+            "point": null,
+            "truck": null,
+            "driver": 2,
+            "type": 1,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 22,
+        "fields": {
+            "title": "CZ-19300 Prague BigBox LENEX",
+            "start_date": "2023-11-09",
+            "start_time": "16:21:10",
+            "end_date": null,
+            "end_time": null,
+            "order": 2,
+            "point": null,
+            "truck": null,
+            "driver": 2,
+            "type": 2,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 23,
+        "fields": {
+            "title": "CZ-25090 JIRNY",
+            "start_date": "2023-10-30",
+            "start_time": "15:00:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 3,
+            "point": null,
+            "truck": 3,
+            "driver": 3,
+            "type": 1,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 24,
+        "fields": {
+            "title": "IT-29015 CASTEL SAN GIOVANNI",
+            "start_date": "2023-11-01",
+            "start_time": "16:21:10",
+            "end_date": null,
+            "end_time": null,
+            "order": 3,
+            "point": null,
+            "truck": 3,
+            "driver": 3,
+            "type": 2,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 25,
+        "fields": {
+            "title": "Service",
+            "start_date": "2023-11-02",
+            "start_time": "16:21:10",
+            "end_date": null,
+            "end_time": null,
+            "order": 5,
+            "point": null,
+            "truck": 3,
+            "driver": 3,
+            "type": 4,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 26,
+        "fields": {
+            "title": "Service",
+            "start_date": "2023-11-03",
+            "start_time": "16:21:10",
+            "end_date": null,
+            "end_time": null,
+            "order": 5,
+            "point": null,
+            "truck": 3,
+            "driver": 3,
+            "type": 4,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 27,
+        "fields": {
+            "title": "Service",
+            "start_date": "2023-11-03",
+            "start_time": "16:21:10",
+            "end_date": null,
+            "end_time": null,
+            "order": 5,
+            "point": null,
+            "truck": 3,
+            "driver": 3,
+            "type": 4,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 31,
+        "fields": {
+            "title": "Service Scania",
+            "start_date": "2023-11-02",
+            "start_time": "16:21:10",
+            "end_date": null,
+            "end_time": null,
+            "order": 5,
+            "point": null,
+            "truck": 3,
+            "driver": 3,
+            "type": 4,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 32,
+        "fields": {
+            "title": "Service",
+            "start_date": "2023-11-01",
+            "start_time": "16:21:10",
+            "end_date": null,
+            "end_time": null,
+            "order": 5,
+            "point": null,
+            "truck": null,
+            "driver": 2,
+            "type": 4,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 33,
+        "fields": {
+            "title": "IT-42012 Castellarano",
+            "start_date": "2023-10-05",
+            "start_time": "08:00:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 11,
+            "point": null,
+            "truck": null,
+            "driver": 2,
+            "type": 1,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 39,
+        "fields": {
+            "title": "Documents",
+            "start_date": "2023-11-03",
+            "start_time": "06:00:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 6,
+            "point": null,
+            "truck": null,
+            "driver": 2,
+            "type": 1,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 40,
+        "fields": {
+            "title": "Service",
+            "start_date": "2023-11-03",
+            "start_time": "07:00:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 6,
+            "point": null,
+            "truck": 7,
+            "driver": 1,
+            "type": 4,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 42,
+        "fields": {
+            "title": "Change tyres",
+            "start_date": "2023-11-02",
+            "start_time": "15:00:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 6,
+            "point": null,
+            "truck": 7,
+            "driver": 1,
+            "type": 4,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 43,
+        "fields": {
+            "title": "Service Scania",
+            "start_date": "2023-11-02",
+            "start_time": "17:12:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 6,
+            "point": null,
+            "truck": 7,
+            "driver": 1,
+            "type": 1,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 45,
+        "fields": {
+            "title": "Service",
+            "start_date": "2023-11-01",
+            "start_time": "06:19:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 6,
+            "point": null,
+            "truck": 7,
+            "driver": 1,
+            "type": 1,
+            "status": null
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 49,
+        "fields": {
+            "title": "IT-37040 Arcole",
+            "start_date": "2023-11-04",
+            "start_time": "06:21:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 8,
+            "point": null,
+            "truck": 7,
+            "driver": 3,
+            "type": 1,
+            "status": 3
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 50,
+        "fields": {
+            "title": "CZ-19800 Prague",
+            "start_date": "2023-11-04",
+            "start_time": "18:24:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 6,
+            "point": null,
+            "truck": 6,
+            "driver": 2,
+            "type": 1,
+            "status": 3
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 51,
+        "fields": {
+            "title": "IT-20086 Somaglia",
+            "start_date": "2023-11-03",
+            "start_time": "16:26:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 9,
+            "point": null,
+            "truck": 2,
+            "driver": 1,
+            "type": 1,
+            "status": 2
+        }
+    },
+    {
+        "model": "base.task",
+        "pk": 52,
+        "fields": {
+            "title": "ES-12200 Onda",
+            "start_date": "2023-10-30",
+            "start_time": "12:32:00",
+            "end_date": null,
+            "end_time": null,
+            "order": 9,
+            "point": null,
+            "truck": 2,
+            "driver": 1,
+            "type": 2,
+            "status": 6
+        }
+    }
+]

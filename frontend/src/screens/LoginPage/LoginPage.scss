@@ -1,0 +1,280 @@
+@import "../../styles/utils/vars";
+
+.background {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1.5" fill="white" opacity="0.1"/><circle cx="5" cy="5" r="0.8" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+    pointer-events: none;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 768px) {
+  .background {
+    padding: 1rem;
+  }
+
+  .passport-container {
+    max-width: 90%;
+    border-radius: 12px;
+    margin: 0 auto;
+  }
+
+  .login-form-container {
+    padding: 2rem 1.5rem;
+  }
+
+  .login-form__title {
+    font-size: 1.6rem;
+    margin-bottom: 2rem;
+  }
+
+  .input-field {
+    padding: 14px 16px;
+  }
+
+  .login-enter-btn {
+    padding: 12px 18px;
+    font-size: 14px;
+  }
+
+  .register-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .background {
+    padding: 0.5rem;
+  }
+
+  .passport-container {
+    max-width: 95%;
+    margin: 0 auto;
+    border-radius: 8px;
+  }
+
+  .login-form-container {
+    padding: 1.5rem 1rem;
+  }
+
+  .register-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+}
+
+// Animation for form appearance
+.passport-container {
+  animation: slideInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.passport-container {
+  position: relative;
+  z-index: 2;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 8px 32px rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  overflow: visible;
+  max-width: 400px;
+  width: 100%;
+  margin: 0 auto;
+  min-height: fit-content;
+}
+
+.login-form-container {
+  padding: 3rem 2rem 2rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-direction: column;
+  background: transparent;
+  width: 100%;
+  min-height: fit-content;
+}
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &__title {
+    color: #2d3748;
+    margin-bottom: 2.5rem;
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    text-shadow: none;
+  }
+
+  &__input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    width: 100%;
+  }
+}
+
+// Enhanced input field styling
+.input-field {
+  width: 100%;
+  padding: 16px 20px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 16px;
+  background: #f8fafc;
+  transition: all 0.3s ease;
+  outline: none;
+  color: #2d3748;
+
+  &::placeholder {
+    color: #a0aec0;
+    font-style: normal;
+  }
+
+  &:focus {
+    border-color: #667eea;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+  }
+
+  &:hover:not(:focus) {
+    border-color: #cbd5e0;
+    background: white;
+  }
+}
+
+// Enhanced label styling
+.input-label {
+  color: #4a5568;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+  text-transform: none;
+  letter-spacing: 0;
+  display: block;
+}
+
+.login-enter-btn {
+  display: inline-block;
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: white;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  text-transform: none;
+  letter-spacing: 0.5px;
+  margin-top: 1.2rem;
+  position: relative;
+  overflow: hidden;
+
+  &:hover {
+    background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+  }
+
+  &:active {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(102, 126, 234, 0.2);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+  }
+}
+
+// Register link button
+.register-link-container {
+  margin-top: 1.5rem;
+  text-align: center;
+  padding: 1.5rem 0 0.5rem 0;
+  border-top: 1px solid #e2e8f0;
+  width: 100%;
+  display: block;
+}
+
+.register-text {
+  color: #718096;
+  font-size: 14px;
+  margin-bottom: 1rem;
+}
+
+// Register button with distinct orange theme - increased specificity
+.register-link-container .register-btn {
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
+  border: none !important;
+  color: white !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  text-transform: none !important;
+  letter-spacing: 0.3px !important;
+  display: inline-block !important;
+  width: auto !important;
+
+  &:hover {
+    background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 15px rgba(237, 137, 54, 0.4) !important;
+    color: white !important;
+  }
+
+  &:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 3px 8px rgba(237, 137, 54, 0.3) !important;
+  }
+
+  &:focus {
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(237, 137, 54, 0.3) !important;
+    color: white !important;
+  }
+}

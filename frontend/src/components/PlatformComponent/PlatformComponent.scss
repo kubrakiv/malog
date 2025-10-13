@@ -1,0 +1,16 @@
+.order-details {
+    padding-right: 0px;
+
+    &__priceperkm {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        size: 5px;
+        font-weight: bold;
+        font-size: 12px;
+        border-radius: 4px;
+        &_text {
+            padding: 2px 4px;
+        }
+    }
+}

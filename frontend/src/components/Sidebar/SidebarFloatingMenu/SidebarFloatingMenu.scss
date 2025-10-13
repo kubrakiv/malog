@@ -1,0 +1,36 @@
+@import "../../../styles/utils/vars";
+
+.floating-menu {
+    color: $backgroundcolor;
+    list-style-type: none;
+    padding: 5px 10px;
+    margin-bottom: 0;
+    &__title {
+        font-size: 1.2em;
+        text-decoration: none;
+        color: $darkTextColor;
+        height: 100%;
+    }
+    &__list-item {
+        font-size: 1em;
+        padding: 5px 10px;
+
+        &:hover {
+            background-color: rgba(108, 129, 127, 0.3);
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        // &:first-child {
+        //     border-radius: 0 6px 0 0;
+        // }
+
+        // &:last-child {
+        //     border-radius: 0 0 6px 0;
+        // }
+    }
+    &__link {
+        color: $backgroundcolor;
+        text-decoration: none;
+        padding: 5px;
+    }
+}

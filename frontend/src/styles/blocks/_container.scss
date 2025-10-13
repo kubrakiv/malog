@@ -1,0 +1,47 @@
+.container-page {
+  position: relative;
+  max-width: 1000px; // Max width for large screens
+  margin: 0 auto; // Center the container
+  width: 100%; // Full width on small devices
+  justify-content: space-between; // Ensure space between elements
+  align-items: center; // Vertically center content
+  z-index: 3;
+  // font-family: "Arial", sans-serif;
+
+  @media (max-width: 1200px) {
+    .section {
+      max-width: 1000px; // Adjust max width for medium screens
+      background-color: green;
+    }
+  }
+
+  @media (max-width: 992px) {
+    max-width: 750px; // Adjust max width for small screens
+    margin: 0 auto; // Center the container
+  }
+
+  @media (max-width: 768px) {
+    grid-template-columns: repeat(
+      auto-fill,
+      minmax(150px, 1fr)
+    ); // Adjust grid for tablets
+  }
+
+  @media (max-width: 576px) {
+    grid-template-columns: 1fr; // Single column for mobile devices
+    padding: 0 10px; // Reduce padding for small screens
+  }
+}
+
+// .grid-pattern {
+//   background-color: #f9f9f9b8; /* Light background color */
+//   background-image: linear-gradient(45deg, #ccc 75%, transparent 75%),
+//     linear-gradient(-45deg, #ccc 75%, transparent 75%),
+//     linear-gradient(45deg, transparent 75%, #ccc 75%),
+//     linear-gradient(-45deg, transparent 75%, #ccc 75%),
+//     linear-gradient(to right, rgba(0, 251, 255, 0.5), transparent); /* Red gradient in the corner */
+//   background-size: 20px 20px; /* Size of the grid squares */
+//   background-position: 0 0, 10px 0, 10px -10px, 0px 10px, 0 0; /* Positioning the grid and gradient */
+//   height: 100vh; /* Full height */
+//   background-attachment: fixed;
+// }

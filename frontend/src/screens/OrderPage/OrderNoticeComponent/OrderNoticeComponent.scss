@@ -1,0 +1,112 @@
+@import "../../../styles/utils/vars";
+
+.order-notice-edit-form {
+  .notice-form {
+    margin-bottom: 1.5rem;
+
+    .notice-textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 50px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+      }
+
+      &::placeholder {
+        color: #6c757d;
+        font-style: italic;
+      }
+    }
+  }
+}
+
+// Notice display styling
+.order-details__content-row-block-value {
+  .no-notices {
+    color: #6c757d;
+    font-style: italic;
+    font-size: 14px;
+    text-align: center;
+    padding: 10px;
+    margin: 0;
+  }
+
+  .notices-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .notice-item {
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    padding: 0.75rem;
+    background-color: #f8f9fa;
+    transition: all 0.2s ease;
+
+    &:hover {
+      border-color: #007bff;
+      box-shadow: 0 2px 8px rgba(0, 123, 255, 0.1);
+    }
+
+    .notice-display {
+      .notice-text {
+        color: #333;
+        font-size: 14px;
+        line-height: 1;
+        margin-bottom: 0.75rem;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+
+      .notice-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 0.75rem;
+        font-size: 14px;
+        color: #6c757d;
+
+        .notice-date {
+          font-weight: 500;
+        }
+
+        .notice-author {
+          font-style: italic;
+        }
+      }
+
+      .notice-actions {
+        display: flex;
+        gap: 0.5rem;
+      }
+    }
+  }
+}
+
+// Responsive design
+@media (max-width: 768px) {
+  .order-details__content-row-block-value {
+    .notice-actions {
+      flex-direction: column;
+
+      .save-btn,
+      .cancel-btn,
+      .edit-btn,
+      .delete-btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  }
+}

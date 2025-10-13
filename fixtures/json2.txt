@@ -1,0 +1,15 @@
+{
+    "model": "contenttypes.contenttype",
+    "pk": 6,
+    "fields": { "app_label": "base", "model": "country" }
+  },
+{
+    "model": "contenttypes.contenttype",
+    "pk": 7,
+    "fields": { "app_label": "base", "model": "customer" }
+  },
+{
+    "model": "contenttypes.contenttype",
+    "pk": 8,
+    "fields": { "app_label": "base", "model": "customermanager" }
+  },

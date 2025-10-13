@@ -1,0 +1,88 @@
+@import "../../../styles/utils/vars";
+
+.sidebar-item {
+    position: relative;
+    padding: 0.75em 0em 0.75em 0.8em;
+    display: block;
+    transition: background-color 0.15s;
+    font-size: 1.1em;
+    max-width: 100%;
+    min-width: max-content;
+
+    &.active {
+        background-color: rgba(108, 129, 127, 0.3);
+    }
+
+    &:hover {
+        background-color: rgba(108, 129, 127, 0.3);
+        cursor: pointer;
+    }
+
+    &.open .sidebar-title .toggle-btn {
+        display: block;
+        transform: rotate(90deg);
+    }
+    &.open .sidebar-content {
+        display: block;
+        height: max-content;
+    }
+}
+
+.sidebar-title {
+    display: flex;
+    font-size: 1em;
+    justify-content: space-between;
+    text-decoration: none;
+    color: $darkTextColor;
+    white-space: nowrap;
+    align-items: center;
+
+    .link {
+        display: flex;
+        justify-content: center;
+    }
+
+    .link-icon {
+        font-size: 1.2em;
+        align-items: center;
+    }
+
+    .link-title {
+        font-size: 1em;
+        padding-right: 10px;
+        text-align: center;
+        color: $backgroundcolor;
+    }
+
+    .link .link-icon {
+        display: inline-block;
+        width: 1.7em;
+    }
+
+    .toggle-btn {
+        cursor: pointer;
+        transition: transform 0.3s;
+    }
+}
+
+.sidebar-content {
+    display: none;
+    left: 50px;
+    top: 0;
+    width: max-content;
+    height: max-content;
+    opacity: 1;
+    overflow: hidden;
+    font-size: 0.8em;
+    color: white;
+    border-radius: 0 6px 6px 0;
+    pointer-events: auto;
+    white-space: nowrap;
+    z-index: 3;
+
+    &--open {
+        display: block;
+        background: $sidebarcolor;
+        position: absolute;
+    }
+}

@@ -1,0 +1,84 @@
+@import "../../../styles/utils/vars";
+
+.add-task-modal {
+    animation-name: slideIn;
+    animation-duration: 0.5s;
+
+    &__close {
+        position: absolute;
+        right: 10px;
+        color: darkred;
+        font-size: 26px;
+        transition: all 0.5s ease-in;
+        &:hover {
+            cursor: pointer;
+            transform: rotate(180deg);
+        }
+    }
+    &__header {
+        display: flex;
+        border-radius: 4px;
+        text-align: center;
+        &-btn {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            text-align: center;
+            margin: 5px 5px 0px 5px;
+            padding: 5px 5px 0px 5px;
+            border-radius: 4px;
+            // color: #fff;
+            color: textColor;
+            background-color: $backgroundcolor;
+            background-color: lighten($colorGray, 30%);
+            border-bottom: 4px solid rgb(48, 12, 227);
+            cursor: pointer;
+            &-left {
+                border-radius: 4px 0 0 4px;
+                margin-right: 0px;
+            }
+            &-right {
+                border-radius: 0 4px 4px 0;
+                margin-left: 0px;
+            }
+            &:hover {
+                border-bottom: 4px solid rgb(48, 12, 227);
+                background-color: darken(lighten($colorGray, 30%), 10%);
+                // border: 2px solid blue;
+                // color: blue;
+            }
+
+            &_active {
+                background-color: rgb(48, 12, 227);
+                color: #fff;
+                &:hover {
+                    background-color: darken(rgb(48, 12, 227), 10%);
+                    border: none;
+                    color: #fff;
+                }
+            }
+        }
+    }
+    &__body {
+        border-radius: 4px;
+        margin: 10px;
+        text-align: center;
+        border: 1px solid green;
+    }
+    &__modal-button {
+        display: block;
+        width: 100%;
+        margin: 0 auto;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        top: 0;
+        opacity: 0;
+    }
+    to {
+        top: 45%;
+        opacity: 1;
+    }
+}

@@ -1,0 +1,238 @@
+@import "../../styles/utils/vars";
+
+.add-order-details {
+  padding-right: 0px;
+  margin-bottom: 20px;
+
+  &__header {
+    position: sticky;
+    display: flex;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    top: 0;
+  }
+  &__return-button {
+    display: flex;
+    justify-content: center;
+    width: 40px;
+    background-color: rgb(249, 4, 4, 0.8);
+    color: white;
+    margin: 5px;
+    line-height: 30px;
+    border-radius: 5px;
+    align-items: center;
+    &:hover {
+      background-color: rgb(249, 4, 4, 0.5);
+      // transition: all 0.5s;
+      box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14);
+      cursor: pointer;
+    }
+    &_close {
+      width: 70px;
+    }
+    & > a {
+      font-size: 26px;
+      color: white;
+      text-decoration: none;
+    }
+  }
+  &__return-button {
+    width: 40px;
+    background-color: rgba(249, 4, 4, 0.8);
+    color: white;
+    margin: 5px;
+    line-height: 30px;
+    border-radius: 5px;
+    text-align: center;
+    vertical-align: center;
+    &:hover {
+      background-color: rgba(249, 4, 4, 0.5);
+      // transition: all 0.5s;
+      box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14);
+      cursor: pointer;
+    }
+  }
+
+  &__header-block {
+    display: flex;
+    background-color: $colorGray;
+    color: white;
+    border-radius: 4px;
+    margin: 5px 10px;
+    padding: 5px 10px;
+    align-items: center;
+    &_order-number {
+      white-space: nowrap;
+    }
+    &:last-child {
+      display: flex;
+      gap: 10px;
+      margin-left: auto;
+      align-items: center;
+    }
+  }
+  &__actions {
+    display: flex;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    margin: 5px auto;
+  }
+  &__action {
+    background: #a9c585;
+    margin: 5px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    border: none;
+
+    & > a {
+      color: #000;
+      text-decoration: none;
+    }
+    &-add-task-btn {
+      background-color: green;
+      border-radius: 4px;
+      // z-index: 3;
+      padding: 5px;
+      margin: 5px;
+      color: white;
+      border: none;
+      &:hover {
+        background-color: rgb(20, 179, 20);
+        cursor: pointer;
+      }
+    }
+  }
+  &__action:hover {
+    background: rgba(53, 186, 60, 0.9);
+    transition: all 0.5s;
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14);
+    cursor: pointer;
+  }
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    height: max-content;
+    gap: 10px;
+  }
+  &__content-block {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    width: calc(100% - 20px);
+  }
+  &__content-row {
+    display: flex;
+    flex-direction: row;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    &:last-child {
+      height: 100%;
+      flex: 1;
+    }
+  }
+  &__content-row-block {
+    flex: 1;
+    border-radius: 4px;
+    background-color: $backgroundcolor;
+    margin: 5px;
+    padding: 5px;
+
+    &-form-button {
+      margin: 5px 5px;
+      background-color: green;
+      border-radius: 4px;
+      padding: 2px 5px;
+      color: white;
+      border: none;
+      &:hover {
+        background: rgba(53, 186, 60, 0.9);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+  }
+  &__content-row-block-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin: 0px 0px 4px 0px;
+  }
+  &__content-row-block-value {
+    padding-left: 20px;
+    font-size: 14px;
+  }
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    position: relative;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+    gap: 10px;
+  }
+
+  &__footer-block {
+    background-color: $colorGray;
+    color: white;
+    border-radius: 4px;
+    margin: 5px 10px;
+    padding: 5px 10px;
+  }
+  &__footer-btn {
+    padding: 5px;
+    color: #fff;
+    border-radius: 4px;
+    background-color: gray;
+    border: none;
+    &_edit {
+      background-color: rgba(43, 84, 233, 0.8);
+      &:hover {
+        background-color: rgba(43, 84, 233, 1);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+    &_save {
+      background-color: rgba(53, 186, 60, 1);
+      &:hover {
+        cursor: pointer;
+        background-color: darken(rgba(53, 186, 60, 1), 10%);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+      }
+    }
+    &_close {
+      background: rgba(233, 43, 43, 1);
+      & > a {
+        color: white;
+        text-decoration: none;
+      }
+      &:hover {
+        background: darken(rgba(233, 43, 43, 1), 10%);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+      }
+    }
+  }
+
+  &__cargo-form-container {
+    display: flex;
+    &__form-input {
+      margin-bottom: 4px;
+    }
+  }
+  &__price-form-container {
+    display: flex;
+    &__form-input {
+      margin-bottom: 4px;
+    }
+  }
+  &__form-col {
+    margin: 4px 4px;
+  }
+}

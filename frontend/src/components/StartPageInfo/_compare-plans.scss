@@ -1,0 +1,56 @@
+// Compare Plans Section
+.compare-plans-section {
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba($borderColor, 0.3);
+
+  .compare-plans-btn {
+    background: linear-gradient(
+      135deg,
+      $sidebarcolor,
+      lighten($sidebarcolor, 10%)
+    );
+    color: white;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 15px rgba($sidebarcolor, 0.3);
+
+    &:hover {
+      background: linear-gradient(
+        135deg,
+        darken($sidebarcolor, 10%),
+        $sidebarcolor
+      );
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba($sidebarcolor, 0.4);
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  .compare-plans-text {
+    color: $colorGray;
+    font-size: 0.95rem;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 768px) {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+
+    .compare-plans-btn {
+      padding: 0.875rem 1.5rem;
+      font-size: 1rem;
+    }
+  }
+}

@@ -1,0 +1,138 @@
+.orders-header-block {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.table__name {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.tenders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  overflow-y: auto; // Enable vertical scrolling
+  max-height: calc(100vh - 40px - 150px); // Ensure it doesn't overflow
+  padding-right: 8px; // Optional: prevents scrollbar overlap
+  padding-bottom: 20px;
+}
+
+.free-order-item {
+  display: flex;
+  flex-direction: column; /* Stack customer row above blocks */
+  // align-items: center;
+  gap: 5px; /* Adjust spacing */
+  background-color: #ffffff;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  min-height: 120px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+
+  &.expanded {
+    background: #f8f9fa;
+    border: 1px solid #007bff;
+    border-left: 4px solid #007bff;
+  }
+
+  &:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.4);
+  }
+}
+
+.tender-customer {
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: left;
+  // padding: 8px 0;
+  color: #af8509;
+}
+
+.offer-details {
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 2fr 1fr 1fr 1fr 1fr 1fr;
+  // flex-wrap: wrap;
+  gap: 8px; /* Adjust spacing */
+  align-items: center;
+}
+
+.offer-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.offer-block strong {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+// .tender-customer {
+//   font-size: 18px;
+//   font-weight: bold;
+//   color: #007bff;
+// }
+
+.origin,
+.destination {
+  text-align: left;
+}
+
+.arrow {
+  font-size: 20px;
+  font-weight: bold;
+  color: #555;
+  justify-self: center;
+}
+
+.time {
+  font-size: 14px;
+  font-weight: normal;
+  color: #555;
+}
+
+.distance,
+.type,
+.weight {
+  background-color: #eef;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.price {
+  font-size: 18px;
+  font-weight: bold;
+  color: #007bff;
+  text-align: right;
+}
+
+.create-order {
+  cursor: pointer;
+}
+
+.create-order-button {
+  background-color: green;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    cursor: pointer;
+    background-color: rgba(0, 128, 0, 0.7);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+  }
+}

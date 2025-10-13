@@ -1,0 +1,107 @@
+.modal-overlay {
+  position: fixed;
+  //   top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+}
+
+.modal-background {
+  position: absolute;
+  top: -10px;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  z-index: 1;
+}
+
+.generic-modal {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
+  padding: 2px;
+  background-color: $backgroundcolor;
+  width: 70%;
+  height: auto;
+  border-radius: 4px;
+  z-index: 3;
+}
+
+.modal {
+  position: absolute;
+  top: 35%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: $backgroundcolor;
+  width: 70%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.add-point-modal {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: $backgroundcolor;
+  width: 70%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.add-task-modal {
+  position: absolute;
+  top: 5%;
+  left: 50px auto;
+  margin: 0 auto;
+  transform: translate(-50%, -50%);
+  background-color: $backgroundcolor;
+  width: 80%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.adit-task-modal {
+  // position: absolute;
+  // top: 5%;
+  left: 50px auto;
+  margin: 0 auto;
+  // transform: translate(-50%, -50%);
+  background-color: $backgroundcolor;
+  width: 80%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.end-time-modal {
+  margin: 200px auto 0;
+  background-color: $backgroundcolor;
+  width: 50%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.upload-documents-modal {
+  margin: 0 auto;
+  background-color: $backgroundcolor;
+  width: 60%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.add-service-task-modal {
+  margin: 0 auto;
+  background-color: $backgroundcolor;
+  width: 60%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.driver-modal {
+  margin: 0 auto;
+  padding: 2px;
+  background-color: $backgroundcolor;
+  width: 50%;
+  height: auto;
+  border-radius: 4px;
+}

@@ -1,0 +1,45 @@
+@import "../../../styles/utils/vars";
+
+.add-point-modal {
+    animation-name: slideIn;
+    animation-duration: 0.5s;
+
+    &__close {
+        position: absolute;
+        right: 10px;
+        color: darkred;
+        font-size: 26px;
+        transition: all 0.5s ease-in;
+        &:hover {
+            cursor: pointer;
+            transform: rotate(180deg);
+        }
+    }
+    &__header {
+        border-radius: 4px;
+        margin: 40px 10px 10px 10px;
+        text-align: center;
+    }
+    &__body {
+        border-radius: 4px;
+        margin: 10px;
+        text-align: center;
+        border: 1px solid green;
+    }
+    &__modal-button {
+        display: block;
+        width: 100%;
+        margin: 0 auto;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        top: 0;
+        opacity: 0;
+    }
+    to {
+        top: 45%;
+        opacity: 1;
+    }
+}

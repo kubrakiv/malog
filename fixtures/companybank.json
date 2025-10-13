@@ -1,0 +1,1 @@
+[{"model": "base.companybank", "pk": 1, "fields": {"name": "Ceska sporitelna, a.s.", "bank_address": "Olbrachtova 1929/62, 140 000 Praha 4, Czech Republic", "iban_cz": "CZ96 0800 0000 0000 0785 6952", "iban_eur": "CZ78 0800 0000 0000 0785 7082", "account_number_cz": "7856952/0800", "account_number_eur": "7857082/0800", "swift_code": "GIBACZPX", "is_active": true}}]

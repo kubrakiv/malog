@@ -1,0 +1,154 @@
+@import "../../styles/utils/vars";
+
+.generic-modal {
+  animation-name: slideInside;
+  animation-duration: 0.5s;
+
+  &__close {
+    align-items: center;
+    position: absolute;
+
+    right: 10px;
+    color: darkred;
+    font-size: 26px;
+    transition: all 0.5s ease-in;
+    &:hover {
+      cursor: pointer;
+      transform: rotate(180deg);
+    }
+  }
+
+  &__header {
+    position: sticky;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    top: 0;
+    // margin: 5px 5px 0 5px;
+    margin-bottom: 5px;
+    padding: 5px;
+    &-btn {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      text-align: center;
+      margin: 5px 5px 0px 5px;
+      padding: 5px 5px 0px 5px;
+      border-radius: 4px;
+      // color: #fff;
+      color: textColor;
+      background-color: $backgroundcolor;
+      background-color: lighten($colorGray, 30%);
+      border-bottom: 4px solid rgb(48, 12, 227);
+      cursor: pointer;
+      &-left {
+        border-radius: 4px 0 0 4px;
+        margin-right: 0px;
+      }
+      &-right {
+        border-radius: 0 4px 4px 0;
+        margin-left: 0px;
+      }
+      &:hover {
+        border-bottom: 4px solid rgb(48, 12, 227);
+        background-color: darken(lighten($colorGray, 30%), 10%);
+        // border: 2px solid blue;
+        // color: blue;
+      }
+
+      &_active {
+        background-color: rgb(48, 12, 227);
+        color: #fff;
+        &:hover {
+          background-color: darken(rgb(48, 12, 227), 10%);
+          border: none;
+          color: #fff;
+        }
+      }
+    }
+  }
+  &__header-block {
+    background-color: $colorGray;
+    color: white;
+    border-radius: 4px;
+    margin: 5px 10px;
+    padding: 5px 10px;
+    align-items: center;
+    &:nth-child(2) {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 5px 5px;
+      width: 100%;
+    }
+  }
+  &__body {
+    border-radius: 4px;
+    margin: 10px;
+    text-align: center;
+    border: 1px solid green;
+  }
+  &__modal-button {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+  }
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    position: relative;
+    margin: 5px;
+    padding: 5px;
+    gap: 10px;
+    bottom: 0;
+  }
+  &__footer-btn {
+    padding: 5px;
+    color: #fff;
+    border-radius: 4px;
+    background-color: gray;
+    border: none;
+    cursor: pointer;
+    &_edit {
+      background-color: rgba(43, 84, 233, 0.8);
+      &:hover {
+        background-color: rgba(43, 84, 233, 1);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+      }
+    }
+    &_save {
+      background-color: rgba(53, 186, 60, 1);
+      &:hover {
+        background-color: darken(rgba(53, 186, 60, 1), 10%);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+      }
+    }
+    &_close {
+      background: rgba(233, 43, 43, 1);
+      & > a {
+        color: white;
+        text-decoration: none;
+      }
+      &:hover {
+        background: darken(rgba(233, 43, 43, 1), 10%);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+      }
+    }
+  }
+}
+
+@keyframes slideInside {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

@@ -1,0 +1,197 @@
+// @import "../../../styles/utils/vars";
+@import "../../../styles/utils/vars";
+
+.trucks-table {
+  border-collapse: separate;
+  border-spacing: 0 3px;
+  margin-bottom: 5px;
+  width: 60%;
+  margin: 0 auto;
+  &__checkbox {
+    cursor: pointer;
+    transform: scale(130%);
+    align-items: center;
+    text-align: center;
+  }
+  &__name {
+    margin: 0 auto;
+    margin-bottom: 10px;
+  }
+
+  &__header {
+    position: sticky;
+    top: 2px;
+    // z-index: 1;
+  }
+
+  &__head {
+    &-row {
+      position: relative;
+      top: -3px;
+      height: 30px;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 14px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.14), 0 2px 2px rgba(0, 0, 0, 0.12);
+    }
+    &-th {
+      border-right: 0.5px solid gray;
+      color: white;
+      background-color: $colorGray;
+      font-weight: bold;
+      font-size: 0.8em;
+
+      &:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+      }
+      &:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+    }
+  }
+  &-td {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  &__body {
+    &-row {
+      font-size: 14px;
+      background-color: #fff;
+      &_active {
+        background-color: rgba(53, 186, 60, 0.2);
+      }
+
+      &:last-child {
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14);
+      }
+
+      &:hover {
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14),
+          0 3px 14px rgba(0, 0, 0, 0.12), 0 5px 5px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        // z-index: 1;
+        position: relative;
+      }
+    }
+    &-td {
+      padding: 5px;
+      text-align: center;
+      border-right: 0.5px solid gray;
+      white-space: nowrap;
+      font-size: 14px;
+      &_image {
+        width: 75px;
+        height: 75px;
+        overflow: hidden;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      &:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+      }
+      &:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-right: 0;
+      }
+    }
+  }
+  &__btn {
+    padding: 2.5px 5px;
+    color: #fff;
+    border-radius: 4px;
+    border: none;
+    &_edit {
+      background-color: rgba(43, 84, 233, 0.8);
+      &:hover {
+        background: rgba(43, 84, 233, 1);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+    &_delete {
+      background: rgba(233, 43, 43, 0.8);
+      &:hover {
+        background: rgba(233, 43, 43, 1);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+  }
+}
+
+.trucks-header-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  &__buttons-container {
+    top: 70px;
+    position: absolute;
+    right: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  &__edit-driver-btn {
+    background-color: rgba(43, 84, 233, 0.8);
+    border-radius: 4px;
+    // z-index: 3;
+    padding: 5px;
+    color: white;
+    border: none;
+    width: 50px;
+    &:hover {
+      background-color: rgba(43, 84, 233, 1);
+      cursor: pointer;
+    }
+  }
+
+  &__add-driver-btn {
+    background-color: green;
+    border-radius: 4px;
+    // z-index: 3;
+    padding: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgb(20, 179, 20);
+      cursor: pointer;
+    }
+  }
+  &__delete-driver-btn {
+    background-color: red;
+    border-radius: 4px;
+    // z-index: 3;
+    padding: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgb(179, 20, 20);
+      cursor: pointer;
+    }
+  }
+  &__save-driver-btn {
+    background-color: rgb(92, 197, 239, 1);
+    border-radius: 4px;
+    // z-index: 3;
+    padding: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgba(48, 127, 158, 0.8);
+      cursor: pointer;
+    }
+  }
+}

@@ -1,0 +1,294 @@
+.services-page {
+  padding: 40px 20px;
+  background: rgba(0, 75, 145, 0.7); /* Semi-transparent dark blue background */
+}
+
+.services-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../../../img/delta_1.jpg");
+  background-size: cover; /* Ensure the image covers the entire area */
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  z-index: 1; /* This is behind the main content */
+  @media (max-width: 768px) {
+    width: 100%;
+    height: 100%;
+    background-attachment: scroll; /* Change to scroll for better performance on mobile */
+    background-size: cover; /* Ensure the image covers the entire area */
+  }
+
+  @media (max-width: 480px) {
+    width: 100%;
+    height: 100%;
+    background-attachment: scroll; /* Ensure smooth scrolling on smaller devices */
+    background-size: cover; /* Adjust based on your preference */
+    background-position: center top; /* Adjust position to better fit mobile screens */
+  }
+}
+
+.services-left-bg {
+  padding-top: 70px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 50%; /* Cover the left half of the screen */
+  height: 100%;
+  background: rgba(0, 75, 145, 0.7); /* Semi-transparent dark blue background */
+  z-index: 3; /* This is on top of the main background */
+  display: flex;
+}
+
+.services-left {
+  h1 {
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    color: rgb(0, 51, 102);
+    color: white;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+  }
+
+  .services-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .services-item {
+      background-color: #f0f4f8; /* Light greyish-blue background */
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+      .p-line {
+        display: flex;
+        align-items: center;
+      }
+
+      .p-container {
+        display: flex;
+        flex-wrap: wrap; /* Allows wrapping of items to the next row */
+        justify-content: space-between; /* Distributes space evenly between columns */
+        .p-line {
+          width: 48%; /* Each line takes up half the width */
+          display: flex;
+          // justify-content: flex-start;
+          align-items: center;
+        }
+      }
+
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      }
+
+      h2 {
+        color: #0056b3; /* Deep blue for the heading */
+        font-size: 24px;
+        margin-bottom: 10px;
+      }
+
+      p,
+      li {
+        color: #333; /* Dark grey for text */
+        font-size: 20px;
+        line-height: 1.5;
+      }
+      ul {
+        list-style-type: none;
+        padding-left: 0;
+
+        li::before {
+          content: "▸"; /* Custom bullet */
+          color: #0056b3; /* Matching bullet color */
+          padding-right: 10px;
+        }
+      }
+    }
+    .service-item-alt {
+      background-color: #eaf1f8; /* Slightly darker greyish-blue for contrast */
+    }
+
+    .service-item-alt-2 {
+      background-color: #dae7f4; /* Another shade for further contrast */
+    }
+  }
+}
+
+.directions-container {
+  background-color: #f7f9fc;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  margin: 0 auto;
+
+  h3 {
+    font-size: 1.5rem;
+    color: #004b87;
+    margin-bottom: 15px;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  .directions-list {
+    list-style: none;
+    padding: 0;
+
+    li {
+      font-size: 1.2rem;
+      color: #333;
+      padding: 10px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      transition: transform 0.3s ease-in-out;
+
+      &:hover {
+        transform: scale(1.05);
+      }
+
+      &::before {
+        content: "●";
+        color: #004b87;
+        margin-right: 10px;
+        font-size: 1.2rem;
+      }
+
+      span {
+        font-weight: bold;
+        color: #004b87;
+        transition: color 0.3s ease;
+
+        &:hover {
+          color: #e63946;
+        }
+      }
+    }
+  }
+}
+
+/* Media Queries for Responsiveness */
+
+/* Medium Devices (Tablets, 768px and up) */
+@media (max-width: 992px) {
+  .services-left-bg {
+    width: 100%; /* Expand background to full width */
+    padding-top: 70px; /* Adjust padding */
+  }
+
+  .services-left h2 {
+    font-size: 28px; /* Adjust font size */
+  }
+
+  .services-left .services-list .services-item {
+    padding: 15px; /* Reduce padding */
+  }
+
+  .services-left .services-list .services-item h3 {
+    font-size: 22px; /* Adjust font size */
+  }
+
+  .services-left .services-list .services-item p {
+    font-size: 20px; /* Adjust font size */
+  }
+
+  .directions-container {
+    max-width: 100%; /* Expand container to full width */
+    padding: 15px; /* Adjust padding */
+  }
+}
+
+/* Small Devices (Phones, 576px and up) */
+@media (max-width: 768px) {
+  .services-left-bg {
+    display: block; /* Stack the background on smaller screens */
+    padding-top: 50px;
+    height: 100vh; /* Allow the height to adjust to the content */
+  }
+
+  .services-left h2 {
+    font-size: 24px;
+    text-align: center; /* Center align text */
+  }
+
+  .services-left .services-list .services-item {
+    padding: 10px;
+    margin-bottom: 10px; /* Increase spacing between items */
+  }
+
+  .services-left .services-list .services-item h3 {
+    font-size: 20px;
+  }
+
+  .services-left .services-list .services-item p {
+    font-size: 16px;
+  }
+
+  .directions-container h3 {
+    font-size: 1.25rem;
+  }
+
+  .directions-container .directions-list li {
+    font-size: 16px;
+    padding: 8px 0;
+  }
+}
+
+/* Extra Small Devices (Phones, less than 576px) */
+/* Extra Small Devices (Phones, less than 576px) */
+@media (max-width: 576px) {
+  .services-left-bg {
+    padding-top: 30px;
+  }
+
+  .services-left h1 {
+    font-size: 28px;
+  }
+
+  .services-left .services-list .services-item {
+    padding: 10px;
+    margin-bottom: 15px;
+  }
+
+  .services-left .services-list .services-item p {
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .directions-container {
+    padding: 15px;
+    max-width: 100%;
+  }
+
+  .directions-container h3 {
+    font-size: 1.25rem;
+  }
+
+  .directions-container .directions-list li {
+    font-size: 0.95rem;
+    padding: 10px 0;
+  }
+
+  .services-left .services-list .services-item .p-line {
+    font-size: 14px;
+    word-wrap: break-word; /* Ensure long text wraps */
+  }
+
+  .services-left .services-list .services-item .p-line sup {
+    font-size: 10px; /* Adjust the size of superscript */
+  }
+
+  .services-left .services-list .services-item .p-container {
+    flex-direction: column; /* Stack the items vertically */
+    align-items: flex-start;
+  }
+}

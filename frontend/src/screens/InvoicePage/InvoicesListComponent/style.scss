@@ -1,0 +1,153 @@
+@import "../../../styles/utils/vars";
+
+.invoices-table {
+  border-collapse: separate;
+  border-spacing: 0 3px;
+  padding: 0 5px;
+  width: 100%;
+  table-layout: auto;
+
+  &__header {
+    position: sticky;
+    top: 2px;
+    // z-index: 2;
+
+    &-row {
+      position: relative;
+      top: -3px;
+      height: 50px;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 14px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.14), 0 2px 2px rgba(0, 0, 0, 0.12);
+    }
+    &-th {
+      border-right: 0.5px solid gray;
+      color: white;
+      background-color: $colorGray;
+      font-weight: bold;
+      font-size: 0.8em;
+      padding: 5px;
+
+      &:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+      }
+      &:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+    }
+  }
+  &-td {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  &__body {
+    &-row {
+      font-size: 14px;
+      height: 30px;
+      background-color: #fff;
+      input {
+        cursor: pointer;
+      }
+      &:last-child {
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14);
+      }
+
+      &:hover {
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14),
+          0 3px 14px rgba(0, 0, 0, 0.12), 0 5px 5px rgba(0, 0, 0, 0.2);
+        position: relative;
+      }
+    }
+    &-td {
+      padding: 3px;
+      text-align: center;
+      border-right: 0.5px solid gray;
+      // white-space: nowrap;
+      font-size: 12px;
+
+      &:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+      }
+      &:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-right: 0;
+      }
+    }
+  }
+}
+
+.invoices-header-block {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  &__buttons-container {
+    display: flex;
+    gap: 5px;
+  }
+
+  &__add-order-btn {
+    background-color: green;
+    border-radius: 4px;
+    z-index: 3;
+    padding: 2px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgb(20, 179, 20);
+      cursor: pointer;
+    }
+  }
+}
+
+.payment-date-input-wrapper {
+  display: flex;
+  flex-direction: row;
+  gap: 5px; // Space between the input and button
+}
+
+.payment-date-input {
+  width: auto; // Take up the full cell width
+  max-width: 120px; // Optional: Limit the width to fit the table style
+  padding: 2px 2px; // Adjust padding to make it compact
+  font-size: 14px; // Match the table font size
+  border: 1px solid #0fdd46; // Match table cell borders
+  border-radius: 4px; // Optional: Rounded corners for better design
+  background-color: #f9f9f9; // Light background to match table theme
+  color: #333; // Text color for readability
+}
+
+.payment-date-save-btn {
+  background-color: #4caf50; // Green color for save button
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0px 6px; // Compact padding
+  font-size: 12px; // Match font size with the input field
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #45a049; // Darker green on hover
+  }
+}
+
+.payment-date-reject-btn {
+  background-color: #f44336; // Red color for reject button
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0px 6px; // Compact padding
+  font-size: 12px; // Match font size with the input field
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #d32f2f; // Darker red on hover
+  }
+}

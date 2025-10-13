@@ -1,0 +1,51 @@
+@import "../../../styles/utils/vars";
+
+.upload-documents {
+    &__footer {
+        display: flex;
+        justify-content: flex-end;
+        background-color: $tableHeaderColor;
+        border-radius: 4px;
+        position: relative;
+        margin-top: 5px;
+        padding: 5px;
+        gap: 10px;
+        bottom: 0;
+    }
+    &__footer-btn {
+        padding: 5px;
+        color: #fff;
+        border-radius: 4px;
+        background-color: gray;
+        border: none;
+        cursor: pointer;
+        &_edit {
+            background-color: rgba(43, 84, 233, 0.8);
+            &:hover {
+                background-color: rgba(43, 84, 233, 1);
+                box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+                transition: all 0.5s;
+            }
+        }
+        &_save {
+            background-color: rgba(53, 186, 60, 1);
+            &:hover {
+                background-color: darken(rgba(53, 186, 60, 1), 10%);
+                box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+                transition: all 0.5s;
+            }
+        }
+        &_close {
+            background: rgba(233, 43, 43, 1);
+            & > a {
+                color: white;
+                text-decoration: none;
+            }
+            &:hover {
+                background: darken(rgba(233, 43, 43, 1), 10%);
+                box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+                transition: all 0.5s;
+            }
+        }
+    }
+}

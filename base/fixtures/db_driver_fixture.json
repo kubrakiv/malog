@@ -1,0 +1,26 @@
+[
+{
+  "model": "base.driver",
+  "pk": 1,
+  "fields": {
+    "full_name": "Bereziuk Sergii",
+    "phone": null
+  }
+},
+{
+  "model": "base.driver",
+  "pk": 2,
+  "fields": {
+    "full_name": "Pyankov Andrey",
+    "phone": null
+  }
+},
+{
+  "model": "base.driver",
+  "pk": 3,
+  "fields": {
+    "full_name": "Diug Piotr",
+    "phone": null
+  }
+}
+]

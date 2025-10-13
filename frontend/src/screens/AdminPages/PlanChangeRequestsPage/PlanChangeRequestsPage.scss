@@ -1,0 +1,495 @@
+@import "../../../styles/utils/vars";
+
+.plan-change-requests-container {
+  padding: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    $backgroundcolor 0%,
+    lighten($backgroundcolor, 3%) 100%
+  );
+
+  .loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+
+    .loading-spinner {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid $headerColor;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    p {
+      margin-top: 1rem;
+      color: #666;
+      font-size: 16px;
+    }
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      color: $headerColor;
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+
+    p {
+      color: #666;
+      font-size: 1.1rem;
+    }
+  }
+
+  .filters {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: flex-end;
+
+    .status-filter {
+      padding: 0.5rem 1rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background: white;
+      font-size: 1rem;
+      cursor: pointer;
+
+      &:focus {
+        outline: none;
+        border-color: $headerColor;
+      }
+    }
+  }
+
+  .requests-grid {
+    display: grid;
+    gap: 1.5rem;
+
+    .request-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border: 2px solid transparent;
+      transition: all 0.3s ease;
+
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      }
+
+      .request-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1.5rem;
+
+        .client-info {
+          h3 {
+            color: $headerColor;
+            font-size: 1.3rem;
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+          }
+
+          .request-date {
+            color: #666;
+            font-size: 0.9rem;
+          }
+        }
+
+        .status-badge {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.5rem 1rem;
+          border-radius: 20px;
+          font-weight: 500;
+
+          .status-pending {
+            color: #ffc107;
+          }
+
+          .status-approved {
+            color: #28a745;
+          }
+
+          .status-rejected {
+            color: #dc3545;
+          }
+
+          &.status-pending {
+            background: rgba(255, 193, 7, 0.1);
+            color: #ffc107;
+          }
+
+          &.status-approved {
+            background: rgba(40, 167, 69, 0.1);
+            color: #28a745;
+          }
+
+          &.status-rejected {
+            background: rgba(220, 53, 69, 0.1);
+            color: #dc3545;
+          }
+        }
+      }
+
+      .plan-comparison {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+
+        .current-plan,
+        .requested-plan {
+          text-align: center;
+
+          h4 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+          }
+
+          .plan-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+
+            svg {
+              color: #ffd700;
+            }
+
+            span {
+              font-weight: 600;
+              color: $headerColor;
+            }
+
+            small {
+              color: #666;
+              font-size: 0.8rem;
+            }
+          }
+
+          .plan-limits {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+
+            svg {
+              color: $headerColor;
+            }
+          }
+        }
+
+        .arrow {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 1.5rem;
+          color: $headerColor;
+          font-weight: bold;
+        }
+      }
+
+      .request-reason {
+        margin-bottom: 1rem;
+
+        h4 {
+          color: $headerColor;
+          font-size: 1rem;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          color: #666;
+          font-style: italic;
+          padding: 0.5rem;
+          background: #f8f9fa;
+          border-radius: 4px;
+        }
+      }
+
+      .request-meta {
+        margin-bottom: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #eee;
+
+        small {
+          display: block;
+          color: #666;
+          margin-bottom: 0.25rem;
+        }
+      }
+
+      .admin-notes {
+        margin-bottom: 1rem;
+
+        h4 {
+          color: $headerColor;
+          font-size: 1rem;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          color: #666;
+          padding: 0.5rem;
+          background: #fff3cd;
+          border-radius: 4px;
+          border-left: 4px solid #ffc107;
+        }
+      }
+
+      .request-actions {
+        display: flex;
+        justify-content: flex-end;
+
+        .view-btn {
+          background: linear-gradient(
+            135deg,
+            $headerColor 0%,
+            lighten($headerColor, 10%) 100%
+          );
+          color: white;
+          border: none;
+          padding: 0.5rem 1rem;
+          border-radius: 6px;
+          font-size: 0.9rem;
+          font-weight: 500;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          transition: all 0.3s ease;
+
+          &:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba($headerColor, 0.3);
+          }
+        }
+      }
+    }
+
+    .no-requests {
+      text-align: center;
+      padding: 3rem;
+      color: #666;
+
+      .no-requests-icon {
+        font-size: 3rem;
+        color: #ddd;
+        margin-bottom: 1rem;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+      }
+    }
+  }
+
+  // Modal styles
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+
+    .review-modal {
+      background: white;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 90%;
+      max-height: 90vh;
+      overflow-y: auto;
+
+      .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        border-bottom: 1px solid #eee;
+
+        h2 {
+          color: $headerColor;
+          margin: 0;
+        }
+
+        .close-btn {
+          background: none;
+          border: none;
+          font-size: 1.5rem;
+          color: #666;
+          cursor: pointer;
+          padding: 0.5rem;
+
+          &:hover {
+            color: $headerColor;
+          }
+        }
+      }
+
+      .modal-content {
+        padding: 1.5rem;
+
+        .request-summary {
+          margin-bottom: 1.5rem;
+
+          h3 {
+            color: $headerColor;
+            margin-bottom: 0.5rem;
+          }
+
+          p {
+            color: #666;
+            margin-bottom: 1rem;
+          }
+
+          .reason {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            border-left: 4px solid $headerColor;
+
+            strong {
+              color: $headerColor;
+            }
+          }
+        }
+
+        .admin-notes-input {
+          margin-bottom: 1.5rem;
+
+          label {
+            display: block;
+            color: $headerColor;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+          }
+
+          textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+            resize: vertical;
+
+            &:focus {
+              outline: none;
+              border-color: $headerColor;
+            }
+          }
+        }
+
+        .modal-actions {
+          display: flex;
+          gap: 1rem;
+          justify-content: flex-end;
+
+          button {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+
+            &.approve-btn {
+              background: #28a745;
+              color: white;
+
+              &:hover {
+                background: #218838;
+                transform: translateY(-1px);
+              }
+            }
+
+            &.reject-btn {
+              background: #dc3545;
+              color: white;
+
+              &:hover {
+                background: #c82333;
+                transform: translateY(-1px);
+              }
+            }
+
+            &.cancel-btn {
+              background: #6c757d;
+              color: white;
+
+              &:hover {
+                background: #5a6268;
+                transform: translateY(-1px);
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+
+    .page-header h1 {
+      font-size: 2rem;
+    }
+
+    .plan-comparison {
+      grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto;
+
+      .arrow {
+        transform: rotate(90deg);
+      }
+    }
+
+    .filters {
+      justify-content: center;
+    }
+
+    .modal-overlay .review-modal {
+      width: 95%;
+    }
+  }
+}

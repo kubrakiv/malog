@@ -1,0 +1,30 @@
+[
+  {
+    "model": "base.filetype",
+    "pk": 1,
+    "fields": {
+      "name": "Invoice"
+    }
+  },
+  {
+    "model": "base.filetype",
+    "pk": 2,
+    "fields": {
+      "name": "CMR"
+    }
+  },
+  {
+    "model": "base.filetype",
+    "pk": 3,
+    "fields": {
+      "name": "Order"
+    }
+  },
+  {
+    "model": "base.filetype",
+    "pk": 4,
+    "fields": {
+      "name": "Other"
+    }
+  }
+]

@@ -1,0 +1,25 @@
+#form-field__select {
+    --bs-form-select-bg-img: url("../../../img/form-select-arrow.svg");
+    display: block;
+    width: 100%;
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    appearance: none;
+    background-color: #fff;
+    background-image: var(--bs-form-select-bg-img),
+        var(--bs-form-select-bg-icon, none);
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    &:focus {
+        border-color: #969fa8;
+        outline: 0;
+        box-shadow: 0 0 0 0.25rem rgba(44, 62, 80, 0.25);
+    }
+}

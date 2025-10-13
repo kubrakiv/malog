@@ -1,0 +1,39 @@
+@import "./utils/reset";
+@import "./utils/normalize";
+@import "./utils/vars";
+@import "./blocks/page";
+@import "./blocks/container";
+@import "./blocks/table";
+@import "./blocks/button";
+@import "./blocks/carousel";
+@import "./blocks/planner";
+@import "./blocks/form";
+@import "./blocks/modal";
+@import "./blocks/order";
+@import "./blocks/orders";
+@import "./blocks/task";
+@import "./blocks/sidebar";
+@import "./blocks/header";
+@import "./blocks/footer";
+@import "./blocks/slider";
+@import "./blocks/map";
+@import "./blocks/points";
+@import "./blocks/point";
+@import "./blocks/login";
+@import "./blocks/passport";
+@import "./blocks/message";
+@import "./blocks/endtime";
+@import "./blocks/starttime";
+@import "./blocks/uploaddocuments";
+@import "./blocks/documents";
+@import "./blocks/drivers";
+@import "./blocks/trucks";
+@import "./blocks/trailers";
+@import "./blocks/customerCard";
+@import "./blocks/invoices";
+@import "./blocks/tenders";
+
+* {
+  font-family: "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana, sans-serif;
+}

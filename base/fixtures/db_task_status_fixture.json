@@ -1,0 +1,50 @@
+[
+  {
+    "model": "base.taskstatus",
+    "pk": 1,
+    "fields": {
+      "name": "Truck arrived for loading",
+      "created_at": "2023-11-19T15:21:57.609Z"
+    }
+  },
+  {
+    "model": "base.taskstatus",
+    "pk": 2,
+    "fields": {
+      "name": "Loading started",
+      "created_at": "2023-11-19T15:22:03.159Z"
+    }
+  },
+  {
+    "model": "base.taskstatus",
+    "pk": 3,
+    "fields": {
+      "name": "Loading finished",
+      "created_at": "2023-11-19T15:22:08.267Z"
+    }
+  },
+  {
+    "model": "base.taskstatus",
+    "pk": 4,
+    "fields": {
+      "name": "Truck arrived for unloading",
+      "created_at": "2023-11-19T15:32:10.247Z"
+    }
+  },
+  {
+    "model": "base.taskstatus",
+    "pk": 5,
+    "fields": {
+      "name": "Unloading started",
+      "created_at": "2023-11-19T15:22:18.845Z"
+    }
+  },
+  {
+    "model": "base.taskstatus",
+    "pk": 6,
+    "fields": {
+      "name": "Unloading finished",
+      "created_at": "2023-11-19T15:22:23.550Z"
+    }
+  }
+]

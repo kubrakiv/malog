@@ -1,0 +1,55 @@
+@import "../../../styles/utils/vars";
+
+.customer-card-details {
+  width: 100%;
+  margin: 0 auto;
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    height: max-content;
+    gap: 5px;
+  }
+  &__title {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 5px;
+  }
+  &__content-block {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    width: calc(100% - 20px);
+  }
+  &__content-row {
+    display: flex;
+    flex-direction: row;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+  }
+  &__content-row-block {
+    flex: 1;
+    border-radius: 4px;
+    background-color: $backgroundcolor;
+    margin: 5px;
+    padding: 5px;
+  }
+  &__content-row-block-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin: 0px 0px 4px 0px;
+  }
+  &__content-row-block-value {
+    font-size: 14px;
+    padding-left: 20px;
+    &_position {
+      padding-left: 20px;
+      font-size: 14px;
+    }
+    &_full-name {
+      font-weight: bold;
+      font-size: 14px;
+    }
+  }
+}

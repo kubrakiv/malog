@@ -1,0 +1,30 @@
+.plus-btn {
+  // margin: 5px 5px;
+  margin-top: auto;
+  background-color: green;
+  border-radius: 4px;
+  padding: 2px 5px;
+  color: white;
+  border: none;
+
+  &:hover {
+    background: rgba(53, 186, 60, 0.9);
+    box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14);
+    transition: all 0.5s;
+    cursor: pointer;
+  }
+  &__week {
+    background-color: rgb(233, 228, 185);
+    color: rgb(233, 228, 185);
+  }
+  &__tacho-card {
+    background-color: rgb(233, 228, 185);
+    color: rgb(233, 228, 185);
+    &:hover {
+      background: rgba(53, 108, 186, 0.9);
+      box-shadow: 0 8px 10px rgba(74, 142, 231, 0.14);
+      transition: all 0.5s;
+      cursor: pointer;
+    }
+  }
+}

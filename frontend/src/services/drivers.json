@@ -1,0 +1,88 @@
+[
+  {
+    "id": "012bc131-a6b7-45bf-98b9-19eadad650a7",
+    "first_name": "ANDREY",
+    "last_name": "PYANKOV"
+  },
+  {
+    "id": "7c83c53d-3f16-4ecc-b364-0d6723e664c7",
+    "first_name": "Andrii",
+    "last_name": "Doronkin"
+  },
+  {
+    "id": "ade9d162-edb1-495e-9dfa-e73c38446261",
+    "first_name": "Ivan",
+    "last_name": "Shakhraiuk"
+  },
+  {
+    "id": "0d08f2ce-5c7f-4141-802b-eb10bdbc90ab",
+    "first_name": "MYKHAILO",
+    "last_name": "SHOPA"
+  },
+
+  {
+    "id": "60171f06-3d7b-40c7-b19d-188fbdbde674",
+    "first_name": "Oleg",
+    "last_name": "Kuzbyt"
+  },
+  {
+    "id": "e33d087a-6e9c-418f-b80e-20c74b85cca0",
+    "first_name": "Oleh",
+    "last_name": "Kopchuk"
+  },
+  {
+    "id": "485823ff-2a43-48d7-92fc-f2afc361490d",
+    "first_name": "OLEKSANDR",
+    "last_name": "BORUKH"
+  },
+  {
+    "id": "072a4324-5fc9-4015-8d7e-651b320683f8",
+    "first_name": "OLEKSANDR",
+    "last_name": "ZINCHENKO"
+  },
+  {
+    "id": "6b414591-d592-4bc0-8fe3-0fcb4864d219",
+    "first_name": "Petro",
+    "last_name": "Sobko"
+  },
+  {
+    "id": "7343d92b-3f7b-432a-be9c-881998281b05",
+    "first_name": "PIOTR",
+    "last_name": "DIUG"
+  },
+  {
+    "id": "f6bb10fc-9fbd-45f5-b230-60fe14a0e14c",
+    "first_name": "Sergii",
+    "last_name": "Bereziuk"
+  },
+  {
+    "id": "1bc49e0c-1a3b-475d-9f96-b0c3589e35c5",
+    "first_name": "STANISLAV",
+    "last_name": "RIABOVOL"
+  },
+  {
+    "id": "b9a3930d-e0bc-42ff-b3f9-2e6b8a816dcc",
+    "first_name": "VOLODYMYR",
+    "last_name": "MOZHAIKO"
+  },
+  {
+    "id": "54749801-9a16-4c30-96ca-05355801745a",
+    "first_name": "Volodymyr",
+    "last_name": "Ryzhak"
+  },
+  {
+    "id": "9b3b9de6-ff9f-47f3-b302-002c5d70cc47",
+    "first_name": "Олег",
+    "last_name": "Копчук"
+  },
+  {
+    "id": "d7aefa30-4081-4520-a5cb-0f4f8b095fe8",
+    "first_name": "Олександр",
+    "last_name": "Зінченко"
+  },
+  {
+    "id": "997e522e-bd0e-46e4-8788-9e86236aee2b",
+    "first_name": "Yurii",
+    "last_name": "Sladkovskyi"
+  }
+]

@@ -1,0 +1,310 @@
+@import "../../styles/utils/vars";
+
+.order-details {
+  padding-right: 0px;
+
+  &__route {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 5px;
+    background-color: rgba(30, 88, 235, 0.3);
+    padding: 5px;
+    border-radius: 4px;
+    // margin-bottom: 5px;
+    transition: all 0.5s ease;
+  }
+
+  &__header {
+    position: sticky;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    top: 0;
+    &-block {
+      display: flex;
+      align-items: center;
+      background-color: $colorGray;
+      color: white;
+      border-radius: 4px;
+      margin: 5px 5px;
+      padding: 5px 5px;
+      min-height: 35px;
+      &:last-child {
+        display: flex;
+        gap: 10px;
+        margin-left: auto;
+      }
+    }
+  }
+  &__platform {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    size: 5px;
+    font-weight: bold;
+    font-size: 12px;
+    border-radius: 4px;
+    background-color: midnightblue;
+    color: white;
+    &_text {
+      padding: 2px 4px;
+    }
+  }
+
+  &__return-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background-color: rgba(249, 4, 4, 0.8);
+    color: white;
+    margin: 5px;
+    // line-height: 30px;
+    border-radius: 5px;
+    text-align: center;
+    &:hover {
+      background-color: rgba(249, 4, 4, 0.5);
+      box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14);
+      cursor: pointer;
+    }
+
+    & > a {
+      font-size: 26px;
+      color: white;
+      text-decoration: none;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    margin: 5px auto;
+  }
+
+  &__action-show-documents-btn {
+    // position: absolute;
+    background-color: rgba(118, 107, 8, 0.7);
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 5px 10px;
+    right: 7px;
+    margin: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgba(118, 107, 8, 0.4);
+      cursor: pointer;
+    }
+  }
+
+  &__action-delete-document-btn {
+    background-color: rgba(233, 43, 43, 0.8);
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgba(233, 43, 43, 0.5);
+      cursor: pointer;
+    }
+  }
+
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    height: max-content;
+    gap: 10px;
+  }
+  &__content-block {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    width: calc(100% - 20px);
+  }
+  &__content-row {
+    display: flex;
+    flex-direction: row;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    &:nth-child(4) {
+      height: calc(100% - 20px);
+    }
+  }
+  &__content-row-block {
+    flex: 1;
+    border-radius: 4px;
+    background-color: $backgroundcolor;
+    margin: 5px;
+    padding: 5px;
+    overflow: auto;
+    // height: 100%;
+    &_price {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+    &_platform {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    &-map {
+      height: calc(100% - 10px);
+      min-height: 352px;
+      &_truck-modal {
+        height: 600px;
+      }
+    }
+
+    & > img {
+      display: block;
+      width: 100%;
+      border-radius: 4px;
+    }
+  }
+  &__content-row-block-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin: 0px 0px 4px 0px;
+  }
+  &__content-row-block-value {
+    font-size: 14px;
+    padding-left: 20px;
+    &-cargo {
+      display: flex;
+      flex-wrap: wrap;
+      padding-left: 20px;
+      &-blocks {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+        width: 50%;
+        &_right-span {
+          margin-right: 30px;
+          border-radius: 4px;
+        }
+      }
+    }
+    &-price {
+      display: flex;
+      flex-wrap: wrap;
+      padding-left: 20px;
+      &-blocks {
+        font-size: 14px;
+        width: 50%;
+      }
+    }
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    position: relative;
+    margin-top: 5px;
+    padding: 5px;
+    gap: 10px;
+  }
+  &__footer-block {
+    background-color: $colorGray;
+    color: white;
+    border-radius: 4px;
+    margin: 5px 10px;
+    padding: 5px 10px;
+  }
+  &__footer-btn {
+    padding: 5px;
+    color: #fff;
+    border-radius: 4px;
+    border: none;
+    &_edit {
+      // padding: 5px;
+      background-color: rgba(43, 84, 233, 0.8);
+      &:hover {
+        background-color: rgba(43, 84, 233, 1);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+    &_save {
+      // padding: 5px;
+      background-color: rgba(53, 186, 60, 0.8);
+      &:hover {
+        background: rgba(53, 186, 60, 1.2);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+    &_close {
+      // padding: 5px;
+      background: rgba(233, 43, 43, 0.8);
+      & > a {
+        color: white;
+        text-decoration: none;
+      }
+      &:hover {
+        background: rgba(233, 43, 43, 1);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+  }
+  &__cargo-form-container {
+    display: flex;
+    &__form-input {
+      margin-bottom: 4px;
+    }
+  }
+  &__price-form-container {
+    display: flex;
+    flex-direction: column;
+    &__form-input {
+      margin-bottom: 4px;
+    }
+  }
+
+  &__form-col {
+    margin: 4px 4px;
+  }
+  &__form-row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    &_item {
+      width: calc(50% - 5px);
+      margin-right: 10px;
+      &:nth-child(2n) {
+        margin-right: 0;
+      }
+      &.full-width {
+        width: 100%;
+        margin-right: 0;
+      }
+    }
+  }
+}
+
+.form-select-mb10 {
+  margin-bottom: 10px;
+}
+
+.form-select-mb5 {
+  margin-bottom: 5px;
+}
+
+.mb-5 {
+  margin-bottom: 5px;
+}

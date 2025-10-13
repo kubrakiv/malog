@@ -1,0 +1,10 @@
+.task-order {
+    display: flex;
+    flex-direction: row;
+}
+
+.add-task-container {
+    padding: 5px;
+    height: 100%;
+    overflow: auto;
+}

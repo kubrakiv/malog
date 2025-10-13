@@ -1,0 +1,202 @@
+[
+  {
+    "model": "user.driverprofile",
+    "pk": 4,
+    "fields": {
+      "image": "images/Bereziuk_Sergiy_PsQOwgz.jpg",
+      "first_name": "Sergii",
+      "last_name": "Bereziuk",
+      "middle_name": null,
+      "full_name": "Sergii Bereziuk",
+      "email": "bereziuk@gmail.com",
+      "phone_number": "42-077-346-51-56",
+      "position": "International driver",
+      "license_series": "EM",
+      "license_number": "393970",
+      "birth_date": "1983-11-06",
+      "started_work": "2021-08-16",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 5,
+    "fields": {
+      "image": "images/Pyankov_Andrey.jpg",
+      "first_name": "Andrey",
+      "last_name": "Pyankov",
+      "middle_name": null,
+      "full_name": "Andrey Pyankov",
+      "email": "pyankov@gmail.com",
+      "phone_number": "42-077-419-18-01",
+      "position": "International driver",
+      "license_series": "EM",
+      "license_number": "659512",
+      "birth_date": "1974-08-11",
+      "started_work": "2020-11-21",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 6,
+    "fields": {
+      "image": "images/Ryzhak.png",
+      "first_name": "Volodymyr",
+      "last_name": "Ryzhak",
+      "middle_name": null,
+      "full_name": "Volodymyr Ryzhak",
+      "email": "ryzhak@gmail.com",
+      "phone_number": "42-060-212-57-53",
+      "position": "International driver",
+      "license_series": "EP",
+      "license_number": "394015",
+      "birth_date": "1970-10-09",
+      "started_work": "2022-03-01",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 7,
+    "fields": {
+      "image": "images/Doronkin.png",
+      "first_name": "Andrii",
+      "last_name": "Doronkin",
+      "middle_name": null,
+      "full_name": "Andrii Doronkin",
+      "email": "doronkin@gmail.com",
+      "phone_number": "42-072-293-99-28",
+      "position": "International driver",
+      "license_series": "EP",
+      "license_number": "127001",
+      "birth_date": "1965-02-20",
+      "started_work": "2022-03-01",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 8,
+    "fields": {
+      "image": "images/Kopchuk.png",
+      "first_name": "Oleh",
+      "last_name": "Kopchuk",
+      "middle_name": null,
+      "full_name": "Oleh Kopchuk",
+      "email": "kopchuk@gmail.com",
+      "phone_number": "42-077-405-74-89",
+      "position": "International driver",
+      "license_series": "EP",
+      "license_number": "393882",
+      "birth_date": "1988-10-23",
+      "started_work": "2022-03-01",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 9,
+    "fields": {
+      "image": "images/Kuzbyt_Oleg.jpg",
+      "first_name": "Oleg",
+      "last_name": "Kuzbyt",
+      "middle_name": null,
+      "full_name": "Oleg Kuzbyt",
+      "email": "kuzbyt@gmail.com",
+      "phone_number": "42-077-301-04-29",
+      "position": "International driver",
+      "license_series": "EQ",
+      "license_number": "711732",
+      "birth_date": "1987-08-23",
+      "started_work": "2024-07-01",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 10,
+    "fields": {
+      "image": "images/Mozhaiko.png",
+      "first_name": "Volodymyr",
+      "last_name": "Mozhaiko",
+      "middle_name": null,
+      "full_name": "Volodymyr Mozhaiko",
+      "email": "mozhaiko@gmail.com",
+      "phone_number": "42-077-564-32-85",
+      "position": "International driver",
+      "license_series": "EP",
+      "license_number": "635377",
+      "birth_date": "1975-04-02",
+      "started_work": "2023-05-11",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 11,
+    "fields": {
+      "image": "images/Shopa.png",
+      "first_name": "Mykhailo",
+      "last_name": "Shopa",
+      "middle_name": null,
+      "full_name": "Mykhailo Shopa",
+      "email": "shopa@gmail.com",
+      "phone_number": "38-066-165-61-50",
+      "position": "International driver",
+      "license_series": "EN",
+      "license_number": "337196",
+      "birth_date": null,
+      "started_work": null,
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 12,
+    "fields": {
+      "image": "images/Shakhraiuk_PuYJKzh.png",
+      "first_name": "Ivan",
+      "last_name": "Shakhraiuk",
+      "middle_name": null,
+      "full_name": "Ivan Shakhraiuk",
+      "email": "shakhraiuk@gmail.com",
+      "phone_number": "42-077-590-81-19",
+      "position": "International driver",
+      "license_series": "EQ",
+      "license_number": "350165",
+      "birth_date": null,
+      "started_work": null,
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 13,
+    "fields": {
+      "image": "images/Zinchenko.png",
+      "first_name": "Oleksandr",
+      "last_name": "Zinchenko",
+      "middle_name": null,
+      "full_name": "Oleksandr Zinchenko",
+      "email": "zinchenko@gmail.com",
+      "phone_number": "38-067-945-60-02",
+      "position": "┬юф│щ ь│цэрЁюфэшщ",
+      "license_series": null,
+      "license_number": null,
+      "birth_date": null,
+      "started_work": null,
+      "finished_work": null,
+      "country": null
+    }
+  }
+]

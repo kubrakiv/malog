@@ -1,0 +1,51 @@
+[
+{
+  "model": "base.truck",
+  "pk": 2,
+  "fields": {
+    "plates": "5E93576"
+  }
+},
+{
+  "model": "base.truck",
+  "pk": 3,
+  "fields": {
+    "plates": "3SR2012"
+  }
+},
+{
+  "model": "base.truck",
+  "pk": 5,
+  "fields": {
+    "plates": "3SR1953"
+  }
+},
+{
+  "model": "base.truck",
+  "pk": 6,
+  "fields": {
+    "plates": "3SR2381"
+  }
+},
+{
+  "model": "base.truck",
+  "pk": 7,
+  "fields": {
+    "plates": "6E20189"
+  }
+},
+{
+  "model": "base.truck",
+  "pk": 8,
+  "fields": {
+    "plates": "6E20185"
+  }
+},
+{
+  "model": "base.truck",
+  "pk": 9,
+  "fields": {
+    "plates": "3SR1884"
+  }
+}
+]

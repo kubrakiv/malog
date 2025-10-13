@@ -1,0 +1,104 @@
+// .form-field__select {
+//   --bs-form-select-bg-img: url("../../../img/form-select-arrow.svg");
+//   display: block;
+//   width: 100%;
+//   padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+//   font-size: 1rem;
+//   font-weight: 400;
+//   line-height: 1.5;
+//   color: #212529;
+//   appearance: none;
+//   background-color: #fff;
+//   background-image: var(--bs-form-select-bg-img),
+//       var(--bs-form-select-bg-icon, none);
+//   background-repeat: no-repeat;
+//   background-position: right 0.75rem center;
+//   background-size: 16px 12px;
+//   border: 1px solid #dee2e6;
+//   border-radius: 0.375rem;
+//   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+//   &:focus {
+//       border-color: #969fa8;
+//       outline: 0;
+//       box-shadow: 0 0 0 0.25rem rgba(44, 62, 80, 0.25);
+//   }
+// }
+
+.form-field__select {
+  position: relative;
+  padding: 6px 2rem 6px 0.75rem;
+  --bs-form-select-bg-img: url("../../img/form-select-arrow.svg");
+  display: block;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 400;
+  color: #212529;
+  appearance: none; // Remove the default browser styling
+  background-color: #fff;
+  background-image: var(--bs-form-select-bg-img),
+    var(--bs-form-select-bg-icon, none);
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+
+  &:disabled {
+    background-color: #f8f9fa;
+    cursor: not-allowed;
+  }
+
+  &:focus {
+    border-color: #007bff;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+  }
+
+  // Custom arrow for better visibility
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    right: 1rem;
+    width: 0.8rem;
+    height: 0.4rem;
+    background-color: #007bff;
+    clip-path: polygon(100% 0%, 0 0%, 50% 100%);
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+
+  // Handle overflow of options
+  & option {
+    max-height: 200px; // Control the overall height of the dropdown
+    overflow-y: auto;
+  }
+
+  // For small viewports, we add better sizing
+  @media (max-width: 576px) {
+    font-size: 14px;
+    padding: 0.5rem 2rem 0.5rem 0.75rem;
+  }
+}
+
+// Parent container styles
+.select-component {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  margin: 5px;
+  &__full-width {
+    width: 100%;
+  }
+  &__form-title {
+    font-size: 14px;
+    font-weight: bold;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+}
+
+.select-input-width-auto {
+  width: auto;
+}

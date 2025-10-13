@@ -1,0 +1,144 @@
+.main-bg {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../../../img/1920x1080-beautiful-road.jpg");
+  background-attachment: fixed; /* Keeps the background fixed during scroll */
+  background-size: cover;
+  background-position: center center;
+
+  @media (max-width: 768px) {
+    background-attachment: scroll; /* Change to scroll for better performance on mobile */
+    background-size: cover; /* Ensure the image covers the entire area */
+  }
+
+  @media (max-width: 480px) {
+    background-attachment: scroll; /* Ensure smooth scrolling on smaller devices */
+    background-size: cover; /* Adjust based on your preference */
+    background-position: center top; /* Adjust position to better fit mobile screens */
+  }
+}
+
+.golovna-page {
+  padding-top: 150px; // To offset the fixed header
+  color: white;
+  h3 {
+    text-align: center;
+    padding-bottom: 50px;
+  }
+}
+
+.golovna-title {
+  padding-top: 50px;
+  text-align: center;
+  font-size: 52px;
+  font-weight: 700;
+  margin-bottom: 50px;
+  line-height: 1.2;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.7); // Stronger shadow for more impact
+  letter-spacing: 3px; // Slightly increase letter spacing for readability
+}
+
+.contact-us-btn {
+  display: inline-block;
+  margin-top: 50px;
+  padding: 12px 25px;
+  font-size: 18px;
+  font-weight: bold;
+  color: white;
+  background-color: #004b91; /* Blue color */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 1s ease;
+
+  &:hover {
+    background-color: #003366; /* Darker blue */
+  }
+}
+
+.golovna-btns {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+@media (max-width: 992px) {
+  .golovna-page {
+    padding-top: 120px;
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+
+  h1 {
+    font-size: 46px;
+  }
+
+  p {
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .golovna-page {
+    padding-top: 100px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .golovna-btns {
+    flex-direction: column;
+    align-items: center;
+    padding-bottom: 20px;
+  }
+
+  h1 {
+    font-size: 42px;
+  }
+  h2 {
+    font-size: 22px; /* Slightly reduce heading size for smaller screens */
+  }
+
+  p {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 576px) {
+  .golovna-page {
+    padding-top: 100px;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .golovna-title {
+    padding-top: 80px;
+  }
+
+  h1 {
+    font-size: 42px;
+  }
+  h2 {
+    font-size: 22px; /* Slightly reduce heading size for smaller screens */
+  }
+
+  p {
+    font-size: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .golovna-page {
+    padding-top: 120px;
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  h1 {
+    font-size: 36px;
+  }
+  h2 {
+    font-size: 20px; /* Further reduce heading size */
+  }
+  p {
+    font-size: 16px;
+  }
+}

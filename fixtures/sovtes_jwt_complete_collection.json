@@ -1,0 +1,613 @@
+{
+  "info": {
+    "_postman_id": "8f3e5b42-9c7a-4d8b-9e3f-123456789abc",
+    "name": "Sovtes JWT Authentication - Complete Suite",
+    "description": "Complete test suite for Sovtes JWT authentication including admin password management endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{admin_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8000",
+      "type": "string"
+    },
+    {
+      "key": "test_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "sovtes_user_id",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication Setup",
+      "item": [
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    if (response.access) {",
+                  "        pm.collectionVariables.set('admin_token', response.access);",
+                  "        pm.test('Admin login successful', function () {",
+                  "            pm.response.to.have.status(200);",
+                  "        });",
+                  "    }",
+                  "} else {",
+                  "    pm.test('Admin login failed', function () {",
+                  "        pm.response.to.have.status(200);",
+                  "    });",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate Test JWT Token",
+          "event": [
+            {
+              "listen": "pre-request",
+              "script": {
+                "exec": [
+                  "// Generate a test JWT token for Sovtes",
+                  "const CryptoJS = require('crypto-js');",
+                  "",
+                  "// JWT Header",
+                  "const header = {",
+                  "    \"alg\": \"RS512\",",
+                  "    \"typ\": \"JWT\"",
+                  "};",
+                  "",
+                  "// JWT Payload",
+                  "const payload = {",
+                  "    \"sub\": \"test_sovtes_user_001\",",
+                  "    \"client_id\": \"sovtes_test_client\",",
+                  "    \"client_name\": \"Sovtes Test Company\",",
+                  "    \"email\": \"test@sovtes.com\",",
+                  "    \"first_name\": \"Test\",",
+                  "    \"last_name\": \"User\",",
+                  "    \"subscription_plan_id\": 1,",
+                  "    \"subscription_plan_name\": \"Basic Plan\",",
+                  "    \"iat\": Math.floor(Date.now() / 1000),",
+                  "    \"exp\": Math.floor(Date.now() / 1000) + 3600,",
+                  "    \"iss\": \"sovtes.com\",",
+                  "    \"aud\": \"malog.com\"",
+                  "};",
+                  "",
+                  "// Base64URL encode",
+                  "function base64urlEncode(str) {",
+                  "    return CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(str))",
+                  "        .replace(/\\+/g, '-')",
+                  "        .replace(/\\//g, '_')",
+                  "        .replace(/=/g, '');",
+                  "}",
+                  "",
+                  "const encodedHeader = base64urlEncode(JSON.stringify(header));",
+                  "const encodedPayload = base64urlEncode(JSON.stringify(payload));",
+                  "",
+                  "// For testing without signature verification",
+                  "const testToken = encodedHeader + '.' + encodedPayload + '.test_signature';",
+                  "pm.collectionVariables.set('test_token', testToken);",
+                  "",
+                  "console.log('Generated test token:', testToken);"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/health/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "health", ""]
+            },
+            "description": "This is a dummy request to generate the test token in pre-request script"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Sovtes JWT Authentication",
+      "item": [
+        {
+          "name": "Login with Sovtes JWT",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response has required fields', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('access');",
+                  "    pm.expect(response).to.have.property('refresh');",
+                  "    pm.expect(response).to.have.property('user');",
+                  "    pm.expect(response).to.have.property('client');",
+                  "    pm.expect(response).to.have.property('subscription');",
+                  "});",
+                  "",
+                  "pm.test('User is created correctly', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.user.username).to.include('sovtes_');",
+                  "    pm.expect(response.user.email).to.eql('test@sovtes.com');",
+                  "});",
+                  "",
+                  "pm.test('Client is created correctly', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.client.name).to.eql('Sovtes Test Company');",
+                  "    pm.expect(response.client.slug).to.include('sovtes-test-company');",
+                  "});",
+                  "",
+                  "pm.test('Subscription info is present', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.subscription).to.have.property('plan');",
+                  "    pm.expect(response.subscription).to.have.property('status');",
+                  "});",
+                  "",
+                  "// Store user ID for management tests",
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.collectionVariables.set('sovtes_user_id', response.user.id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"jwt_token\": \"{{test_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sovtes-auth/login/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sovtes-auth", "login", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Verify Sovtes JWT Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Token is valid', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('valid', true);",
+                  "    pm.expect(response).to.have.property('claims');",
+                  "});",
+                  "",
+                  "pm.test('Claims are extracted correctly', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.claims).to.have.property('sub');",
+                  "    pm.expect(response.claims).to.have.property('client_id');",
+                  "    pm.expect(response.claims).to.have.property('email');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"jwt_token\": \"{{test_token}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sovtes-auth/verify/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sovtes-auth", "verify", ""]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin - Sovtes User Management",
+      "item": [
+        {
+          "name": "List All Sovtes Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200 (Admin access)', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Response contains users list', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('count');",
+                  "    pm.expect(response).to.have.property('users');",
+                  "    pm.expect(response.users).to.be.an('array');",
+                  "});",
+                  "",
+                  "pm.test('Users have authentication info', function () {",
+                  "    const response = pm.response.json();",
+                  "    if (response.users.length > 0) {",
+                  "        const user = response.users[0];",
+                  "        pm.expect(user).to.have.property('authentication_info');",
+                  "        pm.expect(user.username).to.include('sovtes_');",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/sovtes/users/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "sovtes", "users", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Sovtes User Details",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('User details are complete', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('id');",
+                  "    pm.expect(response).to.have.property('username');",
+                  "    pm.expect(response).to.have.property('authentication_info');",
+                  "    pm.expect(response.username).to.include('sovtes_');",
+                  "});",
+                  "",
+                  "pm.test('Authentication info is provided', function () {",
+                  "    const response = pm.response.json();",
+                  "    const authInfo = response.authentication_info;",
+                  "    pm.expect(authInfo).to.have.property('authentication_method');",
+                  "    pm.expect(authInfo).to.have.property('has_password');",
+                  "    pm.expect(authInfo).to.have.property('password_status');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/sovtes/users/{{sovtes_user_id}}/",
+              "host": ["{{base_url}}"],
+              "path": [
+                "api",
+                "admin",
+                "sovtes",
+                "users",
+                "{{sovtes_user_id}}",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Reset Sovtes User Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Password reset successful', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('message');",
+                  "    pm.expect(response).to.have.property('temporary_password');",
+                  "    pm.expect(response).to.have.property('important_note');",
+                  "});",
+                  "",
+                  "pm.test('Warning message is included', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.important_note).to.include('emergency access only');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/sovtes/users/{{sovtes_user_id}}/reset-password/",
+              "host": ["{{base_url}}"],
+              "path": [
+                "api",
+                "admin",
+                "sovtes",
+                "users",
+                "{{sovtes_user_id}}",
+                "reset-password",
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Disable Sovtes User Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test('Password disabled successfully', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('message');",
+                  "    pm.expect(response).to.have.property('note');",
+                  "});",
+                  "",
+                  "pm.test('JWT-only authentication note is included', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response.note).to.include('JWT tokens');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/sovtes/users/{{sovtes_user_id}}/disable-password/",
+              "host": ["{{base_url}}"],
+              "path": [
+                "api",
+                "admin",
+                "sovtes",
+                "users",
+                "{{sovtes_user_id}}",
+                "disable-password",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Error Handling Tests",
+      "item": [
+        {
+          "name": "Invalid JWT Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 400 (Bad Request)', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error message is descriptive', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('error');",
+                  "    pm.expect(response.error).to.include('Invalid');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"jwt_token\": \"invalid.jwt.token\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sovtes-auth/login/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sovtes-auth", "login", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Missing JWT Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 400 (Bad Request)', function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});",
+                  "",
+                  "pm.test('Error message indicates missing token', function () {",
+                  "    const response = pm.response.json();",
+                  "    pm.expect(response).to.have.property('error');",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/sovtes-auth/login/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "sovtes-auth", "login", ""]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Admin Endpoints - Unauthorized Access",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test('Status is 401 (Unauthorized)', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/sovtes/users/",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "sovtes", "users", ""]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

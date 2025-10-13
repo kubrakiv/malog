@@ -1,0 +1,29 @@
+@import "../../../styles/utils/vars";
+
+.accordion-menu {
+    color: $backgroundcolor;
+    list-style-type: none;
+    margin-bottom: 0;
+    padding-left: 22px;
+
+    &__title {
+        font-size: 1.1em;
+        text-decoration: none;
+        color: $darkTextColor;
+        white-space: nowrap;
+    }
+    &__list-item {
+        font-size: 1em;
+        padding: 5px 10px;
+        &:hover {
+            background-color: rgba(108, 129, 127, 0.3);
+            cursor: pointer;
+            border-radius: 6px;
+        }
+    }
+    &__link {
+        color: $backgroundcolor;
+        text-decoration: none;
+        padding: 5px;
+    }
+}

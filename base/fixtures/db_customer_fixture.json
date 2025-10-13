@@ -1,0 +1,44 @@
+[
+    {
+        "model": "base.customer",
+        "pk": 1,
+        "fields": {
+            "name": "LKW WALTER",
+            "nip_number": null,
+            "payment_period": 23,
+            "payment_type": 2,
+            "email": null,
+            "website": "https://www.lkw-walter.com/",
+            "post_address": null,
+            "created_at": "2023-11-14T08:37:11.911Z"
+        }
+    },
+    {
+        "model": "base.customer",
+        "pk": 2,
+        "fields": {
+            "name": "AGROMAT",
+            "nip_number": null,
+            "payment_period": null,
+            "payment_type": 1,
+            "email": null,
+            "website": null,
+            "post_address": null,
+            "created_at": "2023-11-14T08:37:11.911Z"
+        }
+    },
+    {
+        "model": "base.customer",
+        "pk": 3,
+        "fields": {
+            "name": "ASSTRA",
+            "nip_number": "IT02826120160",
+            "payment_period": 45,
+            "payment_type": 2,
+            "email": "fornitori@asstraitalia.com",
+            "website": "http://www.asstra.com/",
+            "post_address": "Italy 24069 Bergamo, via Alessandro Volta, 24",
+            "created_at": "2023-11-14T08:37:11.911Z"
+        }
+    }
+]

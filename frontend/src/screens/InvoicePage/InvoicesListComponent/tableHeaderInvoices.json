@@ -1,0 +1,18 @@
+[
+  { "Invoice Date": "Invoice date" },
+  { "Invoice Number": "Invoice number" },
+  { "Price": "Price without VAT" },
+  { "VAT": "VAT" },
+  { "Total": "Total" },
+  { "Currency": "Currency" },
+  { "Due Date": "Due Date" },
+  { "Paid Date": "Paid Date" },
+  { "Invoice": "Invoice status" },
+  { "Order Number": "Order number" },
+  { "Customer": "Customer" },
+  { "Service Name": "Service Name" },
+  { "Truck": "Truck" },
+  { "Trailer": "Trailer" },
+  { "Loading Date": "Loading Date" },
+  { "Unloading Date": "Unloading Date" }
+]

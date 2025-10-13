@@ -1,0 +1,57 @@
+.form-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 5px;
+  &_number {
+    margin-left: 5px;
+  }
+  &-btn {
+    color: #fff;
+    border-radius: 4px;
+    border: none;
+    &_edit {
+      padding: 5px;
+      background-color: rgba(43, 84, 233, 0.8);
+      &:hover {
+        background-color: rgba(43, 84, 233, 1);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+    &_save {
+      padding: 5px;
+      background-color: rgba(53, 186, 60, 0.8);
+      &:hover {
+        background: rgba(53, 186, 60, 1.2);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+    &_save-order-number {
+      padding: 4px;
+      background-color: rgba(53, 186, 60, 0.8);
+      &:hover {
+        background: rgba(53, 186, 60, 1.2);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+    &_close {
+      padding: 5px;
+      background: rgba(233, 43, 43, 0.8);
+      & > a {
+        color: white;
+        text-decoration: none;
+      }
+      &:hover {
+        background: rgba(233, 43, 43, 1);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+  }
+}

@@ -1,0 +1,10 @@
+.footer {
+  //   position: sticky;
+  position: fixed;
+  bottom: 0;
+  background-color: $headerColor;
+  color: white;
+  text-align: center;
+  width: 100%;
+  z-index: 98;
+}

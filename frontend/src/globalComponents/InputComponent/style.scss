@@ -1,0 +1,108 @@
+.form-field__input {
+  display: block;
+  width: 100%;
+  // padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+  padding: 6px 2rem 6px 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  appearance: none;
+  background-color: #fff;
+  background-image: var(--bs-form-select-bg-img),
+    var(--bs-form-select-bg-icon, none);
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 16px 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  &:focus {
+    border-color: #969fa8;
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(44, 62, 80, 0.25);
+  }
+  &-order-number {
+    display: block;
+    width: auto;
+    padding: 2px;
+    font-size: 1rem;
+    font-weight: 400;
+    // line-height: 1.5;
+    color: #212529;
+    appearance: none;
+    background-color: #fff;
+    background-image: var(--bs-form-select-bg-img),
+      var(--bs-form-select-bg-icon, none);
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #dee2e6;
+    border-radius: 0.375rem;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    &:focus {
+      border-color: #969fa8;
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(44, 62, 80, 0.25);
+    }
+  }
+  &-order-search {
+    display: block;
+    width: 300px;
+    padding-left: 10px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 2;
+    color: #212529;
+    appearance: none;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 1px solid #dee2e6;
+    transition: border-color 0.15s ease-in-out;
+    &:focus {
+      border-color: #ffffff;
+      outline: 0;
+    }
+  }
+}
+
+.input-component {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+
+  &__form-title {
+    font-size: 14px;
+    font-weight: bold;
+    width: 50%;
+    margin-bottom: 5px;
+  }
+}
+
+// Error and helper text styles
+.form-field__input.error {
+  border-color: #e74c3c;
+  background-color: #fdf2f2;
+
+  &:focus {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 0.25rem rgba(231, 76, 60, 0.25);
+  }
+}
+
+.input-error-text {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.input-helper-text {
+  color: #7f8c8d;
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+  display: block;
+}

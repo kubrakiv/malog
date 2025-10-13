@@ -1,0 +1,34 @@
+.add-point-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid rgb(34, 34, 34);
+    font-size: 1rem;
+    font-weight: 700;
+    border-radius: 4px;
+    &:focus {
+        border-color: green;
+        outline: none;
+    }
+}
+
+.add-point-suggestions {
+    position: absolute;
+    // transform: translateY(2px);
+    background: #fff;
+    border: 2px solid green;
+    width: 100%;
+    z-index: 10;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    text-align: left;
+    border-radius: 4px;
+}
+
+.list-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    &:hover {
+        background: #efefef;
+    }
+}

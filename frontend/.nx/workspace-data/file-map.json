@@ -1,0 +1,2667 @@
+{
+  "version": "6.0",
+  "nxVersion": "19.6.4",
+  "deps": {
+    "@react-google-maps/api": "^2.19.2",
+    "@redux-devtools/extension": "^3.3.0",
+    "@reduxjs/toolkit": "^2.0.1",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/react": "^18.3.5",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react-refresh": "^1.3.6",
+    "axios": "^1.5.1",
+    "chroma-js": "^2.4.2",
+    "date-fns": "^2.30.0",
+    "dotenv": "^16.3.1",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2",
+    "lucide-react": "^0.288.0",
+    "primereact": "^10.6.4",
+    "react": "^18.3.1",
+    "react-beautiful-dnd": "^13.1.1",
+    "react-bootstrap": "^2.9.0",
+    "react-cool-onclickoutside": "^1.7.0",
+    "react-datepicker": "^7.5.0",
+    "react-dom": "^18.3.1",
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^4.11.0",
+    "react-redux": "^9.0.4",
+    "react-router-bootstrap": "^0.26.2",
+    "react-router-dom": "^6.16.0",
+    "react-select": "^5.8.0",
+    "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0",
+    "reselect": "^5.1.1",
+    "sass": "^1.69.3",
+    "swiper": "^11.1.11",
+    "transliteration": "^2.3.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.4",
+    "use-places-autocomplete": "^4.0.1",
+    "uuid": "^9.0.1",
+    "vite-plugin-env-compatible": "^2.0.1",
+    "vite-plugin-svgr": "^4.2.0",
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5",
+    "xlsx-style": "^0.8.13",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/preset-env": "^7.23.6",
+    "@vitejs/plugin-react": "^4.3.1",
+    "nx": "19.6.4",
+    "vite": "^5.4.2"
+  },
+  "pathMappings": {},
+  "nxJsonPlugins": [],
+  "fileMap": {
+    "projectFileMap": {
+      "frontend": [
+        {
+          "file": ".env",
+          "hash": "4794017122879625429"
+        },
+        {
+          "file": "README.md",
+          "hash": "12761067833732264204"
+        },
+        {
+          "file": "build/assets/1920x1080-beautiful-road-KmCHK6Id.jpg",
+          "hash": "16821656992075585546"
+        },
+        {
+          "file": "build/assets/24-hours-support-CDNtk2Md.png",
+          "hash": "17035948820855862915"
+        },
+        {
+          "file": "build/assets/Pin-location-CvIYif0e.png",
+          "hash": "3508833875139240367"
+        },
+        {
+          "file": "build/assets/agromat-logo-IwOx7xW_.jpg",
+          "hash": "11952394830042939400"
+        },
+        {
+          "file": "build/assets/android-chrome-192x192-1e1aX9Ka.png",
+          "hash": "17906495687866350389"
+        },
+        {
+          "file": "build/assets/android-chrome-512x512-C5Pqan2f.png",
+          "hash": "21940589841235641"
+        },
+        {
+          "file": "build/assets/apple-touch-icon-Doa_0pP8.png",
+          "hash": "6250083959426608104"
+        },
+        {
+          "file": "build/assets/asstra-BLcnxnNJ.png",
+          "hash": "15332117028852757067"
+        },
+        {
+          "file": "build/assets/background_img-BETDt-68.jpg",
+          "hash": "5704310217290501188"
+        },
+        {
+          "file": "build/assets/career-main-bg-C4dhpoPX.jpg",
+          "hash": "15223135673995916984"
+        },
+        {
+          "file": "build/assets/cargo-insurance-DptElF-W.png",
+          "hash": "17145319201218082025"
+        },
+        {
+          "file": "build/assets/delta-logo-CSi6Xutc.png",
+          "hash": "11095962066629266322"
+        },
+        {
+          "file": "build/assets/delta_1-BB8GDR9e.jpg",
+          "hash": "3638609388020756545"
+        },
+        {
+          "file": "build/assets/delta_2-B9q6KEIp.jpg",
+          "hash": "13954845597335989117"
+        },
+        {
+          "file": "build/assets/delta_dog-BKzxF5Mv.jpg",
+          "hash": "5603875632507375434"
+        },
+        {
+          "file": "build/assets/delta_dog_1-D5Lgx4Oq.jpg",
+          "hash": "6068228014562094841"
+        },
+        {
+          "file": "build/assets/delta_dog_2-BhWYGjm8.jpg",
+          "hash": "1022255111713413473"
+        },
+        {
+          "file": "build/assets/delta_dog_3-Bxo3V2nk.jpg",
+          "hash": "15469388212563452785"
+        },
+        {
+          "file": "build/assets/employment-BQJ_PZYb.jpg",
+          "hash": "6651169457545881424"
+        },
+        {
+          "file": "build/assets/favicon-16x16-CDsnSfew.png",
+          "hash": "6864050412533887619"
+        },
+        {
+          "file": "build/assets/favicon-32x32-D-_mmdXD.png",
+          "hash": "18331677281105870590"
+        },
+        {
+          "file": "build/assets/favicon-CnniNj6Y.ico",
+          "hash": "12928016940339011239"
+        },
+        {
+          "file": "build/assets/gal_1-fKsZAlRs.jpg",
+          "hash": "9163166719689501215"
+        },
+        {
+          "file": "build/assets/gal_2-fPiTMzhR.jpg",
+          "hash": "14005654769589567007"
+        },
+        {
+          "file": "build/assets/gal_3-BdQitqho.jpg",
+          "hash": "9690495731175735901"
+        },
+        {
+          "file": "build/assets/gal_4-CO4DQvGp.jpg",
+          "hash": "393662658600296590"
+        },
+        {
+          "file": "build/assets/gal_6-DwVOV710.jpg",
+          "hash": "8883424857763960048"
+        },
+        {
+          "file": "build/assets/gal_7-WvLiW24X.jpg",
+          "hash": "14759850531949689878"
+        },
+        {
+          "file": "build/assets/gruber-logistics-logo-color-B5fRlgYF.png",
+          "hash": "10492354004772289913"
+        },
+        {
+          "file": "build/assets/hopi-logo-main-DmHqUONg.svg",
+          "hash": "14318355220514807526"
+        },
+        {
+          "file": "build/assets/index-CJ7AGJJs.css",
+          "hash": "4794576749075754121"
+        },
+        {
+          "file": "build/assets/index-E4rW8feE.js",
+          "hash": "4046910145593151332"
+        },
+        {
+          "file": "build/assets/istockphoto-1208885251-612x612-DIwfFpUH.jpg",
+          "hash": "16483588397922894280"
+        },
+        {
+          "file": "build/assets/lkw-walter-internationale-transportorganisation-ag-logo-vector-2023-BwRvFb6O.png",
+          "hash": "15999864407441098352"
+        },
+        {
+          "file": "build/assets/m-logistic-logo-Dj_xco5e.png",
+          "hash": "6889637600887832547"
+        },
+        {
+          "file": "build/assets/pexels-500photos-com-15338-93398-CWeG1hQH.jpg",
+          "hash": "831039752087894166"
+        },
+        {
+          "file": "build/assets/pexels-rich-howard-1910092-12991223-BZoiWPwx.jpg",
+          "hash": "5270079918618026585"
+        },
+        {
+          "file": "build/assets/scania-driver-DYKFT0oT.jpg",
+          "hash": "305184441529280728"
+        },
+        {
+          "file": "build/assets/scania_assist-DsA2Kixz.jpeg",
+          "hash": "6152830543061976044"
+        },
+        {
+          "file": "build/assets/truck_vacancy_photo-r6JYe3ns.jpg",
+          "hash": "878901071216830507"
+        },
+        {
+          "file": "build/assets/trucks-DKfAh_Bd.jpg",
+          "hash": "4385620953804602570"
+        },
+        {
+          "file": "build/assets/white-background-BhSByDDv.jpg",
+          "hash": "14900151732903102561"
+        },
+        {
+          "file": "build/index.html",
+          "hash": "13367431553498321014"
+        },
+        {
+          "file": "eslint.config.js",
+          "hash": "10410409315448039573"
+        },
+        {
+          "file": "index.html",
+          "hash": "7397754690256579419"
+        },
+        {
+          "file": "nx.json",
+          "hash": "1952730947641821736"
+        },
+        {
+          "file": "package-lock.json",
+          "hash": "3606212931415939539"
+        },
+        {
+          "file": "package.json",
+          "hash": "15815977484641791883",
+          "deps": [
+            "npm:@babel/plugin-proposal-private-property-in-object",
+            "npm:@babel/preset-env",
+            "npm:@vitejs/plugin-react",
+            "npm:nx",
+            "npm:vite",
+            "npm:@react-google-maps/api",
+            "npm:@redux-devtools/extension",
+            "npm:@reduxjs/toolkit",
+            "npm:@testing-library/jest-dom",
+            "npm:@testing-library/react",
+            "npm:@testing-library/user-event",
+            "npm:@types/react",
+            "npm:@types/react-dom",
+            "npm:@vitejs/plugin-react-refresh",
+            "npm:axios",
+            "npm:chroma-js",
+            "npm:date-fns",
+            "npm:dotenv",
+            "npm:html2canvas",
+            "npm:jspdf",
+            "npm:lucide-react",
+            "npm:primereact",
+            "npm:react",
+            "npm:react-beautiful-dnd",
+            "npm:react-bootstrap",
+            "npm:react-cool-onclickoutside",
+            "npm:react-datepicker",
+            "npm:react-dom",
+            "npm:react-hot-toast",
+            "npm:react-icons",
+            "npm:react-redux",
+            "npm:react-router-bootstrap",
+            "npm:react-router-dom",
+            "npm:react-select",
+            "npm:redux",
+            "npm:redux-thunk",
+            "npm:reselect",
+            "npm:sass",
+            "npm:swiper",
+            "npm:transliteration",
+            "npm:ts-node",
+            "npm:typescript",
+            "npm:use-places-autocomplete",
+            "npm:uuid",
+            "npm:vite-plugin-env-compatible",
+            "npm:vite-plugin-svgr",
+            "npm:web-vitals",
+            "npm:xlsx",
+            "npm:xlsx-style"
+          ]
+        },
+        {
+          "file": "public/android-chrome-192x192.png",
+          "hash": "17906495687866350389"
+        },
+        {
+          "file": "public/android-chrome-512x512.png",
+          "hash": "21940589841235641"
+        },
+        {
+          "file": "public/apple-touch-icon.png",
+          "hash": "6250083959426608104"
+        },
+        {
+          "file": "public/favicon-16x16.png",
+          "hash": "6864050412533887619"
+        },
+        {
+          "file": "public/favicon-32x32.png",
+          "hash": "18331677281105870590"
+        },
+        {
+          "file": "public/favicon.ico",
+          "hash": "12928016940339011239"
+        },
+        {
+          "file": "public/manifest.json",
+          "hash": "18148235521095288643"
+        },
+        {
+          "file": "src/App.tsx",
+          "hash": "4702343787697164243"
+        },
+        {
+          "file": "src/Layout.jsx",
+          "hash": "9849659959007284800"
+        },
+        {
+          "file": "src/PublicRoute.jsx",
+          "hash": "9631993703168074352"
+        },
+        {
+          "file": "src/RestrictedAdminLogistRoute.js",
+          "hash": "16719182124306004035"
+        },
+        {
+          "file": "src/RestrictedAdminRoute.js",
+          "hash": "5086870868619854669"
+        },
+        {
+          "file": "src/RestrictedRoute.jsx",
+          "hash": "9597140137390278873"
+        },
+        {
+          "file": "src/actions/customerActions.js",
+          "hash": "7912197145389370861"
+        },
+        {
+          "file": "src/actions/documentActions.js",
+          "hash": "9427023755628532524"
+        },
+        {
+          "file": "src/actions/driverActions.js",
+          "hash": "15496688344744139201"
+        },
+        {
+          "file": "src/actions/mapActions.js",
+          "hash": "8980379111721353175"
+        },
+        {
+          "file": "src/actions/orderActions.js",
+          "hash": "3086244424562031627"
+        },
+        {
+          "file": "src/actions/paymentTypeActions.js",
+          "hash": "4042117944395168987"
+        },
+        {
+          "file": "src/actions/platformActions.js",
+          "hash": "3189503154782321565"
+        },
+        {
+          "file": "src/actions/pointActions.js",
+          "hash": "15429368584514668213"
+        },
+        {
+          "file": "src/actions/taskActions.js",
+          "hash": "17603330401827976552"
+        },
+        {
+          "file": "src/actions/taskTypeActions.js",
+          "hash": "543135270456645424"
+        },
+        {
+          "file": "src/actions/userActions.js",
+          "hash": "14623374055481689260"
+        },
+        {
+          "file": "src/api/index.js",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/bootstrap.min.css",
+          "hash": "14234568097675531567"
+        },
+        {
+          "file": "src/components/AddOrder/AddOrder.jsx",
+          "hash": "2124785944966595166"
+        },
+        {
+          "file": "src/components/AddOrder/AddOrder.scss",
+          "hash": "17589852166946808297"
+        },
+        {
+          "file": "src/components/AddOrder/AddOrderCustomerManagerComponent/AddOrderCustomerManagerComponent.jsx",
+          "hash": "4597866626933571555"
+        },
+        {
+          "file": "src/components/AddOrder/AddOrderCustomerManagerComponent/AddOrderCustomerManagerComponent.scss",
+          "hash": "3870625149636707465"
+        },
+        {
+          "file": "src/components/AddOrder/AddOrderResponsibleManagerComponent/AddOrderResponsibleManagerComponent.jsx",
+          "hash": "15818155213411113775"
+        },
+        {
+          "file": "src/components/AddOrder/AddOrderTaskComponent/index.jsx",
+          "hash": "681686086951702979"
+        },
+        {
+          "file": "src/components/AddPoint/AddPoint.jsx",
+          "hash": "15286792133244172801"
+        },
+        {
+          "file": "src/components/AddPoint/AddPoint.scss",
+          "hash": "3704884859807561353"
+        },
+        {
+          "file": "src/components/AddPoint/AddPointAutocomplete/AddPointAutocomplete.jsx",
+          "hash": "13107850919311799278"
+        },
+        {
+          "file": "src/components/AddPoint/AddPointAutocomplete/AddPointAutocomplete.scss",
+          "hash": "13683278489402279760"
+        },
+        {
+          "file": "src/components/AddPoint/AddPointFooterComponent/AddPointFooterComponent.jsx",
+          "hash": "9706375526162504033"
+        },
+        {
+          "file": "src/components/AddPoint/AddPointFooterComponent/AddPointFooterComponent.scss",
+          "hash": "3789973464435584798"
+        },
+        {
+          "file": "src/components/AddPoint/AddPointHeaderComponent/AddPointHeaderComponent.jsx",
+          "hash": "16884593973889952507"
+        },
+        {
+          "file": "src/components/AddPoint/AddPointHeaderComponent/AddPointHeaderComponent.scss",
+          "hash": "3407521007441941524"
+        },
+        {
+          "file": "src/components/AddPoint/AddPointModalCloseComponent/AddPointModalCloseComponent.jsx",
+          "hash": "11114864741728100273"
+        },
+        {
+          "file": "src/components/AddPoint/AddPointModalComponent/AddPointModalComponent.jsx",
+          "hash": "6663773146209083744"
+        },
+        {
+          "file": "src/components/AddPoint/AddPointModalComponent/AddPointModalComponent.scss",
+          "hash": "5558370204747313249"
+        },
+        {
+          "file": "src/components/AddPoint/address_functions.js",
+          "hash": "18313839869742698207"
+        },
+        {
+          "file": "src/components/AddPoint/address_obj.js",
+          "hash": "6643459381200573024"
+        },
+        {
+          "file": "src/components/AddPoint/pointFormFields.jsx",
+          "hash": "8615543841980176381"
+        },
+        {
+          "file": "src/components/AddServiceTaskComponent/AddServiceTaskComponent.jsx",
+          "hash": "505862870625250017"
+        },
+        {
+          "file": "src/components/AddServiceTaskComponent/AddServiceTaskComponent.scss",
+          "hash": "17991861707681094950"
+        },
+        {
+          "file": "src/components/AddServiceTaskComponent/AddServiceTaskFooterComponent/AddServiceTaskFooterComponent.jsx",
+          "hash": "17197758501934694877"
+        },
+        {
+          "file": "src/components/AddServiceTaskComponent/AddServiceTaskFooterComponent/AddServiceTaskFooterComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/components/AddServiceTaskComponent/AddServiceTaskHeaderComponent/AddServiceTaskHeaderComponent.jsx",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/components/AddServiceTaskComponent/taskFormFields.jsx",
+          "hash": "4497214763188728364"
+        },
+        {
+          "file": "src/components/AddTask/AddTaskComponent.jsx",
+          "hash": "5491596052518675047"
+        },
+        {
+          "file": "src/components/AddTask/AddTaskComponent.scss",
+          "hash": "4354765755102511867"
+        },
+        {
+          "file": "src/components/AddTask/AddTaskFooterComponent/AddTaskFooterComponent.jsx",
+          "hash": "15821562282242297512"
+        },
+        {
+          "file": "src/components/AddTask/AddTaskFooterComponent/AddTaskFooterComponent.scss",
+          "hash": "3882953285753615601"
+        },
+        {
+          "file": "src/components/AddTask/AddTaskHeaderComponent/AddTaskHeaderComponent.jsx",
+          "hash": "3463501732800192684"
+        },
+        {
+          "file": "src/components/AddTask/AddTaskHeaderComponent/AddTaskHeaderComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/components/AddTask/AddTaskModalCloseComponent/AddTaskModalCloseComponent.jsx",
+          "hash": "9200101847468298525"
+        },
+        {
+          "file": "src/components/AddTask/AddTaskModalComponent/AddTaskModalComponent.jsx",
+          "hash": "11220425519629206733"
+        },
+        {
+          "file": "src/components/AddTask/AddTaskModalComponent/AddTaskModalComponent.scss",
+          "hash": "16937873064484893317"
+        },
+        {
+          "file": "src/components/AddTask/AddTaskNoOrderComponent/index.jsx",
+          "hash": "15555569016839178393"
+        },
+        {
+          "file": "src/components/AddTaskButton/AddTaskButton.jsx",
+          "hash": "5190752933415158906"
+        },
+        {
+          "file": "src/components/AddTaskButton/AddTaskButton.scss",
+          "hash": "196309414402929970"
+        },
+        {
+          "file": "src/components/Archive/Carousel.jsx",
+          "hash": "11888475353010971186"
+        },
+        {
+          "file": "src/components/Archive/Date.js",
+          "hash": "5435908124733799368"
+        },
+        {
+          "file": "src/components/Archive/Truck.js",
+          "hash": "2355341701550096111"
+        },
+        {
+          "file": "src/components/Autocomplete/Autocomplete.jsx",
+          "hash": "8721835974457442938"
+        },
+        {
+          "file": "src/components/Autocomplete/Autocomplete.scss",
+          "hash": "17531482324516397391"
+        },
+        {
+          "file": "src/components/CurrentLocationMarker/CurrentLocationMarker.jsx",
+          "hash": "17380331819410508790"
+        },
+        {
+          "file": "src/components/CurrentLocationMarker/index.js",
+          "hash": "14175857976730166915"
+        },
+        {
+          "file": "src/components/CustomMarkerComponent/CustomMarkerComponent.jsx",
+          "hash": "2655031665639894311"
+        },
+        {
+          "file": "src/components/CustomersComponent/index.jsx",
+          "hash": "13272618168373006019"
+        },
+        {
+          "file": "src/components/DragAndDropComponent/DragAndDropComponent.jsx",
+          "hash": "12697385889153535919"
+        },
+        {
+          "file": "src/components/DragAndDropComponent/DragAndDropComponent.scss",
+          "hash": "6326521498744821350"
+        },
+        {
+          "file": "src/components/DragAndDropComponent/TaskListComponent/TaskListComponent.jsx",
+          "hash": "13589000042755827125"
+        },
+        {
+          "file": "src/components/DragAndDropTaskOrderComponent/DragAndDropTaskOrderComponent.jsx",
+          "hash": "8368971147856246202"
+        },
+        {
+          "file": "src/components/DriversComponent/AddDriverFooterComponent/AddDriverFooterComponent.jsx",
+          "hash": "5540345933329740909"
+        },
+        {
+          "file": "src/components/DriversComponent/AddDriverFooterComponent/AddDriverFooterComponent.scss",
+          "hash": "10913935069275641587"
+        },
+        {
+          "file": "src/components/DriversComponent/AddDriverHeaderComponent/AddDriverHeaderComponent.jsx",
+          "hash": "8130635539060339499"
+        },
+        {
+          "file": "src/components/DriversComponent/AddDriverHeaderComponent/AddDriverHeaderComponent.scss",
+          "hash": "7089982872553171528"
+        },
+        {
+          "file": "src/components/DriversComponent/AddDriverModalCloseComponent/AddDriverModalCloseComponent.jsx",
+          "hash": "17558820417614727148"
+        },
+        {
+          "file": "src/components/DriversComponent/DriversComponent.jsx",
+          "hash": "10491630470363400618"
+        },
+        {
+          "file": "src/components/DriversComponent/DriversComponent.scss",
+          "hash": "7170318331612039942"
+        },
+        {
+          "file": "src/components/DriversComponent/EditDriverComponent/EditDriverComponent.jsx",
+          "hash": "16646385852474407881"
+        },
+        {
+          "file": "src/components/DriversComponent/EditDriverComponent/EditDriverComponent.scss",
+          "hash": "4727447866971247197"
+        },
+        {
+          "file": "src/components/EmailSenderComponent/index.jsx",
+          "hash": "14686267161282682736"
+        },
+        {
+          "file": "src/components/EndTimeComponent/EndTimeComponent.jsx",
+          "hash": "11158879734502397744"
+        },
+        {
+          "file": "src/components/EndTimeComponent/EndTimeComponent.scss",
+          "hash": "6333135954963657191"
+        },
+        {
+          "file": "src/components/EndTimeComponent/EndTimeFooterComponent/EndTimeFooterComponent.jsx",
+          "hash": "12371361495711841826"
+        },
+        {
+          "file": "src/components/EndTimeComponent/EndTimeFooterComponent/EndTimeFooterComponent.scss",
+          "hash": "10677311965529669000"
+        },
+        {
+          "file": "src/components/EndTimeComponent/EndTimeHeaderComponent/EndTimeHeaderComponent.jsx",
+          "hash": "9838832136152087784"
+        },
+        {
+          "file": "src/components/EndTimeComponent/EndTimeHeaderComponent/EndTimeHeaderComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/components/Footer/Footer.jsx",
+          "hash": "5074238764096582378"
+        },
+        {
+          "file": "src/components/Footer/Footer.scss",
+          "hash": "16641172721479583852"
+        },
+        {
+          "file": "src/components/FormWrapper/index.jsx",
+          "hash": "6566203764237567414"
+        },
+        {
+          "file": "src/components/Header/Header.jsx",
+          "hash": "7663220662105061459"
+        },
+        {
+          "file": "src/components/Header/Header.scss",
+          "hash": "3554485296190508938"
+        },
+        {
+          "file": "src/components/InvoiceComponent/index.jsx",
+          "hash": "4290798847962037743"
+        },
+        {
+          "file": "src/components/InvoiceComponent/stamp_delta.png",
+          "hash": "1577335612973851284"
+        },
+        {
+          "file": "src/components/InvoiceComponent/stamp_delta_horizontal.png",
+          "hash": "7722959602031666733"
+        },
+        {
+          "file": "src/components/InvoiceComponent/stamp_delta_inclined.png",
+          "hash": "2122100210354506654"
+        },
+        {
+          "file": "src/components/InvoiceComponent/style.scss",
+          "hash": "6684155040609246463"
+        },
+        {
+          "file": "src/components/Map/AdvancedMarker.tsx",
+          "hash": "3347905335520993893"
+        },
+        {
+          "file": "src/components/Map/Map.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/components/Map/Theme.js",
+          "hash": "13120981040267877388"
+        },
+        {
+          "file": "src/components/Map/index.jsx",
+          "hash": "14100889118081431566"
+        },
+        {
+          "file": "src/components/MessageComponent/MessageComponent.jsx",
+          "hash": "14575118521587479391"
+        },
+        {
+          "file": "src/components/MessageComponent/MessageComponent.scss",
+          "hash": "4966165140580012998"
+        },
+        {
+          "file": "src/components/Modal/Modal.jsx",
+          "hash": "15765536790065867837"
+        },
+        {
+          "file": "src/components/Modal/Modal.scss",
+          "hash": "4997190974244153652"
+        },
+        {
+          "file": "src/components/Modal/ModalCloseComponent/ModalCloseComponent.jsx",
+          "hash": "11478891727490549627"
+        },
+        {
+          "file": "src/components/OpenContext.jsx",
+          "hash": "6039793324102403227"
+        },
+        {
+          "file": "src/components/OpenContextProvider/OpenContextProvider.jsx",
+          "hash": "17482637590071976755"
+        },
+        {
+          "file": "src/components/OrdersTableComponent/CustomerManagerPopUpComponent/CustomerManagerPopUpComponent.jsx",
+          "hash": "6475754588147231697"
+        },
+        {
+          "file": "src/components/OrdersTableComponent/CustomerManagerPopUpComponent/CustomerManagerPopUpComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/components/OrdersTableComponent/InvoiceStatusComponent/index.jsx",
+          "hash": "4253859917325097587"
+        },
+        {
+          "file": "src/components/OrdersTableComponent/InvoiceStatusComponent/style.scss",
+          "hash": "17161414587022524807"
+        },
+        {
+          "file": "src/components/OrdersTableComponent/OrderActionsComponent/index.jsx",
+          "hash": "12804474723205773486"
+        },
+        {
+          "file": "src/components/OrdersTableComponent/OrderActionsComponent/style.scss",
+          "hash": "15419068778836219084"
+        },
+        {
+          "file": "src/components/OrdersTableComponent/OrderStatusComponent/index.jsx",
+          "hash": "15678037689855187903"
+        },
+        {
+          "file": "src/components/OrdersTableComponent/OrderStatusComponent/style.scss",
+          "hash": "13771856477620952759"
+        },
+        {
+          "file": "src/components/OrdersTableComponent/OrdersTableComponent.jsx",
+          "hash": "9833529928173954825"
+        },
+        {
+          "file": "src/components/OrdersTableComponent/OrdersTableComponent.scss",
+          "hash": "15017353840714844056"
+        },
+        {
+          "file": "src/components/OrdersTableComponent/tableHead.json",
+          "hash": "3796071946946040767"
+        },
+        {
+          "file": "src/components/PaginationComponent/index.jsx",
+          "hash": "815273674037184158"
+        },
+        {
+          "file": "src/components/PaginationComponent/style.scss",
+          "hash": "7871590298884826354"
+        },
+        {
+          "file": "src/components/PlatformComponent/PlatformComponent.jsx",
+          "hash": "9770995651139346527"
+        },
+        {
+          "file": "src/components/PlatformComponent/PlatformComponent.scss",
+          "hash": "11764397534325572878"
+        },
+        {
+          "file": "src/components/PointModalComponent/index.jsx",
+          "hash": "15014038543967358622"
+        },
+        {
+          "file": "src/components/PointModalComponent/style.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/components/PointSearchComponent/PointSearchComponent.jsx",
+          "hash": "8891970434099503005"
+        },
+        {
+          "file": "src/components/PointSearchComponent/PointSearchComponent.scss",
+          "hash": "11238634834951879421"
+        },
+        {
+          "file": "src/components/PointTableComponent/PointTableComponent.jsx",
+          "hash": "790670474360731277"
+        },
+        {
+          "file": "src/components/PointTableComponent/PointTableComponent.scss",
+          "hash": "1490365309090083977"
+        },
+        {
+          "file": "src/components/ProfitComponent/index.jsx",
+          "hash": "9629457033583657644"
+        },
+        {
+          "file": "src/components/ProfitComponent/style.scss",
+          "hash": "14820922061013240265"
+        },
+        {
+          "file": "src/components/RouteCalculationsTable/index.jsx",
+          "hash": "1386254412029934997"
+        },
+        {
+          "file": "src/components/RouteCalculationsTable/style.scss",
+          "hash": "9880979162423198375"
+        },
+        {
+          "file": "src/components/RouteInfoComponent/index.jsx",
+          "hash": "9688278439895052308"
+        },
+        {
+          "file": "src/components/RouteInfoComponent/style.scss",
+          "hash": "1109082546997372046"
+        },
+        {
+          "file": "src/components/RouteInputForm/index.jsx",
+          "hash": "2369414556375627752"
+        },
+        {
+          "file": "src/components/RouteInputForm/style.scss",
+          "hash": "8158489407948340280"
+        },
+        {
+          "file": "src/components/SearchOrderComponent/index.jsx",
+          "hash": "17051459685423766877"
+        },
+        {
+          "file": "src/components/SearchOrderComponent/style.scss",
+          "hash": "3131418275131159631"
+        },
+        {
+          "file": "src/components/Sidebar/Sidebar.jsx",
+          "hash": "1736088847787284103"
+        },
+        {
+          "file": "src/components/Sidebar/Sidebar.scss",
+          "hash": "1624655749532908438"
+        },
+        {
+          "file": "src/components/Sidebar/SidebarAccordionMenu/SidebarAccordionMenu.jsx",
+          "hash": "3789824557812937928"
+        },
+        {
+          "file": "src/components/Sidebar/SidebarAccordionMenu/SidebarAccordionMenu.scss",
+          "hash": "1673531180923579401"
+        },
+        {
+          "file": "src/components/Sidebar/SidebarFloatingMenu/SidebarFloatingMenu.jsx",
+          "hash": "18089746969600827931"
+        },
+        {
+          "file": "src/components/Sidebar/SidebarFloatingMenu/SidebarFloatingMenu.scss",
+          "hash": "13561869900171176253"
+        },
+        {
+          "file": "src/components/Sidebar/SidebarItem/SidebarItem.jsx",
+          "hash": "4133735178349248110"
+        },
+        {
+          "file": "src/components/Sidebar/SidebarItem/SidebarItem.scss",
+          "hash": "12217993218712715647"
+        },
+        {
+          "file": "src/components/Sidebar/sidebarMenuItems.jsx",
+          "hash": "10439559546339572160"
+        },
+        {
+          "file": "src/components/Slider/MainSlider.jsx",
+          "hash": "8742583668776452327"
+        },
+        {
+          "file": "src/components/Slider/MainSlider.scss",
+          "hash": "4318277625711632390"
+        },
+        {
+          "file": "src/components/StartTimeComponent/StartTimeComponent.jsx",
+          "hash": "5890751944981547607"
+        },
+        {
+          "file": "src/components/StartTimeComponent/StartTimeComponent.scss",
+          "hash": "2567864998325153528"
+        },
+        {
+          "file": "src/components/StartTimeComponent/StartTimeFooterComponent/StartTimeFooterComponent.jsx",
+          "hash": "16939853309722075410"
+        },
+        {
+          "file": "src/components/StartTimeComponent/StartTimeHeaderComponent/StartTimeHeaderComponent.jsx",
+          "hash": "15489365715462507395"
+        },
+        {
+          "file": "src/components/SwitchComponent/SwitchComponent.jsx",
+          "hash": "375605432691569617"
+        },
+        {
+          "file": "src/components/SwitchComponent/SwitchComponent.scss",
+          "hash": "12282406235617215170"
+        },
+        {
+          "file": "src/components/TabSwitcher/index.jsx",
+          "hash": "5423206050798862673"
+        },
+        {
+          "file": "src/components/Task/Task.jsx",
+          "hash": "9828534036983574917"
+        },
+        {
+          "file": "src/components/Task/Task.scss",
+          "hash": "990221449682114724"
+        },
+        {
+          "file": "src/components/Task/TaskOrder.jsx",
+          "hash": "5858253920153465709"
+        },
+        {
+          "file": "src/components/Task/TaskOrder.scss",
+          "hash": "12993105147602232565"
+        },
+        {
+          "file": "src/components/TaskTable/TaskTable.jsx",
+          "hash": "5890679503202028667"
+        },
+        {
+          "file": "src/components/TaskTable/TaskTable.scss",
+          "hash": "10557022131732027011"
+        },
+        {
+          "file": "src/components/Tasks/DayTasks.jsx",
+          "hash": "1013263542415733931"
+        },
+        {
+          "file": "src/components/Tasks/DayTasks.scss",
+          "hash": "16666260452068029765"
+        },
+        {
+          "file": "src/components/Tasks/TasksComponent.jsx",
+          "hash": "9216151982601776917"
+        },
+        {
+          "file": "src/components/Tasks/TasksInOrder.jsx",
+          "hash": "7542361849811353382"
+        },
+        {
+          "file": "src/components/TruckRouteMapComponent/index.jsx",
+          "hash": "5261160063088322374"
+        },
+        {
+          "file": "src/components/TruckRouteMapComponent/index_old_working.jsx",
+          "hash": "16649196189101187260"
+        },
+        {
+          "file": "src/components/TruckRouteMapComponent/style.scss",
+          "hash": "10297392705912122693"
+        },
+        {
+          "file": "src/components/UploadDocumentsComponent/AddDocumentsForm/index.jsx",
+          "hash": "10003330998320137113"
+        },
+        {
+          "file": "src/components/UploadDocumentsComponent/DocumentsTableComponent/index.jsx",
+          "hash": "18283574978467645267"
+        },
+        {
+          "file": "src/components/UploadDocumentsComponent/UploadDocumentsComponent.jsx",
+          "hash": "6664669088654398000"
+        },
+        {
+          "file": "src/components/UploadDocumentsComponent/UploadDocumentsComponent.scss",
+          "hash": "4667016134817185262"
+        },
+        {
+          "file": "src/components/UploadDocumentsComponent/UploadDocumentsFooterComponent/UploadDocumentsFooterComponent.jsx",
+          "hash": "10218355507479526157"
+        },
+        {
+          "file": "src/components/UploadDocumentsComponent/UploadDocumentsFooterComponent/UploadDocumentsFooterComponent.scss",
+          "hash": "4746720100952568904"
+        },
+        {
+          "file": "src/components/UploadDocumentsComponent/UploadDocumentsHeaderComponent/UploadDocumentsHeaderComponent.jsx",
+          "hash": "10655515311081228015"
+        },
+        {
+          "file": "src/components/UploadDocumentsComponent/UploadDocumentsModalComponent/UploadDocumentsModalComponent.scss",
+          "hash": "11941493340583730567"
+        },
+        {
+          "file": "src/components/WeekDateComponent/WeekDateComponent.jsx",
+          "hash": "15996029183352924315"
+        },
+        {
+          "file": "src/components/WeekPlanner/EndTimeModalComponent/EndTimeModalComponent.jsx",
+          "hash": "16279010881835485110"
+        },
+        {
+          "file": "src/components/WeekPlanner/EndTimeModalComponent/EndTimeModalComponent.scss",
+          "hash": "10680934172737102493"
+        },
+        {
+          "file": "src/components/WeekPlanner/ServiceTaskModalComponent/ServiceTaskModalComponent.jsx",
+          "hash": "12592580184534629865"
+        },
+        {
+          "file": "src/components/WeekPlanner/ServiceTaskModalComponent/ServiceTaskModalComponent.scss",
+          "hash": "5833121051796288795"
+        },
+        {
+          "file": "src/components/WeekPlanner/StartTimeModalComponent/StartTimeModalComponent.jsx",
+          "hash": "15820766669250730999"
+        },
+        {
+          "file": "src/components/WeekPlanner/StartTimeModalComponent/StartTimeModalComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/components/WeekPlanner/TachoCardComponent/DriverCardComponent/index.jsx",
+          "hash": "4834087396659100213"
+        },
+        {
+          "file": "src/components/WeekPlanner/TachoCardComponent/DriverCardComponent/style.scss",
+          "hash": "8276448119310046470"
+        },
+        {
+          "file": "src/components/WeekPlanner/TachoCardComponent/index.jsx",
+          "hash": "8590259179442106882"
+        },
+        {
+          "file": "src/components/WeekPlanner/TachoCardComponent/style.scss",
+          "hash": "12160499496182673220"
+        },
+        {
+          "file": "src/components/WeekPlanner/TruckOnMapModalComponent/index.jsx",
+          "hash": "16449944865841129387"
+        },
+        {
+          "file": "src/components/WeekPlanner/WeekPlanner.jsx",
+          "hash": "6904419832625855685"
+        },
+        {
+          "file": "src/components/WeekPlanner/WeekPlanner.scss",
+          "hash": "6819854099142529451"
+        },
+        {
+          "file": "src/components/WeekPlanner/dateFunctions.js",
+          "hash": "5178794375986098209"
+        },
+        {
+          "file": "src/components/WeekPlanner/index.js",
+          "hash": "12679267143487404603"
+        },
+        {
+          "file": "src/components/WeekSwitcherComponent/WeekSwitcherComponent.jsx",
+          "hash": "16182285739434481585"
+        },
+        {
+          "file": "src/constants/global.js",
+          "hash": "15552088440953985512"
+        },
+        {
+          "file": "src/css/OrdersList.min.css",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/features/assignTruckAndDriver/assignOperations.js",
+          "hash": "14944153843994810081"
+        },
+        {
+          "file": "src/features/assignTruckAndDriver/assignSlicers.js",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/features/countries/countriesOperations.js",
+          "hash": "12187322469705008151"
+        },
+        {
+          "file": "src/features/countries/countriesSelectors.js",
+          "hash": "1576543569290643538"
+        },
+        {
+          "file": "src/features/countries/countriesSlice.js",
+          "hash": "16901876104641802510"
+        },
+        {
+          "file": "src/features/currencies/currenciesOperations.js",
+          "hash": "14718604058484929895"
+        },
+        {
+          "file": "src/features/currencies/currenciesSelectors.js",
+          "hash": "10384206936161906292"
+        },
+        {
+          "file": "src/features/currencies/currenciesSlice.js",
+          "hash": "4356536620339407541"
+        },
+        {
+          "file": "src/features/customerManagers/customerManagersOperations.js",
+          "hash": "10840211563933635948"
+        },
+        {
+          "file": "src/features/customerManagers/customerManagersSelectors.js",
+          "hash": "9577763664858393269"
+        },
+        {
+          "file": "src/features/customerManagers/customerManagersSlice.js",
+          "hash": "9065523852693416469"
+        },
+        {
+          "file": "src/features/customers/customersOperations.js",
+          "hash": "14816027489578070720"
+        },
+        {
+          "file": "src/features/customers/customersSelectors.js",
+          "hash": "16957407460978319657"
+        },
+        {
+          "file": "src/features/customers/customersSlice.js",
+          "hash": "6483493543612131388"
+        },
+        {
+          "file": "src/features/emails/emailsOperations.js",
+          "hash": "17651576792314927993"
+        },
+        {
+          "file": "src/features/emails/emailsSlice.js",
+          "hash": "15920653267711126211"
+        },
+        {
+          "file": "src/features/invoices/invoiceUtils.js",
+          "hash": "7401200275430504235"
+        },
+        {
+          "file": "src/features/invoices/invoicesOperations.js",
+          "hash": "11708180900735693737"
+        },
+        {
+          "file": "src/features/invoices/invoicesSelectors.js",
+          "hash": "2462263765805301211"
+        },
+        {
+          "file": "src/features/invoices/invoicesSlice.js",
+          "hash": "9276838825136984746"
+        },
+        {
+          "file": "src/features/orderImport/orderImportOperations.js",
+          "hash": "17240182074864154004"
+        },
+        {
+          "file": "src/features/orderImport/orderImportSelectors.js",
+          "hash": "9362199505414900516"
+        },
+        {
+          "file": "src/features/orderImport/orderImportSlice.js",
+          "hash": "13979510502453194358"
+        },
+        {
+          "file": "src/features/orderStatuses/orderStatusesOperations.js",
+          "hash": "7152568514313876016"
+        },
+        {
+          "file": "src/features/orders/ordersOperations.js",
+          "hash": "15112032512278526208"
+        },
+        {
+          "file": "src/features/orders/ordersSelectors.js",
+          "hash": "14849403647596737387"
+        },
+        {
+          "file": "src/features/orders/ordersSlicers.js",
+          "hash": "1990923347063409179"
+        },
+        {
+          "file": "src/features/planner/plannerSelectors.js",
+          "hash": "10474928125318171836"
+        },
+        {
+          "file": "src/features/planner/plannerSlice.js",
+          "hash": "6431254633691859702"
+        },
+        {
+          "file": "src/features/pointCompanies/pointCompanyOperations.js",
+          "hash": "13928464276801533057"
+        },
+        {
+          "file": "src/features/pointCompanies/pointCompanySelectors.js",
+          "hash": "12831567617030073486"
+        },
+        {
+          "file": "src/features/pointCompanies/pointCompanySlice.js",
+          "hash": "6103057703452069096"
+        },
+        {
+          "file": "src/features/points/pointsOperations.js",
+          "hash": "1017142947225999216"
+        },
+        {
+          "file": "src/features/points/pointsSelectors.js",
+          "hash": "10236406675394819330"
+        },
+        {
+          "file": "src/features/points/pointsSlice.js",
+          "hash": "9415334963083045279"
+        },
+        {
+          "file": "src/features/roles/roleOperations.js",
+          "hash": "5578033441026613297"
+        },
+        {
+          "file": "src/features/roles/roleSelectors.js",
+          "hash": "11399279656830760452"
+        },
+        {
+          "file": "src/features/roles/roleSlice.js",
+          "hash": "13466893001028225145"
+        },
+        {
+          "file": "src/features/sovtesRoutes/sovtesRoutesOperations.js",
+          "hash": "9587014708866341124"
+        },
+        {
+          "file": "src/features/sovtesTenders/sovtesTendersOperations.js",
+          "hash": "5413143902942791201"
+        },
+        {
+          "file": "src/features/sovtesTenders/sovtesTendersSlices.js",
+          "hash": "2715634572500761178"
+        },
+        {
+          "file": "src/features/tasks/tasksOperations.js",
+          "hash": "639634739841364377"
+        },
+        {
+          "file": "src/features/tasks/tasksSelectors.js",
+          "hash": "5463651765190318633"
+        },
+        {
+          "file": "src/features/tasks/tasksSlice.js",
+          "hash": "8062801655172309605"
+        },
+        {
+          "file": "src/features/trailers/trailersOperations.js",
+          "hash": "10517916587077213306"
+        },
+        {
+          "file": "src/features/trailers/trailersSelectors.js",
+          "hash": "4048395606705744881"
+        },
+        {
+          "file": "src/features/trailers/trailersSlice.js",
+          "hash": "4347358354295271563"
+        },
+        {
+          "file": "src/features/trucks/trucksOperations.js",
+          "hash": "8869762857616374397"
+        },
+        {
+          "file": "src/features/trucks/trucksSelectors.js",
+          "hash": "3067333625712708783"
+        },
+        {
+          "file": "src/features/trucks/trucksSlice.js",
+          "hash": "5268102631429670934"
+        },
+        {
+          "file": "src/globalComponents/ButtonComponent/index.jsx",
+          "hash": "18237550528206547811"
+        },
+        {
+          "file": "src/globalComponents/ButtonComponent/style.scss",
+          "hash": "4643214161409012256"
+        },
+        {
+          "file": "src/globalComponents/CheckboxComponent/index.jsx",
+          "hash": "2883257334986000833"
+        },
+        {
+          "file": "src/globalComponents/CheckboxComponent/style.scss",
+          "hash": "16205591400533698643"
+        },
+        {
+          "file": "src/globalComponents/GenericModalComponent/GenericFooterComponent/index.jsx",
+          "hash": "14548234296208903539"
+        },
+        {
+          "file": "src/globalComponents/GenericModalComponent/GenericHeaderComponent/index.jsx",
+          "hash": "3849746782979972348"
+        },
+        {
+          "file": "src/globalComponents/GenericModalComponent/GenericModalCloseComponent/GenericModalCloseComponent.jsx",
+          "hash": "11604107512919197140"
+        },
+        {
+          "file": "src/globalComponents/GenericModalComponent/index.jsx",
+          "hash": "4820966074666222282"
+        },
+        {
+          "file": "src/globalComponents/GenericModalComponent/style.scss",
+          "hash": "15549232623940359005"
+        },
+        {
+          "file": "src/globalComponents/InputComponent/index.jsx",
+          "hash": "10461728730199142848"
+        },
+        {
+          "file": "src/globalComponents/InputComponent/style.scss",
+          "hash": "8653549255089102484"
+        },
+        {
+          "file": "src/globalComponents/SearchComponent/index.jsx",
+          "hash": "1088064149573786374"
+        },
+        {
+          "file": "src/globalComponents/SearchComponent/style.scss",
+          "hash": "13749050036867965404"
+        },
+        {
+          "file": "src/globalComponents/SelectComponent/index.jsx",
+          "hash": "8338373683598712412"
+        },
+        {
+          "file": "src/globalComponents/SelectComponent/style.scss",
+          "hash": "18229088074409946911"
+        },
+        {
+          "file": "src/img/1920x1080-beautiful-road.jpg",
+          "hash": "16821656992075585546"
+        },
+        {
+          "file": "src/img/24-hours-support.png",
+          "hash": "17035948820855862915"
+        },
+        {
+          "file": "src/img/Clients/agromat-logo.jpg",
+          "hash": "11952394830042939400"
+        },
+        {
+          "file": "src/img/Clients/asstra.png",
+          "hash": "15332117028852757067"
+        },
+        {
+          "file": "src/img/Clients/gruber-logistics-logo-color.png",
+          "hash": "10492354004772289913"
+        },
+        {
+          "file": "src/img/Clients/hopi-logo-2.png",
+          "hash": "4607519286298129913"
+        },
+        {
+          "file": "src/img/Clients/hopi-logo-main.svg",
+          "hash": "14318355220514807526"
+        },
+        {
+          "file": "src/img/Clients/hopi-logo.jpg",
+          "hash": "5355753202684735395"
+        },
+        {
+          "file": "src/img/Clients/lkw-walter-internationale-transportorganisation-ag-logo-vector-2023.png",
+          "hash": "15999864407441098352"
+        },
+        {
+          "file": "src/img/Clients/m-logistic-logo.png",
+          "hash": "6889637600887832547"
+        },
+        {
+          "file": "src/img/Clients/magnus-logo.png",
+          "hash": "3675833783944031837"
+        },
+        {
+          "file": "src/img/Clients/medium__agromat-logo-4.png",
+          "hash": "15579245630948456015"
+        },
+        {
+          "file": "src/img/Gpsicon.png",
+          "hash": "16564179874348057207"
+        },
+        {
+          "file": "src/img/Location_icon_from_Noun_Project.png",
+          "hash": "2047823273664928635"
+        },
+        {
+          "file": "src/img/Pin-location.png",
+          "hash": "3508833875139240367"
+        },
+        {
+          "file": "src/img/background_img.jpg",
+          "hash": "5704310217290501188"
+        },
+        {
+          "file": "src/img/career-main-bg.jpg",
+          "hash": "15223135673995916984"
+        },
+        {
+          "file": "src/img/cargo-insurance.png",
+          "hash": "17145319201218082025"
+        },
+        {
+          "file": "src/img/delivery-truck-front.png",
+          "hash": "11716580984892248139"
+        },
+        {
+          "file": "src/img/delta-logo.png",
+          "hash": "11095962066629266322"
+        },
+        {
+          "file": "src/img/delta_1.jpg",
+          "hash": "3638609388020756545"
+        },
+        {
+          "file": "src/img/delta_2.jpg",
+          "hash": "13954845597335989117"
+        },
+        {
+          "file": "src/img/delta_dog.jpg",
+          "hash": "5603875632507375434"
+        },
+        {
+          "file": "src/img/delta_dog_1.jpg",
+          "hash": "6068228014562094841"
+        },
+        {
+          "file": "src/img/delta_dog_2.jpg",
+          "hash": "1022255111713413473"
+        },
+        {
+          "file": "src/img/delta_dog_3.jpg",
+          "hash": "15469388212563452785"
+        },
+        {
+          "file": "src/img/driver_placeholder.jpg",
+          "hash": "2126794673835040657"
+        },
+        {
+          "file": "src/img/driving-expirience.jpg",
+          "hash": "5278377761205060179"
+        },
+        {
+          "file": "src/img/employment.jpg",
+          "hash": "6651169457545881424"
+        },
+        {
+          "file": "src/img/europe_eu_map.png",
+          "hash": "2127534483604725333"
+        },
+        {
+          "file": "src/img/europe_map.png",
+          "hash": "7239308996724572755"
+        },
+        {
+          "file": "src/img/form-select-arrow.svg",
+          "hash": "6547844658987419942"
+        },
+        {
+          "file": "src/img/gallery/delta_2.jpg",
+          "hash": "13954845597335989117"
+        },
+        {
+          "file": "src/img/gallery/delta_dog.jpg",
+          "hash": "5603875632507375434"
+        },
+        {
+          "file": "src/img/gallery/delta_dog_1.jpg",
+          "hash": "6068228014562094841"
+        },
+        {
+          "file": "src/img/gallery/delta_dog_3.jpg",
+          "hash": "15469388212563452785"
+        },
+        {
+          "file": "src/img/gallery/gal_1.jpg",
+          "hash": "9163166719689501215"
+        },
+        {
+          "file": "src/img/gallery/gal_2.jpg",
+          "hash": "14005654769589567007"
+        },
+        {
+          "file": "src/img/gallery/gal_3.jpg",
+          "hash": "9690495731175735901"
+        },
+        {
+          "file": "src/img/gallery/gal_4.jpg",
+          "hash": "393662658600296590"
+        },
+        {
+          "file": "src/img/gallery/gal_5.jpg",
+          "hash": "15062519172398265471"
+        },
+        {
+          "file": "src/img/gallery/gal_6.jpg",
+          "hash": "8883424857763960048"
+        },
+        {
+          "file": "src/img/gallery/gal_7.jpg",
+          "hash": "14759850531949689878"
+        },
+        {
+          "file": "src/img/gallery/gal_8.jpg",
+          "hash": "9214122031455376503"
+        },
+        {
+          "file": "src/img/images.js",
+          "hash": "1378689153244308367"
+        },
+        {
+          "file": "src/img/istockphoto-1208885251-612x612.jpg",
+          "hash": "16483588397922894280"
+        },
+        {
+          "file": "src/img/map.png",
+          "hash": "11665434570406312398"
+        },
+        {
+          "file": "src/img/pexels-500photos-com-15338-93398.jpg",
+          "hash": "831039752087894166"
+        },
+        {
+          "file": "src/img/pexels-artem-balashevsky.jpg",
+          "hash": "15696393246939801304"
+        },
+        {
+          "file": "src/img/pexels-deluca-g-412104326-15978610.jpg",
+          "hash": "5550485783809580834"
+        },
+        {
+          "file": "src/img/pexels-grizzlybear-399636.jpg",
+          "hash": "2976630545385122922"
+        },
+        {
+          "file": "src/img/pexels-marcin-jozwiak-199600-2800121.jpg",
+          "hash": "11525989436292684974"
+        },
+        {
+          "file": "src/img/pexels-photograph-1021683.jpg",
+          "hash": "14190282087667318723"
+        },
+        {
+          "file": "src/img/pexels-rich-howard-1910092-12991223.jpg",
+          "hash": "5270079918618026585"
+        },
+        {
+          "file": "src/img/scania-driver.jpg",
+          "hash": "305184441529280728"
+        },
+        {
+          "file": "src/img/scania-logo.png",
+          "hash": "16872206080529395863"
+        },
+        {
+          "file": "src/img/scania.jpg",
+          "hash": "12189319510134809882"
+        },
+        {
+          "file": "src/img/scania_assist.jpeg",
+          "hash": "6152830543061976044"
+        },
+        {
+          "file": "src/img/trailer.png",
+          "hash": "4476968834597059189"
+        },
+        {
+          "file": "src/img/truck_vacancy_photo.jpg",
+          "hash": "878901071216830507"
+        },
+        {
+          "file": "src/img/trucks.jpg",
+          "hash": "4385620953804602570"
+        },
+        {
+          "file": "src/img/white-background.jpg",
+          "hash": "14900151732903102561"
+        },
+        {
+          "file": "src/main.tsx",
+          "hash": "5670120543157423523"
+        },
+        {
+          "file": "src/reducers/customerReducers.js",
+          "hash": "16294096995591224892"
+        },
+        {
+          "file": "src/reducers/documentReducers.js",
+          "hash": "16536281864081648008"
+        },
+        {
+          "file": "src/reducers/driverReducers.js",
+          "hash": "442071273490450667"
+        },
+        {
+          "file": "src/reducers/mapReducers.js",
+          "hash": "3264007603229879328"
+        },
+        {
+          "file": "src/reducers/orderReducers.js",
+          "hash": "13338084130199313079"
+        },
+        {
+          "file": "src/reducers/paymentTypeReducers.js",
+          "hash": "15047938740735817820"
+        },
+        {
+          "file": "src/reducers/platformReducers.js",
+          "hash": "18365890415365999687"
+        },
+        {
+          "file": "src/reducers/pointReducers.js",
+          "hash": "2194866947631319878"
+        },
+        {
+          "file": "src/reducers/taskReducers.js",
+          "hash": "6361087030622054895"
+        },
+        {
+          "file": "src/reducers/taskTypeReducers.js",
+          "hash": "4219570682843088406"
+        },
+        {
+          "file": "src/reducers/userReducers.js",
+          "hash": "13706588791032537166"
+        },
+        {
+          "file": "src/rootReducer.ts",
+          "hash": "7307889119347367428"
+        },
+        {
+          "file": "src/router.jsx",
+          "hash": "7343696835744277450"
+        },
+        {
+          "file": "src/screens/AddDriverPage/index.jsx",
+          "hash": "3023969699798909745"
+        },
+        {
+          "file": "src/screens/AddTaskPage.jsx",
+          "hash": "9653844066263669663"
+        },
+        {
+          "file": "src/screens/AddTaskScreen.jsx",
+          "hash": "6274125474532352790"
+        },
+        {
+          "file": "src/screens/CalculatorPage/HereMapRouteComponent/index.jsx",
+          "hash": "3695067258033170399"
+        },
+        {
+          "file": "src/screens/CalculatorPage/index.jsx",
+          "hash": "11800248382689782836"
+        },
+        {
+          "file": "src/screens/CalculatorPage/style.scss",
+          "hash": "9587875155024245343"
+        },
+        {
+          "file": "src/screens/CareerPage/KeyPointsComponent/index.jsx",
+          "hash": "1572706961855673797"
+        },
+        {
+          "file": "src/screens/CareerPage/KeyPointsComponent/style.scss",
+          "hash": "10836605996119917430"
+        },
+        {
+          "file": "src/screens/CareerPage/index.jsx",
+          "hash": "14197236994159792978"
+        },
+        {
+          "file": "src/screens/CareerPage/style.scss",
+          "hash": "8034108539824584186"
+        },
+        {
+          "file": "src/screens/CustomerPage/AddCustomerComponent/customerFormFields.jsx",
+          "hash": "12967255442015479955"
+        },
+        {
+          "file": "src/screens/CustomerPage/AddCustomerComponent/index.jsx",
+          "hash": "16405680511526103227"
+        },
+        {
+          "file": "src/screens/CustomerPage/AddCustomerComponent/style.scss",
+          "hash": "16622559994384225032"
+        },
+        {
+          "file": "src/screens/CustomerPage/AddCustomerFooterComponent/index.jsx",
+          "hash": "9703936480033884867"
+        },
+        {
+          "file": "src/screens/CustomerPage/AddCustomerManagerComponent/customerManagerFormFields.jsx",
+          "hash": "17511809365851396453"
+        },
+        {
+          "file": "src/screens/CustomerPage/AddCustomerManagerComponent/index.jsx",
+          "hash": "9003146354570670134"
+        },
+        {
+          "file": "src/screens/CustomerPage/AddCustomerManagerComponent/style.scss",
+          "hash": "3250611800930159522"
+        },
+        {
+          "file": "src/screens/CustomerPage/AddCustomerModalComponent/index.jsx",
+          "hash": "5246292142882771898"
+        },
+        {
+          "file": "src/screens/CustomerPage/CustomerCardComponent/customerDetailsConfig.jsx",
+          "hash": "1767991419317696574"
+        },
+        {
+          "file": "src/screens/CustomerPage/CustomerCardComponent/index.jsx",
+          "hash": "4154902810542806309"
+        },
+        {
+          "file": "src/screens/CustomerPage/CustomerCardComponent/style.scss",
+          "hash": "2944231283556387562"
+        },
+        {
+          "file": "src/screens/CustomerPage/CustomerFooterComponent/index.jsx",
+          "hash": "2958281641857240869"
+        },
+        {
+          "file": "src/screens/CustomerPage/CustomerManagerCardComponent/index.jsx",
+          "hash": "13937225484855457406"
+        },
+        {
+          "file": "src/screens/CustomerPage/CustomerManagerCardComponent/style.scss",
+          "hash": "8649781430819824852"
+        },
+        {
+          "file": "src/screens/CustomerPage/CustomerModalComponent/index.jsx",
+          "hash": "6483247525790858994"
+        },
+        {
+          "file": "src/screens/CustomerPage/CustomersListComponent/index.jsx",
+          "hash": "15209836693693808244"
+        },
+        {
+          "file": "src/screens/CustomerPage/CustomersListComponent/style.scss",
+          "hash": "8524893753972811292"
+        },
+        {
+          "file": "src/screens/CustomerPage/index.jsx",
+          "hash": "7272334561288135195"
+        },
+        {
+          "file": "src/screens/CustomerPage/style.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/Dashboard/Dashboard.jsx",
+          "hash": "11285640559334730536"
+        },
+        {
+          "file": "src/screens/Dashboard/Dashboard.scss",
+          "hash": "882966111830247543"
+        },
+        {
+          "file": "src/screens/DragDropPlannerPage/DragDropPlannerPage.jsx",
+          "hash": "5854523764554479274"
+        },
+        {
+          "file": "src/screens/DragDropPlannerPage/DragDropPlannerPage.scss",
+          "hash": "3364363134989632751"
+        },
+        {
+          "file": "src/screens/DragDropPlannerPage/index.js",
+          "hash": "8356261329740344602"
+        },
+        {
+          "file": "src/screens/DriverListPage/DriverListPage.jsx",
+          "hash": "403250499909907509"
+        },
+        {
+          "file": "src/screens/DriverListPage/DriverListPage.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/FreeOrdersPage/index.jsx",
+          "hash": "8496898804597077104"
+        },
+        {
+          "file": "src/screens/FreeOrdersPage/style.scss",
+          "hash": "5254938880791340723"
+        },
+        {
+          "file": "src/screens/InvoicePage/InvoicesListComponent/InvoiceActionsComponent/index.jsx",
+          "hash": "871419653223216706"
+        },
+        {
+          "file": "src/screens/InvoicePage/InvoicesListComponent/InvoiceActionsComponent/style.scss",
+          "hash": "11755828589330855241"
+        },
+        {
+          "file": "src/screens/InvoicePage/InvoicesListComponent/index.jsx",
+          "hash": "9215516578506254464"
+        },
+        {
+          "file": "src/screens/InvoicePage/InvoicesListComponent/style.scss",
+          "hash": "9744605262180328331"
+        },
+        {
+          "file": "src/screens/InvoicePage/InvoicesListComponent/tableHeaderInvoices.json",
+          "hash": "9487873255809782162"
+        },
+        {
+          "file": "src/screens/InvoicePage/index.jsx",
+          "hash": "4806823078278914251"
+        },
+        {
+          "file": "src/screens/InvoicePage/style.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/LoginPage/LoginPage.jsx",
+          "hash": "12556270520695749973"
+        },
+        {
+          "file": "src/screens/LoginPage/LoginPage.scss",
+          "hash": "5358584011533844993"
+        },
+        {
+          "file": "src/screens/LoginPage/loginFormFields.jsx",
+          "hash": "1734863357810577408"
+        },
+        {
+          "file": "src/screens/MainPage/MainPage.jsx",
+          "hash": "8196852913266853818"
+        },
+        {
+          "file": "src/screens/MainPage/MainPage.scss",
+          "hash": "14252122256199553049"
+        },
+        {
+          "file": "src/screens/MainPageComponent/AboutComponent/index.jsx",
+          "hash": "11459340629525621235"
+        },
+        {
+          "file": "src/screens/MainPageComponent/AboutComponent/style.scss",
+          "hash": "13390971790594934790"
+        },
+        {
+          "file": "src/screens/MainPageComponent/ClientsComponent/index.jsx",
+          "hash": "2906925307048581029"
+        },
+        {
+          "file": "src/screens/MainPageComponent/ClientsComponent/style.scss",
+          "hash": "17105362140724740968"
+        },
+        {
+          "file": "src/screens/MainPageComponent/ContactsComponent/index.jsx",
+          "hash": "3986021403171364296"
+        },
+        {
+          "file": "src/screens/MainPageComponent/ContactsComponent/style.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/MainPageComponent/FeaturesComponent/index.jsx",
+          "hash": "1741927489571946259"
+        },
+        {
+          "file": "src/screens/MainPageComponent/FeaturesComponent/style.scss",
+          "hash": "1825683297467451910"
+        },
+        {
+          "file": "src/screens/MainPageComponent/FooterComponent/index.jsx",
+          "hash": "754027696629138064"
+        },
+        {
+          "file": "src/screens/MainPageComponent/FooterComponent/style.scss",
+          "hash": "1026094280247114684"
+        },
+        {
+          "file": "src/screens/MainPageComponent/GalleryComponent/index.jsx",
+          "hash": "14012838670651673533"
+        },
+        {
+          "file": "src/screens/MainPageComponent/GalleryComponent/style.scss",
+          "hash": "13108485586015355838"
+        },
+        {
+          "file": "src/screens/MainPageComponent/GoalsComponent/index.jsx",
+          "hash": "3296578262420863582"
+        },
+        {
+          "file": "src/screens/MainPageComponent/GoalsComponent/style.scss",
+          "hash": "3352953373591136606"
+        },
+        {
+          "file": "src/screens/MainPageComponent/MainComponent/index.jsx",
+          "hash": "17934193476539923392"
+        },
+        {
+          "file": "src/screens/MainPageComponent/MainComponent/style.scss",
+          "hash": "102458741855851951"
+        },
+        {
+          "file": "src/screens/MainPageComponent/MainPageHeaderComponent/index.jsx",
+          "hash": "8981438680475879422"
+        },
+        {
+          "file": "src/screens/MainPageComponent/MainPageHeaderComponent/style.scss",
+          "hash": "11496597842572069186"
+        },
+        {
+          "file": "src/screens/MainPageComponent/ServicesComponent/index.jsx",
+          "hash": "11372716047239037560"
+        },
+        {
+          "file": "src/screens/MainPageComponent/ServicesComponent/style.scss",
+          "hash": "1199598690804008599"
+        },
+        {
+          "file": "src/screens/MainPageComponent/index.jsx",
+          "hash": "13033221433193135685"
+        },
+        {
+          "file": "src/screens/MainPageComponent/style.scss",
+          "hash": "12595341406833143438"
+        },
+        {
+          "file": "src/screens/MapPage/MapPage.jsx",
+          "hash": "17107216454785796762"
+        },
+        {
+          "file": "src/screens/OrderPage/ActionsComponent/ActionsComponent.jsx",
+          "hash": "3373002257161856685"
+        },
+        {
+          "file": "src/screens/OrderPage/ActionsComponent/ActionsComponent.scss",
+          "hash": "620454787817547397"
+        },
+        {
+          "file": "src/screens/OrderPage/AddTaskButtonComponent/AddTaskButtonComponent.jsx",
+          "hash": "12581798293606029621"
+        },
+        {
+          "file": "src/screens/OrderPage/AddTaskButtonComponent/AddTaskButtonComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/OrderPage/AssignTruckAndDriverComponent/index.jsx",
+          "hash": "17038937387208522333"
+        },
+        {
+          "file": "src/screens/OrderPage/CargoComponent/CargoComponent.jsx",
+          "hash": "7516976546394822560"
+        },
+        {
+          "file": "src/screens/OrderPage/CargoComponent/CargoComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/OrderPage/CarrierComponent/CarrierComponent.jsx",
+          "hash": "4204829910553862461"
+        },
+        {
+          "file": "src/screens/OrderPage/CarrierManagerComponent/CarrierManagerComponent.jsx",
+          "hash": "14649293011331383318"
+        },
+        {
+          "file": "src/screens/OrderPage/CustomerComponent/CustomerComponent.jsx",
+          "hash": "7307011320572667395"
+        },
+        {
+          "file": "src/screens/OrderPage/CustomerComponent/CustomerComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/OrderPage/CustomerManagerComponent/CustomerManagerComponent.jsx",
+          "hash": "15654085303449303067"
+        },
+        {
+          "file": "src/screens/OrderPage/CustomerManagerComponent/CustomerManagerComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/OrderPage/DriverComponent/DriverComponent.jsx",
+          "hash": "4535610624618511674"
+        },
+        {
+          "file": "src/screens/OrderPage/DriverComponent/DriverComponent.scss",
+          "hash": "277744154539197983"
+        },
+        {
+          "file": "src/screens/OrderPage/FooterComponent/FooterComponent.jsx",
+          "hash": "16146959521912025297"
+        },
+        {
+          "file": "src/screens/OrderPage/FormButtonComponent/FormButtonComponent.jsx",
+          "hash": "3882593250609416634"
+        },
+        {
+          "file": "src/screens/OrderPage/FormButtonComponent/FormButtonComponent.scss",
+          "hash": "8217790300378836995"
+        },
+        {
+          "file": "src/screens/OrderPage/HeaderComponent/HeaderComponent.jsx",
+          "hash": "233421769450334726"
+        },
+        {
+          "file": "src/screens/OrderPage/HeaderComponent/HeaderComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/OrderPage/MarketPriceComponent/MarketPriceComponent.jsx",
+          "hash": "7179768450794771099"
+        },
+        {
+          "file": "src/screens/OrderPage/OrderHereMapComponent/index.jsx",
+          "hash": "949805131740906914"
+        },
+        {
+          "file": "src/screens/OrderPage/OrderMapComponent/index.jsx",
+          "hash": "820638218354420315"
+        },
+        {
+          "file": "src/screens/OrderPage/OrderNoticeComponent/OrderNoticeComponent.jsx",
+          "hash": "15063749051429688714"
+        },
+        {
+          "file": "src/screens/OrderPage/OrderNoticeComponent/OrderNoticeComponent.scss",
+          "hash": "11860676350989704740"
+        },
+        {
+          "file": "src/screens/OrderPage/OrderNumberComponent/OrderNumberComponent.jsx",
+          "hash": "2914942512918141809"
+        },
+        {
+          "file": "src/screens/OrderPage/OrderNumberComponent/OrderNumberComponent.scss",
+          "hash": "6297595236637583669"
+        },
+        {
+          "file": "src/screens/OrderPage/OrderPage.jsx",
+          "hash": "8366248906463702176"
+        },
+        {
+          "file": "src/screens/OrderPage/OrderPage.scss",
+          "hash": "2900722187129108294"
+        },
+        {
+          "file": "src/screens/OrderPage/PriceComponent/PriceComponent.jsx",
+          "hash": "10245659206573380688"
+        },
+        {
+          "file": "src/screens/OrderPage/PriceComponent/PriceComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/OrderPage/PriceComponent/priceFormFields.jsx",
+          "hash": "10269030607420013259"
+        },
+        {
+          "file": "src/screens/OrderPage/PricePerKmComponent/PricePerKmComponent.jsx",
+          "hash": "10553303812805633024"
+        },
+        {
+          "file": "src/screens/OrderPage/PricePerKmComponent/PricePerKmComponent.scss",
+          "hash": "5832159122022006220"
+        },
+        {
+          "file": "src/screens/OrderPage/RouteComponent/RouteComponent.jsx",
+          "hash": "8090827820256857690"
+        },
+        {
+          "file": "src/screens/OrderPage/RouteComponent/RouteComponent.scss",
+          "hash": "16181057404483564990"
+        },
+        {
+          "file": "src/screens/OrderPage/TaskComponent/TaskComponent.jsx",
+          "hash": "13401353182546194820"
+        },
+        {
+          "file": "src/screens/OrderPage/TaskComponent/TaskComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/OrderPage/TruckComponent/TruckComponent.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/OrderPage/TruckComponent/TruckComponent.tsx",
+          "hash": "6902754676941896784"
+        },
+        {
+          "file": "src/screens/OrderPage/TruckLocationComponent/index.jsx",
+          "hash": "2249157326495320691"
+        },
+        {
+          "file": "src/screens/OrderPage/editModeReducer.js",
+          "hash": "5341793215878354923"
+        },
+        {
+          "file": "src/screens/PlanScreen.jsx",
+          "hash": "17855298401895100278"
+        },
+        {
+          "file": "src/screens/PointPage/PointAddressComponent/PointAddressComponent.jsx",
+          "hash": "3836902164363265758"
+        },
+        {
+          "file": "src/screens/PointPage/PointCompanyComponent/PointCompanyComponent.jsx",
+          "hash": "2303497443729159414"
+        },
+        {
+          "file": "src/screens/PointPage/PointCountryComponent/PointCountryComponent.jsx",
+          "hash": "7705057088377621940"
+        },
+        {
+          "file": "src/screens/PointPage/PointCustomerComponent/PointCustomerComponent.jsx",
+          "hash": "155855840653815951"
+        },
+        {
+          "file": "src/screens/PointPage/PointGpsComponent/PointGpsComponent.jsx",
+          "hash": "5168331804331037826"
+        },
+        {
+          "file": "src/screens/PointPage/PointPage.jsx",
+          "hash": "15664817871398216507"
+        },
+        {
+          "file": "src/screens/PointPage/PointPage.scss",
+          "hash": "12428000189151174548"
+        },
+        {
+          "file": "src/screens/PointsPage/PointsPage.jsx",
+          "hash": "16585179592297328412"
+        },
+        {
+          "file": "src/screens/PointsPage/PointsPage.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/ProfilePage/ProfilePage.jsx",
+          "hash": "17793062524900150732"
+        },
+        {
+          "file": "src/screens/ProfilePage/ProfilePage.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/RegisterPage/CloseRegistrationComponent/index.jsx",
+          "hash": "12552532699699336649"
+        },
+        {
+          "file": "src/screens/RegisterPage/CloseRegistrationComponent/style.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/RegisterPage/RegisterFormComponent/formFields.js",
+          "hash": "7564783139967042590"
+        },
+        {
+          "file": "src/screens/RegisterPage/RegisterFormComponent/index.jsx",
+          "hash": "657880569265024981"
+        },
+        {
+          "file": "src/screens/RegisterPage/RegisterFormComponent/style.scss",
+          "hash": "18430092783778030845"
+        },
+        {
+          "file": "src/screens/RegisterPage/RegisterPage.jsx",
+          "hash": "4669593817376325147"
+        },
+        {
+          "file": "src/screens/RegisterPage/RegisterPage.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/SovtesTenderPage/TenderDetailsComponent/OfferListComponent/index.jsx",
+          "hash": "3119900459693736343"
+        },
+        {
+          "file": "src/screens/SovtesTenderPage/TenderDetailsComponent/OfferListComponent/style.scss",
+          "hash": "8427187658698734247"
+        },
+        {
+          "file": "src/screens/SovtesTenderPage/TenderDetailsComponent/index.jsx",
+          "hash": "16750516824666960409"
+        },
+        {
+          "file": "src/screens/SovtesTenderPage/TenderDetailsComponent/style.scss",
+          "hash": "18126747758631525677"
+        },
+        {
+          "file": "src/screens/SovtesTenderPage/index.jsx",
+          "hash": "5759169862990941399"
+        },
+        {
+          "file": "src/screens/SovtesTenderPage/style.scss",
+          "hash": "10851497044662214730"
+        },
+        {
+          "file": "src/screens/StartScreen.jsx",
+          "hash": "16683997908718613066"
+        },
+        {
+          "file": "src/screens/TaskPage/TaskPage.jsx",
+          "hash": "6369812128024795952"
+        },
+        {
+          "file": "src/screens/TaskPage/TaskPage.scss",
+          "hash": "7454735494393572588"
+        },
+        {
+          "file": "src/screens/TaskTablePage.jsx",
+          "hash": "14969230174467613421"
+        },
+        {
+          "file": "src/screens/TrucksPage/AddTrailerModalComponent/index.jsx",
+          "hash": "551065032641103603"
+        },
+        {
+          "file": "src/screens/TrucksPage/AddTruckModalComponent/index.jsx",
+          "hash": "2826095594098280259"
+        },
+        {
+          "file": "src/screens/TrucksPage/ManageTrailerComponent/index.jsx",
+          "hash": "10473517382263364977"
+        },
+        {
+          "file": "src/screens/TrucksPage/ManageTrailerComponent/style.scss",
+          "hash": "11172326816362925985"
+        },
+        {
+          "file": "src/screens/TrucksPage/ManageTrailerComponent/trailerFormFields.jsx",
+          "hash": "9526959810402509035"
+        },
+        {
+          "file": "src/screens/TrucksPage/ManageTrailerFooterComponent/index.jsx",
+          "hash": "11557514485313632254"
+        },
+        {
+          "file": "src/screens/TrucksPage/ManageTruckComponent/index.jsx",
+          "hash": "3386283629256262993"
+        },
+        {
+          "file": "src/screens/TrucksPage/ManageTruckComponent/style.scss",
+          "hash": "17797239818743796745"
+        },
+        {
+          "file": "src/screens/TrucksPage/ManageTruckComponent/truckFormFields.jsx",
+          "hash": "17553602400538882416"
+        },
+        {
+          "file": "src/screens/TrucksPage/ManageTruckFooterComponent/index.jsx",
+          "hash": "4443987442069219529"
+        },
+        {
+          "file": "src/screens/TrucksPage/TrailerCardComponent/index.jsx",
+          "hash": "14418552337042075453"
+        },
+        {
+          "file": "src/screens/TrucksPage/TrailerCardComponent/trailerDetailsConfig.jsx",
+          "hash": "17274671104652200007"
+        },
+        {
+          "file": "src/screens/TrucksPage/TrailerFooterComponent/index.jsx",
+          "hash": "9094305572101426808"
+        },
+        {
+          "file": "src/screens/TrucksPage/TrailerModalComponent/index.jsx",
+          "hash": "7379116008166020452"
+        },
+        {
+          "file": "src/screens/TrucksPage/TrailersTableComponent/index.jsx",
+          "hash": "8166478514478858076"
+        },
+        {
+          "file": "src/screens/TrucksPage/TrailersTableComponent/style.scss",
+          "hash": "16745369143404171385"
+        },
+        {
+          "file": "src/screens/TrucksPage/TruckCardComponent/index.jsx",
+          "hash": "13232566060273529584"
+        },
+        {
+          "file": "src/screens/TrucksPage/TruckCardComponent/style.scss",
+          "hash": "1126318807087666709"
+        },
+        {
+          "file": "src/screens/TrucksPage/TruckCardComponent/truckDetailsConfig.jsx",
+          "hash": "10080972405025939567"
+        },
+        {
+          "file": "src/screens/TrucksPage/TruckFooterComponent/index.jsx",
+          "hash": "17338223910313740297"
+        },
+        {
+          "file": "src/screens/TrucksPage/TruckModalComponent/index.jsx",
+          "hash": "12803755320332915060"
+        },
+        {
+          "file": "src/screens/TrucksPage/TruckModalComponent/style.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/TrucksPage/TrucksTableComponent/index.jsx",
+          "hash": "5939216927534707714"
+        },
+        {
+          "file": "src/screens/TrucksPage/TrucksTableComponent/style.scss",
+          "hash": "9309884051339074085"
+        },
+        {
+          "file": "src/screens/TrucksPage/index.jsx",
+          "hash": "11979164430092012176"
+        },
+        {
+          "file": "src/screens/TrucksPage/style.scss",
+          "hash": "18366248066556341235"
+        },
+        {
+          "file": "src/screens/UserEditPage/UserEditPage.jsx",
+          "hash": "10271602242501364891"
+        },
+        {
+          "file": "src/screens/UserEditPage/UserEditPage.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/screens/UserListPage/UserListPage.jsx",
+          "hash": "7292733050940983737"
+        },
+        {
+          "file": "src/screens/UserListPage/UserListPage.scss",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "src/services/buildFactualCoordsFromRuptela.js",
+          "hash": "17524255383799251510"
+        },
+        {
+          "file": "src/services/buildPeriodFromOrderPoints.js",
+          "hash": "3928203304981799349"
+        },
+        {
+          "file": "src/services/distanceCalculationService.js",
+          "hash": "1255392661251666929"
+        },
+        {
+          "file": "src/services/driverTimeAnalysisService.js",
+          "hash": "40695276714125472"
+        },
+        {
+          "file": "src/services/drivers.json",
+          "hash": "9742980409509146202"
+        },
+        {
+          "file": "src/services/getRuptelaTripsForPeriod.js",
+          "hash": "12313255079541053515"
+        },
+        {
+          "file": "src/services/truckDriverIDService.js",
+          "hash": "9958703874457348934"
+        },
+        {
+          "file": "src/services/truckLocationService.js",
+          "hash": "9344773817679092947"
+        },
+        {
+          "file": "src/store.ts",
+          "hash": "327622447304084262"
+        },
+        {
+          "file": "src/styles/blocks/_autocomplete.scss",
+          "hash": "1904082539454075522"
+        },
+        {
+          "file": "src/styles/blocks/_button.scss",
+          "hash": "2738032529115288124"
+        },
+        {
+          "file": "src/styles/blocks/_carousel.scss",
+          "hash": "2237439053296429041"
+        },
+        {
+          "file": "src/styles/blocks/_container.scss",
+          "hash": "1039417397379910109"
+        },
+        {
+          "file": "src/styles/blocks/_customerCard.scss",
+          "hash": "14589390784176682585"
+        },
+        {
+          "file": "src/styles/blocks/_documents.scss",
+          "hash": "2121791812082245867"
+        },
+        {
+          "file": "src/styles/blocks/_drivers.scss",
+          "hash": "10519049586149518518"
+        },
+        {
+          "file": "src/styles/blocks/_endtime.scss",
+          "hash": "5073938477554218810"
+        },
+        {
+          "file": "src/styles/blocks/_footer.scss",
+          "hash": "8221025433342430809"
+        },
+        {
+          "file": "src/styles/blocks/_form.scss",
+          "hash": "18267339453038541611"
+        },
+        {
+          "file": "src/styles/blocks/_header.scss",
+          "hash": "17293255873758322126"
+        },
+        {
+          "file": "src/styles/blocks/_invoices.scss",
+          "hash": "4463780447453533488"
+        },
+        {
+          "file": "src/styles/blocks/_login.scss",
+          "hash": "4774634269076041162"
+        },
+        {
+          "file": "src/styles/blocks/_map.scss",
+          "hash": "5642573256320149744"
+        },
+        {
+          "file": "src/styles/blocks/_message.scss",
+          "hash": "3621905783681454789"
+        },
+        {
+          "file": "src/styles/blocks/_modal.scss",
+          "hash": "7476950508931197642"
+        },
+        {
+          "file": "src/styles/blocks/_order.scss",
+          "hash": "3959585599522744607"
+        },
+        {
+          "file": "src/styles/blocks/_orders.scss",
+          "hash": "2736383583135032250"
+        },
+        {
+          "file": "src/styles/blocks/_page.scss",
+          "hash": "57736580859875776"
+        },
+        {
+          "file": "src/styles/blocks/_passport.scss",
+          "hash": "10090201899874808619"
+        },
+        {
+          "file": "src/styles/blocks/_planner.scss",
+          "hash": "14932959675528712057"
+        },
+        {
+          "file": "src/styles/blocks/_point.scss",
+          "hash": "15689168501561718851"
+        },
+        {
+          "file": "src/styles/blocks/_points.scss",
+          "hash": "5813673670079138686"
+        },
+        {
+          "file": "src/styles/blocks/_sidebar.scss",
+          "hash": "847521829171979166"
+        },
+        {
+          "file": "src/styles/blocks/_slider.scss",
+          "hash": "5891529921926853056"
+        },
+        {
+          "file": "src/styles/blocks/_starttime.scss",
+          "hash": "8106304044910448977"
+        },
+        {
+          "file": "src/styles/blocks/_table.scss",
+          "hash": "7943782484041152551"
+        },
+        {
+          "file": "src/styles/blocks/_task.scss",
+          "hash": "14804231882453897743"
+        },
+        {
+          "file": "src/styles/blocks/_tenders.scss",
+          "hash": "14719689365985746418"
+        },
+        {
+          "file": "src/styles/blocks/_trailers.scss",
+          "hash": "7839140006310270874"
+        },
+        {
+          "file": "src/styles/blocks/_trucks.scss",
+          "hash": "7144888773042421030"
+        },
+        {
+          "file": "src/styles/blocks/_uploaddocuments.scss",
+          "hash": "12074453859953863284"
+        },
+        {
+          "file": "src/styles/styles.scss",
+          "hash": "16604350268423351039"
+        },
+        {
+          "file": "src/styles/utils/_normalize.scss",
+          "hash": "6346902199401248682"
+        },
+        {
+          "file": "src/styles/utils/_reset.scss",
+          "hash": "12400980167547855077"
+        },
+        {
+          "file": "src/styles/utils/_vars.scss",
+          "hash": "1607318907937750595"
+        },
+        {
+          "file": "src/utils/address.js",
+          "hash": "9160079053320808039"
+        },
+        {
+          "file": "src/utils/calculateOrderValues.js",
+          "hash": "4145781665590541688"
+        },
+        {
+          "file": "src/utils/capitalizeFirstLetter.js",
+          "hash": "16324038453706966211"
+        },
+        {
+          "file": "src/utils/formatDate.js",
+          "hash": "11286926763176771403"
+        },
+        {
+          "file": "src/utils/formatDuration.js",
+          "hash": "17716354220479477937"
+        },
+        {
+          "file": "src/utils/formatNumber.js",
+          "hash": "11327388148986096616"
+        },
+        {
+          "file": "src/utils/formattedTime.js",
+          "hash": "14125752623576683340"
+        },
+        {
+          "file": "src/utils/generatePointsFromTasks.js",
+          "hash": "1071841968181011460"
+        },
+        {
+          "file": "src/utils/getCmrNumber.js",
+          "hash": "97652701622998907"
+        },
+        {
+          "file": "src/utils/getCsrfToken.js",
+          "hash": "2154210304734588816"
+        },
+        {
+          "file": "src/utils/getDateTime.js",
+          "hash": "13020224271154223348"
+        },
+        {
+          "file": "src/utils/getEmailsFromOrder.js",
+          "hash": "6510228706398798412"
+        },
+        {
+          "file": "src/utils/getPostAddress.js",
+          "hash": "6877404678510812458"
+        },
+        {
+          "file": "src/utils/getRoute.js",
+          "hash": "5406883712643462512"
+        },
+        {
+          "file": "src/utils/getRouteTitle.js",
+          "hash": "3387021140343386880"
+        },
+        {
+          "file": "src/utils/getTaskTitle.js",
+          "hash": "16966968036130625974"
+        },
+        {
+          "file": "src/utils/getTenderDetails.js",
+          "hash": "17159899290595154475"
+        },
+        {
+          "file": "src/utils/getTotalDistance.js",
+          "hash": "18291213021954787541"
+        },
+        {
+          "file": "src/utils/getTrailer.js",
+          "hash": "16080097068316683352"
+        },
+        {
+          "file": "src/utils/pricePerKm.js",
+          "hash": "3625011339815710163"
+        },
+        {
+          "file": "src/utils/round.js",
+          "hash": "10041205705568376478"
+        },
+        {
+          "file": "src/utils/setMapOption.js",
+          "hash": "9693318224520106083"
+        },
+        {
+          "file": "src/utils/transformers.js",
+          "hash": "14995400923645975206"
+        },
+        {
+          "file": "tsconfig.json",
+          "hash": "4286629278871476005"
+        },
+        {
+          "file": "vite.config.mjs",
+          "hash": "10188678393354473758"
+        }
+      ]
+    },
+    "nonProjectFiles": []
+  }
+}

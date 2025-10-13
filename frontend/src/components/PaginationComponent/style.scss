@@ -1,0 +1,33 @@
+.pagination {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 20px;
+
+  .pagination-button {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    background-color: white;
+    cursor: pointer;
+    min-width: 32px;
+
+    &.active {
+      background-color: #007bff;
+      color: white;
+    }
+
+    &:disabled {
+      color: #aaa;
+      cursor: not-allowed;
+      border-color: #eee;
+    }
+  }
+
+  .pagination-dots {
+    padding: 6px 10px;
+    color: #999;
+    min-width: 32px;
+    text-align: center;
+  }
+}

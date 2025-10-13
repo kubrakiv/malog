@@ -1,0 +1,74 @@
+.background {
+  background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../../img/1920x1080-beautiful-road.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.welcome-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 10;
+}
+
+.logo {
+  margin-left: 2rem;
+  width: 6rem;
+  height: 6rem;
+  border-radius: 0.5rem;
+}
+
+.enter-button {
+  margin-right: 2rem;
+  font-size: 2rem;
+  color: white;
+  text-shadow: 2px 2px 4px #000000;
+  background-color: #000000;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 1rem 2rem;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: #ffffff;
+    color: #000000;
+  }
+}
+
+.welcome-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.welcome-content {
+  text-align: center;
+  color: white;
+  text-shadow: 2px 2px 4px #000000;
+
+  &__title {
+    font-size: 5rem;
+    margin-bottom: 2rem;
+  }
+
+  &__subtitle {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+}

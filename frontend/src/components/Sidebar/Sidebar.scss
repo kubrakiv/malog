@@ -1,0 +1,13 @@
+@import "../../styles/utils/vars";
+
+.sidebar {
+  background-color: $sidebarcolor;
+  color: white;
+  height: calc(100vh - 40px - 19px);
+  transition: all 0.3s;
+  flex-shrink: 0;
+  // top: 40px;
+  position: sticky;
+  z-index: 9999;
+  // overflow: hidden; // Ensures it does not scroll
+}

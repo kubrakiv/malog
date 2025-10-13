@@ -1,0 +1,114 @@
+.offer-details-actions {
+  height: auto;
+  opacity: 1;
+  transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  background: #f9f9f9;
+  border-radius: 5px;
+  padding: 0 15px;
+  border-left: 4px solid #007bff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 10px;
+  &__details {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding: 10px;
+    gap: 10px;
+    background: #dfedf8;
+    padding: 15px;
+    border-radius: 5px;
+  }
+  &__quote-form {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: #dfedf8;
+    padding: 15px;
+    border-radius: 5px;
+    // margin-top: 10px;
+    label {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    select,
+    input,
+    textarea {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    textarea {
+      min-height: 60px;
+      resize: vertical;
+    }
+
+    .quote-button {
+      background: #28a745;
+      color: white;
+      font-weight: bold;
+      border: none;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background 0.3s ease-in-out;
+
+      &:hover {
+        background: #218838;
+      }
+    }
+  }
+}
+
+.tender-wrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+/* Header Styling */
+.offer-details-actions__header {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  border-bottom: 2px solid #ddd;
+  padding-bottom: 5px;
+  margin-bottom: 8px;
+}
+
+/* Individual Detail Styling */
+.offer-details-actions__company,
+.offer-details-actions__payment-type,
+.offer-details-actions__route-status {
+  font-size: 14px;
+  font-weight: 500;
+  color: #555;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  // align-items: center;
+
+  strong {
+    font-weight: bold;
+    color: #222;
+  }
+}
+
+.quote-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #eaf6ff;
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 10px;
+}

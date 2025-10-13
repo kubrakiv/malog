@@ -1,0 +1,87 @@
+import { POINT_CONSTANTS } from "../../constants/global";
+
+const {
+  COMPANY_NAME,
+  COUNTRY,
+  CUSTOMER,
+  POSTAL_CODE,
+  CITY,
+  STREET,
+  STREET_NUMBER,
+  GPS_LATITUDE,
+  GPS_LONGITUDE,
+} = POINT_CONSTANTS;
+
+export const formFields = [
+  {
+    id: CUSTOMER,
+    title: "Виберіть замовника",
+    label: "Замовник",
+    type: "text",
+    component: "select",
+  },
+  {
+    id: COMPANY_NAME,
+    title: "Назва компанії",
+    label: "Назва компанії",
+    type: "text",
+    placeholder: "Назва компанії",
+    component: "input",
+  },
+  {
+    id: COUNTRY,
+    title: "Країна",
+    label: "Країна",
+    type: "text",
+    placeholder: "Країна",
+    component: "input",
+  },
+  {
+    id: POSTAL_CODE,
+    title: "Поштовий індекс",
+    label: "Поштовий індекс",
+    type: "number",
+    placeholder: "Поштовий індекс",
+    component: "input",
+  },
+  {
+    id: CITY,
+    title: "Місто",
+    label: "Місто",
+    type: "text",
+    placeholder: "Місто",
+    component: "input",
+  },
+  {
+    id: STREET,
+    title: "Вулиця",
+    label: "Вулиця",
+    type: "text",
+    placeholder: "Вулиця",
+    component: "input",
+  },
+  {
+    id: STREET_NUMBER,
+    title: "Номер будинку",
+    label: "Номер будинку",
+    type: "text",
+    placeholder: "Номер будинку",
+    component: "input",
+  },
+  {
+    id: GPS_LATITUDE,
+    title: "GPS широта",
+    label: "GPS широта",
+    type: "number",
+    placeholder: "GPS широта",
+    component: "input",
+  },
+  {
+    id: GPS_LONGITUDE,
+    title: "GPS довгота",
+    label: "GPS довгота",
+    type: "number",
+    placeholder: "GPS довгота",
+    component: "input",
+  },
+];

@@ -1,0 +1,173 @@
+.orders-header-block {
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.table__name {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.tenders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+  overflow-y: auto; // Enable vertical scrolling
+  max-height: calc(100vh - 40px - 150px); // Ensure it doesn't overflow
+  padding-right: 8px; // Optional: prevents scrollbar overlap
+  padding-bottom: 20px;
+}
+
+.offer-item {
+  display: flex;
+  flex-direction: column; /* Stack customer row above blocks */
+  // align-items: center;
+  gap: 5px; /* Adjust spacing */
+  background-color: #ffffff;
+  // padding: 0px 0px 0px 0px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  min-height: 130px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+
+  &.expanded {
+    background: #f8f9fa;
+    border: 1px solid #007bff;
+    border-left: 4px solid #007bff;
+  }
+
+  &:hover {
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    border: 1px solid #007bff;
+    border-left: 4px solid #007bff;
+  }
+}
+
+.tender-customer {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr; /* First and last columns auto-sized, middle flexible */
+  font-weight: bold;
+  font-size: 1rem;
+  color: #af8509;
+  align-items: center; /* Align text vertically */
+  background-color: #d1e8ff;
+  padding: 5px;
+  border-radius: 5px 5px 0 0;
+  width: 100%;
+}
+
+.tender-customer span:nth-child(1) {
+  text-align: left; /* First element always left-aligned */
+}
+
+.tender-customer span:nth-child(2) {
+  text-align: center; /* Middle element centered */
+}
+
+.tender-customer span:nth-child(3) {
+  text-align: right; /* Last element always right-aligned */
+}
+
+.offer-details {
+  display: grid;
+  grid-template-columns: 2fr 0.5fr 2fr 1fr 1fr 1fr 2.5fr;
+  gap: 8px; /* Adjust spacing */
+  align-items: center;
+}
+
+.offer-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.offer-block strong {
+  font-size: 14px;
+  font-weight: bold;
+}
+
+// .tender-customer {
+//   font-size: 18px;
+//   font-weight: bold;
+//   color: #007bff;
+// }
+
+.origin,
+.destination {
+  text-align: left;
+}
+
+.arrow {
+  font-size: 20px;
+  font-weight: bold;
+  color: #555;
+  justify-self: center;
+}
+
+.time {
+  font-size: 14px;
+  font-weight: normal;
+  color: #555;
+}
+
+.distance,
+.type,
+.weight {
+  background-color: #eef;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 13px;
+  text-align: center;
+}
+
+.price {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.price-table {
+  border-collapse: collapse;
+  width: 100%;
+  text-align: right;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.price-row {
+  padding: 5px;
+}
+
+.price-table td {
+  padding: 0px 10px;
+  white-space: nowrap;
+}
+
+.label {
+  text-align: left;
+  // font-weight: bold;
+}
+
+.start-price {
+  font-size: 16px;
+  // font-weight: normal;
+  color: #007bff; /* Blue for start price */
+}
+
+.my-price {
+  font-size: 16px;
+  // font-weight: normal;
+  color: green; /* Green for my offer */
+}
+
+.min-price {
+  font-size: 16px;
+  // font-weight: normal;
+  color: red; /* Red for minimum price */
+}

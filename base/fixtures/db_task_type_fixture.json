@@ -1,0 +1,26 @@
+[
+    {
+        "model": "base.tasktype",
+        "pk": 1,
+        "fields": {
+            "name": "Завантаження",
+            "created_at": "2023-11-14T08:37:11.966Z"
+        }
+    },
+    {
+        "model": "base.tasktype",
+        "pk": 2,
+        "fields": {
+            "name": "Розвантаження",
+            "created_at": "2023-11-14T08:37:11.966Z"
+        }
+    },
+    {
+        "model": "base.tasktype",
+        "pk": 4,
+        "fields": {
+            "name": "Service",
+            "created_at": "2023-11-14T08:37:11.966Z"
+        }
+    }
+]

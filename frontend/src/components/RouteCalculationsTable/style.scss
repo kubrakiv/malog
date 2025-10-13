@@ -1,0 +1,794 @@
+// RouteCalculationsTable Component Styles
+.routes-table-container {
+  overflow-x: auto;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-top: 0.5rem;
+}
+
+.routes-header {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #dee2e6;
+  background: #f8f9fa;
+  border-radius: 6px 6px 0 0;
+
+  .header-section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+  }
+}
+
+.routes-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  font-size: 0.75rem; // Even smaller font for better fit
+  min-width: 1280px; // Increased to accommodate RT checkbox and select button
+
+  th,
+  td {
+    padding: 0.4rem 0.25rem; // Smaller padding for more compact layout
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+    white-space: nowrap;
+  }
+
+  th {
+    background: #f8f9fa;
+    font-weight: 600;
+    color: #495057;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    text-align: center;
+  }
+
+  tr {
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #f8f9fa;
+    }
+
+    &.selected-row {
+      background-color: #e3f2fd !important;
+      border-left: 4px solid #2196f3;
+
+      &:hover {
+        background-color: #e3f2fd !important;
+      }
+    }
+  }
+
+  td {
+    color: #333;
+
+    &:nth-child(1) {
+      // RT Checkbox & Select Button
+      text-align: center;
+      max-width: 60px;
+      width: 60px;
+    }
+
+    &:nth-child(2) {
+      // Розраховано (Created & User) - NARROWEST
+      color: #6c757d;
+      max-width: 80px; // Made narrowest
+      width: 80px;
+    }
+
+    &:nth-child(3) {
+      // Маршрут & Distance (combined)
+      max-width: 300px; // Increased for route information
+      width: 300px;
+      white-space: normal;
+      word-wrap: break-word;
+    }
+
+    &:nth-child(4) {
+      // Price & Target (combined)
+      text-align: right;
+      max-width: 180px; // Added width constraint
+      width: 180px;
+    }
+
+    &:nth-child(5) {
+      // Total Cost & Tolls (combined)
+      text-align: right;
+      max-width: 180px; // Added width constraint
+      width: 180px;
+    }
+
+    &:nth-child(6) {
+      // Дохідність - LAST COLUMN
+      text-align: center;
+      max-width: 60px; // Made narrower since it's just an icon
+      width: 60px;
+    }
+  }
+}
+
+.loading-message,
+.no-routes-message {
+  text-align: center;
+  padding: 2rem;
+  color: #666;
+  font-style: italic;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+// Responsive adjustments
+@media (max-width: 1200px) {
+  .routes-table {
+    font-size: 0.7rem;
+    min-width: 1280px; // Increased to accommodate RT checkbox and select button
+
+    th,
+    td {
+      padding: 0.3rem 0.2rem; // Even smaller padding
+    }
+
+    td {
+      &:nth-child(1) {
+        // RT Checkbox & Select Button
+        max-width: 55px;
+        width: 55px;
+      }
+
+      &:nth-child(2) {
+        // Розраховано (Created & User) - NARROWEST
+        max-width: 70px;
+        width: 70px;
+      }
+
+      &:nth-child(3) {
+        // Маршрут & Distance (combined)
+        max-width: 240px;
+        width: 240px;
+      }
+
+      &:nth-child(4) {
+        // Price & Target (combined)
+        max-width: 150px;
+        width: 150px;
+      }
+
+      &:nth-child(5) {
+        // Total Cost & Tolls (combined)
+        max-width: 140px;
+        width: 140px;
+      }
+
+      &:nth-child(6) {
+        // Дохідність - LAST COLUMN
+        max-width: 50px;
+        width: 50px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .routes-table {
+    font-size: 0.65rem;
+    min-width: 1080px; // Increased to accommodate RT checkbox and select button
+
+    th,
+    td {
+      padding: 0.25rem 0.15rem; // Minimal padding for mobile
+    }
+
+    td {
+      &:nth-child(1) {
+        // RT Checkbox & Select Button
+        max-width: 50px;
+        width: 50px;
+      }
+
+      &:nth-child(2) {
+        // Розраховано (Created & User) - NARROWEST
+        max-width: 60px;
+        width: 60px;
+      }
+
+      &:nth-child(3) {
+        // Маршрут & Distance (combined)
+        max-width: 200px;
+        width: 200px;
+      }
+
+      &:nth-child(4) {
+        // Price & Target (combined)
+        max-width: 120px;
+        width: 120px;
+      }
+
+      &:nth-child(5) {
+        // Total Cost & Tolls (combined)
+        max-width: 110px;
+        width: 110px;
+      }
+
+      &:nth-child(6) {
+        // Дохідність - LAST COLUMN
+        max-width: 40px;
+        width: 40px;
+      }
+    }
+  }
+}
+
+// Action buttons styling
+.action-buttons {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+  align-items: center;
+
+  button {
+    transition: all 0.2s ease;
+
+    &:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
+  }
+}
+
+// Roundtrip section styling
+.roundtrip-section {
+  background-color: #f8f9fa;
+  border: 2px solid #007bff;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.roundtrip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 0;
+    color: #007bff;
+    font-size: 1.1rem;
+  }
+}
+
+.roundtrip-clear-button {
+  padding: 0.4rem 0.8rem;
+  font-size: 0.8rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #c82333;
+  }
+}
+
+.roundtrip-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.roundtrip-route-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  background-color: white;
+  border-radius: 4px;
+  border: 1px solid #dee2e6;
+
+  .route-label {
+    font-weight: 600;
+    color: #495057;
+  }
+
+  .route-path {
+    color: #007bff;
+    font-weight: 500;
+  }
+
+  .profitability-status {
+    margin-left: auto;
+    font-weight: 600;
+    color: #495057;
+  }
+}
+
+.roundtrip-metrics-cards {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  // background-color: white;
+  // padding: 1rem;
+  // border-radius: 6px;
+  // border: 1px solid #dee2e6;
+  // box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.metric-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  background-color: white;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  min-width: 100px;
+  text-align: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: #9dc9f5;
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .metric-label {
+    color: #6c757d;
+    font-weight: 500;
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .metric-value {
+    color: #212529;
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+}
+
+.roundtrip-placeholder {
+  color: #6c757d;
+  font-style: italic;
+  text-align: center;
+  padding: 1rem;
+}
+
+// Roundtrip button styling
+.roundtrip-btn {
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  height: 28px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &.selected {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+    transform: translateY(-1px);
+  }
+
+  &.unselected {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      background: linear-gradient(135deg, #5a6268 0%, #343a40 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    transform: none !important;
+    background: linear-gradient(135deg, #adb5bd 0%, #6c757d 100%) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+
+    &::before {
+      display: none;
+    }
+  }
+}
+
+// Profitability status styling
+.profitability-status {
+  font-size: 1.1rem;
+  font-weight: bold;
+
+  &.loss {
+    color: #dc3545;
+  }
+
+  &.low {
+    color: #ffc107;
+  }
+
+  &.good {
+    color: #28a745;
+  }
+
+  &.excellent {
+    color: #6f42c1;
+  }
+}
+
+// Status icons styling
+.status-icon {
+  font-size: 1.2rem;
+  display: inline-block;
+  text-align: center;
+  width: 100%;
+}
+
+// Roundtrip selection styling
+.roundtrip-selection {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+}
+
+.roundtrip-checkbox {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: #007bff;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.roundtrip-number {
+  width: 20px;
+  height: 20px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.4);
+  }
+}
+
+// Select row button styling
+.select-row-btn {
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &.selected {
+    background-color: #28a745;
+    color: white;
+
+    &:hover {
+      background-color: #218838;
+      transform: scale(1.1);
+    }
+  }
+
+  &.unselected {
+    background-color: #e9ecef;
+    color: #6c757d;
+    border: 1px solid #dee2e6;
+
+    &:hover {
+      background-color: #007bff;
+      color: white;
+      transform: scale(1.1);
+    }
+  }
+}
+
+// Edit input styling
+.edit-input {
+  width: 80px;
+  padding: 2px 4px;
+  font-size: 0.8rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+// Combined field styling
+.combined-field {
+  display: flex;
+  flex-direction: column;
+  gap: 1px; // Reduced gap for more compact layout
+
+  .main-value {
+    font-weight: 500;
+    line-height: 1.2; // Tighter line height
+  }
+
+  .sub-value {
+    font-size: 0.65rem; // Smaller sub-value text
+    color: #6c757d;
+    line-height: 1.1; // Tighter line height
+  }
+}
+
+// Action button specific styles
+.save-btn {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.2);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none !important;
+  }
+}
+
+.cancel-btn {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none !important;
+  }
+}
+
+.select-btn {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &.selected {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+  }
+
+  &.unselected {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    box-shadow: 0 2px 4px rgba(23, 162, 184, 0.2);
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none !important;
+  }
+}
+
+.edit-btn {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none !important;
+  }
+}
+
+.delete-btn {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.2);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+    transition: left 0.5s;
+  }
+
+  &:hover::before {
+    left: 100%;
+  }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none !important;
+  }
+}

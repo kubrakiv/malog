@@ -1,0 +1,20 @@
+.order-status {
+  padding: 3px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+  display: inline-block;
+}
+
+.order-status.blue {
+  background-color: rgba(0, 0, 255, 0.8); /* Blue for "In progress" */
+}
+
+.order-status.green {
+  background-color: rgb(0, 128, 0, 0.8); /* Green for "Completed" */
+}
+
+.order-status.gray {
+  background-color: gray; /* Gray for "No Unloading Task" */
+}

@@ -1,0 +1,52 @@
+/* Container for the checkbox */
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  input[type="checkbox"] {
+    /* Hide the native checkbox */
+    appearance: none;
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #4caf50; /* Green border color */
+    border-radius: 4px; /* Slightly rounded corners */
+    background-color: #fff; /* White background */
+    cursor: pointer;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+
+    /* Add a shadow for better visuals */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+
+    &:checked {
+      background-color: #4caf50; /* Green fill when checked */
+      border-color: #4caf50;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      &::after {
+        content: "✔";
+        font-size: 14px;
+        color: #fff; /* White checkmark */
+      }
+    }
+
+    &:hover {
+      border-color: #45a049; /* Darker green on hover */
+    }
+
+    &:focus {
+      outline: none;
+      box-shadow: 0 0 3px #4caf50;
+    }
+  }
+
+  /* Optional label styles */
+  label {
+    font-size: 16px;
+    color: #333;
+    cursor: pointer; /* Pointer cursor for the label */
+  }
+}

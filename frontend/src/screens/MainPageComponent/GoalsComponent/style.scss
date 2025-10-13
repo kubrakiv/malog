@@ -1,0 +1,139 @@
+.goals-section {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.1)),
+    url("../../../img/background_img.jpg");
+
+  background-size: cover;
+  padding: 50px;
+
+  .image-container {
+    flex: 1;
+    img {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+    }
+  }
+
+  .content-container {
+    flex: 1;
+    padding: 20px;
+    color: black;
+    text-align: left;
+
+    .commitment {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 5px 10px;
+      border-radius: 5px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    h2 {
+      font-size: 36px;
+      margin-bottom: 20px;
+      color: rgb(0, 51, 102);
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        margin-bottom: 20px;
+        font-size: 24px;
+        display: flex;
+        align-items: center;
+        &::before {
+          content: "✔";
+          margin-right: 10px;
+          color: rgb(0, 75, 145); // Yellow checkmark color
+        }
+      }
+    }
+
+    .contact-button {
+      background-color: rgb(0, 75, 145);
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: rgb(0, 75, 145, 0.6);
+      }
+    }
+  }
+  /* Media Queries for Responsiveness */
+
+  @media (max-width: 992px) {
+    flex-direction: column;
+    padding: 40px;
+
+    .content-container {
+      padding: 15px;
+
+      h2 {
+        font-size: 32px;
+      }
+
+      ul li {
+        font-size: 20px;
+      }
+
+      .contact-button {
+        padding: 8px 16px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 30px;
+
+    .content-container {
+      padding: 10px;
+
+      h2 {
+        font-size: 28px;
+      }
+
+      ul li {
+        font-size: 18px;
+        margin-bottom: 15px;
+      }
+
+      .contact-button {
+        padding: 8px 14px;
+        font-size: 14px;
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    padding: 20px;
+
+    .content-container {
+      padding: 5px;
+
+      h2 {
+        font-size: 24px;
+        margin-bottom: 15px;
+      }
+
+      ul li {
+        font-size: 16px;
+        margin-bottom: 10px;
+      }
+
+      .contact-button {
+        padding: 6px 12px;
+        font-size: 12px;
+      }
+    }
+  }
+}

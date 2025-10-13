@@ -1,0 +1,32 @@
+# Python / Django
+__pycache__/
+*.py[cod]
+*.sqlite3
+*.log
+.env
+.env.*
+.vscode/
+.idea/
+
+# Virtualenvs
+venv/
+.envrc
+
+# Node / React
+frontend/node_modules/
+frontend/.next/
+frontend/.cache/
+frontend/build/
+frontend/dist/
+
+# Build outputs
+staticfiles/
+static_root/
+*.tar.gz
+
+# Media uploaded by users
+media/
+
+# OS
+.DS_Store
+Thumbs.db

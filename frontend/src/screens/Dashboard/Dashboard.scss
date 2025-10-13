@@ -1,0 +1,43 @@
+.modal-test {
+    background-color: white;
+    border: 1px solid green;
+    animation-name: slideIn;
+    animation-duration: 0.5s;
+
+    &__close {
+        position: absolute;
+        right: 10px;
+        color: red;
+        font-size: 26px;
+        cursor: pointer;
+    }
+    &__header {
+        border-radius: 4px;
+        margin: 40px 10px 10px 10px;
+        border: 1px solid green;
+        text-align: center;
+    }
+    &__body {
+        border-radius: 4px;
+        margin: 10px;
+        text-align: center;
+        border: 1px solid green;
+    }
+    &__modal-button {
+        display: block;
+        width: 100%;
+        margin: 0 auto;
+        // align-items: center;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        top: 0;
+        opacity: 0;
+    }
+    to {
+        top: 20%;
+        opacity: 1;
+    }
+}

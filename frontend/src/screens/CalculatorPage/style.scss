@@ -1,0 +1,553 @@
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.calculator-page {
+  height: 100vh;
+  overflow-y: auto;
+  background-color: #f5f5f5 !important;
+
+  .tenders-container {
+    padding: 1rem;
+    max-width: 100%;
+  }
+
+  .orders-header-block {
+    margin-bottom: 2rem;
+
+    .table__name {
+      font-size: 1.8rem;
+      font-weight: bold;
+      color: #333;
+      margin: 0;
+    }
+  }
+
+  .main-layout {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    gap: 1rem;
+    align-items: flex-start;
+    height: 50vh;
+    min-height: 350px;
+    max-height: 500px;
+  }
+
+  .left-panel {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex-shrink: 0;
+    height: 100%;
+    overflow-y: auto;
+
+    // Custom scrollbar styling
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+
+      &:hover {
+        background: #a8a8a8;
+      }
+    }
+  }
+
+  .input-form {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+    .form-group {
+      margin-bottom: 1rem;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .form-label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-size: 0.9rem;
+      }
+
+      .form-label-with-button {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+
+        .form-label {
+          margin-bottom: 0;
+          flex: 1;
+        }
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.5rem;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        font-size: 0.9rem;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: #007bff;
+          box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+
+        &::placeholder {
+          color: #6c757d;
+        }
+      }
+
+      .input-list {
+        .input-item {
+          margin-bottom: 0.5rem;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+      }
+
+      .add-button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 0.4rem 0.6rem;
+        cursor: pointer;
+        font-size: 0.8rem;
+        transition: background-color 0.2s ease;
+
+        &:hover {
+          background-color: #0056b3;
+        }
+
+        &:active {
+          transform: translateY(1px);
+        }
+      }
+
+      .add-button-compact {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+
+        &:hover {
+          background-color: #0056b3;
+          transform: scale(1.1);
+          box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+        }
+
+        &:active {
+          transform: scale(0.95);
+          box-shadow: 0 1px 2px rgba(0, 123, 255, 0.3);
+        }
+      }
+
+      .input-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+
+        .form-input {
+          flex: 1;
+        }
+      }
+
+      .delete-point-button {
+        background-color: #dc3545;
+        color: #fff;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+        box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3);
+
+        &:hover {
+          background-color: #c82333;
+          transform: scale(1.1);
+          box-shadow: 0 4px 8px rgba(220, 53, 69, 0.4);
+        }
+
+        &:active {
+          transform: scale(0.95);
+          box-shadow: 0 1px 2px rgba(220, 53, 69, 0.3);
+        }
+      }
+    }
+
+    .calculate-button {
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: bold;
+      font-size: 1rem;
+      transition: all 0.2s ease;
+      box-shadow: 0 3px 6px rgba(40, 167, 69, 0.3);
+      position: relative;
+      overflow: hidden;
+
+      &:hover:not(:disabled) {
+        background-color: #218838;
+        transform: translateY(-1px);
+        box-shadow: 0 5px 10px rgba(40, 167, 69, 0.4);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+        box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+      }
+
+      &:disabled {
+        background-color: #6c757d;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3);
+      }
+    }
+  }
+
+  .route-info-section {
+    width: 100%;
+  }
+
+  .draggable-divider {
+    height: 12px;
+    background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+    border-top: 1px solid #dee2e6;
+    border-bottom: 1px solid #dee2e6;
+    cursor: ns-resize;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: linear-gradient(to bottom, #e9ecef, #dee2e6);
+    }
+
+    &.dragging {
+      background: linear-gradient(to bottom, #007bff, #0056b3);
+
+      .divider-line {
+        background-color: white;
+      }
+
+      .divider-grip {
+        color: white;
+      }
+    }
+
+    .divider-handle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 1rem;
+    }
+
+    .divider-line {
+      width: 2px;
+      height: 20px;
+      background-color: #6c757d;
+      border-radius: 1px;
+    }
+
+    .divider-grip {
+      color: #6c757d;
+      font-size: 1.2rem;
+      font-weight: bold;
+      line-height: 1;
+      user-select: none;
+      transition: color 0.2s ease;
+    }
+
+    // Show different color when overlay is active
+    &:has(+ .saved-routes-section.overlay) {
+      .divider-grip {
+        color: #007bff;
+      }
+    }
+  }
+
+  .map-section {
+    flex: 1;
+    height: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+    min-width: 600px;
+    background: #f8f9fa;
+    position: relative;
+
+    .map-loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #6c757d;
+      font-size: 1.1rem;
+    }
+  }
+
+  // Responsive design
+  @media (max-width: 1200px) {
+    .main-layout {
+      flex-direction: column;
+      gap: 1.5rem;
+      height: auto;
+      min-height: 400px;
+      max-height: none;
+    }
+
+    .left-panel {
+      width: 100%;
+      height: auto;
+      max-height: none;
+      overflow-y: visible;
+      order: 2;
+    }
+
+    .map-section {
+      min-width: auto;
+      order: 1;
+      height: 50vh;
+      min-height: 360px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .tenders-container {
+      padding: 0.5rem;
+    }
+
+    .orders-header-block {
+      margin-bottom: 1rem;
+
+      .table__name {
+        font-size: 1.5rem;
+      }
+    }
+
+    .main-layout {
+      gap: 1rem;
+      height: auto;
+    }
+
+    .left-panel {
+      gap: 0.8rem;
+      height: auto;
+    }
+
+    .input-form {
+      padding: 0.8rem;
+
+      .form-group {
+        margin-bottom: 0.8rem;
+
+        .form-label {
+          font-size: 0.8rem;
+        }
+
+        .form-input {
+          padding: 0.4rem;
+          font-size: 0.8rem;
+        }
+
+        .add-button {
+          padding: 0.3rem 0.5rem;
+          font-size: 0.7rem;
+        }
+      }
+
+      .calculate-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.9rem;
+      }
+    }
+
+    .map-section {
+      height: 50vh;
+      min-height: 320px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .tenders-container {
+      padding: 0.3rem;
+    }
+
+    .input-form {
+      padding: 0.6rem;
+    }
+
+    .map-section {
+      height: 50vh;
+      min-height: 300px;
+    }
+  }
+}
+
+// Saved Routes Section
+.saved-routes-section {
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 200px;
+  transition: all 0.3s ease;
+
+  &.overlay {
+    margin-top: 0;
+    border-radius: 8px 8px 0 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    border-top: 3px solid #007bff;
+    overflow: hidden;
+    padding: 1rem;
+    margin-left: 0; // Reset any margin
+    margin-right: 0; // Reset any margin
+
+    // Ensure the table inside doesn't overflow
+    .routes-table-container {
+      max-height: calc(100% - 100px); // Account for header and drag handle
+      overflow-y: auto;
+    }
+  }
+
+  // Overlay drag handle - always visible when overlay is active
+  .overlay-drag-handle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    background: linear-gradient(to bottom, #007bff, #0056b3);
+    cursor: ns-resize;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px 8px 0 0;
+    z-index: 1001; // Above the overlay content
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background: linear-gradient(to bottom, #0056b3, #004085);
+    }
+
+    .overlay-handle-content {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .overlay-handle-line {
+      width: 20px;
+      height: 2px;
+      background-color: white;
+      border-radius: 1px;
+    }
+
+    .overlay-handle-grip {
+      color: white;
+      font-size: 1rem;
+      font-weight: bold;
+      line-height: 1;
+      user-select: none;
+    }
+  }
+
+  .routes-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.2rem;
+
+    h3 {
+      margin: 0;
+      color: #333;
+      font-size: 1.2rem;
+    }
+
+    .refresh-button {
+      background: #28a745;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9rem;
+
+      &:hover:not(:disabled) {
+        background: #218838;
+      }
+
+      &:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .loading-message,
+  .no-routes-message {
+    text-align: center;
+    padding: 2rem;
+    color: #666;
+    font-style: italic;
+  }
+}

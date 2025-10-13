@@ -1,0 +1,30 @@
+[
+    {
+        "model": "user.role",
+        "pk": 1,
+        "fields": {
+            "name": "admin"
+        }
+    },
+    {
+        "model": "user.role",
+        "pk": 2,
+        "fields": {
+            "name": "logist"
+        }
+    },
+    {
+        "model": "user.role",
+        "pk": 3,
+        "fields": {
+            "name": "driver"
+        }
+    },
+    {
+        "model": "user.role",
+        "pk": 4,
+        "fields": {
+            "name": "customer"
+        }
+    }
+]

@@ -1,0 +1,10 @@
+.task-container {
+    margin: 10px;
+    // padding: 20px;
+    &__return-button {
+        height: 30px;
+    }
+    &__task-title {
+        padding: 20px;
+    }
+}

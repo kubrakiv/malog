@@ -1,0 +1,109 @@
+.gallery-background {
+  // background-color: rgba(117, 154, 222, 0.7);
+  border-radius: 10px;
+}
+
+.gallery-container {
+  padding: 30px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Four columns layout */
+  grid-template-rows: repeat(2, 1fr); /* Adjust based on the number of images */
+  gap: 10px; /* Adjust the gap between images */
+  height: 65vh; /* Set the container height */
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 20px;
+
+  .gallery-item {
+    overflow: hidden;
+    z-index: 555;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+      border-radius: 10px;
+    }
+
+    &:hover img {
+      transform: scale(1.1);
+    }
+  }
+
+  /* Adjusting specific items to create the mosaic layout */
+  .large {
+    grid-column: span 2; /* Make it span 2 columns */
+    grid-row: span 1; /* Adjust to fit the new layout */
+  }
+
+  .gallery-item:nth-child(2) {
+    grid-column: span 1; /* Adjust to span 1 column */
+  }
+
+  .gallery-item:nth-child(3) {
+    grid-row: span 1; /* Adjust to span 1 row */
+  }
+
+  .gallery-item:nth-child(5) {
+    grid-column: span 1; /* Adjust to span 1 column */
+  }
+
+  .gallery-item:nth-child(6) {
+    grid-row: span 1; /* Adjust to span 1 row */
+  }
+}
+
+/* Medium Devices (up to 1024px) */
+@media (max-width: 1024px) {
+  .gallery-container {
+    display: grid;
+    grid-template-columns: repeat(
+      2,
+      1fr
+    ); /* Switch to two columns on medium screens */
+    grid-template-rows: repeat(4, 1fr);
+  }
+
+  .gallery-item {
+    .large {
+      grid-column: span 2; /* Maintain large item spanning 2 columns */
+    }
+  }
+}
+
+/* Small Devices (up to 768px) */
+@media (max-width: 768px) {
+  .gallery-container {
+    display: block;
+    // grid-template-columns: 1fr; /* Single column layout on small screens */
+    grid-template-rows: repeat(7, 1fr); /* Adjust rows accordingly */
+    height: auto; /* Let height adjust to content */
+    padding: 20px; /* Adjust padding for smaller screens */
+  }
+
+  .gallery-item {
+    .large {
+      grid-column: span 1; /* Large item spans only 1 column on small screens */
+    }
+  }
+}
+
+/* Extra Small Devices (up to 576px) */
+@media (max-width: 576px) {
+  .gallery-container {
+    padding: 10px; /* Further reduce padding for extra small screens */
+    gap: 5px; /* Reduce gap between images */
+  }
+
+  .gallery-item {
+    img {
+      border-radius: 5px; /* Slightly round the images on small screens */
+    }
+
+    &:hover img {
+      transform: scale(1.05); /* Reduce hover effect on small screens */
+      border-radius: 10px;
+    }
+  }
+}

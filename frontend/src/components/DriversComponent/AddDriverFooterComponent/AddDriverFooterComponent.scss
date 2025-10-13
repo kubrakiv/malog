@@ -1,0 +1,50 @@
+@import "../../../styles/utils/vars";
+
+.driver-details {
+    &__footer {
+        display: flex;
+        justify-content: flex-end;
+        background-color: $tableHeaderColor;
+        border-radius: 4px;
+        margin: 5px auto 0 auto;
+        padding: 5px 5px;
+        gap: 10px;
+    }
+
+    &__footer-btn {
+        padding: 5px;
+        color: #fff;
+        border-radius: 4px;
+        background-color: gray;
+        border: none;
+
+        &_edit {
+            &:hover {
+                background: rgba(43, 84, 233, 0.9);
+                box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14);
+                transition: all 0.5s;
+                cursor: pointer;
+            }
+        }
+        &_save {
+            background-color: rgba(53, 186, 60, 1);
+            &:hover {
+                background-color: darken(rgba(53, 186, 60, 1), 10%);
+                box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+                transition: all 0.5s;
+            }
+        }
+        &_close {
+            background: rgba(233, 43, 43, 1);
+            & > a {
+                color: white;
+                text-decoration: none;
+            }
+            &:hover {
+                background: darken(rgba(233, 43, 43, 1), 10%);
+                box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+                transition: all 0.5s;
+            }
+        }
+    }
+}

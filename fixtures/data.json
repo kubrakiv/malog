@@ -1,0 +1,2393 @@
+[
+  {
+    "model": "base.companybank",
+    "pk": 1,
+    "fields": {
+      "name": "Ceska sporitelna, a.s.",
+      "bank_address": "Olbrachtova 1929/62, 140 000 Praha 4, Czech Republic",
+      "iban_cz": "CZ96 0800 0000 0000 0785 6952",
+      "iban_eur": "CZ78 0800 0000 0000 0785 7082",
+      "account_number_cz": "7856952/0800",
+      "account_number_eur": "7857082/0800",
+      "swift_code": "GIBACZPX",
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.company",
+    "pk": 1,
+    "fields": {
+      "name": "DELTA LOGISTICS S.R.O.",
+      "nip_number": "24295540",
+      "vat_number": "CZ24295540",
+      "phone": "607106698, 602305069",
+      "email": "info@deltalogistics.cz",
+      "website": "https://deltalogistics.cz/",
+      "post_address": "Kodymova 2536/14 Stodulky, 158 00 Praha 5, Czech Republic",
+      "bank": null
+    }
+  },
+  {
+    "model": "base.country",
+    "pk": 1,
+    "fields": { "name": "Czech Republic", "short_name": "CZ" }
+  },
+  {
+    "model": "base.country",
+    "pk": 2,
+    "fields": { "name": "Italy", "short_name": "IT" }
+  },
+  {
+    "model": "base.country",
+    "pk": 3,
+    "fields": { "name": "Germany", "short_name": "DE" }
+  },
+  {
+    "model": "base.country",
+    "pk": 4,
+    "fields": { "name": "Spain", "short_name": "ES" }
+  },
+  {
+    "model": "base.country",
+    "pk": 5,
+    "fields": { "name": "Austria", "short_name": "AT" }
+  },
+  {
+    "model": "base.country",
+    "pk": 6,
+    "fields": { "name": "Ukraine", "short_name": "UA" }
+  },
+  {
+    "model": "base.country",
+    "pk": 7,
+    "fields": { "name": "Netherlands", "short_name": "NL" }
+  },
+  {
+    "model": "base.country",
+    "pk": 8,
+    "fields": { "name": "Poland", "short_name": "PL" }
+  },
+  {
+    "model": "base.country",
+    "pk": 9,
+    "fields": { "name": "Romania", "short_name": "RO" }
+  },
+  {
+    "model": "base.country",
+    "pk": 10,
+    "fields": { "name": "Slovenia", "short_name": "SI" }
+  },
+  {
+    "model": "base.country",
+    "pk": 11,
+    "fields": { "name": "Slovakia", "short_name": "SK" }
+  },
+  {
+    "model": "base.country",
+    "pk": 12,
+    "fields": { "name": "Luxembourg", "short_name": "LU" }
+  },
+  {
+    "model": "base.country",
+    "pk": 13,
+    "fields": { "name": "Hungary", "short_name": "HU" }
+  },
+  {
+    "model": "base.country",
+    "pk": 14,
+    "fields": { "name": "France", "short_name": "FR" }
+  },
+  {
+    "model": "base.country",
+    "pk": 15,
+    "fields": { "name": "Switzerland", "short_name": "CH" }
+  },
+  {
+    "model": "base.country",
+    "pk": 16,
+    "fields": { "name": "Bulgaria", "short_name": "BG" }
+  },
+  {
+    "model": "base.country",
+    "pk": 17,
+    "fields": { "name": "Belgium", "short_name": "BE" }
+  },
+  {
+    "model": "base.currency",
+    "pk": 1,
+    "fields": { "name": "Euro", "short_name": "EUR" }
+  },
+  {
+    "model": "base.currency",
+    "pk": 2,
+    "fields": { "name": "Czech koruna", "short_name": "CZK" }
+  },
+  {
+    "model": "base.currency",
+    "pk": 3,
+    "fields": { "name": "Ukrainian hryvnia", "short_name": "UAH" }
+  },
+  {
+    "model": "base.currency",
+    "pk": 4,
+    "fields": { "name": "United States dollar", "short_name": "USD" }
+  },
+  { "model": "base.pointcompany", "pk": 1, "fields": { "name": "UKRPOST" } },
+  {
+    "model": "base.pointcompany",
+    "pk": 2,
+    "fields": { "name": "Kubrak Corp" }
+  },
+  {
+    "model": "base.pointcompany",
+    "pk": 4,
+    "fields": { "name": "UCC Coffee Benelux BV 4700-8900-SCA" }
+  },
+  { "model": "base.pointcompany", "pk": 5, "fields": { "name": "PRU" } },
+  {
+    "model": "base.pointcompany",
+    "pk": 7,
+    "fields": { "name": "Mapei Spa Italy" }
+  },
+  {
+    "model": "base.pointcompany",
+    "pk": 8,
+    "fields": { "name": "Smidl s.r.o." }
+  },
+  {
+    "model": "base.pointcompany",
+    "pk": 9,
+    "fields": { "name": "Mountfield a.s." }
+  },
+  {
+    "model": "base.pointcompany",
+    "pk": 10,
+    "fields": { "name": "Autodoprava Kotlan" }
+  },
+  { "model": "base.pointcompany", "pk": 13, "fields": { "name": "MLW" } },
+  { "model": "base.pointcompany", "pk": 14, "fields": { "name": "╨хяЄЁрэё" } },
+  {
+    "model": "base.pointcompany",
+    "pk": 15,
+    "fields": { "name": "└уЁюьрЄ ёъырф ╣5" }
+  },
+  {
+    "model": "base.pointcompany",
+    "pk": 16,
+    "fields": { "name": "└уЁюьрЄ ёъырф ╣4" }
+  },
+  { "model": "base.pointcompany", "pk": 17, "fields": { "name": "└├╨╬╠└╥" } },
+  { "model": "base.pointcompany", "pk": 18, "fields": { "name": "" } },
+  {
+    "model": "base.pointcompany",
+    "pk": 19,
+    "fields": { "name": "Mayr-Melnhof Holz Paskov s.r.o." }
+  },
+  {
+    "model": "base.pointcompany",
+    "pk": 20,
+    "fields": { "name": "B Timber Trade SRL" }
+  },
+  {
+    "model": "base.trailer",
+    "pk": 1,
+    "fields": {
+      "plates": "4SA5874",
+      "brand": "Krone",
+      "entry_date": "2017-08-21T12:00:00Z",
+      "end_date": null,
+      "vin_code": "WKESD000000759428",
+      "year": 2017,
+      "entry_mileage": "0",
+      "price": "21100.00"
+    }
+  },
+  {
+    "model": "base.trailer",
+    "pk": 2,
+    "fields": {
+      "plates": "4SA5875",
+      "brand": "Krone",
+      "entry_date": "2017-08-21T12:00:00Z",
+      "end_date": null,
+      "vin_code": "WKESD000000759424",
+      "year": 2017,
+      "entry_mileage": "0",
+      "price": "21100.00"
+    }
+  },
+  {
+    "model": "base.trailer",
+    "pk": 3,
+    "fields": {
+      "plates": "9AF1016",
+      "brand": "Krone",
+      "entry_date": "2021-04-12T12:00:00Z",
+      "end_date": null,
+      "vin_code": "WKESD000001053798",
+      "year": 2023,
+      "entry_mileage": "111",
+      "price": "29300.00"
+    }
+  },
+  {
+    "model": "base.trailer",
+    "pk": 13,
+    "fields": {
+      "plates": "9AF1015",
+      "brand": "Krone",
+      "entry_date": "2023-12-12T00:00:00Z",
+      "end_date": null,
+      "vin_code": "WKESD000001053797",
+      "year": 2023,
+      "entry_mileage": "0",
+      "price": "29300.00"
+    }
+  },
+  {
+    "model": "base.trailer",
+    "pk": 14,
+    "fields": {
+      "plates": "9AE9464",
+      "brand": "Krone",
+      "entry_date": "2023-07-25T00:00:00Z",
+      "end_date": null,
+      "vin_code": "WKESD000001053671",
+      "year": 2023,
+      "entry_mileage": "501783",
+      "price": "33300.00"
+    }
+  },
+  {
+    "model": "base.trailer",
+    "pk": 15,
+    "fields": {
+      "plates": "9AE8875",
+      "brand": "Krone",
+      "entry_date": "2023-05-30T00:00:00Z",
+      "end_date": null,
+      "vin_code": "WKESD000001053698",
+      "year": 2023,
+      "entry_mileage": "509829",
+      "price": "33300.00"
+    }
+  },
+  {
+    "model": "base.truck",
+    "pk": 2,
+    "fields": {
+      "plates": "3SR1953",
+      "brand": "Scania",
+      "model": "R450",
+      "entry_date": null,
+      "end_date": null,
+      "vin_code": "YS2R4X20005474396",
+      "year": 2012,
+      "entry_mileage": null,
+      "price": "70000.00",
+      "gps_id": "06f6237c-496c-11ed-8f49-afad4c805779",
+      "driver": 7,
+      "trailer": 3
+    }
+  },
+  {
+    "model": "base.truck",
+    "pk": 5,
+    "fields": {
+      "plates": "3SR2381",
+      "brand": "Scania",
+      "model": "R450",
+      "entry_date": "2017-08-08T00:00:00Z",
+      "end_date": "2024-11-03T00:00:00Z",
+      "vin_code": "YS2R4X20005474444",
+      "year": 2017,
+      "entry_mileage": "888",
+      "price": "75000.00",
+      "gps_id": "2388ac7c-5c21-11ed-91e6-8b2679b886f4",
+      "driver": 8,
+      "trailer": 2
+    }
+  },
+  {
+    "model": "base.truck",
+    "pk": 13,
+    "fields": {
+      "plates": "6SF4310",
+      "brand": "Scania",
+      "model": "R450",
+      "entry_date": "2024-04-12T00:00:00Z",
+      "end_date": null,
+      "vin_code": "YS2R4X20005561173",
+      "year": 2019,
+      "entry_mileage": "519030",
+      "price": "57000.00",
+      "gps_id": "eb328ae6-77db-11ee-8902-1b9b128e0a6a",
+      "driver": 4,
+      "trailer": 13
+    }
+  },
+  {
+    "model": "base.truck",
+    "pk": 14,
+    "fields": {
+      "plates": "6E20185",
+      "brand": "Scania",
+      "model": "R450",
+      "entry_date": "2023-07-25T00:00:00Z",
+      "end_date": null,
+      "vin_code": "YS2R4X20005548565",
+      "year": 2019,
+      "entry_mileage": "501777",
+      "price": "59000.00",
+      "gps_id": "26291866-1712-11ee-be8b-632f9f46484e",
+      "driver": 9,
+      "trailer": 14
+    }
+  },
+  {
+    "model": "base.truck",
+    "pk": 15,
+    "fields": {
+      "plates": "6E20189",
+      "brand": "Scania",
+      "model": "R450",
+      "entry_date": "2023-05-30T00:00:00Z",
+      "end_date": null,
+      "vin_code": "YS2R4X20005548392",
+      "year": 2019,
+      "entry_mileage": "509670",
+      "price": "62000.00",
+      "gps_id": "16e86c18-f60f-11ed-8b40-4f36cec67afb",
+      "driver": 13,
+      "trailer": 15
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 3,
+    "fields": {
+      "truck": 2,
+      "driver_profile": 7,
+      "start_date": "2024-11-01T21:49:45.669Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 4,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 10,
+      "start_date": "2024-11-02T11:44:56.855Z",
+      "end_date": "2024-11-02T11:45:09.005Z",
+      "is_active": false
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 5,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 11,
+      "start_date": "2024-11-02T11:45:09.007Z",
+      "end_date": "2024-11-02T15:11:07.299Z",
+      "is_active": false
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 6,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 11,
+      "start_date": "2024-11-02T14:59:45.759Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 7,
+    "fields": {
+      "truck": 2,
+      "driver_profile": 7,
+      "start_date": "2024-11-02T15:01:16.838Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 8,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 11,
+      "start_date": "2024-11-02T15:02:38.686Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 9,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 11,
+      "start_date": "2024-11-02T15:02:57.439Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 10,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 11,
+      "start_date": "2024-11-02T15:03:12.460Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 11,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 5,
+      "start_date": "2024-11-02T15:11:07.307Z",
+      "end_date": "2024-11-02T15:12:40.596Z",
+      "is_active": false
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 12,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T15:12:40.610Z",
+      "end_date": "2024-11-02T22:46:26.357Z",
+      "is_active": false
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 13,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T15:12:57.972Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 14,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T15:21:39.750Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 15,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T15:22:10.063Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 16,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T15:22:48.732Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 17,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T15:23:14.442Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 18,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T15:25:03.987Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 19,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T15:30:20.272Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 20,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T15:32:21.722Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 21,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T22:04:17.953Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 23,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T22:33:59.414Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 24,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 6,
+      "start_date": "2024-11-02T22:45:53.567Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 25,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 8,
+      "start_date": "2024-11-02T22:46:26.361Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 26,
+    "fields": {
+      "truck": 13,
+      "driver_profile": 5,
+      "start_date": "2024-11-08T17:30:35.226Z",
+      "end_date": "2024-11-23T11:58:31.270Z",
+      "is_active": false
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 27,
+    "fields": {
+      "truck": 13,
+      "driver_profile": 4,
+      "start_date": "2024-11-23T11:58:31.281Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 28,
+    "fields": {
+      "truck": 14,
+      "driver_profile": 10,
+      "start_date": "2024-11-30T11:11:29.513Z",
+      "end_date": "2024-11-30T11:37:05.428Z",
+      "is_active": false
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 29,
+    "fields": {
+      "truck": 14,
+      "driver_profile": 9,
+      "start_date": "2024-11-30T11:37:05.428Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 30,
+    "fields": {
+      "truck": 15,
+      "driver_profile": 13,
+      "start_date": "2024-11-30T14:29:24.467Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 37,
+    "fields": {
+      "truck": 13,
+      "driver_profile": 4,
+      "start_date": "2024-11-30T23:44:22.005Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 38,
+    "fields": {
+      "truck": 2,
+      "driver_profile": 7,
+      "start_date": "2024-11-30T23:45:19.507Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.driverassignment",
+    "pk": 39,
+    "fields": {
+      "truck": 5,
+      "driver_profile": 8,
+      "start_date": "2024-11-30T23:45:33.309Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 3,
+    "fields": {
+      "truck": 2,
+      "trailer": 3,
+      "start_date": "2024-10-27T14:51:34.916Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 6,
+    "fields": {
+      "truck": 2,
+      "trailer": 3,
+      "start_date": "2024-11-01T21:49:45.669Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 7,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T11:44:56.853Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 8,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T11:45:09.006Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 9,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T14:59:45.759Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 10,
+    "fields": {
+      "truck": 2,
+      "trailer": 3,
+      "start_date": "2024-11-02T15:01:16.835Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 11,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:02:38.686Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 12,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:02:57.439Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 13,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:03:12.458Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 14,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:11:07.299Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 15,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:12:40.610Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 16,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:12:57.969Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 17,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:21:39.750Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 18,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:22:10.063Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 19,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:22:48.732Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 20,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:23:14.442Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 21,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:25:03.977Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 22,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:30:20.270Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 23,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T15:32:21.722Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 24,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T22:04:17.951Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 26,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T22:33:59.414Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 27,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T22:45:53.567Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 28,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-02T22:46:26.360Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 29,
+    "fields": {
+      "truck": 13,
+      "trailer": 13,
+      "start_date": "2024-11-08T17:30:35.221Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 30,
+    "fields": {
+      "truck": 13,
+      "trailer": 13,
+      "start_date": "2024-11-23T11:58:31.278Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 31,
+    "fields": {
+      "truck": 14,
+      "trailer": 14,
+      "start_date": "2024-11-30T11:11:29.508Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 32,
+    "fields": {
+      "truck": 14,
+      "trailer": 14,
+      "start_date": "2024-11-30T11:37:05.428Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 33,
+    "fields": {
+      "truck": 15,
+      "trailer": 15,
+      "start_date": "2024-11-30T14:27:11.937Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 34,
+    "fields": {
+      "truck": 15,
+      "trailer": 15,
+      "start_date": "2024-11-30T14:29:24.467Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 41,
+    "fields": {
+      "truck": 13,
+      "trailer": 13,
+      "start_date": "2024-11-30T23:44:22.001Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 42,
+    "fields": {
+      "truck": 2,
+      "trailer": 3,
+      "start_date": "2024-11-30T23:45:19.507Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.trailerassignment",
+    "pk": 43,
+    "fields": {
+      "truck": 5,
+      "trailer": 2,
+      "start_date": "2024-11-30T23:45:33.308Z",
+      "end_date": null,
+      "is_active": true
+    }
+  },
+  {
+    "model": "base.paymenttype",
+    "pk": 1,
+    "fields": { "name": "by originals" }
+  },
+  { "model": "base.paymenttype", "pk": 2, "fields": { "name": "by copies" } },
+  { "model": "base.platform", "pk": 1, "fields": { "name": "TIMOCOM" } },
+  { "model": "base.platform", "pk": 2, "fields": { "name": "ASSTRA" } },
+  { "model": "base.platform", "pk": 3, "fields": { "name": "LKW" } },
+  { "model": "base.platform", "pk": 4, "fields": { "name": "AGROMAT" } },
+  { "model": "base.platform", "pk": 5, "fields": { "name": "RAAL" } },
+  { "model": "base.platform", "pk": 6, "fields": { "name": "SENNDER" } },
+  {
+    "model": "base.customer",
+    "pk": 1,
+    "fields": {
+      "name": "PVK Logistics s.r.o.",
+      "nip_number": "CZ28456947",
+      "vat_number": null,
+      "email": "fakturace@pvk-logistics.eu",
+      "website": "www.pvk-logistics.com",
+      "post_address": null,
+      "created_at": "2024-09-08T04:34:19.865Z"
+    }
+  },
+  {
+    "model": "base.customer",
+    "pk": 6,
+    "fields": {
+      "name": "NOVAS",
+      "nip_number": "UA12345678",
+      "vat_number": null,
+      "email": "novas@mail.com",
+      "website": "www.novas.com",
+      "post_address": "Havrylyshyna street 10",
+      "created_at": "2024-10-15T21:11:13.104Z"
+    }
+  },
+  {
+    "model": "base.customer",
+    "pk": 7,
+    "fields": {
+      "name": "AGROMAT",
+      "nip_number": "UA1234567890",
+      "vat_number": "9999999",
+      "email": "agromat@agromat.ua",
+      "website": "www.agromat.ua",
+      "post_address": "╧ЁюёяхъЄ ┴хЁхёЄхщё№ъшщ, 89-└",
+      "created_at": "2024-10-20T13:35:31.774Z"
+    }
+  },
+  {
+    "model": "base.customer",
+    "pk": 8,
+    "fields": {
+      "name": "HOPI s.r.o.",
+      "nip_number": "45356700",
+      "vat_number": "CZ45356700",
+      "email": "csojazlovice@hopi.cz",
+      "website": "https://hopilogistics.eu/",
+      "post_address": "CSO Jazlovice, Zdebradska 74, 251 01 Ricany - Jazlovice, Czech Republic",
+      "created_at": "2024-11-17T10:06:22.705Z"
+    }
+  },
+  {
+    "model": "base.customer",
+    "pk": 9,
+    "fields": {
+      "name": "LKW WALTER",
+      "nip_number": "ATU19208701",
+      "vat_number": "ATU19208701",
+      "email": "austria@lkw-walter.com",
+      "website": "https://www.lkw-walter.com/",
+      "post_address": "",
+      "created_at": "2024-11-30T11:34:59.862Z"
+    }
+  },
+  {
+    "model": "base.customermanager",
+    "pk": 1,
+    "fields": {
+      "full_name": "Jartimovv Klara",
+      "position": "Transport Manager",
+      "phone": "+420770148113",
+      "email": "klara.jartimova@pvk-logistics.eu",
+      "customer": 1,
+      "created_at": "2024-09-08T04:35:00.470Z"
+    }
+  },
+  {
+    "model": "base.customermanager",
+    "pk": 3,
+    "fields": {
+      "full_name": "Ivan Kubrak",
+      "position": "Transport Manager",
+      "phone": "+380504186484",
+      "email": "kubrak.ivan@gmail.com",
+      "customer": 6,
+      "created_at": "2024-10-17T07:29:52.807Z"
+    }
+  },
+  {
+    "model": "base.customermanager",
+    "pk": 31,
+    "fields": {
+      "full_name": "Maylo Yaroslav",
+      "position": "Logistics Manager",
+      "phone": "+4206071066986",
+      "email": "maylo.ya@agromat.ua",
+      "customer": 6,
+      "created_at": "2024-10-21T21:57:00.480Z"
+    }
+  },
+  {
+    "model": "base.customermanager",
+    "pk": 32,
+    "fields": {
+      "full_name": "Kubrak Ivan",
+      "position": "Transport Manager",
+      "phone": "+380504186484",
+      "email": "kubrak.ivan@gmail.com",
+      "customer": 7,
+      "created_at": "2024-10-26T13:36:22.102Z"
+    }
+  },
+  {
+    "model": "base.customermanager",
+    "pk": 33,
+    "fields": {
+      "full_name": "Leona Ministrova",
+      "position": "Transportation Dispatcher",
+      "phone": "+420 739 000 390",
+      "email": "lministrova@hopi.cz",
+      "customer": 8,
+      "created_at": "2024-11-17T10:08:52.331Z"
+    }
+  },
+  {
+    "model": "base.customermanager",
+    "pk": 34,
+    "fields": {
+      "full_name": "Natalia Jevdjenicova",
+      "position": "Transportation Manager",
+      "phone": "+43 5 7777-2944",
+      "email": "jevdjenicova@lkw-walter.com",
+      "customer": 9,
+      "created_at": "2024-11-30T11:35:22.931Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 4,
+    "fields": {
+      "country": 17,
+      "postal_code": "8701",
+      "city": "Bolsward",
+      "street": "Koopman Heeresweg",
+      "street_number": "3",
+      "gps_latitude": "53.0722872",
+      "gps_longitude": "5.5253572",
+      "company_name": 4,
+      "customer": 1,
+      "created_at": "2024-09-08T04:41:24.117Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 5,
+    "fields": {
+      "country": 1,
+      "postal_code": "104 00",
+      "city": "Praha 22",
+      "street": "K Netlukam",
+      "street_number": "93",
+      "gps_latitude": "50.0446169",
+      "gps_longitude": "14.6131578",
+      "company_name": 5,
+      "customer": 1,
+      "created_at": "2024-09-08T04:43:44.596Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 14,
+    "fields": {
+      "country": 1,
+      "postal_code": "251 63",
+      "city": "Praha-vychod",
+      "street": "Park",
+      "street_number": "1",
+      "gps_latitude": "49.9417061",
+      "gps_longitude": "14.6559157",
+      "company_name": 2,
+      "customer": 1,
+      "created_at": "2024-09-08T19:48:33.864Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 15,
+    "fields": {
+      "country": 2,
+      "postal_code": "20060",
+      "city": "Dresano",
+      "street": "Strada Provinciale 159",
+      "street_number": "1",
+      "gps_latitude": "45.3719518",
+      "gps_longitude": "9.3595033",
+      "company_name": 7,
+      "customer": 1,
+      "created_at": "2024-09-09T07:44:50.876Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 16,
+    "fields": {
+      "country": 1,
+      "postal_code": "566 01",
+      "city": "Okres Usti nad Orlici",
+      "street": "Vostice",
+      "street_number": "931",
+      "gps_latitude": "49.935891",
+      "gps_longitude": "16.1712672",
+      "company_name": 8,
+      "customer": 8,
+      "created_at": "2024-11-17T12:13:45.660Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 18,
+    "fields": {
+      "country": 1,
+      "postal_code": "251 63",
+      "city": "Kunice",
+      "street": "Kunice",
+      "street_number": "308",
+      "gps_latitude": "49.941151917650096",
+      "gps_longitude": "14.66345747621991",
+      "company_name": 9,
+      "customer": 8,
+      "created_at": "2024-11-17T12:21:48.896Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 19,
+    "fields": {
+      "country": 1,
+      "postal_code": "769 01",
+      "city": "Kromeriz",
+      "street": "Palackeho",
+      "street_number": "360",
+      "gps_latitude": "49.3261502",
+      "gps_longitude": "17.5522513",
+      "company_name": 10,
+      "customer": 8,
+      "created_at": "2024-11-24T08:48:44.727Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 25,
+    "fields": {
+      "country": 6,
+      "postal_code": "65000",
+      "city": "Odes'ka city council",
+      "street": "Bohdana Khmel'nyts'koho Street",
+      "street_number": "49",
+      "gps_latitude": "46.4636929",
+      "gps_longitude": "30.7167889",
+      "company_name": 13,
+      "customer": 6,
+      "created_at": "2024-11-26T12:34:47.357Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 26,
+    "fields": {
+      "country": 6,
+      "postal_code": "08130",
+      "city": "Chaiky",
+      "street": "Valentyny Chaiky Street",
+      "street_number": "10",
+      "gps_latitude": "50.44051049999999",
+      "gps_longitude": "30.3003737",
+      "company_name": 14,
+      "customer": 7,
+      "created_at": "2024-11-26T12:48:29.260Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 29,
+    "fields": {
+      "country": null,
+      "postal_code": "",
+      "city": "",
+      "street": "",
+      "street_number": "",
+      "gps_latitude": "",
+      "gps_longitude": "",
+      "company_name": 18,
+      "customer": null,
+      "created_at": "2024-11-30T11:27:26.032Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 30,
+    "fields": {
+      "country": 1,
+      "postal_code": "73943",
+      "city": "Staric",
+      "street": "Staric",
+      "street_number": "544",
+      "gps_latitude": "49.70549219999999",
+      "gps_longitude": "18.2899221",
+      "company_name": 19,
+      "customer": 8,
+      "created_at": "2024-11-30T11:32:26.007Z"
+    }
+  },
+  {
+    "model": "base.point",
+    "pk": 31,
+    "fields": {
+      "country": 2,
+      "postal_code": "41014",
+      "city": "Castelvetro di Modena",
+      "street": "Via Montegrappa",
+      "street_number": "1820",
+      "gps_latitude": "44.5264314",
+      "gps_longitude": "10.9191964",
+      "company_name": 20,
+      "customer": 9,
+      "created_at": "2024-11-30T11:36:09.002Z"
+    }
+  },
+  {
+    "model": "base.order",
+    "pk": 11,
+    "fields": {
+      "number": "11-09-24",
+      "order_number": "156-654-7821",
+      "price": "27000.00",
+      "market_price": null,
+      "payment_type": 2,
+      "currency": 2,
+      "vat": true,
+      "payment_period": 30,
+      "rout": null,
+      "distance": 914,
+      "cargo_name": "goods",
+      "cargo_weight": "20",
+      "loading_type": "back",
+      "trailer_type": "tautliner",
+      "user": 3,
+      "platform": 5,
+      "customer": 1,
+      "customer_manager": 1,
+      "truck": 2,
+      "driver": 7,
+      "created_at": "2024-09-09T13:05:22.343Z"
+    }
+  },
+  {
+    "model": "base.order",
+    "pk": 15,
+    "fields": {
+      "number": "2-11-24",
+      "order_number": "777-777-7777",
+      "price": "1500.00",
+      "market_price": "2000.00",
+      "payment_type": 2,
+      "currency": 1,
+      "vat": false,
+      "payment_period": 60,
+      "rout": null,
+      "distance": 881,
+      "cargo_name": "╧ышЄър",
+      "cargo_weight": "24.5",
+      "loading_type": "┴юъютх",
+      "trailer_type": "╥хэЄ",
+      "user": 3,
+      "platform": 1,
+      "customer": 6,
+      "customer_manager": 31,
+      "truck": 13,
+      "driver": 5,
+      "created_at": "2024-11-10T15:52:14.656Z"
+    }
+  },
+  {
+    "model": "base.order",
+    "pk": 24,
+    "fields": {
+      "number": "4-11-24",
+      "order_number": "6260511",
+      "price": "260.00",
+      "market_price": null,
+      "payment_type": 2,
+      "currency": 1,
+      "vat": true,
+      "payment_period": 60,
+      "rout": null,
+      "distance": 163,
+      "cargo_name": "Єэя",
+      "cargo_weight": "24",
+      "loading_type": "┴юъютх",
+      "trailer_type": "╥хэЄ",
+      "user": 3,
+      "platform": 1,
+      "customer": 8,
+      "customer_manager": 33,
+      "truck": 5,
+      "driver": 8,
+      "created_at": "2024-11-17T10:45:55.931Z"
+    }
+  },
+  {
+    "model": "base.order",
+    "pk": 26,
+    "fields": {
+      "number": "6-11-24",
+      "order_number": "0378-411-0103",
+      "price": "1200.00",
+      "market_price": null,
+      "payment_type": 2,
+      "currency": 1,
+      "vat": false,
+      "payment_period": 25,
+      "rout": null,
+      "distance": 1076,
+      "cargo_name": "─хЁхтю",
+      "cargo_weight": "24.150",
+      "loading_type": "╟рфэ║",
+      "trailer_type": "╥хэЄ",
+      "user": 3,
+      "platform": 3,
+      "customer": 9,
+      "customer_manager": 34,
+      "truck": 14,
+      "driver": 9,
+      "created_at": "2024-11-30T11:23:55.608Z"
+    }
+  },
+  { "model": "base.filetype", "pk": 1, "fields": { "name": "Invoice" } },
+  { "model": "base.filetype", "pk": 2, "fields": { "name": "CMR" } },
+  { "model": "base.filetype", "pk": 3, "fields": { "name": "Order" } },
+  { "model": "base.filetype", "pk": 4, "fields": { "name": "Other" } },
+  {
+    "model": "base.orderfile",
+    "pk": 11,
+    "fields": {
+      "order": 24,
+      "file_type": 1,
+      "file": "order_files/Invoice_DL000000001_13.11.2024.pdf",
+      "uploaded_at": "2024-11-20T11:24:07.618Z"
+    }
+  },
+  {
+    "model": "base.orderfile",
+    "pk": 12,
+    "fields": {
+      "order": 24,
+      "file_type": 3,
+      "file": "order_files/Evgen_Serivlja_Data_Analyst_ENG.pdf",
+      "uploaded_at": "2024-11-21T23:49:43.348Z"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 1,
+    "fields": { "name": "Loading", "created_at": "2024-09-07T07:47:07.123Z" }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 2,
+    "fields": { "name": "Unloading", "created_at": "2024-09-07T07:47:12.922Z" }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 3,
+    "fields": { "name": "Service", "created_at": "2024-09-25T21:41:55.208Z" }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 4,
+    "fields": { "name": "Driving", "created_at": "2024-09-25T21:42:04.056Z" }
+  },
+  {
+    "model": "base.taskstatus",
+    "pk": 1,
+    "fields": {
+      "name": "Truck arrived for loading",
+      "created_at": "2023-11-19T15:21:57.609Z"
+    }
+  },
+  {
+    "model": "base.taskstatus",
+    "pk": 2,
+    "fields": {
+      "name": "Loading started",
+      "created_at": "2023-11-19T15:22:03.159Z"
+    }
+  },
+  {
+    "model": "base.taskstatus",
+    "pk": 3,
+    "fields": {
+      "name": "Loading finished",
+      "created_at": "2023-11-19T15:22:08.267Z"
+    }
+  },
+  {
+    "model": "base.taskstatus",
+    "pk": 4,
+    "fields": {
+      "name": "Truck arrived for unloading",
+      "created_at": "2023-11-19T15:32:10.247Z"
+    }
+  },
+  {
+    "model": "base.taskstatus",
+    "pk": 5,
+    "fields": {
+      "name": "Unloading started",
+      "created_at": "2023-11-19T15:22:18.845Z"
+    }
+  },
+  {
+    "model": "base.taskstatus",
+    "pk": 6,
+    "fields": {
+      "name": "Unloading finished",
+      "created_at": "2023-11-19T15:22:23.550Z"
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 8,
+    "fields": {
+      "title": "IT-20060 Dresano",
+      "start_date": "2024-09-09",
+      "start_time": "13:00:00",
+      "end_date": "2024-09-09",
+      "end_time": "05:00:00",
+      "order": 11,
+      "point": 15,
+      "truck": 2,
+      "driver": 7,
+      "type": 1,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 15,
+    "fields": {
+      "title": "CZ-251 63 Praha-vychod",
+      "start_date": "2024-09-11",
+      "start_time": "11:00:00",
+      "end_date": "2024-09-11",
+      "end_time": "15:00:00",
+      "order": 11,
+      "point": 14,
+      "truck": 2,
+      "driver": 7,
+      "type": 2,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 34,
+    "fields": {
+      "title": "╪шэюьюэЄрц",
+      "start_date": "2024-11-07",
+      "start_time": "05:00:00",
+      "end_date": null,
+      "end_time": null,
+      "order": null,
+      "point": null,
+      "truck": 5,
+      "driver": 8,
+      "type": 3,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 37,
+    "fields": {
+      "title": "CZ-CZ",
+      "start_date": "2024-11-06",
+      "start_time": null,
+      "end_date": null,
+      "end_time": null,
+      "order": null,
+      "point": null,
+      "truck": 5,
+      "driver": 8,
+      "type": 4,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 52,
+    "fields": {
+      "title": "CZ-104 00 Praha 22",
+      "start_date": "2024-11-11",
+      "start_time": "06:00:00",
+      "end_date": "2024-11-11",
+      "end_time": "10:00:00",
+      "order": 15,
+      "point": 5,
+      "truck": 13,
+      "driver": 5,
+      "type": 1,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 53,
+    "fields": {
+      "title": "BE-8701 Bolsward",
+      "start_date": "2024-11-15",
+      "start_time": "09:00:00",
+      "end_date": "2024-11-15",
+      "end_time": "09:30:00",
+      "order": 15,
+      "point": 4,
+      "truck": 13,
+      "driver": 5,
+      "type": 2,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 54,
+    "fields": {
+      "title": "CZ-BE",
+      "start_date": "2024-11-12",
+      "start_time": "10:00:00",
+      "end_date": null,
+      "end_time": null,
+      "order": null,
+      "point": null,
+      "truck": 13,
+      "driver": 5,
+      "type": 4,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 55,
+    "fields": {
+      "title": "CZ-BE",
+      "start_date": null,
+      "start_time": null,
+      "end_date": null,
+      "end_time": null,
+      "order": null,
+      "point": null,
+      "truck": 13,
+      "driver": 5,
+      "type": 4,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 56,
+    "fields": {
+      "title": "CZ-BE",
+      "start_date": "2024-11-13",
+      "start_time": null,
+      "end_date": null,
+      "end_time": null,
+      "order": null,
+      "point": null,
+      "truck": 13,
+      "driver": 5,
+      "type": 4,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 57,
+    "fields": {
+      "title": "CZ-BE",
+      "start_date": "2024-11-14",
+      "start_time": null,
+      "end_date": null,
+      "end_time": null,
+      "order": null,
+      "point": null,
+      "truck": 13,
+      "driver": 5,
+      "type": 4,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 77,
+    "fields": {
+      "title": "CZ-251 63 Kunice",
+      "start_date": "2024-11-13",
+      "start_time": "18:00:00",
+      "end_date": "2024-11-13",
+      "end_time": "17:30:00",
+      "order": 24,
+      "point": 18,
+      "truck": 5,
+      "driver": 8,
+      "type": 2,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 85,
+    "fields": {
+      "title": "CZ-566 01 Okres Usti nad Orlici",
+      "start_date": "2024-11-11",
+      "start_time": "10:00:00",
+      "end_date": "2024-11-11",
+      "end_time": "12:00:00",
+      "order": 24,
+      "point": 16,
+      "truck": 5,
+      "driver": 8,
+      "type": 1,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 86,
+    "fields": {
+      "title": "CZ-CZ",
+      "start_date": "2024-11-12",
+      "start_time": null,
+      "end_date": null,
+      "end_time": null,
+      "order": null,
+      "point": null,
+      "truck": 5,
+      "driver": 8,
+      "type": 4,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 87,
+    "fields": {
+      "title": "CZ-73943 Staric",
+      "start_date": "2024-11-29",
+      "start_time": "11:00:00",
+      "end_date": "2024-11-29",
+      "end_time": "12:30:00",
+      "order": 26,
+      "point": 30,
+      "truck": 14,
+      "driver": 9,
+      "type": 1,
+      "status": null
+    }
+  },
+  {
+    "model": "base.task",
+    "pk": 88,
+    "fields": {
+      "title": "IT-41014 Castelvetro di Modena",
+      "start_date": "2024-12-02",
+      "start_time": "06:30:00",
+      "end_date": null,
+      "end_time": null,
+      "order": 26,
+      "point": 31,
+      "truck": 14,
+      "driver": 9,
+      "type": 2,
+      "status": null
+    }
+  },
+  {
+    "model": "base.invoice",
+    "pk": 1,
+    "fields": {
+      "number": "DL000000001",
+      "service_name": "CZ-566 01 Okres Usti nad Orlici - CZ-251 63 Kunice",
+      "truck": "3SR2381",
+      "trailer": "4SA5875",
+      "loading_date": "2024-11-11",
+      "unloading_date": "2024-11-13",
+      "order_number": "6260511",
+      "company": 1,
+      "order": 24,
+      "price": "260.00",
+      "vat": "54.60",
+      "total_price": "314.60",
+      "currency": 1,
+      "currency_rate": "24.725",
+      "customer": 8,
+      "invoicing_date": "2024-11-13",
+      "vat_date": "2024-11-13",
+      "due_date": "2025-01-12",
+      "send_date": null,
+      "accepted_date": null,
+      "payment_date": null,
+      "created_at": "2024-11-17T13:55:18.094Z",
+      "user": 3
+    }
+  },
+  {
+    "model": "base.invoice",
+    "pk": 6,
+    "fields": {
+      "number": "DL000000003",
+      "service_name": "CZ-104 00 Praha 22 - BE-8701 Bolsward",
+      "truck": "6SF4310",
+      "trailer": "9AF1015",
+      "loading_date": "2024-11-11",
+      "unloading_date": "2024-11-15",
+      "order_number": "777-777-7777",
+      "company": 1,
+      "order": 15,
+      "price": "1500.00",
+      "vat": "0.00",
+      "total_price": "1500.00",
+      "currency": 1,
+      "currency_rate": "24.725",
+      "customer": 6,
+      "invoicing_date": "2024-11-15",
+      "vat_date": "2024-11-15",
+      "due_date": "2025-01-14",
+      "send_date": null,
+      "accepted_date": null,
+      "payment_date": null,
+      "created_at": "2024-11-17T22:51:55.042Z",
+      "user": 3
+    }
+  },
+  {
+    "model": "base.invoice",
+    "pk": 9,
+    "fields": {
+      "number": "DL000000006",
+      "service_name": "IT-20060 Dresano - CZ-251 63 Praha-vychod",
+      "truck": "3SR1953",
+      "trailer": "9AF1016",
+      "loading_date": "2024-09-09",
+      "unloading_date": "2024-09-11",
+      "order_number": "",
+      "company": 1,
+      "order": 11,
+      "price": "27000.00",
+      "vat": "5670.00",
+      "total_price": "32670.00",
+      "currency": 2,
+      "currency_rate": "24.725",
+      "customer": 1,
+      "invoicing_date": "2024-09-11",
+      "vat_date": "2024-09-11",
+      "due_date": "2024-10-11",
+      "send_date": null,
+      "accepted_date": null,
+      "payment_date": null,
+      "created_at": "2024-11-19T09:54:58.479Z",
+      "user": 3
+    }
+  },
+  { "model": "user.role", "pk": 1, "fields": { "name": "admin" } },
+  { "model": "user.role", "pk": 2, "fields": { "name": "driver" } },
+  { "model": "user.role", "pk": 3, "fields": { "name": "logist" } },
+  {
+    "model": "user.profile",
+    "pk": 1,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$xdpPs4jbhsKovHMu4f8rdR$impYgGNKMheOv01q0yx83ToGs31DxwHgOiDKlkgV28s=",
+      "last_login": "2024-08-22T07:32:29Z",
+      "is_superuser": true,
+      "username": "kubrak@gmail.com",
+      "first_name": "Ivan",
+      "last_name": "Kubrak",
+      "email": "kubrak@gmail.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-08-22T07:20:00Z",
+      "role": 1,
+      "phone_number": "+380504186484",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 2,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$avJh0rjRoLmYeyeJDIIv9W$TRMNGcSeUW9y1N7s8Yz8pDBmTqJjwfAuyj4VQiJVYwY=",
+      "last_login": "2024-09-25T20:44:31.049Z",
+      "is_superuser": true,
+      "username": "lola@gmail.com",
+      "first_name": "lola",
+      "last_name": "lola",
+      "email": "lola@gmail.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-08-22T08:51:33Z",
+      "role": 1,
+      "phone_number": "123",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 3,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$SVHGXQYjgu0vsFHmdXqWWt$aaLJplGZHEbKD91FJAccD4TdI0HJDsG+RFwqfVfoAso=",
+      "last_login": "2024-11-30T21:44:49.093Z",
+      "is_superuser": true,
+      "username": "ivan@gmail.com",
+      "first_name": "Ivan",
+      "last_name": "Kubrak",
+      "email": "ivan@gmail.com",
+      "is_staff": true,
+      "is_active": true,
+      "date_joined": "2024-09-02T20:14:00Z",
+      "role": 1,
+      "phone_number": "123",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 4,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$THOAeCS4km174cIBfiAW2x$0RMenV1fWapkF810VMX1ow1xNoHrp43oiu+N0xuooSo=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "bereziuk@gmail.com",
+      "first_name": "Sergii",
+      "last_name": "Bereziuk",
+      "email": "bereziuk@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-09-04T08:54:27.602Z",
+      "role": 2,
+      "phone_number": "42-077-346-51-56",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 5,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$6BgevLOH9Luoa2Pc5zzxX1$A5gQbtlTwuyimiDNDmsXQCthteHeScUFdYdmB5F2tVA=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "pyankov@gmail.com",
+      "first_name": "Andrey",
+      "last_name": "Pyankov",
+      "email": "pyankov@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-09-04T19:15:39.585Z",
+      "role": 2,
+      "phone_number": "42-077-419-18-01",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 6,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$mRBwH6IsHJtUa869EBQqnj$Jg7mYpjJXI4g/RgtxQEofWMpQ5DvEHNKTuKcjCmF5Po=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "ryzhak@gmail.com",
+      "first_name": "Volodymyr",
+      "last_name": "Ryzhak",
+      "email": "ryzhak@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-09-04T19:21:15.203Z",
+      "role": 2,
+      "phone_number": "42-060-212-57-53",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 7,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$FVAj4Le8dBD26NExdf0YRs$9OQQx7DFdbKXeUP6r6oBZbTqKjhUd/hL0uDVDONqJj4=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "doronkin@gmail.com",
+      "first_name": "Andrii",
+      "last_name": "Doronkin",
+      "email": "doronkin@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-09-04T21:19:41.681Z",
+      "role": 2,
+      "phone_number": "42-072-293-99-28",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 8,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$39KPDdcKw8iPcj7b5APlYZ$62Lh+7k+AEZ702ys3NGOl1NCF9lZXfUPM9b09/7A/do=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "kopchuk@gmail.com",
+      "first_name": "Oleh",
+      "last_name": "Kopchuk",
+      "email": "kopchuk@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-09-04T21:24:30.693Z",
+      "role": 2,
+      "phone_number": "42-077-405-74-89",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 9,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$JZw28wVBTUX3S7lJdYYgR9$5rVlnFjbdeTbybSByLs7Fq8mIjvPKII4dk6xtFedYZ8=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "kuzbyt@gmail.com",
+      "first_name": "Oleg",
+      "last_name": "Kuzbyt",
+      "email": "kuzbyt@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-09-04T21:36:48.451Z",
+      "role": 2,
+      "phone_number": "42-077-301-04-29",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 10,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$TnRIEQpvGiasCeCBkg3NcF$f0PxZVIChLS8PeWMO6uCz6XMFg4eX2Bm6cTD4R8b5Ls=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "mozhaiko@gmail.com",
+      "first_name": "Volodymyr",
+      "last_name": "Mozhaiko",
+      "email": "mozhaiko@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-09-04T21:44:31.136Z",
+      "role": 2,
+      "phone_number": "42-077-564-32-85",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 11,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$KuEoMOjiCpoGZnmLXCDCnB$OaqBYSejqwT0/tTVXwnrknyIIOtWw31zkCMQ+6OtYDo=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "shopa@gmail.com",
+      "first_name": "Mykhailo",
+      "last_name": "Shopa",
+      "email": "shopa@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-09-04T22:08:47.300Z",
+      "role": 2,
+      "phone_number": "38-066-165-61-50",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 12,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$qVLcAUlhXjoX85kmenUvrw$ilHiDxLE0LvPJ9hyoNyf59xvFxh6xPCD1teAov1geqA=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "shakhraiuk@gmail.com",
+      "first_name": "Ivan",
+      "last_name": "Shakhraiuk",
+      "email": "shakhraiuk@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-09-09T10:57:51.264Z",
+      "role": 2,
+      "phone_number": "42-077-590-81-19",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.profile",
+    "pk": 13,
+    "fields": {
+      "password": "pbkdf2_sha256$600000$5ong2x17AI6qCsDdwNie0k$hw0ggG3LHfU6OyvtBH1Eiqq2ufGzPy2i8eRPHuEuYRQ=",
+      "last_login": null,
+      "is_superuser": false,
+      "username": "zinchenko@gmail.com",
+      "first_name": "Oleksandr",
+      "last_name": "Zinchenko",
+      "email": "zinchenko@gmail.com",
+      "is_staff": false,
+      "is_active": true,
+      "date_joined": "2024-11-30T14:27:58.078Z",
+      "role": 2,
+      "phone_number": "38-067-945-60-02",
+      "groups": [],
+      "user_permissions": []
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 4,
+    "fields": {
+      "image": "images/Bereziuk_Sergiy_PsQOwgz.jpg",
+      "first_name": "Sergii",
+      "last_name": "Bereziuk",
+      "middle_name": null,
+      "full_name": "Sergii Bereziuk",
+      "email": "bereziuk@gmail.com",
+      "phone_number": "42-077-346-51-56",
+      "position": "International driver",
+      "license_series": "EM",
+      "license_number": "393970",
+      "birth_date": "1983-11-06",
+      "started_work": "2021-08-16",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 5,
+    "fields": {
+      "image": "images/Pyankov_Andrey.jpg",
+      "first_name": "Andrey",
+      "last_name": "Pyankov",
+      "middle_name": null,
+      "full_name": "Andrey Pyankov",
+      "email": "pyankov@gmail.com",
+      "phone_number": "42-077-419-18-01",
+      "position": "International driver",
+      "license_series": "EM",
+      "license_number": "659512",
+      "birth_date": "1974-08-11",
+      "started_work": "2020-11-21",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 6,
+    "fields": {
+      "image": "images/Ryzhak.png",
+      "first_name": "Volodymyr",
+      "last_name": "Ryzhak",
+      "middle_name": null,
+      "full_name": "Volodymyr Ryzhak",
+      "email": "ryzhak@gmail.com",
+      "phone_number": "42-060-212-57-53",
+      "position": "International driver",
+      "license_series": "EP",
+      "license_number": "394015",
+      "birth_date": "1970-10-09",
+      "started_work": "2022-03-01",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 7,
+    "fields": {
+      "image": "images/Doronkin.png",
+      "first_name": "Andrii",
+      "last_name": "Doronkin",
+      "middle_name": null,
+      "full_name": "Andrii Doronkin",
+      "email": "doronkin@gmail.com",
+      "phone_number": "42-072-293-99-28",
+      "position": "International driver",
+      "license_series": "EP",
+      "license_number": "127001",
+      "birth_date": "1965-02-20",
+      "started_work": "2022-03-01",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 8,
+    "fields": {
+      "image": "images/Kopchuk.png",
+      "first_name": "Oleh",
+      "last_name": "Kopchuk",
+      "middle_name": null,
+      "full_name": "Oleh Kopchuk",
+      "email": "kopchuk@gmail.com",
+      "phone_number": "42-077-405-74-89",
+      "position": "International driver",
+      "license_series": "EP",
+      "license_number": "393882",
+      "birth_date": "1988-10-23",
+      "started_work": "2022-03-01",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 9,
+    "fields": {
+      "image": "images/Kuzbyt_Oleg.jpg",
+      "first_name": "Oleg",
+      "last_name": "Kuzbyt",
+      "middle_name": null,
+      "full_name": "Oleg Kuzbyt",
+      "email": "kuzbyt@gmail.com",
+      "phone_number": "42-077-301-04-29",
+      "position": "International driver",
+      "license_series": "EQ",
+      "license_number": "711732",
+      "birth_date": "1987-08-23",
+      "started_work": "2024-07-01",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 10,
+    "fields": {
+      "image": "images/Mozhaiko.png",
+      "first_name": "Volodymyr",
+      "last_name": "Mozhaiko",
+      "middle_name": null,
+      "full_name": "Volodymyr Mozhaiko",
+      "email": "mozhaiko@gmail.com",
+      "phone_number": "42-077-564-32-85",
+      "position": "International driver",
+      "license_series": "EP",
+      "license_number": "635377",
+      "birth_date": "1975-04-02",
+      "started_work": "2023-05-11",
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 11,
+    "fields": {
+      "image": "images/Shopa.png",
+      "first_name": "Mykhailo",
+      "last_name": "Shopa",
+      "middle_name": null,
+      "full_name": "Mykhailo Shopa",
+      "email": "shopa@gmail.com",
+      "phone_number": "38-066-165-61-50",
+      "position": "International driver",
+      "license_series": "EN",
+      "license_number": "337196",
+      "birth_date": null,
+      "started_work": null,
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 12,
+    "fields": {
+      "image": "images/Shakhraiuk_PuYJKzh.png",
+      "first_name": "Ivan",
+      "last_name": "Shakhraiuk",
+      "middle_name": null,
+      "full_name": "Ivan Shakhraiuk",
+      "email": "shakhraiuk@gmail.com",
+      "phone_number": "42-077-590-81-19",
+      "position": "International driver",
+      "license_series": "EQ",
+      "license_number": "350165",
+      "birth_date": null,
+      "started_work": null,
+      "finished_work": null,
+      "country": null
+    }
+  },
+  {
+    "model": "user.driverprofile",
+    "pk": 13,
+    "fields": {
+      "image": "images/Zinchenko.png",
+      "first_name": "Oleksandr",
+      "last_name": "Zinchenko",
+      "middle_name": null,
+      "full_name": "Oleksandr Zinchenko",
+      "email": "zinchenko@gmail.com",
+      "phone_number": "38-067-945-60-02",
+      "position": "┬юф│щ ь│цэрЁюфэшщ",
+      "license_series": null,
+      "license_number": null,
+      "birth_date": null,
+      "started_work": null,
+      "finished_work": null,
+      "country": null
+    }
+  }
+]

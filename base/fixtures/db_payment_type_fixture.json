@@ -1,0 +1,16 @@
+[
+{
+  "model": "base.paymenttype",
+  "pk": 1,
+  "fields": {
+    "name": "by originals"
+  }
+},
+{
+  "model": "base.paymenttype",
+  "pk": 2,
+  "fields": {
+    "name": "by copies"
+  }
+}
+]

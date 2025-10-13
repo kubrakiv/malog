@@ -1,0 +1,74 @@
+[
+  {
+    "model": "base.orderstatus",
+    "pk": 1,
+    "fields": {
+      "name": "created",
+      "description": "The order has been created.",
+      "created_at": "2024-12-22T12:30:00Z"
+    }
+  },
+  {
+    "model": "base.orderstatus",
+    "pk": 2,
+    "fields": {
+      "name": "planned",
+      "description": "The route, truck, and driver have been assigned.",
+      "created_at": "2024-12-22T12:30:00Z"
+    }
+  },
+  {
+    "model": "base.orderstatus",
+    "pk": 3,
+    "fields": {
+      "name": "loading_in_progress",
+      "description": "The cargo is being loaded.",
+      "created_at": "2024-12-22T12:30:00Z"
+    }
+  },
+  {
+    "model": "base.orderstatus",
+    "pk": 4,
+    "fields": {
+      "name": "in_transit",
+      "description": "The truck is in transit.",
+      "created_at": "2024-12-22T12:30:00Z"
+    }
+  },
+  {
+    "model": "base.orderstatus",
+    "pk": 5,
+    "fields": {
+      "name": "unloading_in_progress",
+      "description": "The cargo is being unloaded.",
+      "created_at": "2024-12-22T12:30:00Z"
+    }
+  },
+  {
+    "model": "base.orderstatus",
+    "pk": 6,
+    "fields": {
+      "name": "completed",
+      "description": "The transportation is complete.",
+      "created_at": "2024-12-22T12:30:00Z"
+    }
+  },
+  {
+    "model": "base.orderstatus",
+    "pk": 7,
+    "fields": {
+      "name": "documents_sent",
+      "description": "Required documents have been sent.",
+      "created_at": "2024-12-22T12:30:00Z"
+    }
+  },
+  {
+    "model": "base.orderstatus",
+    "pk": 8,
+    "fields": {
+      "name": "paid",
+      "description": "Payment for the order has been received.",
+      "created_at": "2024-12-22T12:30:00Z"
+    }
+  }
+]

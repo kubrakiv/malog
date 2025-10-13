@@ -1,0 +1,226 @@
+@import "../../styles/utils/vars";
+
+.upload-documents {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  background-color: $backgroundcolor;
+
+  &__header {
+    text-align: center;
+    padding: 5px;
+    &-block {
+      font-weight: bold;
+    }
+  }
+  &__row {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__row-block {
+    width: 100%;
+  }
+  &__form-title {
+    font-size: 14px;
+    font-weight: bold;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  &__form-file {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin-bottom: 5px;
+  }
+  &__content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: stretch; // Ensure the children stretch to the full height
+    height: 100%; // Adjust to the max height needed
+    gap: 10px;
+  }
+  &__content-block {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    width: 100%;
+    // height: 100%;
+  }
+  &__content-row-block {
+    border-radius: 4px;
+    background-color: $backgroundcolor;
+    margin: 5px;
+    padding: 5px; // Ensure padding is consistent for both blocks
+    box-sizing: border-box; // Include padding in height calculation
+    flex: 1; // Allow it to grow equally within the container
+    height: 100px;
+
+    &_table {
+      border-radius: 4px;
+      background-color: $backgroundcolor;
+      margin: 5px;
+      padding: 5px; // Ensure padding is consistent for both blocks
+      box-sizing: border-box; // Include padding in height calculation
+      flex: 1; // Allow it to grow equally within the container
+      height: 100%;
+    }
+  }
+}
+
+.form-container {
+  width: 90%;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+
+.form-name {
+  padding: 5px;
+  text-align: center;
+  color: white;
+}
+
+.form__button:first-of-type {
+  display: block;
+  color: red;
+  height: 35px;
+  width: 100px;
+  margin: 10px auto;
+}
+
+.upload-documents-form {
+  &__button {
+    margin: 10px auto;
+    width: 100%;
+    height: 100%;
+    color: red;
+    &:hover {
+      box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14), 0 3px 14px rgba(0, 0, 0, 0.12),
+        0 5px 5px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      z-index: 1;
+      position: relative;
+    }
+  }
+}
+
+.documents-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 3px;
+  margin-bottom: 5px;
+
+  &__header {
+    position: sticky;
+    top: 2px;
+    z-index: 2;
+  }
+
+  &__head {
+    &-row {
+      position: relative;
+      top: -3px;
+      height: 30px;
+      text-align: center;
+      text-transform: uppercase;
+      font-size: 14px;
+      box-shadow: 0 1px 1px rgba(0, 0, 0, 0.14), 0 2px 2px rgba(0, 0, 0, 0.12);
+    }
+    &-th {
+      border-right: 0.5px solid gray;
+      color: white;
+      background-color: $colorGray;
+      font-weight: bold;
+      font-size: 0.8em;
+      padding: 5px;
+
+      &:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+      }
+      &:last-child {
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+    }
+  }
+  &-td {
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  &__body {
+    width: 100%;
+    &-row {
+      font-size: 14px;
+      background-color: #fff;
+      &:last-child {
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14);
+      }
+
+      &:hover {
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.14),
+          0 3px 14px rgba(0, 0, 0, 0.12), 0 5px 5px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        // z-index: 1;
+        position: relative;
+      }
+    }
+    &-td {
+      padding: 5px;
+      text-align: center;
+      border-right: 0.5px solid gray;
+      // white-space: nowrap;
+      font-size: 14px;
+      &-wrap {
+        max-width: 250px;
+        white-space: wrap;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+
+      &:first-child {
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+      }
+      &:last-child {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        border-right: 0;
+      }
+    }
+  }
+  &__btn {
+    padding: 2.5px 5px;
+    color: #fff;
+    border-radius: 4px;
+    border: none;
+    &_edit {
+      background-color: rgba(43, 84, 233, 0.8);
+      &:hover {
+        background: rgba(43, 84, 233, 1);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+    &_delete {
+      background: rgba(233, 43, 43, 0.8);
+      &:hover {
+        background: rgba(233, 43, 43, 1);
+        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
+        transition: all 0.5s;
+        cursor: pointer;
+      }
+    }
+  }
+}

@@ -1,0 +1,148 @@
+.container-page.vacancy-page {
+  .career-header {
+    text-align: center;
+    margin-bottom: 20px;
+    height: 100%;
+
+    &__title {
+      padding: 20px;
+      font-weight: bold;
+      font-size: 2.5rem;
+      color: #333;
+    }
+
+    p {
+      font-size: 1.25rem;
+      color: #555;
+    }
+  }
+
+  .career-cards {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+
+    .card {
+      flex: 1;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+      transition: transform 0.3s ease;
+
+      &:hover {
+        transform: translateY(-10px);
+      }
+
+      .card-image {
+        height: 200px;
+        overflow: hidden;
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+      }
+
+      .card-content {
+        padding: 20px;
+
+        h3 {
+          font-size: 1.5rem;
+          color: rgb(26, 106, 186);
+          margin-bottom: 10px;
+        }
+
+        p {
+          font-size: 1rem;
+          color: #666;
+          line-height: 1.6;
+        }
+      }
+    }
+  }
+  // Media Queries for Responsiveness
+
+  @media (max-width: 1200px) {
+    .career-header__title {
+      font-size: 2rem;
+    }
+
+    .career-cards {
+      gap: 15px;
+      padding: 15px;
+
+      .card-content h3 {
+        font-size: 1.3rem;
+      }
+
+      .card-content p {
+        font-size: 0.95rem;
+      }
+    }
+  }
+
+  @media (max-width: 992px) {
+    .career-header__title {
+      font-size: 1.75rem;
+    }
+
+    .career-cards {
+      gap: 10px;
+
+      .card-content h3 {
+        font-size: 1.2rem;
+      }
+
+      .card-content p {
+        font-size: 0.9rem;
+      }
+    }
+  }
+
+  @media (max-width: 768px) {
+    .career-header__title {
+      font-size: 1.5rem;
+    }
+
+    .career-cards {
+      flex-direction: column; // Stack cards vertically
+      gap: 20px;
+
+      .card {
+        margin-bottom: 20px;
+      }
+
+      .card-content h3 {
+        font-size: 1.1rem;
+      }
+
+      .card-content p {
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  @media (max-width: 576px) {
+    .career-header__title {
+      font-size: 1.25rem;
+      padding: 15px;
+    }
+
+    .career-header p {
+      font-size: 1rem;
+    }
+
+    .career-cards {
+      gap: 15px;
+
+      .card-content h3 {
+        font-size: 1rem;
+      }
+
+      .card-content p {
+        font-size: 0.8rem;
+      }
+    }
+  }
+}

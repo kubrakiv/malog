@@ -1,0 +1,85 @@
+[
+  {
+    "model": "base.subscriptionplan",
+    "pk": 1,
+    "fields": {
+      "name": "base",
+      "display_name": "Base Plan",
+      "description": "Perfect for small businesses starting their logistics journey. Get essential fleet management tools with basic features to manage up to 3 trucks efficiently.",
+      "truck_limit": 3,
+      "monthly_price": "29.99",
+      "yearly_price": "299.99",
+      "features": [
+        "Fleet Management",
+        "Driver Management",
+        "Route Planner",
+        "Orders Management",
+        "Basic Support"
+      ],
+      "is_active": true,
+      "created_at": "2025-10-07T10:00:00Z",
+      "updated_at": "2025-10-07T10:00:00Z"
+    }
+  },
+  {
+    "model": "base.subscriptionplan",
+    "pk": 2,
+    "fields": {
+      "name": "pro",
+      "display_name": "Pro Plan",
+      "description": "Ideal for growing logistics companies. Advanced features including route optimization, customer management, and comprehensive reporting for up to 10 trucks.",
+      "truck_limit": 10,
+      "monthly_price": "79.99",
+      "yearly_price": "799.99",
+      "features": [
+        "Fleet Management",
+        "Driver Management",
+        "Route Planner",
+        "Orders Management",
+        "Route Calculator",
+        "Points Management",
+        "Invoicing",
+        "Customer Management",
+        "Advanced Analytics",
+        "Priority Support"
+      ],
+      "is_active": true,
+      "created_at": "2025-10-07T10:00:00Z",
+      "updated_at": "2025-10-07T10:00:00Z"
+    }
+  },
+  {
+    "model": "base.subscriptionplan",
+    "pk": 3,
+    "fields": {
+      "name": "unlimited",
+      "display_name": "Unlimited Plan",
+      "description": "For large enterprises with extensive logistics operations. Unlimited trucks, all premium features, white-label options, and dedicated support.",
+      "truck_limit": -1,
+      "monthly_price": "199.99",
+      "yearly_price": "1999.99",
+      "features": [
+        "Fleet Management",
+        "Driver Management",
+        "Route Planner",
+        "Orders Management",
+        "Route Calculator",
+        "Points Management",
+        "Invoicing",
+        "Customer Management",
+        "Tasks Management",
+        "Live Map",
+        "Dashboard",
+        "System Administration",
+        "Advanced Analytics",
+        "API Access",
+        "White Label Options",
+        "Dedicated Support",
+        "Custom Integrations"
+      ],
+      "is_active": true,
+      "created_at": "2025-10-07T10:00:00Z",
+      "updated_at": "2025-10-07T10:00:00Z"
+    }
+  }
+]

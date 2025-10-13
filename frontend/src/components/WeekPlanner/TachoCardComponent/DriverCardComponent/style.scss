@@ -1,0 +1,59 @@
+.driver-kpi-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.driver-kpi-section {
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.driver-kpi-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #007bff;
+}
+
+.driver-kpi-stat {
+  text-align: left;
+  font-size: 14px;
+  margin: 4px 0;
+  color: #555;
+
+  .driver-kpi-value {
+    font-weight: bold;
+    color: #333;
+  }
+}
+
+.driver-kpi-progress {
+  width: 100%;
+  height: 10px;
+  margin: 8px 0;
+  border-radius: 5px;
+
+  &::-webkit-progress-bar {
+    background-color: #e9ecef;
+    border-radius: 5px;
+  }
+
+  &::-webkit-progress-value {
+    background-color: #007bff;
+    border-radius: 5px;
+  }
+
+  &::-moz-progress-bar {
+    background-color: #007bff;
+    border-radius: 5px;
+  }
+}

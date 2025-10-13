@@ -1,0 +1,18 @@
+.order-details {
+    &__order-number-form {
+        // width: auto;
+        form {
+            display: flex;
+            // justify-content: flex-end;
+            align-items: center;
+            // width: 100%;
+        }
+    }
+    &__order-number-btn {
+        // width: 100%;
+    }
+    &__order-number-title {
+    }
+    &__order-number-value {
+    }
+}

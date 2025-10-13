@@ -1,0 +1,21 @@
+[
+    {
+        "model": "user.user",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$600000$DVSU2cKbTF5vp0Z7uf7Hjr$Xv9LkZHHorJ2Hl+BJSeWgqQ1SVnNTv8TRMVu27RVotA=",
+            "last_login": null,
+            "is_superuser": true,
+            "username": "kubrak",
+            "first_name": "",
+            "last_name": "",
+            "email": "",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2023-11-26T12:19:02.590Z",
+            "groups": [],
+            "user_permissions": [],
+            "role": 1
+        }
+    }
+]

@@ -1,0 +1,1 @@
+[{"model": "base.currency", "pk": 1, "fields": {"name": "Euro", "short_name": "EUR"}}, {"model": "base.currency", "pk": 2, "fields": {"name": "Czech koruna", "short_name": "CZK"}}, {"model": "base.currency", "pk": 3, "fields": {"name": "Ukrainian hryvnia", "short_name": "UAH"}}, {"model": "base.currency", "pk": 4, "fields": {"name": "United States dollar", "short_name": "USD"}}]

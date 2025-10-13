@@ -1,0 +1,10 @@
+.table-container {
+    height: 100%;
+    overflow: auto;
+}
+
+.table {
+    &__name {
+        font-size: 32px;
+    }
+}

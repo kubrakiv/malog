@@ -1,0 +1,44 @@
+[
+  {
+    "model": "base.platform",
+    "pk": 1,
+    "fields": {
+      "name": "TIMOCOM"
+    }
+  },
+  {
+    "model": "base.platform",
+    "pk": 2,
+    "fields": {
+      "name": "ASSTRA"
+    }
+  },
+  {
+    "model": "base.platform",
+    "pk": 3,
+    "fields": {
+      "name": "LKW"
+    }
+  },
+  {
+    "model": "base.platform",
+    "pk": 4,
+    "fields": {
+      "name": "AGROMAT"
+    }
+  },
+  {
+    "model": "base.platform",
+    "pk": 5,
+    "fields": {
+      "name": "RAAL"
+    }
+  },
+  {
+    "model": "base.platform",
+    "pk": 6,
+    "fields": {
+      "name": "SENNDER"
+    }
+  }
+]

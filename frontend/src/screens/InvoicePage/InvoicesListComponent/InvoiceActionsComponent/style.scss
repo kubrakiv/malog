@@ -1,0 +1,167 @@
+@import "../../../../styles/utils/vars";
+
+.invoices-actions {
+  display: flex;
+  background-color: $tableHeaderColor;
+  border-radius: 4px;
+  margin: 5px auto;
+
+  &__date-filter {
+    display: flex;
+    align-items: center;
+    gap: 10px; // Space between date pickers
+
+    .styled-date-picker {
+      padding: 5px 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 150px;
+      background-color: #f8f9fa; // Light background color for better visual
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s ease-in-out;
+
+      &:focus {
+        outline: none;
+        border-color: #007bff; // Highlight border on focus
+      }
+
+      &::placeholder {
+        color: #6c757d; // Darker placeholder text for better readability
+        font-style: italic;
+      }
+    }
+  }
+  &__find-driver-select {
+    display: flex;
+    align-items: center;
+    position: relative;
+
+    .styled-select-component {
+      padding-right: 30px; // Add padding to prevent overlap with the clear button
+    }
+  }
+  &__add-order-btn {
+    background-color: green;
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgb(20, 179, 20);
+      cursor: pointer;
+    }
+  }
+  &__copy-order-btn {
+    background-color: rgba(6, 22, 67, 0.8);
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgba(23, 58, 184, 0.5);
+      cursor: pointer;
+    }
+  }
+  &__add-documents-btn {
+    background-color: rgba(6, 67, 66, 0.9);
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgba(6, 67, 66, 0.5);
+      cursor: pointer;
+    }
+  }
+  &__find-driver-btn {
+    background-color: rgba(89, 80, 9, 0.7);
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgba(89, 80, 9, 0.4);
+      cursor: pointer;
+    }
+  }
+  &__find-truck-btn {
+    background-color: rgba(69, 9, 89, 0.7);
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgba(69, 9, 89, 0.4);
+      cursor: pointer;
+    }
+  }
+
+  &__clear-btn {
+    background-color: rgba(233, 43, 43, 0.8);
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgba(233, 43, 43, 0.5);
+      cursor: pointer;
+    }
+  }
+
+  &__clear-btn-order-number {
+    background-color: rgba(233, 43, 43, 0.8);
+    font-size: 14px;
+    border-radius: 4px;
+    padding: 4px;
+    // margin: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgba(233, 43, 43, 0.5);
+      cursor: pointer;
+    }
+  }
+
+  &__calendar-btn {
+    background-color: rgba(89, 9, 9, 0.7);
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgba(89, 9, 9, 0.4);
+      cursor: pointer;
+    }
+  }
+
+  &__download-excel-btn {
+    position: absolute;
+    right: 10px;
+    background-color: rgb(0, 128, 0);
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    border: none;
+    &:hover {
+      background-color: rgba(0, 128, 0, 0.5);
+      cursor: pointer;
+    }
+  }
+}

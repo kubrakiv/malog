@@ -1,0 +1,600 @@
+@import "../../styles/utils/vars";
+@import "compare-plans";
+
+.start-page-container {
+  width: 100%;
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    $backgroundcolor 0%,
+    lighten($backgroundcolor, 5%) 100%
+  );
+  margin-top: 80px; // Account for fixed header
+}
+
+.hero-section {
+  background: linear-gradient(
+    135deg,
+    $headerColor 0%,
+    lighten($headerColor, 10%) 100%
+  );
+  color: white;
+  padding: 80px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="1" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+
+    @media (max-width: 768px) {
+      font-size: 2.5rem;
+    }
+  }
+
+  .hero-subtitle {
+    font-size: 1.25rem;
+    margin-bottom: 3rem;
+    opacity: 0.9;
+    line-height: 1.6;
+
+    @media (max-width: 768px) {
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+    }
+  }
+
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      gap: 2rem;
+    }
+  }
+
+  .stat-item {
+    text-align: center;
+
+    .stat-number {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: $tableHeaderColor;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+  }
+}
+
+.features-section {
+  padding: 80px 20px;
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 4rem;
+
+    h2 {
+      font-size: 2.5rem;
+      color: $headerColor;
+      margin-bottom: 1rem;
+      font-weight: 600;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: $colorGray;
+      max-width: 600px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  .feature-card {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba($borderColor, 0.2);
+    transition: all 0.3s ease;
+    text-align: center;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      border-color: $tableHeaderColor;
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: $headerColor;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .feature-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: $textColor;
+      margin-bottom: 1rem;
+    }
+
+    .feature-description {
+      color: $colorGray;
+      line-height: 1.6;
+      font-size: 0.95rem;
+    }
+  }
+}
+
+.info-section {
+  padding: 60px 20px;
+  background: rgba(white, 0.5);
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 3rem;
+    max-width: 1000px;
+    margin: 0 auto;
+
+    @media (max-width: 768px) {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .info-card {
+    h3 {
+      font-size: 1.5rem;
+      color: $headerColor;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+    }
+
+    p {
+      color: $colorGray;
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+
+      li {
+        color: $colorGray;
+        padding: 0.5rem 0;
+        position: relative;
+        padding-left: 1.5rem;
+        line-height: 1.6;
+
+        &::before {
+          content: "✓";
+          position: absolute;
+          left: 0;
+          color: $tableHeaderColor;
+          font-weight: bold;
+        }
+      }
+    }
+  }
+}
+
+.cta-section {
+  padding: 80px 20px;
+  background: linear-gradient(
+    135deg,
+    $sidebarcolor 0%,
+    lighten($sidebarcolor, 10%) 100%
+  );
+  color: white;
+  text-align: center;
+
+  .cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+    }
+
+    p {
+      font-size: 1.1rem;
+      margin-bottom: 3rem;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+  }
+
+  .cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+
+    .btn-primary,
+    .btn-secondary {
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      min-width: 150px;
+    }
+
+    .btn-primary {
+      background: $tableHeaderColor;
+      color: $headerColor;
+
+      &:hover {
+        background: lighten($tableHeaderColor, 10%);
+        transform: translateY(-2px);
+      }
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: white;
+      border: 2px solid white;
+
+      &:hover {
+        background: white;
+        color: $sidebarcolor;
+        transform: translateY(-2px);
+      }
+    }
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 576px) {
+  .start-page-container {
+    .hero-section {
+      padding: 60px 15px;
+    }
+
+    .features-section,
+    .info-section,
+    .cta-section {
+      padding: 40px 15px;
+    }
+
+    .features-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .info-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+}
+
+// Pricing Section Styles
+.pricing-section {
+  padding: 80px 20px;
+  background: rgba(white, 0.8);
+
+  .section-header {
+    text-align: center;
+    margin-bottom: 3rem;
+
+    h2 {
+      font-size: 2.5rem;
+      color: $headerColor;
+      margin-bottom: 1rem;
+      font-weight: 700;
+    }
+
+    p {
+      font-size: 1.1rem;
+      color: $colorGray;
+      margin-bottom: 2rem;
+    }
+  }
+
+  .billing-toggle {
+    display: flex;
+    justify-content: center;
+    background: $sidebarcolor;
+    border-radius: 50px;
+    padding: 4px;
+    max-width: 300px;
+    margin: 0 auto;
+
+    button {
+      flex: 1;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 46px;
+      background: transparent;
+      color: white;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      position: relative;
+      font-weight: 500;
+
+      &.active {
+        background: white;
+        color: $sidebarcolor;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      }
+
+      .discount-badge {
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        background: #ff6b35;
+        color: white;
+        font-size: 0.7rem;
+        padding: 2px 6px;
+        border-radius: 10px;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .loading-plans {
+    text-align: center;
+    padding: 3rem 0;
+    color: $colorGray;
+
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid $headerColor;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    @media (max-width: 992px) {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      max-width: 400px;
+    }
+  }
+
+  .pricing-card {
+    background: white;
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    &:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    &.featured {
+      border-color: $tableHeaderColor;
+      transform: scale(1.05);
+
+      &:hover {
+        transform: scale(1.05) translateY(-5px);
+      }
+
+      .plan-header {
+        padding-top: 2rem;
+      }
+    }
+
+    .featured-badge {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(
+        135deg,
+        $tableHeaderColor,
+        lighten($tableHeaderColor, 10%)
+      );
+      color: white;
+      text-align: center;
+      padding: 0.5rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+
+      svg {
+        color: #ffd700;
+      }
+    }
+
+    .plan-header {
+      text-align: center;
+      margin-bottom: 2rem;
+      padding-top: 0;
+
+      h3 {
+        font-size: 1.5rem;
+        color: $headerColor;
+        margin-bottom: 1rem;
+        font-weight: 700;
+      }
+
+      .price {
+        display: flex;
+        align-items: baseline;
+        justify-content: center;
+        margin-bottom: 0.5rem;
+
+        .currency {
+          font-size: 1.2rem;
+          color: $colorGray;
+        }
+
+        .amount {
+          font-size: 3rem;
+          font-weight: 700;
+          color: $headerColor;
+          margin: 0 0.2rem;
+        }
+
+        .period {
+          font-size: 1rem;
+          color: $colorGray;
+        }
+      }
+
+      .yearly-total {
+        font-size: 0.9rem;
+        color: $colorGray;
+        margin-bottom: 1rem;
+      }
+
+      .plan-description {
+        color: $colorGray;
+        line-height: 1.6;
+        font-size: 0.95rem;
+      }
+    }
+
+    .plan-features {
+      margin-bottom: 2rem;
+
+      .truck-limit {
+        text-align: center;
+        background: rgba($tableHeaderColor, 0.1);
+        color: $tableHeaderColor;
+        padding: 0.75rem;
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+      }
+
+      .features-list {
+        list-style: none;
+        padding: 0;
+
+        li {
+          display: flex;
+          align-items: center;
+          padding: 0.5rem 0;
+          font-size: 0.95rem;
+          line-height: 1.4;
+
+          .check-icon {
+            color: #28a745;
+            margin-right: 0.75rem;
+            font-size: 0.9rem;
+            flex-shrink: 0;
+          }
+        }
+      }
+    }
+
+    .plan-btn {
+      width: 100%;
+      padding: 1rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+
+      &.btn-primary {
+        background: $sidebarcolor;
+        color: white;
+
+        &:hover {
+          background: darken($sidebarcolor, 10%);
+          transform: translateY(-2px);
+        }
+      }
+
+      &.btn-featured {
+        background: linear-gradient(
+          135deg,
+          $tableHeaderColor,
+          lighten($tableHeaderColor, 10%)
+        );
+        color: white;
+
+        &:hover {
+          background: linear-gradient(
+            135deg,
+            darken($tableHeaderColor, 10%),
+            $tableHeaderColor
+          );
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,173 @@
+.task {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  // align-items: stretch;
+  // flex-grow: 1;
+
+  min-height: 70px;
+  margin: 4px 0 4px 0;
+  background-color: rgb(193, 200, 166);
+  border-radius: 4px;
+
+  font-size: 14px;
+  overflow: hidden;
+
+  transition: height 0.3s;
+
+  &__container {
+    overflow-wrap: break-word;
+  }
+  &-details {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 4px 2px;
+    &__order {
+      display: block; // Ensure they are displayed in separate lines
+    }
+    &__driver {
+      display: block; // Ensure they are displayed in separate lines
+    }
+    &__customer {
+      display: block; // Ensure they are displayed in separate lines
+    }
+  }
+  &:hover {
+    background-color: rgb(160, 237, 101);
+    cursor: pointer;
+  }
+
+  &--placeholder {
+    border: 2px dashed rgba(255, 255, 255, 0.5);
+    cursor: default;
+
+    &:hover {
+      background-color: inherit;
+      opacity: 0.9;
+    }
+  }
+  &__time {
+    text-align: center;
+    padding: 2px;
+  }
+  &__type {
+    text-align: center;
+    padding: 2px;
+  }
+  &__title {
+    text-align: center;
+    padding: 2px;
+  }
+  &__truck {
+    text-align: center;
+    padding: 2px;
+  }
+}
+
+.task-actions {
+  display: flex;
+  justify-content: space-around;
+  background-color: rgb(219, 24, 24);
+  border-radius: 4px;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  transition: top 0.3s; /* Smooth transition for top change */
+
+  &_first {
+    margin: 2px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: none;
+    text-align: center;
+    background-color: blue;
+    color: white;
+    &:hover {
+      background-color: rgb(20, 121, 179);
+      cursor: pointer;
+    }
+  }
+  &_second {
+    margin: 2px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: none;
+    text-align: center;
+    background-color: yellow;
+    &:hover {
+      background-color: rgb(179, 179, 20);
+      cursor: pointer;
+    }
+    &:focus {
+      background-color: yellow;
+    }
+  }
+
+  &_third {
+    margin: 2px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: none;
+    text-align: center;
+    background-color: green;
+    &:hover {
+      background-color: rgb(20, 179, 20);
+      cursor: pointer;
+    }
+    &:focus {
+      background-color: green;
+    }
+  }
+  &_map {
+    margin: 2px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: none;
+    text-align: center;
+    background-color: green;
+    color: white;
+    &:hover {
+      background-color: rgb(20, 179, 20);
+      cursor: pointer;
+    }
+    &:focus {
+      background-color: green;
+    }
+  }
+  &_delete {
+    margin: 2px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: none;
+    text-align: center;
+    background-color: rgb(130, 12, 8);
+    color: white;
+    &:hover {
+      background-color: rgba(130, 12, 8, 0.5);
+      cursor: pointer;
+    }
+    &:focus {
+      background-color: rgba(130, 12, 8);
+    }
+  }
+  &_edit {
+    margin: 2px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    border: none;
+    text-align: center;
+    background-color: blue;
+    color: white;
+    &:hover {
+      background-color: rgb(20, 121, 179);
+      cursor: pointer;
+    }
+    &:focus {
+      background-color: blue;
+    }
+  }
+}

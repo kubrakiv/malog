@@ -1,0 +1,92 @@
+@import "../../styles/utils/vars";
+
+.add-point-details {
+  width: 100%;
+  margin: 0 auto;
+
+  &__form {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+  }
+  &__input {
+    width: 100%;
+    border-radius: 4px;
+  }
+  &__select {
+    width: 100%;
+    border-radius: 4px;
+    option {
+      width: 100%;
+      border-radius: 4px;
+    }
+  }
+  &__content {
+    display: flex;
+    justify-content: space-between;
+    height: max-content;
+    border-radius: 4px;
+    gap: 5px;
+  }
+  &__content-block {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    width: 100%;
+  }
+  &__content-row {
+    display: flex;
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    flex-grow: 1; // Allow this row to grow
+    height: 100%;
+    &:last-child {
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+    &__search {
+      margin-bottom: 5px;
+    }
+    &__formatted-address {
+      margin-bottom: 5px;
+    }
+  }
+  &__content-row-block {
+    display: flex;
+    // justify-content: space-between;
+    flex-direction: row;
+    flex-basis: 100%;
+    border-radius: 4px;
+    background-color: $backgroundcolor;
+    margin: 5px 5px 0 5px;
+    padding: 5px;
+    width: 70%;
+    gap: 10px;
+    align-items: center;
+    height: 100%;
+    // min-height: 0; // Prevent flex overflow issues
+    select {
+      display: block;
+    }
+    input {
+      display: block;
+      padding: 2px;
+    }
+
+    &-map {
+      flex-grow: 1; // Allow the map to take all available space
+      height: 100%;
+      min-height: 0; // Prevent flex overflow issues
+    }
+  }
+  &__content-row-block-title {
+    font-weight: bold;
+    font-size: 14px;
+  }
+  &__content-row-block-value {
+    font-size: 14px;
+    padding-left: 20px;
+  }
+}
