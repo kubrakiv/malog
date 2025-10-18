@@ -7,16 +7,16 @@ from .base import *
 DEBUG = False
 
 ALLOWED_HOSTS = [
-    "deltalogistics.cz", 
+    "deltalogistics.cz",
     "www.deltalogistics.cz",
     "195.201.96.160",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://deltalogistics.cz", 
-    "http://deltalogistics.cz", 
-    "https://195.201.96.160", 
-    "http://195.201.96.160"
+    "https://deltalogistics.cz",
+    "http://deltalogistics.cz",
+    "https://195.201.96.160",
+    "http://195.201.96.160",
 ]
 
 # Database configuration for production
@@ -104,11 +104,3 @@ LOGGING = {
 
 # Performance optimizations for production
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
-# Cache configuration (optional - add Redis/Memcached if needed)
-# CACHES = {
-#     'default': {
-#         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-#         'LOCATION': 'redis://127.0.0.1:6379/1',
-#     }
-# }

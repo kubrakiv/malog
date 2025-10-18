@@ -11,15 +11,38 @@ from dotenv import load_dotenv
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Load environment variables from .env file
-load_dotenv(BASE_DIR / '.env')
+# Load environment variables from the appropriate .env file
+# Priority:
+# 1) ENV_FILE explicitly set (absolute or relative to BASE_DIR)
+# 2) Based on DJANGO_SETTINGS_MODULE suffix: dev->.env, staging->.env.staging, prod->.env.prod
+# 3) Fallback to .env
+dj_settings = os.environ.get('DJANGO_SETTINGS_MODULE', 'backend.env.dev')
+
+env_file = BASE_DIR / '.env'
+if dj_settings.endswith('.staging') or dj_settings.endswith('staging'):
+    env_file = BASE_DIR / '.env.staging'
+elif dj_settings.endswith('.prod') or dj_settings.endswith('prod'):
+    env_file = BASE_DIR / '.env.prod'
+
+override_env_file = os.environ.get('ENV_FILE')
+if override_env_file:
+    # Allow absolute path or path relative to BASE_DIR
+    env_file = Path(override_env_file)
+    if not env_file.is_absolute():
+        env_file = BASE_DIR / override_env_file
+
+load_dotenv(env_file)
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # If SECRET_KEY is not in environment variables, raise an error in production
 # but use a temporary one for development
 if 'SECRET_KEY' not in os.environ:
-    if os.environ.get('DJANGO_SETTINGS_MODULE') == 'backend.settings.prod':
-        raise Exception('SECRET_KEY environment variable is required in production')
+    # For staging and production we require SECRET_KEY to be present
+    if os.environ.get('DJANGO_SETTINGS_MODULE') in (
+        'backend.env.prod',
+        'backend.env.staging',
+    ):
+        raise Exception('SECRET_KEY environment variable is required in staging/production')
     # Generate a temporary secret key for development only
     print("WARNING: Using a temporary SECRET_KEY. Set SECRET_KEY in .env for development.")
     os.environ['SECRET_KEY'] = secrets.token_urlsafe(50)

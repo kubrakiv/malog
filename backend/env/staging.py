@@ -16,7 +16,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://test.malog.com.ua",
     "http://test.malog.com.ua",
     "https://91.98.164.83",
-    "http://91.98.164.83"
+    "http://91.98.164.83",
 ]
 
 # Database configuration for staging

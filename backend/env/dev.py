@@ -8,24 +8,22 @@ from .base import *
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    "127.0.0.1", 
-    "localhost", 
+    "127.0.0.1",
+    "localhost",
     "192.168.0.2",
-    "192.168.0.6", 
-    "192.168.88.218", 
-    "192.168.88.84"
+    "192.168.0.6",
+    "192.168.88.218",
+    "192.168.88.84",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "http://127.0.0.1", 
-    "http://localhost", 
-    "http://192.168.0.6", 
-    "http://192.168.0.2"
+    "http://127.0.0.1",
+    "http://localhost",
+    "http://192.168.0.6",
+    "http://192.168.0.2",
 ]
 
 # Database configuration for development
-# For development, we keep fallbacks for convenience
-# but staging and production require explicit environment variables
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
