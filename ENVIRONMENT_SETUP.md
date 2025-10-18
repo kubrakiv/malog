@@ -19,7 +19,7 @@ backend/settings/
 
 **Default environment** - no additional configuration needed.
 
-- **Settings Module**: `backend.settings.dev`
+- **Settings Module**: `backend.env.dev`
 - **Debug**: `True`
 - **Database**: Local PostgreSQL
 - **Static Files**: Served by Django
@@ -32,7 +32,7 @@ For staging deployment:
 
 1. Copy `.env.staging` to `.env` on your staging server
 2. Update the values in `.env` with your staging credentials
-3. Set `DJANGO_SETTINGS_MODULE=backend.settings.staging`
+3. Set `DJANGO_SETTINGS_MODULE=backend.env.staging`
 
 **Key differences from development:**
 
@@ -49,7 +49,7 @@ For production deployment:
 
 1. Copy `.env.production` to `.env` on your production server
 2. Update the values in `.env` with your production credentials
-3. Set `DJANGO_SETTINGS_MODULE=backend.settings.prod`
+3. Set `DJANGO_SETTINGS_MODULE=backend.env.prod`
 
 **Key differences from staging:**
 
@@ -67,7 +67,7 @@ All sensitive configuration is stored in `.env` files:
 # Generate a unique SECRET_KEY for each environment using:
 # python -c "import secrets; print(secrets.token_urlsafe(50))"
 SECRET_KEY=your-unique-secure-key-for-this-environment
-DJANGO_SETTINGS_MODULE=backend.settings.dev  # or staging/prod
+DJANGO_SETTINGS_MODULE=backend.env.dev  # or backend.env.staging/backend.env.prod
 
 # Database
 DB_NAME=malog
@@ -123,7 +123,7 @@ python manage.py runserver
 # On staging server
 cp .env.staging .env
 # Edit .env with staging values
-export DJANGO_SETTINGS_MODULE=backend.settings.staging
+export DJANGO_SETTINGS_MODULE=backend.env.staging
 python manage.py collectstatic --noinput
 python manage.py migrate
 python manage.py runserver  # or use gunicorn/uwsgi
@@ -135,7 +135,7 @@ python manage.py runserver  # or use gunicorn/uwsgi
 # On production server
 cp .env.production .env
 # Edit .env with production values
-export DJANGO_SETTINGS_MODULE=backend.settings.prod
+export DJANGO_SETTINGS_MODULE=backend.env.prod
 python manage.py collectstatic --noinput
 python manage.py migrate
 # Use production WSGI server (gunicorn, uwsgi, etc.)
