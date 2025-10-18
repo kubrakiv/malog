@@ -106,7 +106,7 @@ function Header() {
           <FaBars />
         </div>
         <div className="header-navbar__title">
-          <Link to="/main">MALOG TMS</Link>
+          <Link to="/main">MALOG SYSTEMS</Link>
         </div>
 
         <div className="header-navbar__search-wrapper">
@@ -127,6 +127,22 @@ function Header() {
                   <span className="plan-name">
                     {subscription.plan_details.display_name}
                   </span>
+                  {subscription.days_remaining !== undefined && (
+                    <span className="days-remaining">
+                      {subscription.days_remaining > 0 ? (
+                        <>
+                          {subscription.days_remaining}{" "}
+                          {subscription.days_remaining === 1
+                            ? "день"
+                            : subscription.days_remaining < 5
+                            ? "дні"
+                            : "днів"}
+                        </>
+                      ) : (
+                        "Закінчено"
+                      )}
+                    </span>
+                  )}
                 </div>
               ) : (
                 <div className="no-subscription-mini-bar">
@@ -157,16 +173,16 @@ function Header() {
                     onClick={() => setDropdownOpen(false)}
                   >
                     <FaUser />
-                    Profile
+                    Профіль
                   </Link>
-                  {userInfo.role === "admin" && (
+                  {userInfo.role === "client_admin" && (
                     <Link
                       to="/subscriptions"
                       className="dropdown-item"
                       onClick={() => setDropdownOpen(false)}
                     >
                       <FaCrown />
-                      Subscriptions
+                      Керувати підписками
                     </Link>
                   )}
                   <div className="dropdown-divider"></div>

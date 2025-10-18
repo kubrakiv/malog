@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.exceptions import ValidationError
+from django.conf import settings
 
 from base.sovtes_auth import SovtesJWTValidator, SovtesUserManager
 from user.serializers import UserSerializerWithToken
@@ -31,7 +32,7 @@ def sovtes_jwt_login(request):
     """
     try:
         # Extract token from request
-        token = request.data.get('token')
+        token = request.data.get('jwt_token') or request.data.get('token')
         if not token:
             return Response(
                 {'error': 'JWT token is required'}, 
@@ -47,15 +48,24 @@ def sovtes_jwt_login(request):
                 status=status.HTTP_401_UNAUTHORIZED
             )
         
-        # Extract user and client data
-        user_data = payload['user']
-        client_id = user_data['client']
+        # Extract user and client data from payload
+        # Handle both nested user object and direct fields
+        if 'user' in payload:
+            user_data = payload['user']
+            client_id = user_data['client']
+        else:
+            # Direct fields in payload
+            client_id = payload.get('client_id', payload.get('sub', 'unknown'))
+            client_name = payload.get('client_name', f'Sovtes Client {client_id}')
         
         # Get or create client
-        client = SovtesUserManager.get_or_create_client(client_id)
+        client = SovtesUserManager.get_or_create_client(
+            client_id, 
+            client_name=payload.get('client_name', f'Sovtes Client {client_id}')
+        )
         
         # Get or create user
-        user = SovtesUserManager.get_or_create_user(user_data, client)
+        user, created = SovtesUserManager.get_or_create_user(payload, client)
         
         # Generate Malog JWT tokens for the user
         refresh = RefreshToken.for_user(user)
@@ -70,17 +80,21 @@ def sovtes_jwt_login(request):
         
         # Prepare response data
         user_serializer = UserSerializerWithToken(user)
+        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:3000')
+        
         response_data = {
             'message': 'Login successful',
             'user': user_serializer.data,
-            'access_token': str(access_token),
-            'refresh_token': str(refresh),
+            'access': str(access_token),
+            'refresh': str(refresh),
             'subscription': subscription_info,
+            'redirect_url': f'{frontend_url}/main',  # Auto-redirect to main page
+            'user_created': created,  # Indicate if this was a new user
             'sovtes_data': {
-                'sovtes_user_id': user_data['id'],
+                'sovtes_user_id': payload.get('sub'),
                 'sovtes_client_id': client_id,
-                'user_type': user_data.get('usertype'),
-                'system_language': user_data.get('systemlanguage')
+                'user_type': payload.get('usertype'),
+                'system_language': payload.get('systemlanguage')
             }
         }
         

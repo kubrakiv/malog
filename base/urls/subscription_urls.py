@@ -25,4 +25,10 @@ urlpatterns = [
     # Admin endpoints for client subscription management
     path('admin/client-subscriptions/', views.admin_client_subscriptions, name='admin-client-subscriptions'),
     path('admin/client-subscriptions/<int:subscription_id>/', views.admin_client_subscription_detail, name='admin-client-subscription-detail'),
+    
+    # Trial-specific endpoints
+    path('trial/start/', views.start_trial, name='start-trial'),
+    path('trial/convert/', views.convert_trial_to_paid, name='convert-trial-to-paid'),
+    path('trial/extend/', views.extend_trial, name='extend-trial'),
+    path('trial/status/', views.get_trial_status, name='trial-status'),
 ]

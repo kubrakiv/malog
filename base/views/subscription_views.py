@@ -571,3 +571,222 @@ def get_subscription_history(request):
             {'error': str(e)}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+
+# Trial-specific views
+@api_view(['POST'])
+def start_trial(request):
+    """Start a trial subscription for new client"""
+    try:
+        client_id = request.data.get('client_id')
+        
+        if not client_id:
+            return Response(
+                {'error': 'Client ID is required'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        client = get_object_or_404(Client, id=client_id)
+        
+        # Check if client already has any subscription
+        existing_subscription = ClientSubscription.objects.filter(client=client).first()
+        if existing_subscription:
+            return Response(
+                {'error': 'Client already has a subscription'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # Get trial plan
+        trial_plan = SubscriptionPlan.objects.filter(
+            name='trial', 
+            is_active=True, 
+            is_trial_plan=True
+        ).first()
+        
+        if not trial_plan:
+            return Response(
+                {'error': 'Trial plan not available'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Calculate trial dates
+        start_date = timezone.now()
+        trial_end_date = start_date + timedelta(days=trial_plan.trial_duration_days)
+        
+        # Create trial subscription
+        subscription = ClientSubscription.objects.create(
+            client=client,
+            plan=trial_plan,
+            billing_cycle='monthly',  # Default for trial
+            start_date=start_date,
+            end_date=trial_end_date,
+            is_trial=True,
+            trial_end_date=trial_end_date,
+            status='trial',
+            auto_renew=False  # Trials don't auto-renew
+        )
+        
+        serializer = ClientSubscriptionSerializer(subscription)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        return Response(
+            {'error': str(e)}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def convert_trial_to_paid(request):
+    """Convert current trial subscription to paid subscription"""
+    try:
+        client = request.user.client
+        billing_cycle = request.data.get('billing_cycle', 'monthly')
+        plan_name = request.data.get('plan', 'base')
+        
+        # Get current trial subscription
+        trial_subscription = ClientSubscription.objects.filter(
+            client=client,
+            status='trial',
+            is_trial=True
+        ).first()
+        
+        if not trial_subscription:
+            return Response(
+                {'error': 'No active trial subscription found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Get new plan
+        new_plan = get_object_or_404(SubscriptionPlan, name=plan_name, is_active=True)
+        if new_plan.is_trial_plan:
+            return Response(
+                {'error': 'Cannot convert to another trial plan'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        # End trial subscription
+        trial_subscription.status = 'cancelled'
+        trial_subscription.end_date = timezone.now()
+        trial_subscription.save()
+        
+        # Create new paid subscription
+        start_date = timezone.now()
+        if billing_cycle == 'yearly':
+            end_date = start_date + timedelta(days=365)
+        else:
+            end_date = start_date + timedelta(days=30)
+        
+        paid_subscription = ClientSubscription.objects.create(
+            client=client,
+            plan=new_plan,
+            billing_cycle=billing_cycle,
+            start_date=start_date,
+            end_date=end_date,
+            is_trial=False,
+            status='active',
+            auto_renew=True,
+            next_billing_date=end_date
+        )
+        
+        serializer = ClientSubscriptionSerializer(paid_subscription)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        return Response(
+            {'error': str(e)}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def extend_trial(request):
+    """Extend trial subscription (admin only)"""
+    try:
+        # Check if user is admin/superuser
+        if not request.user.is_staff:
+            return Response(
+                {'error': 'Permission denied'}, 
+                status=status.HTTP_403_FORBIDDEN
+            )
+        
+        client_id = request.data.get('client_id')
+        additional_days = request.data.get('additional_days', 7)
+        
+        client = get_object_or_404(Client, id=client_id)
+        
+        # Get current trial subscription
+        trial_subscription = ClientSubscription.objects.filter(
+            client=client,
+            status='trial',
+            is_trial=True
+        ).first()
+        
+        if not trial_subscription:
+            return Response(
+                {'error': 'No active trial subscription found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        # Extend trial
+        trial_subscription.extend_trial(additional_days)
+        
+        serializer = ClientSubscriptionSerializer(trial_subscription)
+        return Response({
+            'message': f'Trial extended by {additional_days} days',
+            'subscription': serializer.data
+        })
+        
+    except Exception as e:
+        return Response(
+            {'error': str(e)}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_trial_status(request):
+    """Get detailed trial status for current client"""
+    try:
+        client = request.user.client
+        
+        # Get current trial subscription
+        trial_subscription = ClientSubscription.objects.filter(
+            client=client,
+            is_trial=True
+        ).order_by('-created_at').first()
+        
+        if not trial_subscription:
+            return Response({
+                'has_trial': False,
+                'message': 'No trial subscription found'
+            })
+        
+        # Get current usage
+        current_truck_count = Truck.objects.filter(client=client).count()
+        
+        response_data = {
+            'has_trial': True,
+            'status': trial_subscription.status,
+            'is_active': trial_subscription.is_trial_active,
+            'days_remaining': trial_subscription.trial_days_remaining,
+            'trial_end_date': trial_subscription.trial_end_date,
+            'plan': SubscriptionPlanSerializer(trial_subscription.plan).data,
+            'current_usage': {
+                'truck_count': current_truck_count,
+                'truck_limit': trial_subscription.plan.truck_limit,
+                'can_add_truck': trial_subscription.can_create_truck(current_truck_count)
+            },
+            'can_upgrade': trial_subscription.status == 'trial' and trial_subscription.is_trial_active
+        }
+        
+        return Response(response_data)
+        
+    except Exception as e:
+        return Response(
+            {'error': str(e)}, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )

@@ -105,18 +105,67 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         return token
     
     def validate(self, attrs):
-        data = super().validate(attrs)
+        from django.contrib.auth import authenticate
+        from rest_framework import serializers
         
-        # Check if user's client is approved
-        if self.user.client and not self.user.client.is_approved:
-            from rest_framework import serializers
+        username = attrs.get('username')
+        password = attrs.get('password')
+        
+        if username and password:
+            # Try to find the user first, regardless of is_active status
+            try:
+                from user.models import Profile
+                user = Profile.objects.get(username=username)
+                
+                # Check if password is correct
+                if not user.check_password(password):
+                    raise serializers.ValidationError({
+                        'detail': 'Unable to log in with provided credentials.'
+                    })
+                
+                # Check if user's client exists and is not approved
+                if user.client and not user.client.is_approved:
+                    raise serializers.ValidationError({
+                        'detail': 'Your account is pending approval. Please wait for admin approval.',
+                        'approval_status': user.client.approval_status,
+                        'error_code': 'ACCOUNT_PENDING'
+                    })
+                
+                # Check if user is inactive but has an approved client
+                if not user.is_active and user.client and user.client.is_approved:
+                    raise serializers.ValidationError({
+                        'detail': 'Your account has been deactivated. Please contact support.',
+                        'error_code': 'ACCOUNT_DEACTIVATED'
+                    })
+                
+                # If user is inactive and no client (shouldn't happen with our registration flow)
+                if not user.is_active:
+                    raise serializers.ValidationError({
+                        'detail': 'Your account is pending approval. Please wait for admin approval.',
+                        'error_code': 'ACCOUNT_PENDING'
+                    })
+                
+                # User exists, password is correct, and account is active - proceed with normal flow
+                self.user = user
+                
+            except Profile.DoesNotExist:
+                # User doesn't exist
+                raise serializers.ValidationError({
+                    'detail': 'Unable to log in with provided credentials.'
+                })
+        else:
             raise serializers.ValidationError({
-                'detail': 'Your account is pending approval. Please wait for admin approval.',
-                'approval_status': self.user.client.approval_status
+                'detail': 'Must include username and password.'
             })
         
+        # Continue with token generation
+        refresh = self.get_token(self.user)
+        data = {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
+        
         serializer = UserSerializerWithToken(self.user).data
-
         for k, v in serializer.items():
             data[k] = v 
 

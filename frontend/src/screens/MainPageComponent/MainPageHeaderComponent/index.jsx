@@ -45,24 +45,21 @@ const MainPageHeaderComponent = () => {
       <nav className="nav-bar">
         <div className="main-logo">
           <FaTruck className="logo-icon" />
-          <span className="logo-text">MALOG</span>
+          <span className="logo-text">MALOG SYSTEMS</span>
         </div>
         <button className="menu-icon" onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <FaTimes /> : <FaBars />}
         </button>
         <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
-          <li onClick={() => scrollToSection("hero-section")}>Home</li>
-          <li onClick={() => scrollToSection("features-section")}>Features</li>
-          <li onClick={() => scrollToSection("pricing-section")}>Pricing</li>
-          <li onClick={() => scrollToSection("info-section")}>About</li>
-          <li onClick={() => handleCareer()}>Career</li>
-          <li onClick={() => scrollToSection("cta-section")}>Contact</li>
-          <button className="register-btn" onClick={handleRegister}>
-            <span>Register</span>
-          </button>
+          <li onClick={() => scrollToSection("hero-section")}>Головна</li>
+          <li onClick={() => scrollToSection("features-section")}>Функції</li>
+          <li onClick={() => scrollToSection("pricing-section")}>Ціни</li>
+          <li onClick={() => scrollToSection("info-section")}>Про нас</li>
+          <li onClick={() => handleCareer()}>Кар'єра</li>
+          <li onClick={() => scrollToSection("cta-section")}>Контакти</li>
           <button className="enter-btn" onClick={handleLogin}>
             <FaRegUser />
-            <span style={{ paddingLeft: "5px" }}>Login</span>
+            <span style={{ paddingLeft: "5px" }}>Вхід</span>
           </button>
         </ul>
       </nav>

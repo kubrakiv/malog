@@ -21,10 +21,11 @@ class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField(read_only=True)
     is_admin = serializers.SerializerMethodField(read_only=True)
     role = serializers.SerializerMethodField(read_only=True)
+    client = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Profile
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'is_admin', 'role', 'phone_number']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'full_name', 'is_admin', 'role', 'phone_number', 'client', 'is_staff', 'is_superuser']
 
     def get_full_name(self, obj):
         full_name = obj.first_name + " " + obj.last_name
@@ -36,7 +37,18 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.is_staff
 
     def get_role(self, obj):
-        return obj.role.name.lower() if obj.role else None
+        return obj.role.name if obj.role else None
+    
+    def get_client(self, obj):
+        if obj.client:
+            return {
+                'id': obj.client.id,
+                'name': obj.client.name,
+                'slug': obj.client.slug,
+                'is_active': obj.client.is_active,
+                'approval_status': obj.client.approval_status
+            }
+        return None
 
 
 class UserSerializerWithToken(UserSerializer):

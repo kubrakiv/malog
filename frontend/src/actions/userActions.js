@@ -55,12 +55,32 @@ export const login = (email, password) => async (dispatch) => {
     dispatch({ type: USER_LOGIN_SUCCESS, payload: data });
     localStorage.setItem("userInfo", JSON.stringify(data));
   } catch (error) {
+    let errorMessage = error.message;
+    let errorCode = null;
+
+    console.log("Login error response:", error.response);
+    console.log("Login error response data:", error.response?.data);
+
+    if (error.response && error.response.data) {
+      const errorData = error.response.data;
+      if (errorData.detail) {
+        errorMessage = errorData.detail;
+      }
+      if (errorData.error_code) {
+        // Handle both string and array formats
+        errorCode = Array.isArray(errorData.error_code)
+          ? errorData.error_code[0]
+          : errorData.error_code;
+      }
+    }
+
+    console.log("Dispatching error message:", errorMessage);
+    console.log("Dispatching error code:", errorCode);
+
     dispatch({
       type: USER_LOGIN_FAIL,
-      payload:
-        error.response && error.response.data.detail
-          ? error.response.data.detail
-          : error.message,
+      payload: errorMessage,
+      errorCode: errorCode,
     });
   }
 };

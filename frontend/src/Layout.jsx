@@ -7,6 +7,7 @@ import SubscriptionAwareSidebar from "./components/Sidebar/SubscriptionAwareSide
 import Header from "./components/Header/Header";
 import Footer from "./components/Footer/Footer";
 import SubscriptionBanner from "./components/SubscriptionBanner/SubscriptionBanner";
+import SovtesAuthHandler from "./components/SovtesAuthHandler/SovtesAuthHandler";
 
 // Import subscription-aware sidebar styles
 import "./components/Sidebar/SubscriptionAwareSidebar.scss";
@@ -32,6 +33,7 @@ const Layout = () => {
   return userInfo ? (
     <div>
       <Suspense fallback={<div>Loading...</div>}>
+        <SovtesAuthHandler />
         <Header />
         <SubscriptionAwareSidebar>
           <SubscriptionBanner showOnlyWarnings={true} />
@@ -44,6 +46,7 @@ const Layout = () => {
   ) : (
     <div>
       <Suspense fallback={<div>Loading...</div>}>
+        <SovtesAuthHandler />
         <Outlet />
         <Toaster position="top-right" reverseOrder={false} />
       </Suspense>

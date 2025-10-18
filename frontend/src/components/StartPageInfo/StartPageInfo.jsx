@@ -54,51 +54,53 @@ function StartPageInfo() {
   const features = [
     {
       icon: <FaTruck />,
-      title: "Fleet Management",
+      title: "Управління Автопарком",
       description:
-        "Comprehensive truck and trailer management system with real-time tracking and maintenance scheduling.",
-    },
-    {
-      icon: <FaRoute />,
-      title: "Route Planning",
-      description:
-        "Advanced route optimization algorithms to ensure efficient delivery paths and reduced fuel consumption.",
-    },
-    {
-      icon: <FaUsers />,
-      title: "Driver Management",
-      description:
-        "Complete driver profile management, work schedules, and performance tracking system.",
+        "Комплексна система управління вантажівками та причепами з відстеженням в реальному часі та планування технічного обслуговування.",
     },
     {
       icon: <FaFileInvoiceDollar />,
-      title: "Order Management",
+      title: "Управління Замовленнями",
       description:
-        "Streamlined order processing, tracking, and invoice generation for seamless business operations.",
+        "Спрощена обробка замовлень, відстеження та генерація рахунків для безперебійної роботи бізнесу.",
+    },
+
+    {
+      icon: <FaRoute />,
+      title: "Планування Маршрутів",
+      description:
+        "Передові алгоритми оптимізації маршрутів для забезпечення ефективних шляхів доставки та зниження витрат палива.",
     },
     {
-      icon: <FaMapMarkedAlt />,
-      title: "Real-time Tracking",
+      icon: <FaUsers />,
+      title: "Управління Водіями",
       description:
-        "Live GPS tracking of vehicles with interactive maps and location updates for customers.",
+        "Повне управління профілями водіїв, робочими графіками та системою відстеження продуктивності.",
+    },
+
+    {
+      icon: <FaMapMarkedAlt />,
+      title: "Відстеження в Реальному Часі",
+      description:
+        "Відстеження GPS транспортних засобів в режимі реального часу з інтерактивними картами та оновленням місцезнаходження для клієнтів.",
     },
     {
       icon: <FaChartLine />,
-      title: "Analytics & Reports",
+      title: "Аналітика та Звіти",
       description:
-        "Detailed analytics and reporting tools to monitor performance, costs, and business metrics.",
+        "Детальна аналітика та інструменти звітності для моніторингу продуктивності, витрат та бізнес-метрик.",
     },
     {
       icon: <FaCog />,
-      title: "Task Automation",
+      title: "Автоматизація Завдань",
       description:
-        "Automated task scheduling and workflow management to improve operational efficiency.",
+        "Автоматизоване планування завдань та управління робочими процесами для підвищення операційної ефективності.",
     },
     {
       icon: <FaShieldAlt />,
-      title: "Multi-tenant Security",
+      title: "Мультітенантна Безпека",
       description:
-        "Enterprise-grade security with multi-tenant architecture for data isolation and protection.",
+        "Корпоративний рівень безпеки з мультітенантною архітектурою для ізоляції та захисту даних.",
     },
   ];
 
@@ -106,24 +108,35 @@ function StartPageInfo() {
     <div className="start-page-container">
       <div id="hero-section" className="hero-section">
         <div className="hero-content">
-          <h1 className="hero-title">Welcome to Malog System</h1>
+          <h1 className="hero-title">MALOG SYSTEMS</h1>
           <p className="hero-subtitle">
-            Your comprehensive logistics management solution for modern
-            transportation needs
+            Ваше комплексне інноваційне рішення для управління автопарком в
+            режимі реального часу.
           </p>
+          {/* <p className="hero-description">
+            Автоматизуйте рутинні операції, підвищуйте ефективність перевезень
+            та контролюйте весь автопарк в режимі реального часу з нашою
+            інноваційною платформою.
+          </p> */}
           <div className="hero-stats">
             <div className="stat-item">
               <span className="stat-number">100+</span>
-              <span className="stat-label">Active Vehicles</span>
+              <span className="stat-label">Активних транспортних засобів</span>
             </div>
             <div className="stat-item">
               <span className="stat-number">24/7</span>
-              <span className="stat-label">Real-time Tracking</span>
+              <span className="stat-label">Відстеження в реальному часі</span>
             </div>
             <div className="stat-item">
               <span className="stat-number">99.9%</span>
-              <span className="stat-label">System Uptime</span>
+              <span className="stat-label">Час роботи системи</span>
             </div>
+          </div>
+
+          <div className="hero-cta">
+            <button className="hero-register-btn" onClick={handleGetStarted}>
+              <span>Реєстрація</span>
+            </button>
           </div>
         </div>
       </div>
@@ -131,10 +144,10 @@ function StartPageInfo() {
       <div id="features-section" className="features-section">
         <div className="container-page">
           <div className="section-header">
-            <h2>Platform Features</h2>
+            <h2>Функції платформи</h2>
             <p>
-              Discover the powerful tools that make Malog the perfect choice for
-              your logistics operations
+              Відкрийте для себе потужні інструменти, які роблять Malog Systems
+              ідеальним вибором для вашої транспортної компанії
             </p>
           </div>
 
@@ -154,23 +167,26 @@ function StartPageInfo() {
         <div className="container-page">
           <div className="info-grid">
             <div className="info-card">
-              <h3>About Malog System</h3>
+              <h3>Про систему</h3>
               <p>
-                Malog is a comprehensive logistics management platform designed
-                to streamline transportation operations. Built with modern
-                technologies including Django and React, it provides robust
-                solutions for fleet management, route optimization, and
-                real-time tracking.
+                Malog Systems - це комплексна платформа управління автопарком,
+                призначена для підвищення прибутковості та спрощення
+                транспортних операцій. Побудована з використанням сучасних
+                технологій та штучного інтелекту, вона надає надійні рішення для
+                управління перевезеннями, оптимізації маршрутів та відстеження в
+                реальному часі.
               </p>
             </div>
             <div className="info-card">
-              <h3>Key Benefits</h3>
+              <h3>Ключові Переваги</h3>
               <ul>
-                <li>Reduce operational costs by up to 30%</li>
-                <li>Improve delivery times with smart routing</li>
-                <li>Real-time visibility across all operations</li>
-                <li>Scalable multi-tenant architecture</li>
-                <li>Comprehensive reporting and analytics</li>
+                <li>Зменшення операційних витрат до 30%</li>
+                <li>
+                  Покращення часу доставки завдяки розумному маршрутизації
+                </li>
+                <li>Видимість в реальному часі всіх операцій</li>
+                <li>Масштабована мультітенантна архітектура</li>
+                <li>Комплексна звітність та аналітика</li>
               </ul>
             </div>
           </div>
@@ -180,10 +196,10 @@ function StartPageInfo() {
       <div id="pricing-section" className="pricing-section">
         <div className="container-page">
           <div className="section-header">
-            <h2>Choose Your Perfect Plan</h2>
+            <h2>Оберіть ідеальний план</h2>
             <p>
-              Select a subscription plan that fits your business needs and scale
-              as you grow
+              Оберіть план підписки, який відповідає потребам вашого бізнесу та
+              масштабуйтесь в міру зростання
             </p>
 
             <div className="billing-toggle">
@@ -191,14 +207,14 @@ function StartPageInfo() {
                 className={selectedBilling === "monthly" ? "active" : ""}
                 onClick={() => setSelectedBilling("monthly")}
               >
-                Monthly
+                Щомісяця
               </button>
               <button
                 className={selectedBilling === "yearly" ? "active" : ""}
                 onClick={() => setSelectedBilling("yearly")}
               >
-                Yearly
-                <span className="discount-badge">Save 17%</span>
+                Щорічно
+                <span className="discount-badge">Економія 17%</span>
               </button>
             </div>
           </div>
@@ -206,7 +222,7 @@ function StartPageInfo() {
           {loading ? (
             <div className="loading-plans">
               <div className="loading-spinner"></div>
-              <p>Loading subscription plans...</p>
+              <p>Завантаження планів підписки...</p>
             </div>
           ) : (
             <div className="pricing-grid">
@@ -219,24 +235,50 @@ function StartPageInfo() {
                 >
                   {plan.name === "pro" && (
                     <div className="featured-badge">
-                      <FaCrown /> Most Popular
+                      <FaCrown /> Найпопулярніший
                     </div>
                   )}
 
                   <div className="plan-header">
-                    <h3>{plan.display_name}</h3>
+                    <h3>
+                      {plan.display_name}
+                      {plan.is_trial_plan && (
+                        <span className="trial-badge">БЕЗКОШТОВНО</span>
+                      )}
+                    </h3>
                     <div className="price">
-                      <span className="currency">$</span>
-                      <span className="amount">
-                        {selectedBilling === "yearly"
-                          ? Math.round((plan.yearly_price / 12) * 100) / 100
-                          : plan.monthly_price}
-                      </span>
-                      <span className="period">/month</span>
+                      {plan.is_trial_plan ? (
+                        <div className="trial-price">
+                          <span className="amount">0</span>
+                          <span className="period">
+                            грн / {plan.trial_duration_days} днів
+                          </span>
+                        </div>
+                      ) : (
+                        <>
+                          <span className="currency"></span>
+                          <span className="amount">
+                            {(() => {
+                              const price =
+                                selectedBilling === "yearly"
+                                  ? Math.round(plan.yearly_price / 12)
+                                  : Math.round(plan.monthly_price);
+                              return price
+                                .toString()
+                                .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+                            })()}
+                          </span>
+                          <span className="period">₴/міс</span>
+                        </>
+                      )}
                     </div>
                     {selectedBilling === "yearly" && (
                       <div className="yearly-total">
-                        Billed yearly: ${plan.yearly_price}
+                        Оплата щорічно:{" "}
+                        {Math.round(plan.yearly_price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}{" "}
+                        грн
                       </div>
                     )}
                     <p className="plan-description">{plan.description}</p>
@@ -246,9 +288,9 @@ function StartPageInfo() {
                     <div className="truck-limit">
                       <strong>
                         {plan.truck_limit === -1
-                          ? "Unlimited"
+                          ? "Необмежено"
                           : plan.truck_limit}{" "}
-                        Trucks
+                        Вантажівок
                       </strong>
                     </div>
 
@@ -268,7 +310,7 @@ function StartPageInfo() {
                     }`}
                     onClick={() => handleChoosePlan(plan.id)}
                   >
-                    Choose {plan.display_name}
+                    Обрати {plan.display_name}
                   </button>
                 </div>
               ))}
@@ -280,10 +322,11 @@ function StartPageInfo() {
               className="compare-plans-btn"
               onClick={() => navigate("/subscription-plans")}
             >
-              Compare Plans in Detail
+              Детальне порівняння планів
             </button>
             <p className="compare-plans-text">
-              View detailed feature comparison and manage your subscription
+              Переглядайте детальне порівняння функцій та керуйте своєю
+              підпискою
             </p>
           </div>
         </div>
@@ -292,16 +335,16 @@ function StartPageInfo() {
       <div id="cta-section" className="cta-section">
         <div className="container-page">
           <div className="cta-content">
-            <h2>Ready to Transform Your Logistics?</h2>
+            <h2>Готові трансформувати вашу компанію?</h2>
             <p>
-              Join hundreds of companies already using Malog to optimize their
-              transportation operations
+              Приєднуйтеся до тих, хто вже використовує Malog Systems для
+              оптимізації своїх перевезень та підвищення ефективності автопарку.
             </p>
             <div className="cta-buttons">
               <button className="btn-primary" onClick={handleGetStarted}>
-                Get Started
+                Почати
               </button>
-              <button className="btn-secondary">Learn More</button>
+              <button className="btn-secondary">Дізнатися більше</button>
             </div>
           </div>
         </div>

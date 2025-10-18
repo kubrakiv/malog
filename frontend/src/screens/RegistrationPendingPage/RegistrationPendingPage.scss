@@ -1,20 +1,98 @@
-.registration-pending-container {
+@import "../../styles/utils/vars";
+
+.registration-pending-page {
+  width: 100%;
   min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    $backgroundcolor 0%,
+    lighten($backgroundcolor, 5%) 100%
+  );
+  padding-top: 71px; // Header height accounting
+
+  @media (max-width: 1024px) {
+    padding-top: 75px;
+  }
+
+  @media (max-width: 768px) {
+    padding-top: 75px;
+  }
+
+  @media (max-width: 480px) {
+    padding-top: 71px;
+  }
+}
+
+.registration-pending-container {
+  background: linear-gradient(
+    135deg,
+    $headerColor 0%,
+    lighten($headerColor, 12%) 50%,
+    darken($headerColor, 5%) 100%
+  );
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  min-height: calc(100vh - 71px - 60px); // Account for header and footer
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 2rem;
+
+  @media (max-width: 768px) {
+    padding: 40px 15px;
+    min-height: calc(
+      100vh - 75px - 40px
+    ); // Account for header and footer on mobile
+  }
+
+  @media (max-width: 480px) {
+    padding: 30px 10px;
+  }
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(
+        circle at 20% 30%,
+        rgba(255, 255, 255, 0.1) 0%,
+        transparent 50%
+      ),
+      radial-gradient(
+        circle at 80% 70%,
+        rgba(100, 204, 197, 0.15) 0%,
+        transparent 50%
+      );
+    pointer-events: none;
+  }
 }
 
 .registration-pending-card {
-  background: white;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
   padding: 3rem;
-  max-width: 600px;
+  max-width: 700px;
   width: 100%;
   text-align: center;
+  position: relative;
+  z-index: 2;
+  color: #2d3748;
+
+  @media (max-width: 768px) {
+    padding: 2rem;
+    margin: 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1.5rem;
+  }
 }
 
 .icon-section {
@@ -24,26 +102,106 @@
 .pending-icon {
   font-size: 4rem;
   margin-bottom: 1rem;
+  background: linear-gradient(45deg, $headerColor, lighten($headerColor, 15%));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 h1 {
-  color: #2d3748;
-  font-size: 2rem;
-  font-weight: 700;
+  color: $headerColor;
+  font-size: 2.5rem;
+  font-weight: 800;
   margin-bottom: 1rem;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
+
+  @media (max-width: 480px) {
+    font-size: 1.8rem;
+  }
 }
 
 .main-message {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   color: #4a5568;
   margin-bottom: 2rem;
+  font-weight: 400;
+
+  @media (max-width: 768px) {
+    font-size: 1.1rem;
+  }
+}
+
+.registration-details {
+  background: linear-gradient(
+    135deg,
+    rgba(100, 204, 197, 0.1),
+    rgba(255, 255, 255, 0.1)
+  );
+  border: 2px solid rgba(100, 204, 197, 0.3);
+  border-radius: 15px;
+  padding: 1.8rem;
+  margin-bottom: 2rem;
+  text-align: left;
+  backdrop-filter: blur(10px);
+
+  h3 {
+    color: $headerColor;
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    text-align: center;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.2rem;
+  }
+}
+
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+
+  @media (min-width: 480px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.detail-label {
+  font-weight: 600;
+  color: $headerColor;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.detail-value {
+  color: #2d3748;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  border: 1px solid rgba(100, 204, 197, 0.2);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
 }
 
 .status-info {
-  background: #f7fafc;
-  border-radius: 8px;
+  background: rgba(100, 204, 197, 0.1);
+  border: 2px solid rgba(100, 204, 197, 0.3);
+  border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 2rem;
+  backdrop-filter: blur(10px);
 }
 
 .status-item {
@@ -55,29 +213,38 @@ h1 {
 
 .status-label {
   font-weight: 600;
-  color: #2d3748;
+  color: $headerColor;
+  font-size: 1rem;
 }
 
 .status-value {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.9rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 25px;
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 
   &.pending {
-    background: #fed7d7;
-    color: #c53030;
+    background: linear-gradient(135deg, #f56500, #ed8936);
+    color: white;
+    box-shadow: 0 4px 15px rgba(245, 101, 0, 0.3);
   }
 }
 
 .info-section {
   text-align: left;
   margin-bottom: 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
 
   h3 {
-    color: #2d3748;
-    font-size: 1.2rem;
+    color: $headerColor;
+    font-size: 1.3rem;
+    font-weight: 700;
     margin-bottom: 1rem;
+    text-align: center;
   }
 
   ul {
@@ -85,104 +252,140 @@ h1 {
     padding: 0;
 
     li {
-      padding: 0.5rem 0;
+      padding: 0.8rem 0;
       color: #4a5568;
       position: relative;
-      padding-left: 1.5rem;
+      padding-left: 2rem;
+      font-size: 1rem;
+      line-height: 1.5;
 
       &::before {
         content: "✓";
         position: absolute;
         left: 0;
-        color: #48bb78;
+        color: #f56500;
         font-weight: bold;
+        font-size: 1.2rem;
+        background: rgba(245, 101, 0, 0.1);
+        border-radius: 50%;
+        width: 1.5rem;
+        height: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
+    }
+  }
+
+  @media (max-width: 768px) {
+    padding: 1rem;
+
+    ul li {
+      font-size: 0.9rem;
     }
   }
 }
 
 .contact-info {
-  background: #f7fafc;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(100, 204, 197, 0.2);
+  border-radius: 12px;
   padding: 1.5rem;
   margin-bottom: 2rem;
 
   p {
     margin: 0.5rem 0;
     color: #4a5568;
+    font-size: 1rem;
 
     &:first-child {
       font-weight: 600;
+      color: $headerColor;
     }
   }
 
   a {
-    color: #667eea;
+    color: #f56500;
     text-decoration: none;
     font-weight: 600;
+    padding: 0.2rem 0.5rem;
+    border-radius: 5px;
+    background: rgba(245, 101, 0, 0.1);
+    transition: all 0.3s ease;
 
     &:hover {
-      text-decoration: underline;
+      background: rgba(245, 101, 0, 0.2);
+      transform: translateY(-1px);
     }
   }
 }
 
 .actions {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   justify-content: center;
   flex-wrap: wrap;
+  margin-top: 1rem;
 }
 
 .btn {
-  padding: 0.75rem 2rem;
-  border-radius: 8px;
-  font-weight: 600;
+  padding: 14px 32px;
+  border-radius: 12px;
+  font-weight: 700;
   text-decoration: none;
   display: inline-block;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   border: none;
   cursor: pointer;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 
   &.btn-primary {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(
+      135deg,
+      $headerColor 0%,
+      lighten($headerColor, 10%) 100%
+    );
     color: white;
+    box-shadow: 0 6px 20px rgba($headerColor, 0.3);
 
     &:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 10px 30px rgba($headerColor, 0.4);
+      background: linear-gradient(
+        135deg,
+        darken($headerColor, 5%) 0%,
+        $headerColor 100%
+      );
     }
   }
 
   &.btn-secondary {
-    background: #e2e8f0;
-    color: #2d3748;
+    background: rgba(255, 255, 255, 0.9);
+    color: $headerColor;
+    border: 2px solid rgba($headerColor, 0.3);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 
     &:hover {
-      background: #cbd5e0;
-      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 1);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+      border-color: rgba($headerColor, 0.5);
     }
+  }
+
+  @media (max-width: 768px) {
+    padding: 12px 24px;
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 10px 20px;
+    font-size: 0.8rem;
+    width: 100%;
+    max-width: 200px;
   }
 }
 
-@media (max-width: 768px) {
-  .registration-pending-container {
-    padding: 1rem;
-  }
-
-  .registration-pending-card {
-    padding: 2rem;
-  }
-
-  h1 {
-    font-size: 1.5rem;
-  }
-
-  .actions {
-    flex-direction: column;
-
-    .btn {
-      width: 100%;
-    }
-  }
-}
+// Responsive styles are integrated above

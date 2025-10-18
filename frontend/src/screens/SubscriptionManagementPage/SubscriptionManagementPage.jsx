@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import OpenContext from "../../components/OpenContext";
 import {
   FaCrown,
   FaLock,
@@ -17,6 +18,7 @@ import "./SubscriptionManagementPage.scss";
 
 function SubscriptionManagementPage() {
   const navigate = useNavigate();
+  const { isSidebarOpen } = useContext(OpenContext);
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -24,6 +26,7 @@ function SubscriptionManagementPage() {
   const [availablePlans, setAvailablePlans] = useState([]);
   const [pendingRequests, setPendingRequests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedBilling, setSelectedBilling] = useState("monthly");
 
   // Function to fetch pending requests
   const fetchPendingRequests = async (token, config) => {
@@ -98,6 +101,14 @@ function SubscriptionManagementPage() {
 
   const [submittingPlanId, setSubmittingPlanId] = useState(null);
 
+  const getCurrentPlanPrice = (plan) => {
+    const price =
+      selectedBilling === "yearly"
+        ? Math.round(plan.yearly_price / 12)
+        : Math.round(plan.monthly_price);
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  };
+
   const handlePlanChange = async (planId) => {
     // Check if user is trying to request the same plan they already have
     if (
@@ -106,7 +117,7 @@ function SubscriptionManagementPage() {
       subscription.plan_details.id === parseInt(planId)
     ) {
       alert(
-        "You are already on this plan. You cannot request a change to the same plan."
+        "Ви вже використовуєте цей план. Ви не можете запросити зміну на той же план."
       );
       return;
     }
@@ -132,7 +143,7 @@ function SubscriptionManagementPage() {
 
         // Show success message
         alert(
-          "Plan change request submitted successfully! It will be reviewed by an administrator."
+          "Запит на зміну плану успішно подано! Він буде розглянутий адміністратором."
         );
 
         // Refetch pending requests to show the new request immediately
@@ -143,7 +154,7 @@ function SubscriptionManagementPage() {
       if (error.response?.data?.error) {
         alert(`Error: ${error.response.data.error}`);
       } else {
-        alert("Failed to submit plan change request. Please try again.");
+        alert("Не вдалося подати запит на зміну плану. Спробуйте ще раз.");
       }
     } finally {
       setSubmittingPlanId(null);
@@ -152,11 +163,15 @@ function SubscriptionManagementPage() {
 
   if (loading) {
     return (
-      <div className="subscription-management-wrapper">
+      <div
+        className={`subscription-management-wrapper ${
+          isSidebarOpen ? "sidebar-open" : ""
+        }`}
+      >
         <div className="subscription-management-container">
           <div className="loading-container">
             <div className="loading-spinner"></div>
-            <p>Loading your subscription details...</p>
+            <p>Завантаження деталей вашої підписки...</p>
           </div>
         </div>
       </div>
@@ -164,33 +179,39 @@ function SubscriptionManagementPage() {
   }
 
   return (
-    <div className="subscription-management-wrapper">
+    <div
+      className={`subscription-management-wrapper ${
+        isSidebarOpen ? "sidebar-open" : ""
+      }`}
+    >
       <div className="subscription-management-container">
         <div className="page-header">
-          <h1>Subscription Management</h1>
-          <p>Manage your subscription plan and view usage details</p>
+          <h1>Управління підпискою</h1>
+          <p>Керуйте планом підписки та переглядайте деталі використання</p>
         </div>
         {/* Pending Requests Notification */}
         {pendingRequests.length > 0 && (
           <div className="pending-requests-notification">
             <FaClock className="pending-icon" />
             <div className="notification-content">
-              <h3>Pending Plan Change Request</h3>
+              <h3>Очікуючий запит на зміну плану</h3>
               <p>
-                You have {pendingRequests.length} pending plan change request
-                {pendingRequests.length > 1 ? "s" : ""}
-                awaiting admin approval.
+                У вас є {pendingRequests.length} очікуюч
+                {pendingRequests.length === 1 ? "ий" : "их"} запит
+                {pendingRequests.length > 1 ? "и" : ""} на зміну плану
+                {pendingRequests.length > 1 ? "ів" : ""}, що очікує схвалення
+                адміністратором.
               </p>
               {pendingRequests.map((request) => (
                 <div key={request.id} className="pending-request-item">
                   <span>
-                    Requested:{" "}
+                    Запитано:{" "}
                     {request.requested_plan_details?.display_name ||
-                      "Unknown Plan"}
+                      "Невідомий план"}
                     {request.requested_at && (
                       <>
                         {" "}
-                        (submitted{" "}
+                        (подано{" "}
                         {new Date(request.requested_at).toLocaleDateString()})
                       </>
                     )}
@@ -202,7 +223,7 @@ function SubscriptionManagementPage() {
         )}{" "}
         {/* Current Subscription */}
         <div className="current-subscription-section">
-          <h2>Current Subscription</h2>
+          <h2>Поточна підписка</h2>
           {subscription ? (
             <div className="current-subscription-card">
               <div className="subscription-header">
@@ -210,12 +231,35 @@ function SubscriptionManagementPage() {
                 <div className="subscription-info">
                   <h3>{subscription.plan_details.display_name}</h3>
                   <p className="subscription-status">
-                    Status: <span className="status-active">Active</span>
+                    Статус: <span className="status-active">Активний</span>
                   </p>
+                  {subscription.days_remaining !== undefined && (
+                    <p className="days-remaining">
+                      {subscription.days_remaining > 0 ? (
+                        <>
+                          <FaCalendarAlt className="calendar-icon" />
+                          Залишилося {subscription.days_remaining}{" "}
+                          {subscription.days_remaining === 1
+                            ? "день"
+                            : subscription.days_remaining < 5
+                            ? "дні"
+                            : "днів"}
+                        </>
+                      ) : (
+                        <>
+                          <FaCalendarAlt className="calendar-icon" />
+                          Підписка закінчилася
+                        </>
+                      )}
+                    </p>
+                  )}
                 </div>
                 <div className="subscription-cost">
                   <span className="price">
-                    ${subscription.plan_details.monthly_price}/month
+                    {subscription.plan_details.monthly_price
+                      .toString()
+                      .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}{" "}
+                    ₴/міс
                   </span>
                 </div>
               </div>
@@ -225,20 +269,21 @@ function SubscriptionManagementPage() {
                   <div className="usage-item">
                     <FaTruck className="usage-icon" />
                     <span>
-                      Trucks: {subscription.current_usage?.truck_count || 0} /{" "}
+                      Вантажівки: {subscription.current_usage?.truck_count || 0}{" "}
+                      /{" "}
                       {subscription.plan_details.truck_limit === -1
-                        ? "Unlimited"
+                        ? "Необмежено"
                         : subscription.plan_details.truck_limit}
                     </span>
                   </div>
                   <div className="usage-item">
                     <FaUsers className="usage-icon" />
-                    <span>Plan: {subscription.plan_details.display_name}</span>
+                    <span>План: {subscription.plan_details.display_name}</span>
                   </div>
                 </div>
 
                 <div className="features-list">
-                  <h4>Included Features:</h4>
+                  <h4>Включені функції:</h4>
                   <div className="features-grid">
                     {subscription.plan_details.features?.map(
                       (feature, index) => (
@@ -255,23 +300,40 @@ function SubscriptionManagementPage() {
           ) : (
             <div className="no-subscription-card">
               <FaLock className="lock-icon" />
-              <h3>No Active Subscription</h3>
-              <p>You don't have an active subscription plan.</p>
+              <h3>Немає активної підписки</h3>
+              <p>У вас немає активного плану підписки.</p>
               <button
                 className="choose-plan-btn"
                 onClick={() => navigate("/subscription-plans")}
               >
-                Choose a Plan
+                Обрати план
               </button>
             </div>
           )}
         </div>
         {/* Available Plans */}
         <div className="available-plans-section">
-          <h2>Available Plans</h2>
+          <h2>Доступні плани</h2>
           <p>
-            Compare and switch to a different plan that better fits your needs
+            Порівняйте та переключіться на інший план, який краще відповідає
+            вашим потребам
           </p>
+
+          <div className="billing-toggle">
+            <button
+              className={selectedBilling === "monthly" ? "active" : ""}
+              onClick={() => setSelectedBilling("monthly")}
+            >
+              Щомісяця
+            </button>
+            <button
+              className={selectedBilling === "yearly" ? "active" : ""}
+              onClick={() => setSelectedBilling("yearly")}
+            >
+              Щорічно
+              <span className="discount-badge">Економія 17%</span>
+            </button>
+          </div>
 
           <div className="plans-grid">
             {availablePlans.map((plan) => (
@@ -284,9 +346,20 @@ function SubscriptionManagementPage() {
                 <div className="plan-header">
                   <h3>{plan.display_name}</h3>
                   <div className="plan-price">
-                    <span className="price">${plan.monthly_price}</span>
-                    <span className="period">/month</span>
+                    <span className="price">
+                      {getCurrentPlanPrice(plan)} ₴/міс
+                    </span>
+                    {/* <span className="period">/міс</span> */}
                   </div>
+                  {selectedBilling === "yearly" && (
+                    <div className="yearly-total">
+                      Оплата щорічно:{" "}
+                      {Math.round(plan.yearly_price)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}{" "}
+                      грн
+                    </div>
+                  )}
                 </div>
 
                 <div className="plan-limits">
@@ -294,13 +367,13 @@ function SubscriptionManagementPage() {
                     <FaTruck />
                     <span>
                       {plan.truck_limit === -1
-                        ? "Unlimited trucks"
-                        : `${plan.truck_limit} trucks`}
+                        ? "Необмежено вантажівок"
+                        : `${plan.truck_limit} вантажівок`}
                     </span>
                   </div>
                   <div className="limit-item">
                     <FaUsers />
-                    <span>Multiple user support</span>
+                    <span>Підтримка декількох користувачів</span>
                   </div>
                 </div>
 
@@ -316,7 +389,7 @@ function SubscriptionManagementPage() {
                 <div className="plan-actions">
                   {subscription?.plan_details?.id === plan.id ? (
                     <button className="current-plan-btn" disabled>
-                      Current Plan
+                      Поточний план
                     </button>
                   ) : (
                     <button
@@ -325,8 +398,8 @@ function SubscriptionManagementPage() {
                       disabled={submittingPlanId === plan.id}
                     >
                       {submittingPlanId === plan.id
-                        ? "Submitting..."
-                        : "Switch to This Plan"}
+                        ? "Подання..."
+                        : "Перейти на цей план"}
                     </button>
                   )}
                 </div>

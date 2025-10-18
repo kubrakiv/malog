@@ -34,38 +34,39 @@ const SubscriptionBanner = ({ showOnlyWarnings = false }) => {
     bannerType = "danger";
     bannerContent = {
       icon: <FaLock />,
-      title: "Subscription Expired",
-      message: "Your subscription has expired. Some features may be limited.",
-      action: "Renew Subscription",
+      title: "Підписка закінчилась",
+      message:
+        "Термін дії вашої підписки закінчився. Деякі функції можуть бути обмежені.",
+      action: "Поновити підписку",
       actionPath: "/subscription-plans",
     };
   } else if (isExpiringSoon) {
     bannerType = "warning";
     bannerContent = {
       icon: <FaExclamationTriangle />,
-      title: `Subscription Expires in ${daysRemaining} day${
-        daysRemaining > 1 ? "s" : ""
+      title: `Підписка закінчується через ${daysRemaining} ${
+        daysRemaining === 1 ? "день" : daysRemaining < 5 ? "дні" : "днів"
       }`,
-      message: "Renew your subscription to avoid service interruption.",
-      action: "Renew Now",
+      message: "Поновіть підписку, щоб уникнути переривання сервісу.",
+      action: "Поновити зараз",
       actionPath: "/subscription-plans",
     };
   } else if (isTruckLimitReached) {
     bannerType = "warning";
     bannerContent = {
       icon: <FaTruck />,
-      title: "Truck Limit Reached",
-      message: `You've reached your truck limit (${limits.truck_count}/${limits.truck_limit}). Upgrade to add more trucks.`,
-      action: "Upgrade Plan",
+      title: "Досягнуто ліміт вантажівок",
+      message: `Ви досягли ліміту вантажівок (${limits.truck_count}/${limits.truck_limit}). Оновіть план, щоб додати більше вантажівок.`,
+      action: "Оновити план",
       actionPath: "/subscription-plans",
     };
   } else if (isNearTruckLimit && !showOnlyWarnings) {
     bannerType = "info";
     bannerContent = {
       icon: <FaTruck />,
-      title: "Approaching Truck Limit",
-      message: `You're using ${limits.truck_count} of ${limits.truck_limit} available trucks.`,
-      action: "Upgrade Plan",
+      title: "Наближення до ліміту вантажівок",
+      message: `Ви використовуєте ${limits.truck_count} з ${limits.truck_limit} доступних вантажівок.`,
+      action: "Оновити план",
       actionPath: "/subscription-plans",
     };
   }
@@ -78,9 +79,11 @@ const SubscriptionBanner = ({ showOnlyWarnings = false }) => {
       title: limits.plan_name,
       message: `${limits.truck_count}/${
         limits.truck_limit === -1 ? "∞" : limits.truck_limit
-      } trucks used • ${daysRemaining} days remaining`,
-      action: "Manage Subscription",
-      actionPath: "/subscription-management",
+      } вантажівок використано • ${daysRemaining} ${
+        daysRemaining === 1 ? "день" : daysRemaining < 5 ? "дні" : "днів"
+      } залишилось`,
+      action: "Керувати підпискою",
+      actionPath: "/subscriptions",
     };
   }
 
