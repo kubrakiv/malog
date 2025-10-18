@@ -10,6 +10,7 @@ import {
   FaArrowLeft,
   FaSpinner,
 } from "react-icons/fa";
+import MainPageHeaderComponent from "../MainPageComponent/MainPageHeaderComponent";
 import "./SubscriptionPlansPage.scss";
 
 function SubscriptionPlansPage() {
@@ -128,204 +129,237 @@ function SubscriptionPlansPage() {
       <div className="subscription-plans-page">
         <div className="loading-container">
           <div className="loading-spinner"></div>
-          <p>Loading subscription plans...</p>
+          <p>Завантаження планів підписки...</p>
         </div>
       </div>
     );
   }
 
   const getCurrentPlanPrice = (plan) => {
-    if (selectedBilling === "yearly") {
-      return Math.round((plan.yearly_price / 12) * 100) / 100;
-    }
-    return plan.monthly_price;
+    const price =
+      selectedBilling === "yearly"
+        ? Math.round(plan.yearly_price / 12)
+        : Math.round(plan.monthly_price);
+    return price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   };
 
   return (
-    <div className="subscription-plans-content">
-      <div className="page-header">
-        <h1>Choose Your Subscription Plan</h1>
-        <p>
-          {currentSubscription
-            ? "Upgrade or change your current subscription plan"
-            : "Select a plan that fits your business needs"}
-        </p>
-      </div>
+    <div className="subscription-plans-page">
+      <MainPageHeaderComponent />
+      <div className="subscription-plans-content">
+        <div className="page-header">
+          <h1>Оберіть ваш план підписки</h1>
+          <p>
+            {currentSubscription
+              ? "Підвищіть рівень або змініть свій поточний план підписки"
+              : "Оберіть план, який відповідає потребам вашого бізнесу"}
+          </p>
+        </div>
 
-      {currentSubscription && (
-        <div className="current-subscription">
-          <div className="current-plan-info">
-            <FaCrown className="crown-icon" />
-            <div className="plan-details">
-              <h3>
-                Current Plan: {currentSubscription.plan_details.display_name}
-              </h3>
-              <p>
-                {currentSubscription.current_usage.truck_count} /{" "}
-                {currentSubscription.plan_details.truck_limit === -1
-                  ? "∞"
-                  : currentSubscription.plan_details.truck_limit}{" "}
-                trucks used
-              </p>
-              <p>{currentSubscription.days_remaining} days remaining</p>
+        {currentSubscription && (
+          <div className="current-subscription">
+            <div className="current-plan-info">
+              <FaCrown className="crown-icon" />
+              <div className="plan-details">
+                <h3>
+                  Поточний План: {currentSubscription.plan_details.display_name}
+                </h3>
+                <p>
+                  {currentSubscription.current_usage.truck_count} /{" "}
+                  {currentSubscription.plan_details.truck_limit === -1
+                    ? "∞"
+                    : currentSubscription.plan_details.truck_limit}{" "}
+                  вантажівок використано
+                </p>
+                <p>{currentSubscription.days_remaining} днів залишилося</p>
+              </div>
             </div>
           </div>
+        )}
+
+        <div className="billing-toggle">
+          <button
+            className={selectedBilling === "monthly" ? "active" : ""}
+            onClick={() => setSelectedBilling("monthly")}
+          >
+            Щомісяця
+          </button>
+          <button
+            className={selectedBilling === "yearly" ? "active" : ""}
+            onClick={() => setSelectedBilling("yearly")}
+          >
+            Щорічно
+            <span className="discount-badge">Економія 17%</span>
+          </button>
         </div>
-      )}
 
-      <div className="billing-toggle">
-        <button
-          className={selectedBilling === "monthly" ? "active" : ""}
-          onClick={() => setSelectedBilling("monthly")}
-        >
-          Monthly
-        </button>
-        <button
-          className={selectedBilling === "yearly" ? "active" : ""}
-          onClick={() => setSelectedBilling("yearly")}
-        >
-          Yearly
-          <span className="discount-badge">Save 17%</span>
-        </button>
-      </div>
+        <div className="pricing-grid">
+          {subscriptionPlans.map((plan) => {
+            const isCurrentPlan =
+              currentSubscription?.plan_details?.id === plan.id;
+            const isUpgrade =
+              currentSubscription &&
+              plan.monthly_price >
+                currentSubscription.plan_details.monthly_price;
+            const isDowngrade =
+              currentSubscription &&
+              plan.monthly_price <
+                currentSubscription.plan_details.monthly_price;
 
-      <div className="pricing-grid">
-        {subscriptionPlans.map((plan) => {
-          const isCurrentPlan =
-            currentSubscription?.plan_details?.id === plan.id;
-          const isUpgrade =
-            currentSubscription &&
-            plan.monthly_price > currentSubscription.plan_details.monthly_price;
-          const isDowngrade =
-            currentSubscription &&
-            plan.monthly_price < currentSubscription.plan_details.monthly_price;
-
-          return (
-            <div
-              key={plan.id}
-              className={`pricing-card ${
-                plan.name === "pro" ? "featured" : ""
-              } ${isCurrentPlan ? "current" : ""}`}
-            >
-              {plan.name === "pro" && (
-                <div className="featured-badge">
-                  <FaCrown /> Most Popular
-                </div>
-              )}
-
-              {isCurrentPlan && (
-                <div className="current-badge">Current Plan</div>
-              )}
-
-              <div className="plan-header">
-                <h3>{plan.display_name}</h3>
-                <div className="price">
-                  <span className="currency">$</span>
-                  <span className="amount">{getCurrentPlanPrice(plan)}</span>
-                  <span className="period">/month</span>
-                </div>
-                {selectedBilling === "yearly" && (
-                  <div className="yearly-total">
-                    Billed yearly: ${plan.yearly_price}
+            return (
+              <div
+                key={plan.id}
+                className={`pricing-card ${
+                  plan.name === "pro" ? "featured" : ""
+                } ${isCurrentPlan ? "current" : ""}`}
+              >
+                {plan.name === "pro" && (
+                  <div className="featured-badge">
+                    <FaCrown /> Найпопулярніший
                   </div>
                 )}
-                <p className="plan-description">{plan.description}</p>
-              </div>
 
-              <div className="plan-features">
-                <div className="truck-limit">
-                  <FaTruck />
-                  {plan.truck_limit === -1
-                    ? "Unlimited"
-                    : plan.truck_limit}{" "}
-                  Trucks
+                {isCurrentPlan && (
+                  <div className="current-badge">Поточний План</div>
+                )}
+
+                <div className="plan-header">
+                  <h3>
+                    {plan.display_name}
+                    {plan.is_trial_plan && (
+                      <span className="trial-badge">БЕЗКОШТОВНО</span>
+                    )}
+                  </h3>
+                  <div className="price">
+                    {plan.is_trial_plan ? (
+                      <div className="trial-price">
+                        <span className="amount">0</span>
+                        <span className="period">
+                          грн / {plan.trial_duration_days} днів
+                        </span>
+                      </div>
+                    ) : (
+                      <>
+                        <span className="currency"></span>
+                        <span className="amount">
+                          {getCurrentPlanPrice(plan)}
+                        </span>
+                        <span className="period">₴/міс</span>
+                      </>
+                    )}
+                  </div>
+                  {selectedBilling === "yearly" && (
+                    <div className="yearly-total">
+                      Оплата щорічно:{" "}
+                      {Math.round(plan.yearly_price)
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}{" "}
+                      грн
+                    </div>
+                  )}
+                  <p className="plan-description">{plan.description}</p>
                 </div>
 
-                <ul className="features-list">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex}>
-                      <FaCheck className="check-icon" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                <div className="plan-features">
+                  <div className="truck-limit">
+                    <FaTruck />
+                    {plan.truck_limit === -1
+                      ? "Необмежено"
+                      : plan.truck_limit}{" "}
+                    Вантажівок
+                  </div>
 
-              <button
-                className={`plan-btn ${
-                  plan.name === "pro" ? "btn-featured" : "btn-primary"
-                } ${isCurrentPlan ? "btn-current" : ""}`}
-                onClick={() => handleChoosePlan(plan)}
-                disabled={isCurrentPlan || processingPlan === plan.id}
-              >
-                {processingPlan === plan.id ? (
-                  <>
-                    <FaSpinner className="spinning" /> Processing...
-                  </>
-                ) : isCurrentPlan ? (
-                  "Current Plan"
-                ) : isUpgrade ? (
-                  `Upgrade to ${plan.display_name}`
-                ) : isDowngrade ? (
-                  `Downgrade to ${plan.display_name}`
-                ) : (
-                  `Choose ${plan.display_name}`
-                )}
-              </button>
-            </div>
-          );
-        })}
-      </div>
+                  <ul className="features-list">
+                    {plan.features.map((feature, featureIndex) => (
+                      <li key={featureIndex}>
+                        <FaCheck className="check-icon" />
+                        {feature}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-      <div className="plan-comparison">
-        <h2>Compare Plans</h2>
-        <div className="comparison-table">
-          <div className="comparison-header">
-            <div className="feature-column">Features</div>
-            {subscriptionPlans.map((plan) => (
-              <div key={plan.id} className="plan-column">
-                {plan.display_name}
-              </div>
-            ))}
-          </div>
-
-          <div className="comparison-row">
-            <div className="feature-name">Truck Limit</div>
-            {subscriptionPlans.map((plan) => (
-              <div key={plan.id} className="plan-value">
-                {plan.truck_limit === -1 ? "Unlimited" : plan.truck_limit}
-              </div>
-            ))}
-          </div>
-
-          {/* Feature comparison rows */}
-          {[
-            "Fleet Management",
-            "Driver Management",
-            "Route Planner",
-            "Orders Management",
-            "Route Calculator",
-            "Points Management",
-            "Invoicing",
-            "Customer Management",
-            "Tasks Management",
-            "Live Map",
-            "Dashboard",
-            "System Administration",
-          ].map((feature) => (
-            <div key={feature} className="comparison-row">
-              <div className="feature-name">{feature}</div>
-              {subscriptionPlans.map((plan) => (
-                <div key={plan.id} className="plan-value">
-                  {plan.features.includes(feature) ? (
-                    <FaCheck className="check-icon" />
+                <button
+                  className={`plan-btn ${
+                    plan.name === "pro" ? "btn-featured" : "btn-primary"
+                  } ${isCurrentPlan ? "btn-current" : ""}`}
+                  onClick={() => handleChoosePlan(plan)}
+                  disabled={isCurrentPlan || processingPlan === plan.id}
+                >
+                  {processingPlan === plan.id ? (
+                    <>
+                      <FaSpinner className="spinning" /> Обробка...
+                    </>
+                  ) : isCurrentPlan ? (
+                    "Поточний План"
+                  ) : isUpgrade ? (
+                    `Підвищити до ${plan.display_name}`
+                  ) : isDowngrade ? (
+                    `Понизити до ${plan.display_name}`
                   ) : (
-                    <FaTimes className="times-icon" />
+                    `Обрати ${plan.display_name}`
                   )}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="plan-comparison">
+          <h2>Порівняти Плани</h2>
+          <p className="scroll-hint">
+            Прокрутіть таблицю горизонтально для перегляду всіх планів
+          </p>
+          <div className="comparison-scroll-container">
+            <div className="comparison-table">
+              <div className="comparison-header">
+                <div className="feature-column">Функції</div>
+                {subscriptionPlans.map((plan) => (
+                  <div key={plan.id} className="plan-column">
+                    {plan.display_name}
+                  </div>
+                ))}
+              </div>
+
+              <div className="comparison-row">
+                <div className="feature-name">Ліміт Вантажівок</div>
+                {subscriptionPlans.map((plan) => (
+                  <div key={plan.id} className="plan-value">
+                    {plan.truck_limit === -1 ? "Необмежено" : plan.truck_limit}
+                  </div>
+                ))}
+              </div>
+
+              {/* Feature comparison rows */}
+              {[
+                "Fleet Management",
+                "Driver Management",
+                "Route Planner",
+                "Orders Management",
+                "Route Calculator",
+                "Points Management",
+                "Invoicing",
+                "Customer Management",
+                "Tasks Management",
+                "Live Map",
+                "Dashboard",
+                "System Administration",
+              ].map((feature) => (
+                <div key={feature} className="comparison-row">
+                  <div className="feature-name">{feature}</div>
+                  {subscriptionPlans.map((plan) => (
+                    <div key={plan.id} className="plan-value">
+                      {plan.features.includes(feature) ? (
+                        <FaCheck className="check-icon" />
+                      ) : (
+                        <FaTimes className="times-icon" />
+                      )}
+                    </div>
+                  ))}
                 </div>
               ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
     </div>

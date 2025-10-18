@@ -1,6 +1,5 @@
 from django.contrib import admin
 from django.urls import path, re_path, include
-
 from django.conf import settings # it's access to variables in settings.py file
 from django.conf.urls.static import static # it's a specific function that connects urls
 from django.views.generic import TemplateView
@@ -8,8 +7,7 @@ from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, Spec
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    # This is for production
-    # path("", TemplateView.as_view(template_name="index.html")),
+
     # Schema endpoint
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     
@@ -56,13 +54,33 @@ urlpatterns = [
     
     # Route calculator
     path("api/route_calculator/", include("route_calculator.urls")),
-
-    # This is for production
-    # Catch-all URL pattern for React app
-    # re_path(r'^.*$', TemplateView.as_view(template_name="index.html")),
 ]
 
-# urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
+# Development-only patterns
 if settings.DEBUG:
+    # Add debug toolbar if installed
+    try:
+        import debug_toolbar
+        urlpatterns += [
+            path("__debug__/", include("debug_toolbar.urls")),
+        ]
+    except ImportError:
+        pass
+    
+    # Serve media files in development
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0] if settings.STATICFILES_DIRS else None)
+
+# Production/Staging patterns - serve React app
+if not settings.DEBUG:
+    # Serve the React app at root
+    urlpatterns.insert(0, path("", TemplateView.as_view(template_name="index.html")))
+    
+    # Catch-all URL pattern for React app routes
+    urlpatterns += [
+        re_path(r'^.*$', TemplateView.as_view(template_name="index.html")),
+    ]
+
+# Always serve media files (handled by Nginx in production, but needed for Django's storage)
+if not settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -6,7 +6,11 @@ from .models import Profile,  DriverProfile
 
 @receiver(pre_save, sender=Profile)
 def update_user_username(sender, instance, **kwargs):
-    # Always ensure the username matches the email
+    # Skip username modification for Sovtes users (they have custom usernames)
+    if instance.username and instance.username.startswith('sovtes_'):
+        return
+    
+    # Always ensure the username matches the email for regular users
     if instance.email:
         instance.username = instance.email
 

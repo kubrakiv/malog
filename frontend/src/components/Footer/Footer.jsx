@@ -7,7 +7,7 @@ function Footer() {
       {/* <div className="footer footer-container"> */}
       <div className="row footer-row">
         <div className="col footer-col">
-          &copy; 2024 Malog System. All rights reserved.{" "}
+          &copy; 2025 Malog Systems. Усі права захищено.{" "}
         </div>
       </div>
       {/* </div> */}

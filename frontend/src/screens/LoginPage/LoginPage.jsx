@@ -10,7 +10,7 @@ import MessageComponent from "../../components/MessageComponent/MessageComponent
 
 import "./LoginPage.scss";
 
-import { formFields } from "./loginFormFields";
+import { formFields } from "./loginFormFields.jsx";
 import { USER_CONSTANTS } from "../../constants/global";
 
 const LoginPage = () => {
@@ -21,10 +21,11 @@ const LoginPage = () => {
   const redirect = location.state?.from?.pathname || "/main";
 
   const userLogin = useSelector((state) => state.userLogin);
-  const { userInfo, error } = userLogin;
+  const { userInfo, error, errorCode } = userLogin;
 
   const [message, setMessage] = useState("");
   const [isFilled, setIsFilled] = useState(false);
+  const [loginAttempted, setLoginAttempted] = useState(false);
 
   const [userFields, setUserFields] = useState(
     Object.values(USER_CONSTANTS).reduce((acc, item) => {
@@ -35,6 +36,9 @@ const LoginPage = () => {
 
   useEffect(() => {
     if (userInfo) {
+      // Clear pending registration info on successful login
+      localStorage.removeItem("pendingRegistration");
+
       // Check user role and redirect accordingly
       if (userInfo.role === "system_admin") {
         // If system admin is trying to access a specific admin route, honor that
@@ -59,11 +63,45 @@ const LoginPage = () => {
           navigate(redirect);
         }
       }
-    } else if (error) {
-      toast.error(error, {
-        position: "top-right",
-        style: { color: "black", marginTop: "0rem" },
-      });
+    } else if (error && loginAttempted) {
+      // Debug logging
+      console.log("Login error detected:", error);
+      console.log("Error code:", errorCode);
+
+      // Reset the login attempted flag
+      setLoginAttempted(false);
+
+      // Check if error is about pending approval using error code or message content
+      const isPendingApproval =
+        errorCode === "ACCOUNT_PENDING" ||
+        (Array.isArray(errorCode) && errorCode.includes("ACCOUNT_PENDING")) ||
+        (error &&
+          (error.includes("pending approval") ||
+            error.includes("Your account is pending approval") ||
+            error.includes("No active account found") ||
+            error.toLowerCase().includes("pending") ||
+            error.toLowerCase().includes("approval")));
+
+      console.log("isPendingApproval check:", isPendingApproval);
+
+      if (isPendingApproval) {
+        console.log("Pending approval detected, redirecting...");
+        // Redirect to registration pending page immediately
+        navigate("/registration-pending");
+      } else if (errorCode === "ACCOUNT_DEACTIVATED") {
+        toast.error(
+          "Ваш обліковий запис деактивовано. Зв'яжіться з підтримкою.",
+          {
+            position: "top-right",
+            style: { color: "black", marginTop: "0rem" },
+          }
+        );
+      } else {
+        toast.error(error, {
+          position: "top-right",
+          style: { color: "black", marginTop: "0rem" },
+        });
+      }
     }
   }, [navigate, userInfo, redirect, error]);
 
@@ -81,6 +119,9 @@ const LoginPage = () => {
 
     // Clear any error messages if inputs are correct
     setIsFilled(false);
+
+    // Set flag to track that we're attempting a login
+    setLoginAttempted(true);
 
     dispatch(login(email, password));
   };

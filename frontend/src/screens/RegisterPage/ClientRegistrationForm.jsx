@@ -42,7 +42,7 @@ const ClientRegistrationForm = () => {
     confirmPassword: "",
 
     // Subscription data
-    subscriptionPlan: "base", // Default to base plan
+    subscriptionPlan: "trial", // Default to trial plan
     billingCycle: "monthly", // Default to monthly
   });
 
@@ -55,7 +55,7 @@ const ClientRegistrationForm = () => {
         setSubscriptionPlans(data);
       } catch (error) {
         console.error("Failed to load subscription plans:", error);
-        toast.error("Failed to load subscription plans");
+        toast.error("Не вдалося завантажити плани підписки");
       } finally {
         setPlansLoading(false);
       }
@@ -187,57 +187,56 @@ const ClientRegistrationForm = () => {
     if (step === 1) {
       // Validate company information
       if (!formData.clientName.trim()) {
-        newErrors.clientName = "Company name is required";
+        newErrors.clientName = "Назва компанії обов'язкова";
       }
       if (!formData.clientSlug.trim()) {
-        newErrors.clientSlug = "Company identifier is required";
+        newErrors.clientSlug = "Ідентифікатор компанії обов'язковий";
       } else if (!/^[a-z0-9-]+$/.test(formData.clientSlug)) {
-        newErrors.clientSlug =
-          "Only lowercase letters, numbers, and hyphens allowed";
+        newErrors.clientSlug = "Дозволені лише малі літери, цифри та дефіси";
       }
       if (
         formData.companyEmail &&
         !/\S+@\S+\.\S+/.test(formData.companyEmail)
       ) {
-        newErrors.companyEmail = "Please enter a valid email address";
+        newErrors.companyEmail = "Введіть дійсну адресу електронної пошти";
       }
     }
 
     if (step === 2) {
       // Validate admin user information
       if (!formData.username.trim()) {
-        newErrors.username = "Username is required";
+        newErrors.username = "Ім'я користувача обов'язкове";
       }
       if (!formData.email.trim()) {
-        newErrors.email = "Email is required";
+        newErrors.email = "Електронна пошта обов'язкова";
       } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-        newErrors.email = "Please enter a valid email address";
+        newErrors.email = "Введіть дійсну адресу електронної пошти";
       }
       if (!formData.firstName.trim()) {
-        newErrors.firstName = "First name is required";
+        newErrors.firstName = "Ім'я обов'язкове";
       }
       if (!formData.lastName.trim()) {
-        newErrors.lastName = "Last name is required";
+        newErrors.lastName = "Прізвище обов'язкове";
       }
       if (!formData.password) {
-        newErrors.password = "Password is required";
+        newErrors.password = "Пароль обов'язковий";
       } else if (formData.password.length < 8) {
-        newErrors.password = "Password must be at least 8 characters long";
+        newErrors.password = "Пароль повинен містити принаймні 8 символів";
       }
       if (!formData.confirmPassword) {
-        newErrors.confirmPassword = "Please confirm your password";
+        newErrors.confirmPassword = "Підтвердіть свій пароль";
       } else if (formData.password !== formData.confirmPassword) {
-        newErrors.confirmPassword = "Passwords do not match";
+        newErrors.confirmPassword = "Паролі не співпадають";
       }
     }
 
     if (step === 3) {
       // Validate subscription plan selection
       if (!formData.subscriptionPlan) {
-        newErrors.subscriptionPlan = "Please select a subscription plan";
+        newErrors.subscriptionPlan = "Оберіть план підписки";
       }
       if (!formData.billingCycle) {
-        newErrors.billingCycle = "Please select a billing cycle";
+        newErrors.billingCycle = "Оберіть цикл оплати";
       }
     }
 
@@ -246,11 +245,22 @@ const ClientRegistrationForm = () => {
   };
 
   const handleNext = () => {
+    console.log("handleNext called, currentStep:", currentStep);
+
+    // Prevent advancing beyond step 3
+    if (currentStep >= 3) {
+      console.log("Already at step 3, not advancing");
+      return;
+    }
+
     setHasAttemptedSubmit(true);
     if (validateStep(currentStep)) {
-      setCurrentStep((prev) => prev + 1);
+      console.log("Validation passed, moving to next step");
+      setCurrentStep((prev) => Math.min(prev + 1, 3));
       setHasAttemptedSubmit(false); // Reset for next step
       setErrors({}); // Clear all errors when moving to next step
+    } else {
+      console.log("Validation failed for step:", currentStep);
     }
   };
 
@@ -262,9 +272,18 @@ const ClientRegistrationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("handleSubmit called, currentStep:", currentStep);
 
+    // Only allow submission on step 3
+    if (currentStep !== 3) {
+      console.log("Not on step 3, preventing submission");
+      return;
+    }
+
+    console.log("Submitting registration form");
     setHasAttemptedSubmit(true);
     if (!validateStep(3)) {
+      console.log("Step 3 validation failed");
       return;
     }
 
@@ -303,17 +322,33 @@ const ClientRegistrationForm = () => {
       if (result.success) {
         // Don't auto-login for pending approvals
         if (result.data.approval_status === "pending") {
+          // Store registration info for the pending page
+          const registrationInfo = {
+            client_name: result.data.client_name,
+            client_slug: result.data.client_slug,
+            admin_email: result.data.admin_email,
+            registration_date: new Date().toISOString(),
+          };
+
+          localStorage.setItem(
+            "pendingRegistration",
+            JSON.stringify(registrationInfo)
+          );
+
           toast.success(
-            "Registration submitted successfully! Your account is pending approval. You'll receive an email once approved.",
+            "Реєстрацію подано успішно! Ваш обліковий запис очікує схвалення. Ви отримаєте електронний лист після схвалення.",
             {
               position: "top-right",
               duration: 6000,
             }
           );
-          navigate("/registration-pending");
+
+          navigate("/registration-pending", {
+            state: { registrationData: registrationInfo },
+          });
         } else {
           // Handle immediate approval (if implemented)
-          toast.success("Registration successful! Welcome to Malog!", {
+          toast.success("Реєстрація успішна! Ласкаво просимо до Malog!", {
             position: "top-right",
             duration: 4000,
           });
@@ -323,12 +358,12 @@ const ClientRegistrationForm = () => {
         // Handle server validation errors
         if (result.errors) {
           setErrors(result.errors);
-          toast.error("Please fix the errors and try again", {
+          toast.error("Виправте помилки та спробуйте ще раз", {
             position: "top-right",
           });
         } else {
           toast.error(
-            result.message || "Registration failed. Please try again.",
+            result.message || "Реєстрація не вдалась. Спробуйте ще раз.",
             {
               position: "top-right",
             }
@@ -337,7 +372,7 @@ const ClientRegistrationForm = () => {
       }
     } catch (error) {
       console.error("Registration error:", error);
-      toast.error("Registration failed. Please try again.", {
+      toast.error("Реєстрація не вдалась. Спробуйте ще раз.", {
         position: "top-right",
       });
     } finally {
@@ -349,35 +384,35 @@ const ClientRegistrationForm = () => {
     <div className="step-indicator">
       <div className={`step ${currentStep >= 1 ? "active" : ""}`}>
         <div className="step-number">1</div>
-        <div className="step-label">Company Info</div>
+        <div className="step-label">Інформація про компанію</div>
       </div>
       <div className="step-connector"></div>
       <div className={`step ${currentStep >= 2 ? "active" : ""}`}>
         <div className="step-number">2</div>
-        <div className="step-label">Admin Account</div>
+        <div className="step-label">Обліковий запис адміністратора</div>
       </div>
       <div className="step-connector"></div>
       <div className={`step ${currentStep >= 3 ? "active" : ""}`}>
         <div className="step-number">3</div>
-        <div className="step-label">Subscription Plan</div>
+        <div className="step-label">План підписки</div>
       </div>
     </div>
   );
 
   const renderStep1 = () => (
     <div className="registration-step">
-      <h3>Company Information</h3>
+      <h3>Інформація про компанію</h3>
       <p className="step-description">
-        Let's start by setting up your company profile
+        Почнемо з налаштування профілю вашої компанії
       </p>
 
       <div className="form-row">
         <div className="form-group">
           <InputComponent
-            label="Company Name *"
+            label="Назва Компанії *"
             name="clientName"
             type="text"
-            placeholder="Your Company Name"
+            placeholder="Назва вашої компанії"
             value={formData.clientName}
             onChange={handleClientNameChange}
             error={hasAttemptedSubmit ? errors.clientName : ""}
@@ -385,14 +420,14 @@ const ClientRegistrationForm = () => {
         </div>
         <div className="form-group">
           <InputComponent
-            label="Company Identifier *"
+            label="Ідентифікатор Компанії *"
             name="clientSlug"
             type="text"
-            placeholder="company-identifier"
+            placeholder="ідентифікатор-компанії"
             value={formData.clientSlug}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.clientSlug : ""}
-            helperText="Unique identifier (lowercase, hyphens only)"
+            helperText="Ідентифікатор (формується автоматично з назви)"
           />
         </div>
       </div>
@@ -400,10 +435,10 @@ const ClientRegistrationForm = () => {
       <div className="form-row">
         <div className="form-group">
           <InputComponent
-            label="Company Email"
+            label="Електронна Пошта"
             name="companyEmail"
             type="email"
-            placeholder="company@example.com"
+            placeholder="info@trans.com.ua"
             value={formData.companyEmail}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.companyEmail : ""}
@@ -411,10 +446,10 @@ const ClientRegistrationForm = () => {
         </div>
         <div className="form-group">
           <InputComponent
-            label="Company Phone"
+            label="Телефон Компанії"
             name="companyPhone"
             type="tel"
-            placeholder="+1 (555) 123-4567"
+            placeholder="+380 (99) 123-45-67"
             value={formData.companyPhone}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.companyPhone : ""}
@@ -425,22 +460,22 @@ const ClientRegistrationForm = () => {
       <div className="form-row">
         <div className="form-group">
           <InputComponent
-            label="VAT Number"
+            label="ЄДРПОУ"
             name="companyVatNumber"
             type="text"
-            placeholder="Enter VAT number"
+            placeholder="Введіть номер ЄДРПОУ"
             value={formData.companyVatNumber}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.companyVatNumber : ""}
-            helperText="Optional - Your company's VAT registration number"
+            // helperText="Опціонально - код ЄДРПОУ вашої компанії"
           />
         </div>
         <div className="form-group">
           <InputComponent
-            label="Company Address"
+            label="Адреса Компанії"
             name="companyAddress"
             type="textarea"
-            placeholder="Enter your company address"
+            placeholder="Введіть адресу вашої компанії"
             value={formData.companyAddress}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.companyAddress : ""}
@@ -453,18 +488,18 @@ const ClientRegistrationForm = () => {
 
   const renderStep2 = () => (
     <div className="registration-step">
-      <h3>Admin Account</h3>
+      <h3>Обліковий запис адміністратора</h3>
       <p className="step-description">
-        Create your admin account to manage your company
+        Створіть свій обліковий запис адміністратора для управління компанією
       </p>
 
       <div className="form-row">
         <div className="form-group">
           <InputComponent
-            label="Username *"
+            label="Ім'я Користувача *"
             name="username"
             type="text"
-            placeholder="admin_username"
+            placeholder="ім'я_користувача"
             value={formData.username}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.username : ""}
@@ -472,10 +507,10 @@ const ClientRegistrationForm = () => {
         </div>
         <div className="form-group">
           <InputComponent
-            label="Email Address *"
+            label="Електронна пошта *"
             name="email"
             type="email"
-            placeholder="admin@company.com"
+            placeholder="info@trans.com.ua"
             value={formData.email}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.email : ""}
@@ -486,10 +521,10 @@ const ClientRegistrationForm = () => {
       <div className="form-row">
         <div className="form-group">
           <InputComponent
-            label="First Name *"
+            label="Ім'я *"
             name="firstName"
             type="text"
-            placeholder="John"
+            placeholder="Іван"
             value={formData.firstName}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.firstName : ""}
@@ -497,10 +532,10 @@ const ClientRegistrationForm = () => {
         </div>
         <div className="form-group">
           <InputComponent
-            label="Last Name *"
+            label="Прізвище *"
             name="lastName"
             type="text"
-            placeholder="Doe"
+            placeholder="Іваненко"
             value={formData.lastName}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.lastName : ""}
@@ -508,10 +543,10 @@ const ClientRegistrationForm = () => {
         </div>
         <div className="form-group">
           <InputComponent
-            label="Phone Number"
+            label="Номер Телефону"
             name="phoneNumber"
             type="tel"
-            placeholder="+1 (555) 123-4567"
+            placeholder="+380 (99) 123-45-67"
             value={formData.phoneNumber}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.phoneNumber : ""}
@@ -522,10 +557,10 @@ const ClientRegistrationForm = () => {
       <div className="form-row">
         <div className="form-group">
           <InputComponent
-            label="Password *"
+            label="Пароль *"
             name="password"
             type="password"
-            placeholder="Enter secure password"
+            placeholder="Введіть надійний пароль"
             value={formData.password}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.password : ""}
@@ -533,10 +568,10 @@ const ClientRegistrationForm = () => {
         </div>
         <div className="form-group">
           <InputComponent
-            label="Confirm Password *"
+            label="Підтвердити Пароль *"
             name="confirmPassword"
             type="password"
-            placeholder="Confirm your password"
+            placeholder="Підтвердіть свій пароль"
             value={formData.confirmPassword}
             onChange={handleInputChange}
             error={hasAttemptedSubmit ? errors.confirmPassword : ""}
@@ -547,43 +582,40 @@ const ClientRegistrationForm = () => {
   );
 
   const renderStep3 = () => (
-    <div className="step-content">
-      <h3>Choose Your Subscription Plan</h3>
-      <p>Select the plan that best fits your business needs</p>
+    <div className="step-content subscription-step">
+      <div className="subscription-header">
+        <h3>Оберіть ваш план підписки</h3>
+        <p>Оберіть план, який найкраще відповідає потребам вашого бізнесу</p>
+      </div>
 
       {plansLoading ? (
         <div className="loading-plans">
-          <p>Loading subscription plans...</p>
+          <p>Завантаження планів підписки...</p>
         </div>
       ) : (
         <>
           <div className="billing-toggle">
-            <div className="toggle-group">
-              <label
-                className={formData.billingCycle === "monthly" ? "active" : ""}
-              >
-                <input
-                  type="radio"
-                  name="billingCycle"
-                  value="monthly"
-                  checked={formData.billingCycle === "monthly"}
-                  onChange={handleInputChange}
-                />
-                Monthly
-              </label>
-              <label
-                className={formData.billingCycle === "yearly" ? "active" : ""}
-              >
-                <input
-                  type="radio"
-                  name="billingCycle"
-                  value="yearly"
-                  checked={formData.billingCycle === "yearly"}
-                  onChange={handleInputChange}
-                />
-                Yearly (Save 17%)
-              </label>
-            </div>
+            <button
+              className={formData.billingCycle === "monthly" ? "active" : ""}
+              onClick={() =>
+                handleInputChange({
+                  target: { name: "billingCycle", value: "monthly" },
+                })
+              }
+            >
+              Щомісяця
+            </button>
+            <button
+              className={formData.billingCycle === "yearly" ? "active" : ""}
+              onClick={() =>
+                handleInputChange({
+                  target: { name: "billingCycle", value: "yearly" },
+                })
+              }
+            >
+              Щорічно
+              <span className="discount-badge">Економія 17%</span>
+            </button>
           </div>
 
           <div className="subscription-plans">
@@ -600,17 +632,36 @@ const ClientRegistrationForm = () => {
                 }
               >
                 <div className="plan-header">
-                  <h4>{plan.display_name}</h4>
+                  <h4>
+                    {plan.display_name}
+                    {plan.is_trial_plan && (
+                      <span className="trial-badge">БЕЗКОШТОВНО</span>
+                    )}
+                  </h4>
                   <div className="plan-price">
-                    <span className="price">
-                      $
-                      {formData.billingCycle === "yearly"
-                        ? plan.yearly_price
-                        : plan.monthly_price}
-                    </span>
-                    <span className="period">
-                      /{formData.billingCycle === "yearly" ? "year" : "month"}
-                    </span>
+                    {plan.is_trial_plan ? (
+                      <div className="trial-price">
+                        <span className="price">0 грн</span>
+                        <span className="period">
+                          /{plan.trial_duration_days} днів
+                        </span>
+                      </div>
+                    ) : (
+                      <>
+                        <span className="price">
+                          $
+                          {formData.billingCycle === "yearly"
+                            ? plan.yearly_price
+                            : plan.monthly_price}
+                        </span>
+                        <span className="period">
+                          /
+                          {formData.billingCycle === "yearly"
+                            ? "рік"
+                            : "місяць"}
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -618,8 +669,8 @@ const ClientRegistrationForm = () => {
                   <div className="truck-limit">
                     <strong>
                       {plan.truck_limit === -1
-                        ? "Unlimited trucks"
-                        : `Up to ${plan.truck_limit} trucks`}
+                        ? "Необмежено вантажівок"
+                        : `До ${plan.truck_limit} вантажівок`}
                     </strong>
                   </div>
 
@@ -632,6 +683,18 @@ const ClientRegistrationForm = () => {
 
                 <div className="plan-description">
                   <p>{plan.description}</p>
+                  {plan.is_trial_plan && (
+                    <div className="trial-benefits">
+                      <p className="trial-highlight">
+                        🎉 Спробуйте всі функції безкоштовно протягом{" "}
+                        {plan.trial_duration_days} днів!
+                      </p>
+                      <p className="trial-note">
+                        Жодних зобов'язань • Легке оновлення • Скасування в
+                        будь-який час
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
@@ -651,13 +714,22 @@ const ClientRegistrationForm = () => {
   return (
     <div className="client-registration-form">
       <div className="registration-header">
-        <h2>Join Malog</h2>
-        <p>Logistics Management Platform</p>
+        <h2>Приєднуйтесь до Malog Systems</h2>
+        <p>Платформа управління автопарком</p>
       </div>
 
       {renderStepIndicator()}
 
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+        onKeyDown={(e) => {
+          // Prevent form submission on Enter key if not on step 3
+          if (e.key === "Enter" && currentStep !== 3) {
+            e.preventDefault();
+            handleNext();
+          }
+        }}
+      >
         {currentStep === 1 && renderStep1()}
         {currentStep === 2 && renderStep2()}
         {currentStep === 3 && renderStep3()}
@@ -671,7 +743,7 @@ const ClientRegistrationForm = () => {
                 className="btn btn-secondary"
                 disabled={isLoading}
               >
-                Previous
+                Назад
               </button>
             )}
           </div>
@@ -681,19 +753,23 @@ const ClientRegistrationForm = () => {
               <>
                 <button
                   type="button"
-                  onClick={handleNext}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleNext();
+                  }}
                   className="btn btn-primary"
+                  disabled={isLoading}
                 >
-                  Next
+                  Далі
                 </button>
                 <div className="login-link">
-                  Already have an account?{" "}
+                  Вже маєте обліковий запис?{" "}
                   <button
                     type="button"
                     onClick={() => navigate("/login")}
                     className="link-button"
                   >
-                    Login here
+                    Увійти тут
                   </button>
                 </div>
               </>
@@ -703,7 +779,9 @@ const ClientRegistrationForm = () => {
                 className="btn btn-primary"
                 disabled={isLoading}
               >
-                {isLoading ? "Creating Account..." : "Register Company"}
+                {isLoading
+                  ? "Створення облікового запису..."
+                  : "Зареєструвати компанію"}
               </button>
             )}
           </div>

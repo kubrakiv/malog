@@ -239,6 +239,18 @@
       font-size: 14px;
       font-weight: 500;
     }
+
+    .days-remaining {
+      font-size: 12px;
+      font-weight: 600;
+      padding: 2px 8px;
+      background: rgba(255, 215, 0, 0.9);
+      color: #333;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 215, 0, 1);
+      min-width: fit-content;
+      white-space: nowrap;
+    }
   }
 
   .no-subscription-mini-bar {

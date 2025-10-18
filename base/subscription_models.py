@@ -9,6 +9,7 @@ class SubscriptionPlan(models.Model):
     Subscription plans with different feature sets and truck limits
     """
     PLAN_CHOICES = [
+        ('trial', 'Trial Plan'),
         ('base', 'Base Plan'),
         ('pro', 'Pro Plan'),
         ('unlimited', 'Unlimited Plan'),
@@ -22,6 +23,8 @@ class SubscriptionPlan(models.Model):
     yearly_price = models.DecimalField(max_digits=10, decimal_places=2)
     features = models.JSONField(default=list, help_text="List of available features")
     is_active = models.BooleanField(default=True)
+    is_trial_plan = models.BooleanField(default=False, help_text="Is this a trial plan?")
+    trial_duration_days = models.IntegerField(default=14, help_text="Trial duration in days (for trial plans)")
     created_at = models.DateTimeField(default=timezone.now)  # Added default
     updated_at = models.DateTimeField(auto_now=True)  # This already handles updates automatically
     
@@ -49,6 +52,8 @@ class ClientSubscription(models.Model):
     
     STATUS_CHOICES = [
         ('active', 'Active'),
+        ('trial', 'Trial'),
+        ('trial_expired', 'Trial Expired'),
         ('cancelled', 'Cancelled'),
         ('expired', 'Expired'),
         ('pending', 'Pending Payment'),
@@ -136,9 +141,58 @@ class ClientSubscription(models.Model):
     
     def can_create_truck(self, current_truck_count):
         """Check if client can create another truck based on subscription limits"""
-        if self.status != 'active':
+        if self.status not in ['active', 'trial']:
             return False
         return self.plan.can_create_truck(current_truck_count)
+    
+    @property
+    def is_trial_active(self):
+        """Check if trial is still active"""
+        if not self.is_trial or not self.trial_end_date:
+            return False
+        return timezone.now() < self.trial_end_date
+    
+    @property
+    def trial_days_remaining(self):
+        """Get remaining trial days"""
+        if not self.is_trial or not self.trial_end_date:
+            return 0
+        if not self.is_trial_active:
+            return 0
+        delta = self.trial_end_date - timezone.now()
+        return max(0, delta.days)
+    
+    def convert_trial_to_paid(self, billing_cycle='monthly'):
+        """Convert trial subscription to paid subscription"""
+        if not self.is_trial:
+            raise ValidationError("This is not a trial subscription")
+        
+        # Update subscription details
+        self.is_trial = False
+        self.status = 'active'
+        self.billing_cycle = billing_cycle
+        
+        # Set new end date based on billing cycle
+        start_date = timezone.now()
+        if billing_cycle == 'yearly':
+            from datetime import timedelta
+            self.end_date = start_date + timedelta(days=365)
+        else:
+            from datetime import timedelta
+            self.end_date = start_date + timedelta(days=30)
+        
+        self.next_billing_date = self.end_date
+        self.save()
+    
+    def extend_trial(self, additional_days=7):
+        """Extend trial period by additional days"""
+        if not self.is_trial or not self.trial_end_date:
+            raise ValidationError("This is not a trial subscription")
+        
+        from datetime import timedelta
+        self.trial_end_date = self.trial_end_date + timedelta(days=additional_days)
+        self.end_date = self.trial_end_date
+        self.save()
 
 
 class SubscriptionUsage(models.Model):

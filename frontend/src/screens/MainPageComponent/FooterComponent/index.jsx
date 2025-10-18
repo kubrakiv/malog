@@ -8,11 +8,11 @@ const FooterComponent = () => {
       <div className="footer-content">
         <div className="footer-logo">
           <FaTruck className="logo-icon" />
-          <span className="logo-text">MALOG</span>
+          <span className="logo-text">MALOG SYSTEMS</span>
         </div>
         <div className="footer-info">
-          <span>&copy; 2024 Malog System. All rights reserved.</span>
-          <p>Your comprehensive logistics management solution</p>
+          <span>&copy; 2025 Malog Systems. Усі права захищено.</span>
+          <p>Ваше комплексне рішення для управління автопарком</p>
         </div>
       </div>
     </footer>

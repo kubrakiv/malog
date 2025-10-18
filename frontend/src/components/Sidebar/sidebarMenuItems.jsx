@@ -44,17 +44,24 @@ const menuItems = [
   //   icon: <MdDashboard />,
   // },
   {
+    path: "/calculator",
+    title: "Калькулятор",
+    icon: <FaCalculator />,
+    childrens: [
+      {
+        path: "/calculator",
+        title: "Калькулятор",
+      },
+    ],
+  },
+  {
     title: "Рознарядка",
     path: "/planner",
     icon: <FaCalendarWeek />,
     childrens: [
       {
         path: "/planner",
-        title: "Звичайна рознарядка",
-      },
-      {
-        path: "/planner/drag-drop",
-        title: "Drag & Drop Планувальник",
+        title: "Тижневе планування",
       },
     ],
   },
@@ -98,11 +105,6 @@ const menuItems = [
   //   ],
   // },
   // {
-  //   path: "/orders/add",
-  //   title: "Створити маршрут",
-  //   icon: <FaPlus />,
-  // },
-  // {
   //   path: "/map",
   //   title: "Карта",
   //   icon: <FaMapMarkedAlt />,
@@ -131,11 +133,6 @@ const menuItems = [
         title: "ЛАРДІ",
       },
     ],
-  },
-  {
-    path: "/calculator",
-    title: "Калькулятор",
-    icon: <FaCalculator />,
   },
 ];
 

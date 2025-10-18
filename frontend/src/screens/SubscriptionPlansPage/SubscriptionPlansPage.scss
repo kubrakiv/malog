@@ -1,16 +1,35 @@
 @import "../../styles/utils/vars";
 
-.subscription-plans-content {
-  min-height: calc(100vh - 160px); // Account for header and footer
+.subscription-plans-page {
+  width: 100%;
+  min-height: 100vh;
   background: linear-gradient(
     135deg,
     $backgroundcolor 0%,
     lighten($backgroundcolor, 3%) 100%
   );
+  padding-top: 71px; // Header height accounting
+
+  @media (max-width: 1024px) {
+    padding-top: 75px;
+  }
+
+  @media (max-width: 768px) {
+    padding-top: 75px;
+  }
+
+  @media (max-width: 480px) {
+    padding-top: 71px;
+  }
+}
+
+.subscription-plans-content {
+  min-height: calc(100vh - 71px); // Account for header
   padding: 2rem;
 
   @media (max-width: 768px) {
     padding: 1rem;
+    min-height: calc(100vh - 75px);
   }
 }
 
@@ -45,8 +64,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 50vh;
+  min-height: calc(100vh - 71px);
   color: $colorGray;
+  padding: 2rem;
+
+  @media (max-width: 768px) {
+    min-height: calc(100vh - 75px);
+    padding: 1rem;
+  }
 
   .loading-spinner {
     width: 40px;
@@ -157,27 +182,42 @@
 
 .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  max-width: 1200px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  max-width: 1400px;
   margin: 0 auto 4rem;
 
-  @media (max-width: 992px) {
+  @media (max-width: 1200px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    max-width: 800px;
+  }
+
+  @media (max-width: 768px) {
     grid-template-columns: 1fr;
-    gap: 1.5rem;
-    max-width: 400px;
+    gap: 2rem;
+    max-width: 450px;
+    padding: 0 1rem;
+  }
+
+  @media (max-width: 480px) {
+    gap: 2.5rem;
+    max-width: 100%;
+    padding: 0 1.5rem;
   }
 }
 
 .pricing-card {
   background: white;
   border-radius: 16px;
-  padding: 2rem;
+  padding: 1.5rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   border: 2px solid transparent;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 
   &:hover {
     transform: translateY(-5px);
@@ -250,37 +290,87 @@
 
   .plan-header {
     text-align: center;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     padding-top: 0;
 
     h3 {
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       color: $headerColor;
-      margin-bottom: 1rem;
+      margin-bottom: 0.8rem;
       font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+
+      .trial-badge {
+        background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+        color: white;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.2rem 0.5rem;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+        animation: pulse 2s infinite;
+      }
     }
 
     .price {
       display: flex;
       align-items: baseline;
       justify-content: center;
-      margin-bottom: 0.5rem;
+      margin: 1rem 0;
+      flex-wrap: nowrap;
+      text-align: center;
+      width: 100%;
 
       .currency {
-        font-size: 1.2rem;
+        font-size: 1rem;
         color: $colorGray;
       }
 
       .amount {
-        font-size: 3rem;
+        font-size: 1.8rem;
         font-weight: 700;
         color: $headerColor;
         margin: 0 0.2rem;
+        white-space: nowrap;
+        text-align: center;
       }
 
       .period {
         font-size: 1rem;
         color: $colorGray;
+        text-align: center;
+      }
+    }
+
+    .trial-price {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      margin: 1rem 0;
+      flex-wrap: nowrap;
+      text-align: center;
+      width: 100%;
+
+      .amount {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #4caf50;
+        margin: 0 0.2rem;
+        white-space: nowrap;
+        text-align: center;
+      }
+
+      .period {
+        font-size: 1rem;
+        color: #4caf50;
+        font-weight: 600;
+        text-align: center;
       }
     }
 
@@ -288,6 +378,8 @@
       font-size: 0.9rem;
       color: $colorGray;
       margin-bottom: 1rem;
+      text-align: center;
+      width: 100%;
     }
 
     .plan-description {
@@ -298,7 +390,8 @@
   }
 
   .plan-features {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
+    flex: 1;
 
     .truck-limit {
       display: flex;
@@ -307,10 +400,10 @@
       gap: 0.5rem;
       background: rgba($tableHeaderColor, 0.1);
       color: $tableHeaderColor;
-      padding: 0.75rem;
+      padding: 0.6rem;
       border-radius: 8px;
-      margin-bottom: 1.5rem;
-      font-size: 1.1rem;
+      margin-bottom: 1rem;
+      font-size: 1rem;
       font-weight: 600;
     }
 
@@ -321,14 +414,14 @@
       li {
         display: flex;
         align-items: center;
-        padding: 0.5rem 0;
-        font-size: 0.95rem;
-        line-height: 1.4;
+        padding: 0.4rem 0;
+        font-size: 0.85rem;
+        line-height: 1.3;
 
         .check-icon {
           color: #28a745;
-          margin-right: 0.75rem;
-          font-size: 0.9rem;
+          margin-right: 0.6rem;
+          font-size: 0.8rem;
           flex-shrink: 0;
         }
       }
@@ -406,57 +499,172 @@
     text-align: center;
     font-size: 2rem;
     color: $headerColor;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     font-weight: 700;
+  }
+
+  .scroll-hint {
+    text-align: center;
+    font-size: 0.9rem;
+    color: $colorGray;
+    margin-bottom: 1.5rem;
+    font-style: italic;
+    display: none;
+
+    @media (max-width: 768px) {
+      display: block;
+    }
+  }
+
+  .comparison-scroll-container {
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+
+    // Custom scrollbar styling
+    &::-webkit-scrollbar {
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: rgba($colorGray, 0.1);
+      border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: rgba($headerColor, 0.5);
+      border-radius: 4px;
+
+      &:hover {
+        background: rgba($headerColor, 0.7);
+      }
+    }
   }
 
   .comparison-table {
     background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    min-width: 700px; // Minimum width to ensure readability for all plans
+    width: 100%;
+    display: table;
+    border-collapse: separate;
+    border-spacing: 0;
 
     .comparison-header {
-      display: grid;
-      grid-template-columns: 1fr repeat(3, 1fr);
+      display: table-row;
       background: $sidebarcolor;
       color: white;
       font-weight: 600;
 
       .feature-column,
       .plan-column {
+        display: table-cell;
         padding: 1rem;
         text-align: center;
+        white-space: nowrap;
+        vertical-align: middle;
+        min-width: 150px;
+
+        @media (min-width: 768px) {
+          min-width: 180px;
+        }
       }
 
       .feature-column {
         text-align: left;
-        background: darken($sidebarcolor, 5%);
+        background: $sidebarcolor !important; // Completely opaque
+        position: sticky;
+        left: 0;
+        z-index: 20;
+        box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        min-width: 200px;
+        border-right: 3px solid darken($sidebarcolor, 10%);
+        position: relative;
+
+        // Extra background layer for complete coverage
+        &::before {
+          content: "";
+          position: absolute;
+          top: -1px;
+          left: -1px;
+          right: -4px;
+          bottom: -1px;
+          background: $sidebarcolor;
+          z-index: -1;
+        }
+
+        @media (min-width: 768px) {
+          min-width: 250px;
+        }
       }
     }
 
     .comparison-row {
-      display: grid;
-      grid-template-columns: 1fr repeat(3, 1fr);
+      display: table-row;
       border-bottom: 1px solid $borderColor;
 
       &:last-child {
         border-bottom: none;
       }
 
-      .feature-name {
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .feature-name,
+      .plan-value {
+        display: table-cell;
         padding: 1rem;
-        background: rgba($sidebarcolor, 0.05);
+        vertical-align: middle;
+        white-space: nowrap;
+        border-right: 1px solid rgba($borderColor, 0.3);
+
+        &:last-child {
+          border-right: none;
+        }
+      }
+
+      .feature-name {
+        background: #f8f9fa !important; // Completely opaque light gray
         font-weight: 500;
         color: $textColor;
+        position: sticky;
+        left: 0;
+        z-index: 15;
+        border-right: 3px solid $borderColor;
+        box-shadow: 3px 0 10px rgba(0, 0, 0, 0.2);
+        text-align: left;
+        min-width: 200px;
+        position: relative;
+
+        // Double background for extra coverage
+        &::before {
+          content: "";
+          position: absolute;
+          top: -1px;
+          left: -1px;
+          right: -4px;
+          bottom: -1px;
+          background: #f8f9fa;
+          z-index: -1;
+        }
+
+        @media (min-width: 768px) {
+          min-width: 250px;
+        }
       }
 
       .plan-value {
-        padding: 1rem;
         text-align: center;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        background: white;
+        position: relative;
+        z-index: 1;
+        min-width: 150px;
+
+        @media (min-width: 768px) {
+          min-width: 180px;
+        }
 
         .check-icon {
           color: #28a745;
@@ -469,32 +677,19 @@
         }
       }
     }
+  }
 
-    @media (max-width: 768px) {
-      .comparison-header,
-      .comparison-row {
-        grid-template-columns: 1fr;
-      }
-
-      .comparison-header {
-        .plan-column {
-          display: none;
-        }
-      }
-
-      .comparison-row {
-        .plan-value {
-          border-left: 3px solid $tableHeaderColor;
-          justify-content: flex-start;
-          padding-left: 2rem;
-
-          &::before {
-            content: attr(data-plan) ": ";
-            font-weight: 600;
-            margin-right: 0.5rem;
-          }
-        }
-      }
+  // Animation for trial badge
+  @keyframes pulse {
+    0% {
+      box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+    }
+    50% {
+      box-shadow: 0 2px 15px rgba(76, 175, 80, 0.5);
+      transform: scale(1.02);
+    }
+    100% {
+      box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
     }
   }
 }

@@ -35,6 +35,7 @@ def register_client(request):
     """
     try:
         data = request.data
+        logger.info(f"Registration request received: {data}")
         
         # Extract data from request
         client_data = data.get('client', {})
@@ -42,8 +43,14 @@ def register_client(request):
         company_data = data.get('company', {})
         subscription_data = data.get('subscription', {})
         
+        logger.info(f"Client data: {client_data}")
+        logger.info(f"Admin user data: {admin_user_data}")
+        logger.info(f"Company data: {company_data}")
+        logger.info(f"Subscription data: {subscription_data}")
+        
         # Validate required fields
         if not client_data.get('name'):
+            logger.error("Client name is missing")
             return Response({'detail': 'Client name is required'}, status=status.HTTP_400_BAD_REQUEST)
         
         if not client_data.get('slug'):
@@ -88,48 +95,71 @@ def register_client(request):
         
         with transaction.atomic():
             # Create client with pending approval status
-            client = Client.objects.create(
-                name=client_data['name'],
-                slug=client_data['slug'],
-                is_active=False,  # Inactive until approved
-                is_approved=False,
-                approval_status='pending'
-            )
+            logger.info(f"Creating client: {client_data['name']} with slug: {client_data['slug']}")
+            try:
+                client = Client.objects.create(
+                    name=client_data['name'],
+                    slug=client_data['slug'],
+                    is_active=False,  # Inactive until approved
+                    is_approved=False,
+                    approval_status='pending'
+                )
+                logger.info(f"Client created successfully: {client.id}")
+            except Exception as e:
+                logger.error(f"Failed to create client: {str(e)}")
+                raise
             
             # Set current client for tenant-aware models
             set_current_client(client)
             
             # Create admin user but mark as inactive until approved
-            admin_user = Profile.objects.create_user(
-                username=admin_user_data['username'],
-                email=admin_user_data['email'],
-                password=admin_user_data['password1'],
-                first_name=admin_user_data.get('first_name', ''),
-                last_name=admin_user_data.get('last_name', ''),
-                phone_number=admin_user_data.get('phone_number', ''),
-                client=client,
-                is_staff=True,  # Give admin access (makes is_admin=True)
-                is_superuser=True,  # Give superuser privileges within their tenant
-                is_active=False  # Inactive until approved
-            )
+            logger.info(f"Creating admin user: {admin_user_data['username']}")
+            try:
+                admin_user = Profile.objects.create_user(
+                    username=admin_user_data['username'],
+                    email=admin_user_data['email'],
+                    password=admin_user_data['password1'],
+                    first_name=admin_user_data.get('first_name', ''),
+                    last_name=admin_user_data.get('last_name', ''),
+                    phone_number=admin_user_data.get('phone_number', ''),
+                    client=client,
+                    is_staff=True,  # Give admin access (makes is_admin=True)
+                    is_superuser=True,  # Give superuser privileges within their tenant
+                    is_active=False  # Inactive until approved
+                )
+                logger.info(f"Admin user created successfully: {admin_user.id}")
+            except Exception as e:
+                logger.error(f"Failed to create admin user: {str(e)}")
+                raise
             
             # Get or create admin role
-            admin_role, created = Role.objects.get_or_create(
-                name='admin',
-                defaults={'name': 'admin'}
-            )
-            admin_user.role = admin_role
-            admin_user.save()
+            try:
+                admin_role, created = Role.objects.get_or_create(
+                    name='admin',
+                    defaults={'name': 'admin'}
+                )
+                admin_user.role = admin_role
+                admin_user.save()
+                logger.info(f"Admin role assigned successfully")
+            except Exception as e:
+                logger.error(f"Failed to assign admin role: {str(e)}")
+                raise
             
             # Create company with explicit client assignment
-            company = Company.objects.create(
-                name=company_data.get('name', client_data['name']),
-                email=company_data.get('email', ''),
-                phone=company_data.get('phone', ''),
-                post_address=company_data.get('address', ''),
-                vat_number=company_data.get('vat_number', ''),
-                client=client
-            )
+            logger.info(f"Creating company: {company_data.get('name', client_data['name'])}")
+            try:
+                company = Company.objects.create(
+                    name=company_data.get('name', client_data['name']),
+                    email=company_data.get('email', ''),
+                    phone=company_data.get('phone', ''),
+                    post_address=company_data.get('address', ''),
+                    vat_number=company_data.get('vat_number', ''),
+                    client=client
+                )
+                logger.info(f"Company created successfully: {company.id}")
+            except Exception as e:
+                logger.error(f"Failed to create company: {str(e)}")
+                raise
             
             # Create subscription if specified
             if subscription_data and subscription_data.get('plan'):
@@ -137,33 +167,61 @@ def register_client(request):
                     plan_name = subscription_data.get('plan', 'base')
                     billing_cycle = subscription_data.get('billing_cycle', 'monthly')
                     
+                    logger.info(f"Creating subscription with plan: {plan_name}, billing: {billing_cycle}")
+                    
                     # Get the subscription plan
                     subscription_plan = SubscriptionPlan.objects.get(name=plan_name, is_active=True)
                     
-                    # Calculate subscription dates (start with pending status)
+                    # Calculate subscription dates 
                     start_date = timezone.now()
-                    if billing_cycle == 'yearly':
-                        end_date = start_date + timedelta(days=365)
+                    
+                    # Handle trial vs regular subscriptions differently
+                    if subscription_plan.is_trial_plan:
+                        # Trial subscription setup
+                        trial_end_date = start_date + timedelta(days=subscription_plan.trial_duration_days)
+                        end_date = trial_end_date
+                        
+                        client_subscription = ClientSubscription.objects.create(
+                            client=client,
+                            plan=subscription_plan,
+                            billing_cycle=billing_cycle,
+                            status='pending',  # Will become 'trial' when client is approved
+                            start_date=start_date,
+                            end_date=end_date,
+                            is_trial=True,
+                            trial_end_date=trial_end_date,
+                            auto_renew=False  # Trials don't auto-renew
+                        )
+                        
+                        logger.info(f'Created trial subscription for client {client.name}: {subscription_plan.display_name} (trial period: {subscription_plan.trial_duration_days} days)')
                     else:
-                        end_date = start_date + timedelta(days=30)
-                    
-                    # Create client subscription with pending status
-                    client_subscription = ClientSubscription.objects.create(
-                        client=client,
-                        plan=subscription_plan,
-                        billing_cycle=billing_cycle,
-                        status='pending',  # Will be activated when client is approved
-                        start_date=start_date,
-                        end_date=end_date,
-                        auto_renew=True
-                    )
-                    
-                    logger.info(f'Created subscription for client {client.name}: {subscription_plan.display_name} ({billing_cycle})')
+                        # Regular subscription setup
+                        if billing_cycle == 'yearly':
+                            end_date = start_date + timedelta(days=365)
+                        else:
+                            end_date = start_date + timedelta(days=30)
+                        
+                        client_subscription = ClientSubscription.objects.create(
+                            client=client,
+                            plan=subscription_plan,
+                            billing_cycle=billing_cycle,
+                            status='pending',  # Will be activated when client is approved
+                            start_date=start_date,
+                            end_date=end_date,
+                            is_trial=False,
+                            auto_renew=True
+                        )
+                        
+                        logger.info(f'Created subscription for client {client.name}: {subscription_plan.display_name} ({billing_cycle})')
                     
                 except SubscriptionPlan.DoesNotExist:
-                    logger.warning(f'Subscription plan "{plan_name}" not found for client {client.name}')
+                    logger.error(f'Subscription plan "{plan_name}" not found for client {client.name}')
+                    return Response({
+                        'detail': f'Subscription plan "{plan_name}" not found'
+                    }, status=status.HTTP_400_BAD_REQUEST)
                 except Exception as e:
                     logger.error(f'Failed to create subscription for client {client.name}: {str(e)}')
+                    raise
             
             # Send notification emails
             send_registration_notifications(client, admin_user)
@@ -185,8 +243,19 @@ def register_client(request):
             
     except Exception as e:
         logger.error(f'Client registration failed: {str(e)}', exc_info=True)
+        
+        # Return more specific error information for debugging
+        error_detail = str(e)
+        if 'UNIQUE constraint failed' in error_detail:
+            if 'username' in error_detail:
+                error_detail = 'Username already exists'
+            elif 'email' in error_detail:
+                error_detail = 'Email already exists'
+            elif 'slug' in error_detail:
+                error_detail = 'Client identifier already exists'
+        
         return Response({
-            'detail': 'Registration failed. Please try again.',
+            'detail': error_detail,
             'error': str(e),
             'type': type(e).__name__
         }, status=status.HTTP_400_BAD_REQUEST)
