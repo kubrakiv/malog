@@ -75,6 +75,7 @@ def createTruck(request):
         entry_mileage=data.get("entry_mileage"),
         price=price,
         gps_id=data.get("gps_id"),
+        client=client,  # Add the client from request.user.client
     )
     serializer = TruckSerializer(truck, many=False)
     return Response(serializer.data)

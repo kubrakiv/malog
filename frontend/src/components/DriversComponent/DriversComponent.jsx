@@ -1,35 +1,52 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import driverImagePlaceholder from "../../img/driver_placeholder.jpg";
 import cn from "classnames";
+
+// Redux
 import {
-  deleteDriver,
+  setShowAddDriverModal,
+  setSelectedDriver,
+} from "../../features/drivers/driversSlice";
+import {
   listDrivers,
-  setUpdateDriversList,
-} from "../../actions/driverActions";
+  deleteDriver,
+  updateDriver,
+} from "../../features/drivers/driversOperations";
 
 import GenericModalComponent from "../../globalComponents/GenericModalComponent";
 import EditDriverComponent from "./EditDriverComponent/EditDriverComponent";
+import AddDriverModalComponent from "./AddDriverModalComponent";
+import DriverModalComponent from "./DriverModalComponent";
 import SearchComponent from "../../globalComponents/SearchComponent";
 
 import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
 
 import "./DriversComponent.scss";
+import { selectDrivers } from "../../features/drivers/driversSelectors";
 
 // const { REACT_APP_PROXY: BASE_URL } = import.meta.env;
 const { REACT_APP_API_BASE_URL: BASE_URL } = import.meta.env;
 
 const DriversComponent = () => {
   const dispatch = useDispatch();
-  const drivers = useSelector((state) => state.driversInfo.drivers.data);
+  // Use the new Redux state structure
+  const drivers = useSelector(selectDrivers);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check if coming from onboarding wizard and should show add driver form
+  const fromOnboarding = location.state?.fromOnboarding;
+  const addDriver = location.state?.addDriver || fromOnboarding;
+  const onboardingNextStep = location.state?.nextStep;
 
   const [selectedDriver, setSelectedDriver] = useState({});
   const [search, setSearch] = useState("");
   const [showDriverModal, setShowDriverModal] = useState(false);
 
   const [selectedDrivers, setSelectedDrivers] = useState([]);
+  const [showContinueOnboarding, setShowContinueOnboarding] = useState(false);
 
   // All edit mode hooks
   const [editDriverProfileMode, setEditDriverProfileMode] = useState(false);
@@ -47,6 +64,28 @@ const DriversComponent = () => {
   useEffect(() => {
     dispatch(listDrivers());
   }, [dispatch]);
+
+  // Check if we should show the continue onboarding button
+  useEffect(() => {
+    if (fromOnboarding && drivers && drivers.length > 0) {
+      setShowContinueOnboarding(true);
+    }
+  }, [fromOnboarding, drivers]);
+
+  // Auto-show add driver modal when coming from onboarding wizard
+  useEffect(() => {
+    if (addDriver) {
+      // Open the modal instead of navigating
+      dispatch(setShowAddDriverModal(true));
+
+      // Clear the location state after using it to prevent it from persisting
+      if (history.replaceState) {
+        const newState = { ...location.state };
+        delete newState.addDriver;
+        history.replaceState({ ...newState }, document.title);
+      }
+    }
+  }, [addDriver, dispatch]);
 
   console.log("Drivers", drivers);
 
@@ -69,16 +108,16 @@ const DriversComponent = () => {
 
   const handleRowDoubleClick = (e, driver) => {
     e.stopPropagation();
-    setSelectedDriver(driver);
-    console.log("Selected driver", driver);
-    setShowDriverModal(true);
+    dispatch(setSelectedDriver(driver));
+    dispatch(setShowDriverModal(true));
   };
 
   const handleAddDriverButton = (e) => {
     e.stopPropagation();
     setSelectedDriver({});
     console.log("Add driver button clicked");
-    navigate("/drivers/add");
+    // Open the modal instead of navigating
+    dispatch(setShowAddDriverModal(true));
   };
 
   const handleDeleteSelectedDrivers = () => {
@@ -108,14 +147,19 @@ const DriversComponent = () => {
   };
 
   const handleDriverUpdate = (driverId, driverData) => {
-    const updatedDrivers = drivers.map((driver) => {
-      if (driver.profile === driverId) {
-        return driverData;
+    console.log("Updating driver:", driverId, driverData);
+    // Use our new Redux Toolkit updateDriver action
+    dispatch(updateDriver({ driverId, dataToUpdate: driverData })).then(
+      (result) => {
+        if (result.meta.requestStatus === "fulfilled") {
+          console.log("Driver updated successfully:", result.payload);
+          // Refresh the list after update
+          dispatch(listDrivers());
+        } else if (result.meta.requestStatus === "rejected") {
+          console.error("Failed to update driver:", result.payload);
+        }
       }
-      return driver;
-    });
-    console.log("Updated drivers", updatedDrivers);
-    dispatch(setUpdateDriversList(updatedDrivers));
+    );
   };
 
   const handleModalClose = () => {
@@ -124,6 +168,12 @@ const DriversComponent = () => {
 
   return (
     <>
+      {/* Add Driver Modal */}
+      {/* Include the driver modal components */}
+      <AddDriverModalComponent />
+      <DriverModalComponent />
+
+      {/* View/Edit Driver Modal */}
       <GenericModalComponent
         title={
           editDriverProfileMode
@@ -147,6 +197,20 @@ const DriversComponent = () => {
         header
       />
       <div className="drivers-container">
+        {showContinueOnboarding && (
+          <div style={{ textAlign: "center", margin: "1.5rem 0" }}>
+            <button
+              className="btn-primary"
+              onClick={() =>
+                navigate("/onboarding", {
+                  state: { fromDrivers: true, currentStep: 2 },
+                })
+              }
+            >
+              Продовжити онбординг
+            </button>
+          </div>
+        )}
         <div className="drivers-header-block">
           <h2 className="drivers-table__name">Мої водії</h2>
           <div className="drivers-header-block__buttons-container">

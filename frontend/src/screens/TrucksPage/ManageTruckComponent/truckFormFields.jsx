@@ -18,85 +18,109 @@ const {
 
 export const formFields = {
   basic: [
+    // Left Column
     [
       {
         id: TRUCK_BRAND,
         title: "Марка автомобіля",
         type: "text",
-        placeholder: "Марка",
+        placeholder: "Введіть марку",
+        icon: "🚚",
       },
       {
         id: TRUCK_MODEL,
         title: "Модель автомобіля",
         type: "text",
-        placeholder: "Модель",
+        placeholder: "Введіть модель",
+        icon: "📋",
       },
       {
         id: TRUCK_PLATES,
         title: "Державний номер",
         type: "text",
-        placeholder: "Державний номер",
+        placeholder: "Наприклад: AA 1234 BB",
+        icon: "🔢",
       },
       {
         id: TRUCK_VIN_CODE,
         title: "VIN номер",
         type: "text",
-        placeholder: "VIN номер",
+        placeholder: "17-значний код",
+        icon: "🔑",
       },
+      {
+        id: TRUCK_GPS_ID,
+        title: "GPS ID",
+        type: "text",
+        placeholder: "Ідентифікатор GPS",
+        icon: "📍",
+      },
+    ],
+    // Right Column
+    [
       {
         id: TRUCK_YEAR,
         title: "Рік випуску",
         type: "number",
-        placeholder: "Рік випуску",
+        placeholder: "Наприклад: 2022",
+        icon: "📅",
       },
-    ],
-    [
       {
         id: TRUCK_ENTRY_DATE,
         title: "Дата введення",
         type: "date",
         placeholder: "Дата введення",
+        icon: "➕",
       },
       {
         id: TRUCK_END_DATE,
         title: "Дата вибуття",
         type: "date",
         placeholder: "Дата вибуття",
+        icon: "➖",
       },
       {
         id: TRUCK_ENTRY_MILEAGE,
         title: "Пробіг при введенні",
         type: "number",
-        placeholder: "Пробіг при введенні",
+        placeholder: "Початковий пробіг (км)",
+        icon: "🔄",
       },
-      { id: TRUCK_PRICE, title: "Ціна", type: "number", placeholder: "Ціна" },
       {
-        id: TRUCK_GPS_ID,
-        title: "GPS ID",
-        type: "text",
-        placeholder: "GPS ID",
+        id: TRUCK_PRICE,
+        title: "Ціна",
+        type: "number",
+        placeholder: "Вартість в UAH",
+        icon: "💰",
       },
     ],
   ],
   norms: [
+    // Left Column
     [
       {
         id: TRUCK_DIESEL_NORM,
         title: "Норма витрати пального, л/100 км",
         type: "number",
-        placeholder: "л/100 км",
+        placeholder: "Витрата пального",
+        icon: "⛽",
       },
       {
         id: TRUCK_ADBLUE_NORM,
         title: "Норма витрати AdBlue, л/100 км",
         type: "number",
-        placeholder: "л/100 км",
+        placeholder: "Витрата AdBlue",
+        icon: "💧",
       },
+    ],
+    // Right Column
+    [
       {
         id: TRUCK_TIRE_COST_PER_KM,
         title: "Вартість шин, євро/км",
         type: "number",
-        placeholder: "євро/км",
+        placeholder: "Вартість на км",
+        icon: "🛞",
       },
     ],
   ],

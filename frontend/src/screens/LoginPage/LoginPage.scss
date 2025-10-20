@@ -2,6 +2,7 @@
 
 .background {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-size: 400% 400%;
   min-height: 100vh;
   width: 100vw;
   display: flex;
@@ -11,6 +12,20 @@
   position: fixed;
   top: 0;
   left: 0;
+  overflow: hidden;
+  animation: gradientShift 15s ease infinite;
+
+  @keyframes gradientShift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
 
   &::before {
     content: "";
@@ -21,6 +36,16 @@
     bottom: 0;
     background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="1.5" fill="white" opacity="0.1"/><circle cx="5" cy="5" r="0.8" fill="white" opacity="0.05"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
     pointer-events: none;
+    animation: floatBackground 60s linear infinite;
+  }
+
+  @keyframes floatBackground {
+    0% {
+      background-position: 0 0;
+    }
+    100% {
+      background-position: 100px 100px;
+    }
   }
 
   @media (max-width: 768px) {
@@ -114,10 +139,78 @@
   width: 100%;
   margin: 0 auto;
   min-height: fit-content;
+  transition: box-shadow 0.5s ease,
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  &:hover {
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.18), 0 10px 35px rgba(0, 0, 0, 0.12);
+    transform: translateY(-5px);
+  }
 }
 
 .login-form-container {
   padding: 3rem 2rem 2rem 2rem;
+
+  // Login page specific styling for the InputComponent
+  .login-form-field {
+    margin-bottom: 16px;
+
+    .input-component {
+      margin-bottom: 0;
+    }
+  }
+
+  // Login input specific styling
+  .login-input {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #333;
+    appearance: none;
+    background-color: #fff;
+    background-repeat: no-repeat;
+    border: 1px solid #dce0e8;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+    animation: fadeInUp 0.5s ease-out;
+    transform-origin: center;
+
+    &:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+      transform: translateY(-2px);
+    }
+
+    &:hover:not(:focus) {
+      border-color: #a3bffa;
+      transform: translateY(-1px);
+    }
+
+    &::placeholder {
+      color: #aab0bc;
+      transition: opacity 0.3s ease;
+    }
+
+    &:focus::placeholder {
+      opacity: 0.6;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
   display: flex;
   justify-content: center;
   align-items: stretch;
@@ -134,12 +227,15 @@
   align-items: center;
 
   &__title {
-    color: #2d3748;
     margin-bottom: 2.5rem;
     text-align: center;
     font-size: 1.8rem;
     font-weight: 700;
     text-shadow: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
   &__input-group {
@@ -206,14 +302,72 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-transform: none;
   letter-spacing: 0.5px;
-  margin-top: 1.2rem;
+  margin-top: 1.8rem;
   position: relative;
   overflow: hidden;
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .button-effect {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.2) 50%,
+      rgba(255, 255, 255, 0) 100%
+    );
+    z-index: 0;
+    transition: left 0.8s ease;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 5px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.5);
+    opacity: 0;
+    border-radius: 100%;
+    transform: scale(1, 1) translate(-50%);
+    transform-origin: 50% 50%;
+  }
+
+  &:focus:not(:active)::after {
+    animation: ripple 1s ease-out;
+  }
+
+  @keyframes ripple {
+    0% {
+      transform: scale(0, 0);
+      opacity: 0.5;
+    }
+    20% {
+      transform: scale(25, 25);
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 0;
+      transform: scale(40, 40);
+    }
+  }
 
   &:hover {
     background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+
+    .button-effect {
+      left: 100%;
+    }
   }
 
   &:active {
@@ -245,31 +399,43 @@
 
 // Register button with distinct orange theme - increased specificity
 .register-link-container .register-btn {
-  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%) !important;
-  border: none !important;
-  color: white !important;
-  font-size: 14px !important;
-  font-weight: 600 !important;
-  text-decoration: none !important;
-  cursor: pointer !important;
-  transition: all 0.3s ease !important;
-  padding: 12px 24px !important;
-  border-radius: 8px !important;
-  text-transform: none !important;
-  letter-spacing: 0.3px !important;
-  display: inline-block !important;
-  width: auto !important;
+  background: linear-gradient(135deg, #ed8936 0%, #dd6b20 100%);
+  border: none;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 12px 24px;
+  border-radius: 8px;
+  text-transform: none;
+  letter-spacing: 0.3px;
+  display: inline-block;
+  width: auto;
+  position: relative;
+  overflow: hidden;
+
+  span {
+    position: relative;
+    z-index: 1;
+  }
 
   &:hover {
-    background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%) !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 6px 15px rgba(237, 137, 54, 0.4) !important;
-    color: white !important;
+    background: linear-gradient(135deg, #dd6b20 0%, #c05621 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 15px rgba(237, 137, 54, 0.4);
+    color: white;
   }
 
   &:active {
-    transform: translateY(0) !important;
-    box-shadow: 0 3px 8px rgba(237, 137, 54, 0.3) !important;
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(237, 137, 54, 0.3);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(237, 137, 54, 0.3);
   }
 
   &:focus {

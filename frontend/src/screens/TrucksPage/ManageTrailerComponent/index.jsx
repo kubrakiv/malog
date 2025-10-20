@@ -99,6 +99,7 @@ const ManageTrailerComponent = ({
                               name={field.id}
                               title={field.title}
                               placeholder={field.placeholder}
+                              icon={field.icon}
                               value={
                                 field.type !== "date"
                                   ? trailerFields[field.id]
@@ -121,7 +122,6 @@ const ManageTrailerComponent = ({
               <div className="edit-trailer__footer">
                 <button
                   title={initialTrailerData && "Оновити причіп"}
-                  style={{ margin: "0px 0px 5px 5px" }}
                   className="end-time__footer-btn end-time__footer-btn_save"
                   type="submit"
                   // disabled={initialTrailerData ? isFormValid : !isFormValid}

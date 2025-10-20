@@ -6,6 +6,7 @@ const InputComponent = ({
   value,
   placeholder,
   onChange,
+  onKeyDown,
   autoFocus,
   label,
   multiple,
@@ -14,29 +15,38 @@ const InputComponent = ({
   style = null,
   error = null,
   helperText = null,
+  icon = null, // Added icon prop
 }) => {
   return (
-    <>
-      {label && <label className="input-component__form-title">{label}</label>}
-      <input
-        multiple={multiple}
-        id={id}
-        name={name}
-        type={type}
-        placeholder={placeholder}
-        className={`${style ? style : "form-field__input form-select-mb5"} ${
-          error ? "error" : ""
-        }`}
-        value={value || ""}
-        onChange={onChange}
-        autoFocus={autoFocus}
-        required={required}
-      />
+    <div className="input-component">
+      {label && (
+        <label className="input-component__form-title">
+          {icon && <span className="input-icon">{icon}</span>}
+          {label}
+        </label>
+      )}
+      <div className="input-wrapper">
+        <input
+          multiple={multiple}
+          id={id}
+          name={name}
+          type={type}
+          placeholder={placeholder}
+          className={`${style ? style : "form-field__input form-select-mb5"} ${
+            error ? "error" : ""
+          }`}
+          value={value || ""}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+          autoFocus={autoFocus}
+          required={required}
+        />
+      </div>
       {error && <span className="input-error-text">{error}</span>}
       {helperText && !error && (
         <span className="input-helper-text">{helperText}</span>
       )}
-    </>
+    </div>
   );
 };
 

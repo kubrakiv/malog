@@ -27,13 +27,20 @@ const ManageTruckComponent = ({
   onCloseModal,
   onEditMode,
   initialTruckData = null,
-  activeTab,
-  setActiveTab,
+  activeTab: propActiveTab,
+  setActiveTab: propSetActiveTab,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
+
+  // Local state for activeTab if not provided as prop
+  const [localActiveTab, setLocalActiveTab] = useState("basic");
+
+  // Use either props or local state
+  const activeTab = propActiveTab || localActiveTab;
+  const setActiveTab = propSetActiveTab || setLocalActiveTab;
 
   const [truckLimitCheck, setTruckLimitCheck] = useState({
     canAddTruck: true,
@@ -129,9 +136,8 @@ const ManageTruckComponent = ({
             <div className="add-truck__content">
               <div className="add-truck__content-block">
                 {!onEditMode && (
-                  <h3 className="add-truck__title">Додати тягач</h3>
+                  <h3 className="add-truck__title">Додати автомобіль</h3>
                 )}
-
                 {/* Subscription limit warning */}
                 {!initialTruckData && !truckLimitCheck.loading && (
                   <div
@@ -143,19 +149,39 @@ const ManageTruckComponent = ({
                   >
                     <div className="truck-count-info">
                       <strong>
-                        Trucks: {truckLimitCheck.currentTruckCount} /{" "}
+                        Автомобілі: {truckLimitCheck.currentTruckCount} /{" "}
                         {truckLimitCheck.truckLimit === -1
                           ? "∞"
                           : truckLimitCheck.truckLimit}
                       </strong>
                       <span className="plan-name">
-                        ({truckLimitCheck.planName})
+                        {truckLimitCheck.planName}
                       </span>
                     </div>
+                    {/* Visual progress bar */}
+                    {truckLimitCheck.truckLimit !== -1 && (
+                      <div className="truck-limit-progress">
+                        <div
+                          className="truck-limit-progress-bar"
+                          style={{
+                            width: `${Math.min(
+                              100,
+                              (truckLimitCheck.currentTruckCount /
+                                truckLimitCheck.truckLimit) *
+                                100
+                            )}%`,
+                            backgroundColor: truckLimitCheck.canAddTruck
+                              ? "$sidebarcolor"
+                              : "#dc3545",
+                          }}
+                        ></div>
+                      </div>
+                    )}
                     {!truckLimitCheck.canAddTruck && (
                       <div className="limit-warning">
                         <p>
-                          You've reached your truck limit for the current plan.
+                          Ви досягли обмеження в кількості автомобілів у
+                          поточному плані
                         </p>
                         <button
                           type="button"
@@ -190,36 +216,70 @@ const ManageTruckComponent = ({
                     Норми
                   </button>
                 </div>
+
                 <div className="add-truck__content-row">
-                  {formFields[activeTab]?.map((fields) => (
-                    <div
-                      className={cn(
-                        "add-truck__content-row-block",
-                        initialTruckData !== null &&
-                          "add-truck__content-row-block_edit-mode"
-                      )}
-                      key={`fields-row-${fields[0].id}`}
-                    >
-                      {fields.map((field) => (
-                        <div key={field.id}>
-                          <InputComponent
-                            label={field.title}
-                            id={field.id}
-                            type={field.type}
-                            name={field.id}
-                            title={field.title}
-                            placeholder={field.placeholder}
-                            value={
-                              field.type !== "date"
-                                ? truckFields[field.id]
-                                : formatDateForInput(truckFields[field.id])
-                            }
-                            onChange={handleTruckChange}
-                          />
+                  {formFields[activeTab]
+                    ? formFields[activeTab].map((fields) => (
+                        <div
+                          className={cn(
+                            "add-truck__content-row-block",
+                            initialTruckData !== null &&
+                              "add-truck__content-row-block_edit-mode"
+                          )}
+                          key={`fields-row-${fields[0].id}`}
+                        >
+                          {fields.map((field) => (
+                            <div key={field.id}>
+                              <InputComponent
+                                label={field.title}
+                                id={field.id}
+                                type={field.type}
+                                name={field.id}
+                                title={field.title}
+                                placeholder={field.placeholder}
+                                icon={field.icon}
+                                value={
+                                  field.type !== "date"
+                                    ? truckFields[field.id]
+                                    : formatDateForInput(truckFields[field.id])
+                                }
+                                onChange={handleTruckChange}
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      ))
+                    : // Fallback if activeTab isn't valid
+                      formFields["basic"] &&
+                      formFields["basic"].map((fields) => (
+                        <div
+                          className={cn(
+                            "add-truck__content-row-block",
+                            initialTruckData !== null &&
+                              "add-truck__content-row-block_edit-mode"
+                          )}
+                          key={`fields-row-${fields[0].id}`}
+                        >
+                          {fields.map((field) => (
+                            <div key={field.id}>
+                              <InputComponent
+                                label={field.title}
+                                id={field.id}
+                                type={field.type}
+                                name={field.id}
+                                title={field.title}
+                                placeholder={field.placeholder}
+                                value={
+                                  field.type !== "date"
+                                    ? truckFields[field.id]
+                                    : formatDateForInput(truckFields[field.id])
+                                }
+                                onChange={handleTruckChange}
+                              />
+                            </div>
+                          ))}
                         </div>
                       ))}
-                    </div>
-                  ))}
                 </div>
               </div>
             </div>

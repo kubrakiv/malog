@@ -106,7 +106,10 @@ function Header() {
           <FaBars />
         </div>
         <div className="header-navbar__title">
-          <Link to="/main">MALOG SYSTEMS</Link>
+          <Link to="/planner" className="logo-link">
+            <span className="logo-text">MALOG SYSTEMS</span>
+            <span className="logo-hover-effect"></span>
+          </Link>
         </div>
 
         <div className="header-navbar__search-wrapper">
@@ -182,7 +185,7 @@ function Header() {
                       onClick={() => setDropdownOpen(false)}
                     >
                       <FaCrown />
-                      Керувати підписками
+                      Підписки
                     </Link>
                   )}
                   <div className="dropdown-divider"></div>

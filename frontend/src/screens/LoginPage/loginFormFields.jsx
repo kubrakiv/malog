@@ -6,7 +6,7 @@ export const formFields = [
   {
     id: EMAIL,
     placeholder: "Введіть логін",
-    label: "Логін/Email",
+    label: "Логін",
     type: "text",
   },
   {

@@ -1,34 +1,35 @@
 .search-order-container {
-  margin: 0 auto;
+  margin: 8px auto; // Added top/bottom margin
   display: flex;
   flex-direction: row;
-  gap: 10px;
   align-items: center;
   justify-content: center;
-}
-
-.search-label {
-  color: white;
-  // font-weight: bold;
+  height: 100%;
+  width: 100%; // Ensure it takes full width of parent
 }
 
 .search-input-wrapper {
-  margin: 0 auto;
-  padding-top: 1px;
-}
-
-.search-button {
-  background: transparent;
-  border: none;
-  color: white;
+  margin-top: 6px;
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  transition: transform 0.5s ease;
+  width: 100%;
 
-  &:hover {
-    cursor: pointer;
-    transform: scale(1.5);
+  .search-icon {
+    position: absolute;
+    left: 10px;
+    color: #666;
+    z-index: 1;
+  }
+
+  .input-component {
+    width: 100%;
+
+    input {
+      padding-left: 35px; // Make room for the icon
+      width: 100%;
+      height: 36px;
+      min-width: 250px; // Ensure minimum width to fit text
+    }
   }
 }

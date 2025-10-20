@@ -44,6 +44,7 @@ urlpatterns = [
     path("api/sovtes-auth/", include("base.urls.sovtes_auth_urls")),
     path("api/admin/sovtes/", include("base.urls.sovtes_user_management_urls")),
     path("api/subscriptions/", include("base.urls.subscription_urls")),
+    path("api/onboarding/", include("base.urls.onboarding_urls")),
 
     path("api/ruptela/", include("base.urls.ruptela_urls")),
 
@@ -71,16 +72,16 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0] if settings.STATICFILES_DIRS else None)
 
-# Production/Staging patterns - serve React app
-if not settings.DEBUG:
-    # Serve the React app at root
-    urlpatterns.insert(0, path("", TemplateView.as_view(template_name="index.html")))
+# # Production/Staging patterns - serve React app
+# if not settings.DEBUG:
+#     # Serve the React app at root
+#     urlpatterns.insert(0, path("", TemplateView.as_view(template_name="index.html")))
     
-    # Catch-all URL pattern for React app routes
-    urlpatterns += [
-        re_path(r'^.*$', TemplateView.as_view(template_name="index.html")),
-    ]
+#     # Catch-all URL pattern for React app routes
+#     urlpatterns += [
+#         re_path(r'^.*$', TemplateView.as_view(template_name="index.html")),
+#     ]
 
-# Always serve media files (handled by Nginx in production, but needed for Django's storage)
-if not settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# # Always serve media files (handled by Nginx in production, but needed for Django's storage)
+# if not settings.DEBUG:
+#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

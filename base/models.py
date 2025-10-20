@@ -71,6 +71,11 @@ class Client(models.Model):
     approved_at = models.DateTimeField(null=True, blank=True, help_text="When the client was approved/rejected")
     rejection_reason = models.TextField(blank=True, null=True, help_text="Reason for rejection if applicable")
     
+    # Onboarding tracking fields
+    is_onboarded = models.BooleanField(default=False, help_text="Client has completed the onboarding wizard")
+    onboarded_at = models.DateTimeField(null=True, blank=True, help_text="When the client completed onboarding")
+    planner_tutorial_shown = models.BooleanField(default=False, help_text="Planner tutorial has been shown to client users")
+    
     # Additional client-specific settings can be added here
     settings = models.JSONField(default=dict, blank=True, help_text="Client-specific configuration")
     

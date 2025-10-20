@@ -1,0 +1,323 @@
+.empty-state-card {
+  background: white;
+  border: 2px dashed #e0e0e0;
+  border-radius: 16px;
+  padding: 3rem 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  min-height: 250px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: #667eea;
+    background: #f8f9ff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
+  }
+
+  .empty-state-icon {
+    font-size: 4rem;
+    color: #ccc;
+    margin-bottom: 1.5rem;
+    transition: all 0.3s ease;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 1rem;
+    color: #666;
+    margin-bottom: 2rem;
+    max-width: 400px;
+    line-height: 1.5;
+  }
+
+  &.truck-empty {
+    .empty-state-icon {
+      color: #2196f3;
+    }
+
+    &:hover .empty-state-icon {
+      color: #1976d2;
+      transform: scale(1.1);
+    }
+  }
+
+  &.driver-empty {
+    .empty-state-icon {
+      color: #ff9800;
+    }
+
+    &:hover .empty-state-icon {
+      color: #f57c00;
+      transform: scale(1.1);
+    }
+  }
+
+  &.order-empty {
+    .empty-state-icon {
+      color: #4caf50;
+    }
+
+    &:hover .empty-state-icon {
+      color: #388e3c;
+      transform: scale(1.1);
+    }
+  }
+}
+
+.btn-add-primary {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 30px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+
+  svg {
+    font-size: 1.1rem;
+  }
+}
+
+/* Planner Welcome Banner */
+.planner-welcome-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 8px 24px rgba(102, 126, 234, 0.3);
+  animation: slideDown 0.5s ease-out;
+
+  .banner-content {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    color: white;
+
+    .banner-icon {
+      font-size: 3rem;
+      flex-shrink: 0;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .banner-text {
+      flex: 1;
+
+      h2 {
+        font-size: 1.75rem;
+        margin-bottom: 0.5rem;
+        font-weight: 700;
+      }
+
+      p {
+        font-size: 1.05rem;
+        opacity: 0.95;
+        line-height: 1.5;
+        margin: 0;
+      }
+    }
+
+    .banner-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      flex-shrink: 0;
+
+      button {
+        border: none;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border-radius: 30px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        white-space: nowrap;
+      }
+
+      .btn-banner-primary {
+        background: white;
+        color: #667eea;
+
+        &:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+        }
+      }
+
+      .btn-banner-secondary {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: 2px solid white;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.3);
+          transform: translateY(-2px);
+        }
+      }
+    }
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+/* Inline Empty States for Planner Grid */
+.inline-empty-state {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #e9ecef;
+    border-color: #667eea;
+  }
+
+  .inline-icon {
+    font-size: 2rem;
+    color: #adb5bd;
+    flex-shrink: 0;
+  }
+
+  .inline-text {
+    flex: 1;
+    font-size: 0.95rem;
+    color: #6c757d;
+    font-weight: 500;
+  }
+
+  .btn-inline-add {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 0.5rem 1.25rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    border-radius: 20px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+
+    &:hover {
+      background: #764ba2;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+
+    svg {
+      font-size: 0.9rem;
+    }
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .planner-welcome-banner {
+    .banner-content {
+      flex-direction: column;
+      text-align: center;
+
+      .banner-icon {
+        font-size: 2.5rem;
+      }
+
+      .banner-text {
+        h2 {
+          font-size: 1.4rem;
+        }
+
+        p {
+          font-size: 0.95rem;
+        }
+      }
+
+      .banner-actions {
+        width: 100%;
+
+        button {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+  }
+
+  .empty-state-card {
+    padding: 2rem 1.5rem;
+    min-height: 200px;
+
+    .empty-state-icon {
+      font-size: 3rem;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+    }
+
+    p {
+      font-size: 0.9rem;
+    }
+  }
+
+  .inline-empty-state {
+    flex-direction: column;
+    text-align: center;
+
+    .btn-inline-add {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+}

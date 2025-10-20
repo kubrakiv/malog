@@ -11,38 +11,44 @@ import {
   FaGlobe,
   FaCalculator,
 } from "react-icons/fa";
+import { IoSettingsSharp } from "react-icons/io5";
 import { MdDashboard } from "react-icons/md";
 
 const menuItems = [
   {
-    title: "Моя компанія",
-    path: "/main",
-    icon: <FaTruckMoving />,
+    title: "Система",
+    path: "/help",
+    icon: <IoSettingsSharp />,
     childrens: [
       {
+        path: "/onboarding",
+        title: "Налаштування",
+      },
+      {
         path: "/main",
-        title: "Головна сторінка",
-      },
-      {
-        path: "/userlist",
-        title: "Мої співробітники",
-      },
-      {
-        path: "/drivers",
-        title: "Мої водії",
-      },
-      {
-        path: "/vehicles",
-        title: "Мої автомобілі",
+        title: "Функціонал",
       },
     ],
   },
-
-  // {
-  //   path: "/dashboard",
-  //   title: "Dashboard",
-  //   icon: <MdDashboard />,
-  // },
+  {
+    title: "Моя компанія",
+    path: "",
+    icon: <FaTruckMoving />,
+    childrens: [
+      {
+        path: "/userlist",
+        title: "Співробітники",
+      },
+      {
+        path: "/drivers",
+        title: "Водії",
+      },
+      {
+        path: "/trucks",
+        title: "Автомобілі",
+      },
+    ],
+  },
   {
     path: "/calculator",
     title: "Калькулятор",
@@ -50,7 +56,7 @@ const menuItems = [
     childrens: [
       {
         path: "/calculator",
-        title: "Калькулятор",
+        title: "Розрахунок вартості",
       },
     ],
   },
@@ -66,10 +72,14 @@ const menuItems = [
     ],
   },
   {
-    title: "Маршрути",
+    title: "Замовлення",
     path: "/orders",
     icon: <FaThList />,
     childrens: [
+      {
+        path: "/orders/add",
+        title: "Створити замовлення",
+      },
       {
         path: "/orders",
         title: "Поточні замовлення",
@@ -78,10 +88,6 @@ const menuItems = [
         path: "/free-orders",
         title: "Вільні замовлення",
       },
-      {
-        path: "/orders/add",
-        title: "Створити замовлення",
-      },
     ],
   },
   {
@@ -89,26 +95,6 @@ const menuItems = [
     path: "/invoices",
     icon: <FaFileInvoice />,
   },
-  // {
-  //   title: "Завдання",
-  //   path: "/tasks",
-  //   icon: <FaTasks />,
-  //   childrens: [
-  //     {
-  //       path: "/tasks",
-  //       title: "Реєстр завдань",
-  //     },
-  //     {
-  //       path: "/tasks/add",
-  //       title: "Додати завдання",
-  //     },
-  //   ],
-  // },
-  // {
-  //   path: "/map",
-  //   title: "Карта",
-  //   icon: <FaMapMarkedAlt />,
-  // },
   {
     path: "/points",
     title: "Мої пункти",

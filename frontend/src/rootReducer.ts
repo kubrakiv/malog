@@ -1,8 +1,6 @@
 import { combineReducers } from "@reduxjs/toolkit";
 
-// import { orderReducer } from "./reducers/orderReducers";
 import orderReducer from "./features/orders/ordersSlicers";
-import { driverReducer } from "./reducers/driverReducers";
 import {
   userLoginReducer,
   userRegisterReducer,
@@ -22,6 +20,7 @@ import { taskTypeReducer } from "./reducers/taskTypeReducers";
 import taskReducer from "./features/tasks/tasksSlice";
 import truckReducer from "./features/trucks/trucksSlice";
 import trailerReducer from "./features/trailers/trailersSlice";
+import driverReducer from "./features/drivers/driversSlice";
 import plannerReducers from "./features/planner/plannerSlice";
 import roleReducer from "./features/roles/roleSlice";
 import customerReducer from "./features/customers/customersSlice";

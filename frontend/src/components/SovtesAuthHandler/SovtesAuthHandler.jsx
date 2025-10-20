@@ -45,6 +45,27 @@ const SovtesAuthHandler = () => {
           const userProfile = await response.json();
           console.log("Fetched user profile:", userProfile);
 
+          // Check onboarding status
+          const onboardingResponse = await fetch("/api/onboarding/status/", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          let onboardingData = {
+            needs_onboarding: true,
+            is_new_client: true,
+            completed_steps: [],
+            planner_tutorial_shown: false,
+          };
+
+          if (onboardingResponse.ok) {
+            onboardingData = await onboardingResponse.json();
+            console.log("Onboarding status:", onboardingData);
+          }
+
           // Create userInfo object with complete backend data
           const userInfo = {
             id: userProfile.id,
@@ -63,6 +84,11 @@ const SovtesAuthHandler = () => {
             is_staff: userProfile.is_staff || false,
             is_superuser: userProfile.is_superuser || false,
             phone_number: userProfile.phone_number || "",
+            // Onboarding data
+            needs_onboarding: onboardingData.needs_onboarding,
+            is_new_client: onboardingData.is_new_client,
+            completed_steps: onboardingData.completed_steps,
+            planner_tutorial_shown: onboardingData.planner_tutorial_shown,
           };
 
           console.log("Created userInfo object with backend data:", userInfo);
@@ -77,17 +103,20 @@ const SovtesAuthHandler = () => {
           const cleanUrl = window.location.pathname;
           window.history.replaceState({}, document.title, cleanUrl);
 
-          // Show success message for new users
-          if (newUser === "true") {
-            console.log("Welcome new Sovtes user!");
-            // You could show a welcome toast or modal here
+          // Smart routing based on user status
+          if (newUser === "true" || onboardingData.needs_onboarding) {
+            console.log(
+              "New user or needs onboarding, redirecting to onboarding wizard..."
+            );
+            // Navigate to onboarding for new users or users without essential data
+            navigate("/onboarding", { replace: true });
+          } else {
+            console.log(
+              "Existing user with complete setup, redirecting to planner..."
+            );
+            // Existing users with trucks and drivers go straight to planner
+            navigate("/planner", { replace: true });
           }
-
-          console.log(
-            "Sovtes authentication successful, redirecting to main..."
-          );
-          // Navigate to main page
-          navigate("/main", { replace: true });
         } catch (error) {
           console.error("Error processing Sovtes authentication:", error);
           // If there's an error, redirect to login with error message

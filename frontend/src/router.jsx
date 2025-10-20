@@ -41,6 +41,7 @@ import PlanChangeRequestsPage from "./screens/AdminPages/PlanChangeRequestsPage/
 import AdminDashboard from "./screens/AdminPages/AdminDashboard/AdminDashboard";
 import AdminSubscriptionPlansPage from "./screens/AdminPages/AdminSubscriptionPlansPage/AdminSubscriptionPlansPage";
 import AdminClientSubscriptionsPage from "./screens/AdminPages/AdminClientSubscriptionsPage/AdminClientSubscriptionsPage";
+import OnboardingWizard from "./components/OnboardingWizard/OnboardingWizard";
 
 import { RestrictedRoute } from "./RestrictedRoute";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
@@ -179,7 +180,7 @@ const routes = [
     requiredFeature: "Driver Management",
   },
   {
-    path: "/vehicles",
+    path: "/trucks",
     element: <TrucksPage />,
     roles: ["system_admin", "client_admin", "logist"],
     requiredFeature: "Fleet Management",
@@ -225,6 +226,10 @@ const routes = [
     element: <CalculatorPage />,
     roles: ["system_admin", "client_admin", "logist"],
     requiredFeature: "Route Calculator",
+  },
+  {
+    path: "/onboarding",
+    element: <OnboardingWizard />,
   },
 ];
 

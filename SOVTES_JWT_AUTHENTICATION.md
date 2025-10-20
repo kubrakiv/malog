@@ -121,11 +121,11 @@ This document describes the implementation of JWT authentication for the externa
 
 ### User Type Mapping
 
-| Sovtes UserType | Malog Role |
-| --------------- | ---------- |
-| 1               | driver     |
-| 2               | admin      |
-| 3               | logist     |
+| Sovtes UserType | Malog Role   |
+| --------------- | ------------ |
+| 1               | driver       |
+| 2               | client_admin |
+| 3               | logist       |
 
 ### Security Considerations
 

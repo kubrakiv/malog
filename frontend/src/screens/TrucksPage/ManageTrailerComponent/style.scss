@@ -4,88 +4,231 @@
   width: 100%;
   margin: 0 auto;
   &__title {
-    font-size: 24px;
+    font-size: 22px;
     font-weight: bold;
-    margin: 5px;
+    margin: 8px 5px;
+    color: #333;
+    position: relative;
+    display: inline-block;
+
+    &::after {
+      content: "";
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      width: 35%;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        $sidebarcolor 0%,
+        lighten($sidebarcolor, 15%) 100%
+      );
+      border-radius: 1px;
+    }
   }
+
   &__form {
     display: flex;
     width: 100%;
     flex-direction: column;
+    transition: all 0.3s ease;
   }
+
   &__input {
     width: 100%;
-    border-radius: 4px;
-  }
-  &__select {
-    width: 100%;
-    border-radius: 4px;
-    option {
-      width: 100%;
-      border-radius: 4px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    padding: 8px 12px;
+
+    &:focus {
+      border-color: $sidebarcolor;
+      box-shadow: 0 0 0 3px rgba($sidebarcolor, 0.2);
+      outline: none;
     }
   }
+
+  &__select {
+    width: 100%;
+    border-radius: 6px;
+    padding: 8px 12px;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+
+    &:focus {
+      border-color: $sidebarcolor;
+      box-shadow: 0 0 0 3px rgba($sidebarcolor, 0.2);
+      outline: none;
+    }
+
+    option {
+      width: 100%;
+      padding: 8px 12px;
+    }
+  }
+
   &__content {
     display: flex;
     justify-content: space-between;
     height: max-content;
-    gap: 5px;
+    gap: 10px;
   }
+
   &__content-block {
     display: flex;
     flex: 1;
     flex-direction: column;
-    background-color: $tableHeaderColor;
-    border-radius: 4px;
+    background-color: white;
+    border-radius: 10px;
     width: 100%;
+    box-shadow: 0 3px 16px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+    max-height: calc(
+      100vh - 170px
+    ); /* Increased height for more content visibility */
   }
+
   &__content-row {
     display: flex;
-    background-color: $tableHeaderColor;
-    border-radius: 4px;
+    flex-wrap: wrap;
+    background-color: white;
+    border-radius: 6px;
+    padding: 8px;
+    justify-content: space-between;
+    max-height: 65vh; /* Increased height for more content */
+    overflow-y: auto; /* Enable vertical scrolling */
+    scrollbar-width: thin; /* For Firefox */
+
+    /* Custom scrollbar for webkit browsers (Chrome, Safari, Edge, etc) */
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: #aaa;
+    }
+
     &:last-child {
-      margin-bottom: 5px;
+      margin-bottom: 3px;
     }
+
     &__search {
-      margin-bottom: 5px;
+      margin-bottom: 3px;
     }
+
     &__formatted-address {
-      margin-bottom: 5px;
+      margin-bottom: 3px;
     }
   }
   &__content-row-block {
     display: flex;
-    // justify-content: space-between;
     flex-direction: column;
-    flex-basis: 100%;
-    border-radius: 4px;
-    background-color: #dbe5ea;
-    // border: 1px solid #3986f1;
-    padding: 5px;
-    margin: 5px;
-    width: 70%;
-    gap: 5px;
+    flex-basis: 49.5%; /* Slightly increased to use more space */
+    border-radius: 6px;
+    background-color: #f5f8fa;
+    padding: 8px;
+    margin-bottom: 7px;
+    gap: 7px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba($sidebarcolor, 0.1);
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.02);
+
+    &:hover {
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+      transform: translateY(-1px);
+      border-color: rgba($sidebarcolor, 0.2);
+    }
+
+    > div {
+      margin-bottom: 4px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+
     select {
       display: block;
       width: 100%;
+      padding: 7px 8px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      background-color: white;
+      transition: all 0.2s ease;
+      font-size: 12px;
+
+      &:focus {
+        border-color: $sidebarcolor;
+        box-shadow: 0 0 0 2px rgba($sidebarcolor, 0.1);
+        outline: none;
+      }
     }
+
     input {
       display: block;
       width: 100%;
-      padding: 2px;
+      padding: 7px 8px;
+      border-radius: 5px;
+      border: 1px solid #ddd;
+      background-color: white;
+      transition: all 0.2s ease;
+      font-size: 12px;
+
+      &:focus {
+        border-color: $sidebarcolor;
+        box-shadow: 0 0 0 2px rgba($sidebarcolor, 0.1);
+        outline: none;
+      }
+
+      &::placeholder {
+        color: #aaa;
+        font-size: 11px;
+      }
     }
 
     &-map {
       height: 410px;
     }
   }
+
   &__content-row-block-title {
-    font-weight: bold;
-    font-size: 14px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #444;
+    margin-bottom: 3px;
   }
+
   &__content-row-block-value {
-    font-size: 14px;
-    padding-left: 20px;
+    font-size: 13px;
+    padding-left: 15px;
+    color: #333;
+  }
+
+  // Add animation to form elements
+  &__content-block {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+}
+
+// Animation keyframes
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
@@ -93,5 +236,63 @@
   &__footer {
     display: flex;
     gap: 5px;
+  }
+}
+
+.end-time__footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 8px;
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
+  background: #f8f9fa;
+  gap: 6px;
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+
+  &-btn {
+    padding: 6px 14px;
+    border-radius: 18px;
+    font-weight: 600;
+    font-size: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.3px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+
+    &_save {
+      background: $sidebarcolor;
+      color: white;
+
+      &:hover {
+        background: darken($sidebarcolor, 5%);
+        box-shadow: 0 3px 8px rgba($sidebarcolor, 0.35);
+        transform: translateY(-1px);
+      }
+    }
+
+    &_close {
+      background: white;
+      color: #555;
+      border: 1px solid #ddd;
+
+      &:hover {
+        background: #f1f1f1;
+        color: #333;
+      }
+    }
+  }
+}
+
+.end-time__footer-btn_disabled {
+  background: $colorGray !important;
+  cursor: not-allowed !important;
+  opacity: 0.7;
+
+  &:hover {
+    background: $colorGray !important;
+    transform: none !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
   }
 }

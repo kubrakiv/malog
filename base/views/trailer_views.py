@@ -21,7 +21,10 @@ def getTrailers(request):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def createTrailer(request):
+    # Get client from the authenticated user
+    client = request.user.client
     data = request.data
 
     entry_date = data.get("entry_date")
@@ -40,6 +43,7 @@ def createTrailer(request):
     price = int(float(data.get("price"))) if data.get("price") else None
 
     trailer = Trailer.objects.create(
+        client=client,
         brand=data.get("brand"),
         plates=data.get("plates"),
         vin_code=data.get("vin_code"),

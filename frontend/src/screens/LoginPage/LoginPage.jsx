@@ -150,7 +150,7 @@ const LoginPage = () => {
               {
                 <div className="login-form">
                   {formFields.map((field, index) => (
-                    <div key={index}>
+                    <div key={index} className="login-form-field">
                       <InputComponent
                         id={field.id}
                         name={field.id}
@@ -159,13 +159,15 @@ const LoginPage = () => {
                         label={field.label}
                         value={userFields[field.id]}
                         onChange={(e) => handleUserDataChange(e)}
+                        style="login-input"
                       />
                     </div>
                   ))}
                 </div>
               }
               <button className="login-enter-btn" type="submit">
-                Увійти
+                <span>Увійти</span>
+                <div className="button-effect"></div>
               </button>
             </form>
 
@@ -176,7 +178,7 @@ const LoginPage = () => {
                 onClick={() => navigate("/register")}
                 type="button"
               >
-                РЕЄСТРАЦІЯ
+                <span>РЕЄСТРАЦІЯ</span>
               </button>
             </div>
           </div>

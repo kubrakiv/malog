@@ -1,10 +1,21 @@
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { DELIVERY_CONSTANTS } from "../../constants/global";
 import "./style.scss";
 
 import { buildFactualCoordsFromRuptela } from "../../services/buildFactualCoordsFromRuptela";
 
 const { START, LOADING, UNLOADING } = DELIVERY_CONSTANTS;
+
+// Check if HERE Maps API is loaded
+const isHereMapsLoaded = () => {
+  return (
+    typeof window !== "undefined" &&
+    window.H &&
+    window.H.map &&
+    window.H.service &&
+    window.H.mapevents
+  );
+};
 
 const TruckRouteMapComponent = ({
   points = [],
@@ -15,6 +26,9 @@ const TruckRouteMapComponent = ({
   ruptelaTrips = [],
 }) => {
   console.log("RUPTELA TRIPS", ruptelaTrips);
+  // Track if HERE Maps is loaded
+  const [hereMapsReady, setHereMapsReady] = useState(isHereMapsLoaded());
+
   // ---- DOM refs
   const wrapperRef = useRef(null);
   const containerRef = useRef(null);
@@ -25,10 +39,24 @@ const TruckRouteMapComponent = ({
   const routerRef = useRef(null);
 
   // ---- Layer groups (add once, update contents)
-  const routeGroupRef = useRef(new H.map.Group()); // planned route polylines
-  const markersGroupRef = useRef(new H.map.Group()); // Start/Loading/Unloading pins
-  const truckGroupRef = useRef(new H.map.Group()); // live truck→next leg + truck icon
-  const factualGroupRef = useRef(new H.map.Group()); // factual polyline + pins
+  const routeGroupRef = useRef(null);
+  const markersGroupRef = useRef(null);
+  const truckGroupRef = useRef(null);
+  const factualGroupRef = useRef(null);
+
+  // Initialize group refs after HERE Maps is loaded
+  useEffect(() => {
+    if (hereMapsReady && window.H) {
+      if (!routeGroupRef.current)
+        routeGroupRef.current = new window.H.map.Group();
+      if (!markersGroupRef.current)
+        markersGroupRef.current = new window.H.map.Group();
+      if (!truckGroupRef.current)
+        truckGroupRef.current = new window.H.map.Group();
+      if (!factualGroupRef.current)
+        factualGroupRef.current = new window.H.map.Group();
+    }
+  }, [hereMapsReady]);
 
   // -------- helpers ---------------------------------------------------------
   const pendingPoint = useMemo(
@@ -75,9 +103,26 @@ const TruckRouteMapComponent = ({
     }
   };
 
+  // --- Check if HERE Maps scripts are loaded, if not wait for them ---
+  useEffect(() => {
+    const checkHereMapsLoaded = () => {
+      if (isHereMapsLoaded()) {
+        setHereMapsReady(true);
+        clearInterval(checkInterval);
+      }
+    };
+
+    // If not loaded yet, set an interval to check
+    if (!hereMapsReady) {
+      const checkInterval = setInterval(checkHereMapsLoaded, 100);
+      return () => clearInterval(checkInterval);
+    }
+  }, [hereMapsReady]);
+
   // --- ONE unified init effect (works for page AND modal) ---
   useEffect(() => {
-    if (!containerRef.current || mapRef.current) return;
+    if (!containerRef.current || mapRef.current || !hereMapsReady || !window.H)
+      return;
 
     const el = containerRef.current;
 
@@ -88,23 +133,36 @@ const TruckRouteMapComponent = ({
         import.meta.env.VITE_HERE_API_KEY ||
         import.meta.env.REACT_APP_HERE_API_KEY;
 
-      const platform = new H.service.Platform({ apikey: apiKey });
-      const layers = platform.createDefaultLayers();
-      const map = new H.Map(el, layers.vector.normal.map, {
-        pixelRatio: window.devicePixelRatio || 1,
-      });
-      mapRef.current = map;
+      try {
+        const platform = new window.H.service.Platform({ apikey: apiKey });
+        const layers = platform.createDefaultLayers();
+        const map = new window.H.Map(el, layers.vector.normal.map, {
+          pixelRatio: window.devicePixelRatio || 1,
+        });
+        mapRef.current = map;
 
-      new H.mapevents.Behavior(new H.mapevents.MapEvents(map));
-      uiRef.current = H.ui.UI.createDefault(map, layers);
-      routerRef.current = platform.getRoutingService(null, 8);
+        new window.H.mapevents.Behavior(new window.H.mapevents.MapEvents(map));
+        uiRef.current = window.H.ui.UI.createDefault(map, layers);
+        routerRef.current = platform.getRoutingService(null, 8);
+      } catch (error) {
+        console.error("Error initializing HERE Maps:", error);
+        return;
+      }
 
-      map.addObjects([
-        routeGroupRef.current,
-        markersGroupRef.current,
-        truckGroupRef.current,
-        factualGroupRef.current,
-      ]);
+      // Make sure all group refs are initialized before adding them to the map
+      if (
+        routeGroupRef.current &&
+        markersGroupRef.current &&
+        truckGroupRef.current &&
+        factualGroupRef.current
+      ) {
+        map.addObjects([
+          routeGroupRef.current,
+          markersGroupRef.current,
+          truckGroupRef.current,
+          factualGroupRef.current,
+        ]);
+      }
 
       const resize = () => map.getViewPort().resize();
       window.addEventListener("resize", resize);
@@ -118,7 +176,9 @@ const TruckRouteMapComponent = ({
       // keep a cleanup
       el.__cleanup__ = () => {
         window.removeEventListener("resize", resize);
-        map.dispose();
+        if (map) {
+          map.dispose();
+        }
         mapRef.current = null;
       };
     };
@@ -131,7 +191,7 @@ const TruckRouteMapComponent = ({
       // Otherwise wait until it becomes visible (Modal)
       const ro = new ResizeObserver((entries) => {
         const { width, height } = entries[0].contentRect;
-        if (width > 0 && height > 0) {
+        if (width > 0 && height > 0 && hereMapsReady) {
           ro.disconnect();
           doInit();
         }
@@ -139,11 +199,13 @@ const TruckRouteMapComponent = ({
         if (mapRef.current && width > 0 && height > 0) {
           mapRef.current.getViewPort().resize();
           // mapRef.current.renderSync();
-          const bounds = markersGroupRef.current.getBoundingBox();
-          if (bounds) {
-            mapRef.current
-              .getViewModel()
-              .setLookAtData({ bounds, padding: 150 });
+          if (markersGroupRef.current) {
+            const bounds = markersGroupRef.current.getBoundingBox();
+            if (bounds) {
+              mapRef.current
+                .getViewModel()
+                .setLookAtData({ bounds, padding: 150 });
+            }
           }
         }
       });
@@ -191,8 +253,8 @@ const TruckRouteMapComponent = ({
       "vehicle[axleCount]": "6",
       "exclude[countries]": "CHE",
     };
-    if (via.length) {
-      params.via = new H.service.Url.MultiValueQueryParameter(via);
+    if (via.length && window.H) {
+      params.via = new window.H.service.Url.MultiValueQueryParameter(via);
     }
 
     router.calculateRoute(
@@ -206,8 +268,12 @@ const TruckRouteMapComponent = ({
         let emptyDistance = 0;
 
         route.sections.forEach((section, index) => {
-          const line = H.geo.LineString.fromFlexiblePolyline(section.polyline);
-          const poly = new H.map.Polyline(line, { style: { lineWidth: 5 } });
+          const line = window.H.geo.LineString.fromFlexiblePolyline(
+            section.polyline
+          );
+          const poly = new window.H.map.Polyline(line, {
+            style: { lineWidth: 5 },
+          });
           routeGroupRef.current.addObject(poly);
 
           if (index === 0) {
@@ -230,16 +296,19 @@ const TruckRouteMapComponent = ({
         // markers
         const ui = uiRef.current;
         points.forEach((point, idx) => {
-          const icon = new H.map.Icon(iconSvg(point));
-          const marker = new H.map.Marker(
+          const icon = new window.H.map.Icon(iconSvg(point));
+          const marker = new window.H.map.Marker(
             { lat: point.lat, lng: point.lng },
             { icon }
           );
           marker.setData(point.label || `${idx + 1}: ${point.type}`);
           marker.addEventListener("tap", (evt) => {
-            const bubble = new H.ui.InfoBubble(evt.target.getGeometry(), {
-              content: evt.target.getData(),
-            });
+            const bubble = new window.H.ui.InfoBubble(
+              evt.target.getGeometry(),
+              {
+                content: evt.target.getData(),
+              }
+            );
             ui.addBubble(bubble);
           });
           markersGroupRef.current.addObject(marker);
@@ -361,18 +430,20 @@ const TruckRouteMapComponent = ({
           const section = result?.routes?.[0]?.sections?.[0];
           if (!section) return;
 
-          const line = H.geo.LineString.fromFlexiblePolyline(section.polyline);
-          const truckLine = new H.map.Polyline(line, {
+          const line = window.H.geo.LineString.fromFlexiblePolyline(
+            section.polyline
+          );
+          const truckLine = new window.H.map.Polyline(line, {
             style: { lineWidth: 4, strokeColor: "#FDA000" },
           });
           truckLine.setZIndex(2);
           truckGroupRef.current.addObject(truckLine);
 
-          const truckIcon = new H.map.Icon(
+          const truckIcon = new window.H.map.Icon(
             "https://img.icons8.com/?size=100&id=LKFOJdUZXTkd&format=png&color=C50000",
             { size: { w: 36, h: 36 }, anchor: { x: 18, y: 18 } }
           );
-          const truckMarker = new H.map.Marker(truckPosition, {
+          const truckMarker = new window.H.map.Marker(truckPosition, {
             icon: truckIcon,
           });
           truckMarker.setZIndex(3);
@@ -400,10 +471,10 @@ const TruckRouteMapComponent = ({
   // -------- factual path (ruptela) ------------------------------------------
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    if (!map || !window.H) return;
 
     if (!factualGroupRef.current) {
-      factualGroupRef.current = new H.map.Group();
+      factualGroupRef.current = new window.H.map.Group();
       map.addObject(factualGroupRef.current);
     }
 
@@ -414,23 +485,23 @@ const TruckRouteMapComponent = ({
     const coords = buildFactualCoordsFromRuptela(ruptelaTrips);
     if (coords.length < 2) return;
 
-    const ls = new H.geo.LineString();
+    const ls = new window.H.geo.LineString();
     coords.forEach((c) => ls.pushLatLngAlt(c.lat, c.lng, 0));
 
-    const factualLine = new H.map.Polyline(ls, {
+    const factualLine = new window.H.map.Polyline(ls, {
       style: { lineWidth: 4, strokeColor: "#DC3545" },
     });
     factualLine.setZIndex(1);
     factualGroupRef.current.addObject(factualLine);
 
     // start/end pins
-    const startPin = new H.map.Marker(coords[0], {
-      icon: new H.map.Icon(
+    const startPin = new window.H.map.Marker(coords[0], {
+      icon: new window.H.map.Icon(
         '<svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="6" fill="#8E44AD"/></svg>'
       ),
     });
-    const endPin = new H.map.Marker(coords.at(-1), {
-      icon: new H.map.Icon(
+    const endPin = new window.H.map.Marker(coords.at(-1), {
+      icon: new window.H.map.Icon(
         '<svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="6" width="12" height="12" fill="#8E44AD"/></svg>'
       ),
     });
@@ -456,23 +527,49 @@ const TruckRouteMapComponent = ({
 
   return (
     <div ref={wrapperRef} className="here-map-wrap">
-      <button
-        onClick={toggleFullscreen}
-        style={{
-          position: "absolute",
-          zIndex: 10,
-          right: 12,
-          top: 12,
-          padding: "8px 12px",
-          borderRadius: 8,
-          border: "1px solid #ddd",
-          background: "#fff",
-          cursor: "pointer",
-        }}
-        title="Toggle fullscreen"
-      >
-        ⛶ Fullscreen
-      </button>
+      {hereMapsReady && (
+        <button
+          onClick={toggleFullscreen}
+          style={{
+            position: "absolute",
+            zIndex: 10,
+            right: 12,
+            top: 12,
+            padding: "8px 12px",
+            borderRadius: 8,
+            border: "1px solid #ddd",
+            background: "#fff",
+            cursor: "pointer",
+          }}
+          title="Toggle fullscreen"
+        >
+          ⛶ Fullscreen
+        </button>
+      )}
+
+      {!hereMapsReady && (
+        <div
+          className="here-map-loading"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: "100%",
+            background: "#f5f5f5",
+            fontSize: "16px",
+            color: "#555",
+          }}
+        >
+          <div>
+            <div style={{ textAlign: "center", marginBottom: "10px" }}>
+              Loading map resources...
+            </div>
+            <div style={{ textAlign: "center", fontSize: "14px" }}>
+              Please ensure HERE Maps API is loaded.
+            </div>
+          </div>
+        </div>
+      )}
 
       <div ref={containerRef} className="here-map" />
     </div>
