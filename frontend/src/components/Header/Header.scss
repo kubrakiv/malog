@@ -21,7 +21,7 @@
   align-items: center;
   flex-wrap: wrap; // Allow wrapping on mobile
   height: auto; // Auto height to accommodate wrapping
-  min-height: 40px;
+  min-height: 40px; // Increased to better fit subscription pill
   padding: 0 10px 0 0px;
 
   @media (max-width: 768px) {
@@ -278,6 +278,9 @@
 }
 
 .header-subscription-info {
+  display: flex;
+  align-items: center;
+
   .subscription-mini-bar {
     display: flex;
     align-items: center;

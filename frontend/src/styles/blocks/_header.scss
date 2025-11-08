@@ -1,8 +1,10 @@
 .header {
-    position: sticky;
-    top: 0;
-    width: 100%;
-    background: $headerColor;
-    // padding: 5px 5px 5px 0px;
-    z-index: 99;
+  position: sticky;
+  top: 0;
+  width: 100%;
+  background: $headerColor;
+  // padding: 5px 5px 5px 0px;
+  // Raise header stacking context so header elements (like the mini subscription bar)
+  // can appear above the SubscriptionBanner which uses a high z-index.
+  z-index: 1300;
 }

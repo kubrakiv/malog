@@ -1,2 +1,3 @@
-﻿- Fix: SubscriptionBanner location and button redirection to /subscription page; bannerOffset to align height of the page (511e2d2, kubrakiv, 2025-11-08 14:03)
+﻿- Fix: removed SubscriptionBanner from /main page (994b678, kubrakiv, 2025-11-08 14:09)
+- Fix: SubscriptionBanner location and button redirection to /subscription page; bannerOffset to align height of the page (511e2d2, kubrakiv, 2025-11-08 14:03)
 - Fix: redesign of Profile page (7922573, kubrakiv, 2025-11-08 13:43)
