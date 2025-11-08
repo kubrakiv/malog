@@ -2,8 +2,10 @@
   display: flex;
   align-items: center;
   padding: 12px 20px;
-  margin-bottom: 20px;
+  margin-bottom: 8px;
   border-radius: 8px;
+  position: relative;
+  z-index: 1200; /* keep the banner above page content */
   border-left: 4px solid transparent;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;

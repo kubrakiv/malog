@@ -100,6 +100,42 @@ function SubscriptionManagementPage() {
   }, [userInfo, navigate]);
 
   const [submittingPlanId, setSubmittingPlanId] = useState(null);
+  const [bannerOffset, setBannerOffset] = useState(0);
+
+  // Adjust top offset when SubscriptionBanner is present so the absolute wrapper
+  // doesn't overlap it. We measure the banner height and apply it as top.
+  useEffect(() => {
+    const updateBannerOffset = () => {
+      try {
+        const banner = document.querySelector(".subscription-banner");
+        if (banner) {
+          const rect = banner.getBoundingClientRect();
+          // Add small extra spacing
+          setBannerOffset(Math.ceil(rect.height) + 8);
+        } else {
+          setBannerOffset(0);
+        }
+      } catch (err) {
+        setBannerOffset(0);
+      }
+    };
+
+    // Run once on mount
+    updateBannerOffset();
+
+    // Update on window resize in case banner wraps or changes height
+    window.addEventListener("resize", updateBannerOffset);
+
+    // Optionally observe DOM changes for banner size changes
+    const observer = new MutationObserver(updateBannerOffset);
+    const root = document.querySelector(".page__main");
+    if (root) observer.observe(root, { childList: true, subtree: true });
+
+    return () => {
+      window.removeEventListener("resize", updateBannerOffset);
+      if (observer) observer.disconnect();
+    };
+  }, []);
 
   const getCurrentPlanPrice = (plan) => {
     const price =
@@ -183,6 +219,7 @@ function SubscriptionManagementPage() {
       className={`subscription-management-wrapper ${
         isSidebarOpen ? "sidebar-open" : ""
       }`}
+      style={bannerOffset ? { top: `${bannerOffset}px` } : undefined}
     >
       <div className="subscription-management-container">
         <div className="page-header">

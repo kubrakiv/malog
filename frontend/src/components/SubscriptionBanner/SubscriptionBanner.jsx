@@ -49,7 +49,7 @@ const SubscriptionBanner = ({ showOnlyWarnings = false }) => {
       }`,
       message: "Поновіть підписку, щоб уникнути переривання сервісу.",
       action: "Поновити зараз",
-      actionPath: "/subscription-plans",
+      actionPath: "/subscriptions",
     };
   } else if (isTruckLimitReached) {
     bannerType = "warning";
