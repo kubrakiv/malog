@@ -218,7 +218,6 @@ function StartScreen() {
 
   return (
     <div className="start-screen-container">
-      <SubscriptionBanner />
       <div className="modules-grid">
         {allModules.map((module, index) => {
           const featureMap = {
