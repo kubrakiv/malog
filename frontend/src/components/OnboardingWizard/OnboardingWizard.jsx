@@ -76,9 +76,9 @@ const OnboardingWizard = () => {
   const steps = [
     {
       id: "welcome",
-      title: "Вітаємо у MALOG SYSTEMS",
+      title: "Вас вітає MALOG SYSTEMS",
       description:
-        "Давайте налаштуємо вашу транспортну компанію за декілька кроків. Ми допоможемо додати автопарк і водіїв, щоб ви могли почати планувати маршрути та керувати логістикою.",
+        "Давайте налаштуємо вашу транспортну компанію за декілька кроків. Ми допоможемо додати автопарк і водіїв, щоб ви могли почати планувати маршрути та керувати автопарком.",
       icon: <FaRocket />,
       action: "Почати",
       route: null,
@@ -127,7 +127,7 @@ const OnboardingWizard = () => {
       id: "complete",
       title: "Все готово! 🎉",
       description:
-        "Чудово! Ваша транспортна компанія налаштована. Тепер ви можете створювати замовлення, планувати маршрути та ефективно керувати логістикою.",
+        "Чудово! Ваша транспортна компанія налаштована. Тепер ви можете створювати замовлення, планувати маршрути та ефективно керувати автопарком.",
       icon: <FaCheckCircle />,
       action: "До планувальника",
       route: "/planner",
@@ -251,54 +251,107 @@ const OnboardingWizard = () => {
   return (
     <div className="onboarding-wizard fit-screen">
       {/* Step Content */}
-      <div className="onboarding-content">
-        {/* Progress Steps (moved below title/desc) */}
-        <div className="onboarding-progress">
-          {steps.map((step, index) => (
-            <div
-              key={step.id}
-              className={`progress-step ${
-                index === currentStep ? "active" : ""
-              } ${index < currentStep ? "completed-step" : ""} ${
-                step.completed ? "has-data" : ""
-              }`}
-              onClick={() => {
-                // Allow clicking on: any previous step, OR step 1 if has trucks, OR step 2 if has drivers
-                if (
-                  index < currentStep ||
-                  (index === 1 && onboardingStatus?.has_trucks) ||
-                  (index === 2 && onboardingStatus?.has_drivers)
-                ) {
-                  handleBackToStep(index);
-                }
-              }}
-              style={{
-                cursor:
-                  index < currentStep ||
-                  (index === 1 && onboardingStatus?.has_trucks) ||
-                  (index === 2 && onboardingStatus?.has_drivers)
-                    ? "pointer"
-                    : "default",
-              }}
-            >
-              <div className="step-number">
-                {/* Always show step number, never show check mark */}
-                {index + 1}
+      <div
+        className={`onboarding-content ${
+          currentStep === 0 ? "welcome-step" : ""
+        }`}
+      >
+        {/* Progress Steps - shown at top for steps 2, 3, 4 */}
+        {currentStep > 0 && (
+          <div className="onboarding-progress">
+            {steps.map((step, index) => (
+              <div
+                key={step.id}
+                className={`progress-step ${
+                  index === currentStep ? "active" : ""
+                } ${index < currentStep ? "completed-step" : ""} ${
+                  step.completed ? "has-data" : ""
+                }`}
+                onClick={() => {
+                  // Allow clicking on: any previous step, OR step 1 if has trucks, OR step 2 if has drivers
+                  if (
+                    index < currentStep ||
+                    (index === 1 && onboardingStatus?.has_trucks) ||
+                    (index === 2 && onboardingStatus?.has_drivers)
+                  ) {
+                    handleBackToStep(index);
+                  }
+                }}
+                style={{
+                  cursor:
+                    index < currentStep ||
+                    (index === 1 && onboardingStatus?.has_trucks) ||
+                    (index === 2 && onboardingStatus?.has_drivers)
+                      ? "pointer"
+                      : "default",
+                }}
+              >
+                <div className="step-number">
+                  {/* Always show step number, never show check mark */}
+                  {index + 1}
+                </div>
+                <div className="step-label">{step.title}</div>
               </div>
-              <div className="step-label">{step.title}</div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        <h1>
-          {currentStepData.title}
-          {/* <span className="step-icon">{currentStepData.icon}</span> */}
-        </h1>
+        {currentStep === 0 ? (
+          <h1 className="welcome-title">
+            <span className="welcome-prefix">Вас вітає</span>
+            <span className="welcome-brand">MALOG SYSTEMS</span>
+          </h1>
+        ) : (
+          <h1>
+            {currentStepData.title}
+            {/* <span className="step-icon">{currentStepData.icon}</span> */}
+          </h1>
+        )}
         <div></div>
         <p className="step-description">{currentStepData.description}</p>
 
-        {/* Welcome Screen Features */}
+        {/* Progress Steps - shown after description only for step 1 (welcome) */}
         {currentStep === 0 && (
+          <div className="onboarding-progress">
+            {steps.map((step, index) => (
+              <div
+                key={step.id}
+                className={`progress-step ${
+                  index === currentStep ? "active" : ""
+                } ${index < currentStep ? "completed-step" : ""} ${
+                  step.completed ? "has-data" : ""
+                }`}
+                onClick={() => {
+                  // Allow clicking on: any previous step, OR step 1 if has trucks, OR step 2 if has drivers
+                  if (
+                    index < currentStep ||
+                    (index === 1 && onboardingStatus?.has_trucks) ||
+                    (index === 2 && onboardingStatus?.has_drivers)
+                  ) {
+                    handleBackToStep(index);
+                  }
+                }}
+                style={{
+                  cursor:
+                    index < currentStep ||
+                    (index === 1 && onboardingStatus?.has_trucks) ||
+                    (index === 2 && onboardingStatus?.has_drivers)
+                      ? "pointer"
+                      : "default",
+                }}
+              >
+                <div className="step-number">
+                  {/* Always show step number, never show check mark */}
+                  {index + 1}
+                </div>
+                <div className="step-label">{step.title}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Welcome Screen Features */}
+        {/* {currentStep === 0 && (
           <div className="welcome-features">
             <h3>Що ви налаштуєте:</h3>
             <ul>
@@ -327,7 +380,7 @@ const OnboardingWizard = () => {
               </li>
             </ul>
           </div>
-        )}
+        )} */}
 
         {/* Badge for completed steps */}
         {currentStepData.badge && (
@@ -336,13 +389,7 @@ const OnboardingWizard = () => {
           </div>
         )}
 
-        {/* Completion status */}
-        {currentStepData.completed && currentStep !== 3 && (
-          <div className="step-completed-note">
-            <FaCheck /> Цей крок вже виконано. Ви можете пропустити або додати
-            ще.
-          </div>
-        )}
+        {/* Removed completion status note per request */}
 
         {/* Action Buttons */}
         <div className="onboarding-actions">
@@ -351,20 +398,12 @@ const OnboardingWizard = () => {
               {currentStepData.action} <FaArrowRight />
             </button>
           ) : (
-            <>
-              <button
-                className="btn-primary btn-large"
-                onClick={handleStepAction}
-              >
-                {currentStepData.action} <FaArrowRight />
-              </button>
-
-              {currentStep > 0 && currentStep < 3 && (
-                <button className="btn-secondary" onClick={handleSkip}>
-                  Пропустити
-                </button>
-              )}
-            </>
+            <button
+              className="btn-primary btn-large"
+              onClick={handleStepAction}
+            >
+              {currentStepData.action} <FaArrowRight />
+            </button>
           )}
         </div>
 
@@ -380,15 +419,6 @@ const OnboardingWizard = () => {
           </p>
         )}
       </div>
-
-      {/* Skip All Link */}
-      {currentStep > 0 && currentStep < 3 && (
-        <div className="skip-all-link">
-          <button onClick={handleSkip} className="text-link">
-            Налаштую пізніше →
-          </button>
-        </div>
-      )}
     </div>
   );
 };

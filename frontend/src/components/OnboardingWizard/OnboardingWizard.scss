@@ -137,6 +137,14 @@
   background: none;
   border-radius: 0;
   box-shadow: none;
+
+  /* Reduce top spacing for welcome step (step 0) */
+  &.welcome-step {
+    h1 {
+      margin-top: -3rem; /* Pull title closer to header */
+    }
+  }
+
   .step-icon {
     font-size: 2.5rem;
     color: #667eea;
@@ -149,12 +157,35 @@
     margin-bottom: 0.4rem;
     font-weight: 600;
   }
+  /* Two-line welcome title only for step 0 */
+  .welcome-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    line-height: 1.1;
+    gap: 1rem; // base gap; brand line gets additional top spacing
+
+    .welcome-prefix {
+      font-size: 1.2rem;
+      color: $headerColor;
+      font-weight: 500;
+    }
+
+    .welcome-brand {
+      font-size: 2.1rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      color: $headerColor;
+      text-transform: uppercase;
+      padding-top: 0.35rem; // extra space from 'Вас вітає' line
+    }
+  }
   .step-description {
     font-size: 1rem;
     color: $colorGray;
     line-height: 1.5;
     max-width: 500px;
-    margin: 0 auto 0.7rem;
+    margin: 0 auto 2rem;
   }
 }
 
@@ -269,18 +300,7 @@
   }
 }
 
-.step-completed-note {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  background: #fff3cd;
-  border: 1px solid #ffc107;
-  border-radius: 8px;
-  color: #856404;
-  font-size: 0.9rem;
-  margin: 1rem 0;
-}
+// .step-completed-note removed by request
 
 /* Action Buttons */
 .onboarding-actions {
