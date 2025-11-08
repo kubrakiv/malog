@@ -89,112 +89,110 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="background">
-      <div className="profile-form-container">
-        <div className="profile-header">
-          <h2>Профіль користувача</h2>
-          <p className="profile-role">Роль: {getRole(role)}</p>
+    <div className="profile-page">
+      <div className="profile-header">
+        <h2>Профіль користувача</h2>
+        <p className="profile-role">Роль: {getRole(role)}</p>
+      </div>
+
+      <form onSubmit={submitHandler}>
+        <div className="profile-section">
+          <h3>Особиста інформація</h3>
+          <div className="form-row">
+            <div className="form-group">
+              <InputComponent
+                label="Ім'я *"
+                name="firstName"
+                type="text"
+                placeholder="Введіть ім'я"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <InputComponent
+                label="Прізвище *"
+                name="lastName"
+                type="text"
+                placeholder="Введіть прізвище"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                required
+              />
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={submitHandler}>
-          <div className="profile-section">
-            <h3>Особиста інформація</h3>
-            <div className="form-row">
-              <div className="form-group">
-                <InputComponent
-                  label="Ім'я *"
-                  name="firstName"
-                  type="text"
-                  placeholder="Введіть ім'я"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <InputComponent
-                  label="Прізвище *"
-                  name="lastName"
-                  type="text"
-                  placeholder="Введіть прізвище"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  required
-                />
-              </div>
+        <div className="profile-section">
+          <h3>Контактна інформація</h3>
+          <div className="form-row">
+            <div className="form-group">
+              <InputComponent
+                label="Email *"
+                name="email"
+                type="email"
+                placeholder="Введіть email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <InputComponent
+                label="Телефон"
+                name="phone"
+                type="tel"
+                placeholder="Введіть телефон"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
             </div>
           </div>
+        </div>
 
-          <div className="profile-section">
-            <h3>Контактна інформація</h3>
-            <div className="form-row">
-              <div className="form-group">
-                <InputComponent
-                  label="Email *"
-                  name="email"
-                  type="email"
-                  placeholder="Введіть email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <InputComponent
-                  label="Телефон"
-                  name="phone"
-                  type="tel"
-                  placeholder="Введіть телефон"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </div>
+        <div className="profile-section">
+          <h3>Зміна паролю</h3>
+          <p className="section-description">
+            Залиште поля пустими, якщо не хочете змінювати пароль
+          </p>
+          <div className="form-row">
+            <div className="form-group">
+              <InputComponent
+                label="Новий пароль"
+                name="password"
+                type="password"
+                placeholder="Введіть новий пароль"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <InputComponent
+                label="Підтвердіть пароль"
+                name="confirmPassword"
+                type="password"
+                placeholder="Підтвердіть новий пароль"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
             </div>
           </div>
+        </div>
 
-          <div className="profile-section">
-            <h3>Зміна паролю</h3>
-            <p className="section-description">
-              Залиште поля пустими, якщо не хочете змінювати пароль
-            </p>
-            <div className="form-row">
-              <div className="form-group">
-                <InputComponent
-                  label="Новий пароль"
-                  name="password"
-                  type="password"
-                  placeholder="Введіть новий пароль"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-              <div className="form-group">
-                <InputComponent
-                  label="Підтвердіть пароль"
-                  name="confirmPassword"
-                  type="password"
-                  placeholder="Підтвердіть новий пароль"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="form-actions">
-            <button type="submit" className="btn btn-primary">
-              {loading ? "Оновлення..." : "Оновити профіль"}
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              onClick={() => navigate(-1)}
-            >
-              Скасувати
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="form-actions">
+          <button type="submit" className="btn btn-primary">
+            {loading ? "Оновлення..." : "Оновити профіль"}
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => navigate(-1)}
+          >
+            Скасувати
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
