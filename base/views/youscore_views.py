@@ -7,6 +7,7 @@ handling authentication, pagination, and data aggregation.
 
 import logging
 import requests
+import time
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -19,6 +20,65 @@ logger = logging.getLogger("youscore_proxy")
 # YouScore API configuration
 YOUSCORE_BASE_URL = "https://api.youscore.com.ua/"
 YOUSCORE_ENDPOINT = "v1/vehicles/owned"
+
+
+def _poll_youscore_url(url, headers, max_attempts=30, poll_interval=1):
+    """
+    Poll a YouScore URL until data is ready.
+    
+    Args:
+        url: The URL to poll (typically from currentDataUrl in 202 response)
+        headers: Request headers with authorization
+        max_attempts: Maximum number of polling attempts (default: 30)
+        poll_interval: Seconds to wait between attempts (default: 1)
+    
+    Returns:
+        dict with either "response" (successful response object) or "error" (error message)
+    """
+    logger.info(f"Starting to poll URL: {url}")
+    
+    for attempt in range(max_attempts):
+        try:
+            logger.debug(f"Poll attempt {attempt + 1}/{max_attempts}")
+            response = requests.get(url, headers=headers, timeout=10)
+            
+            # If we get 202 again, the data is still being processed
+            if response.status_code == 202:
+                logger.debug(f"Still processing (202). Waiting {poll_interval}s before retry...")
+                time.sleep(poll_interval)
+                continue
+            
+            # If we get 200, the data is ready
+            elif response.status_code == 200:
+                logger.info(f"Data ready (200) after {attempt + 1} attempts")
+                return {"response": response}
+            
+            # Any other status code is an error
+            else:
+                logger.error(f"Unexpected status {response.status_code} when polling: {response.text}")
+                return {
+                    "error": f"Error polling YouScore data: {response.status_code}",
+                    "details": response.text
+                }
+        
+        except requests.exceptions.Timeout:
+            logger.warning(f"Poll attempt {attempt + 1} timed out")
+            if attempt < max_attempts - 1:
+                time.sleep(poll_interval)
+                continue
+            return {"error": "Polling timed out after multiple attempts"}
+        
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error polling URL: {str(e)}")
+            return {"error": f"Error polling YouScore: {str(e)}"}
+    
+    # Max attempts exceeded
+    logger.error(f"Polling failed: exceeded {max_attempts} attempts")
+    return {
+        "error": "YouScore data processing took too long. Please try again.",
+        "details": f"Data not ready after {max_attempts} polling attempts"
+    }
+
 
 
 @api_view(["GET"])
@@ -132,81 +192,90 @@ def get_vehicles_owned(request):
         "Accept": "application/json",
     }
     
-    # ── 5. Collect all results with pagination ─────────────────────────────────
+    # ── 5. Make single API request with pagination support ───────────────────
     all_results = []
-    skip = 0
     total_results = None
     next_page_url = None
-    max_pages = 100  # Safety limit to prevent infinite loops
     
     try:
-        logger.info(f"Starting to fetch vehicles for contractor: {contractor_code}")
+        logger.info(f"Fetching vehicles for contractor: {contractor_code}")
         
-        for page in range(max_pages):
-            # Build the request URL
-            url = f"{YOUSCORE_BASE_URL}{YOUSCORE_ENDPOINT}"
-            params = {
-                "contractorCode": contractor_code,
-                "top": top,
-                "skip": skip,
-                "showCurrentData": show_current_data
-            }
+        # Build the request URL
+        url = f"{YOUSCORE_BASE_URL}{YOUSCORE_ENDPOINT}"
+        params = {
+            "contractorCode": contractor_code,
+            "top": top,
+            "skip": request.query_params.get("skip", 0),
+            "showCurrentData": show_current_data
+        }
+        
+        logger.debug(f"[YouScore] GET {url} params={params}")
+        
+        # Make the request to YouScore API
+        response = requests.get(url, headers=headers, params=params, timeout=30)
+        
+        # Handle 202 Accepted - data is being updated in background
+        if response.status_code == 202:
+            logger.info(f"YouScore returned 202 (Accepted). Processing is in progress.")
+            response_data = response.json()
+            current_data_url = response_data.get("currentDataUrl")
             
-            logger.debug(f"[YouScore] Page {page + 1}: GET {url} params={params}")
-            
-            # Make the request to YouScore API
-            response = requests.get(url, headers=headers, params=params, timeout=30)
-            
-            # Check for errors
-            if response.status_code != 200:
-                logger.error(f"YouScore API error: {response.status_code} - {response.text}")
+            if current_data_url:
+                logger.info(f"Polling for data at: {current_data_url}")
+                # Poll the currentDataUrl with retry logic
+                poll_response = _poll_youscore_url(current_data_url, headers)
+                
+                if poll_response.get("error"):
+                    return Response(poll_response, status=status.HTTP_504_GATEWAY_TIMEOUT)
+                
+                response = poll_response.get("response")
+            else:
+                logger.error("202 response without currentDataUrl")
                 return Response(
                     {
-                        "error": f"YouScore API returned error: {response.status_code}",
-                        "details": response.text
+                        "error": "YouScore API returned 202 but no currentDataUrl provided",
+                        "details": response_data
                     },
-                    status=response.status_code
+                    status=status.HTTP_202_ACCEPTED
                 )
-            
-            # Parse the response
-            data = response.json()
-            
-            # Store total results count from first response
-            if total_results is None:
-                total_results = data.get("totalResults", 0)
-                logger.info(f"Total results to fetch: {total_results}")
-            
-            # Get the results from this page
-            results = data.get("results", [])
-            
-            if not results:
-                logger.info("No more results, pagination complete")
-                break
-            
-            # Add results to our collection
-            all_results.extend(results)
-            logger.debug(f"Collected {len(results)} results. Total so far: {len(all_results)}")
-            
-            # Update next page URL for logging
-            next_page_url = data.get("nextPageUrl")
-            
-            # Check if we've collected all results
-            if len(all_results) >= total_results:
-                logger.info(f"All {total_results} results collected")
-                break
-            
-            # Move to next page
-            skip += top
-            
-        # ── 6. Return the complete dataset ─────────────────────────────────────
-        logger.info(f"Successfully collected {len(all_results)} vehicles for contractor {contractor_code}")
         
-        return Response({
-            "totalResults": total_results or len(all_results),
-            "resultsCount": len(all_results),
+        # Check for other errors
+        elif response.status_code != 200:
+            logger.error(f"YouScore API error: {response.status_code} - {response.text}")
+            return Response(
+                {
+                    "error": f"YouScore API returned error: {response.status_code}",
+                    "details": response.text
+                },
+                status=response.status_code
+            )
+        
+        # Parse the response
+        data = response.json()
+        
+        # Extract data from response
+        total_results = data.get("totalResults", 0)
+        results = data.get("results", [])
+        next_page_url = data.get("nextPageUrl")
+        
+        logger.info(f"Fetched {len(results)} results from YouScore (Total available: {total_results})")
+            
+        # ── 6. Return the response with pagination info ──────────────────────────
+        logger.info(f"Successfully fetched {len(results)} vehicles for contractor {contractor_code}")
+        
+        response_data = {
+            "totalResults": total_results,
+            "resultsCount": len(results),
             "contractorCode": contractor_code,
-            "results": all_results
-        }, status=status.HTTP_200_OK)
+            "results": results
+        }
+        
+        # Include nextPageUrl if available for client-side pagination
+        if next_page_url:
+            response_data["nextPageUrl"] = next_page_url
+            logger.debug(f"Next page available: {next_page_url}")
+        
+        return Response(response_data, status=status.HTTP_200_OK)
         
     except requests.exceptions.Timeout:
         logger.error("YouScore API request timeout")
