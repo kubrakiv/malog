@@ -267,14 +267,12 @@
   margin-left: auto;
   display: flex;
   align-items: center;
+  gap: 15px;
 
   @media (max-width: 768px) {
     order: 2; // Keep on top row on mobile
     flex-shrink: 0; // Prevent shrinking
   }
-  display: flex;
-  align-items: center;
-  gap: 15px;
 }
 
 .header-subscription-info {

@@ -1,0 +1,352 @@
+{
+  "info": {
+    "name": "YouScore API Integration",
+    "description": "Collection for testing YouScore API proxy endpoints",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Get Vehicles Owned",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "test_api_key_malog_2025",
+            "type": "text",
+            "description": "API key for authentication"
+          }
+        ],
+        "url": {
+          "raw": "https://test.malog.com.ua/api/youscore/vehicles/owned?contractorCode=21509937",
+          "protocol": "https",
+          "host": ["test", "malog", "com", "ua"],
+          "path": ["api", "youscore", "vehicles", "owned"],
+          "query": [
+            {
+              "key": "contractorCode",
+              "value": "21509937",
+              "description": "Company code (required)"
+            },
+            {
+              "key": "top",
+              "value": "100",
+              "description": "Number of results per page",
+              "disabled": true
+            },
+            {
+              "key": "skip",
+              "value": "0",
+              "description": "Number of results to skip",
+              "disabled": true
+            },
+            {
+              "key": "showCurrentData",
+              "value": "False",
+              "description": "Show current data only",
+              "disabled": true
+            }
+          ]
+        },
+        "description": "Fetches all vehicles owned by a contractor from YouScore API. Automatically handles pagination and collects all results."
+      },
+      "response": [
+        {
+          "name": "Success - All Vehicles",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "test_api_key_malog_2025",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://test.malog.com.ua/api/youscore/vehicles/owned?contractorCode=21509937",
+              "protocol": "https",
+              "host": ["test", "malog", "com", "ua"],
+              "path": ["api", "youscore", "vehicles", "owned"],
+              "query": [
+                {
+                  "key": "contractorCode",
+                  "value": "21509937"
+                }
+              ]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"totalResults\": 150,\n  \"resultsCount\": 150,\n  \"contractorCode\": \"21509937\",\n  \"results\": [\n    {\n      \"operationCode\": 329,\n      \"operationName\": \"ПЕРЕРЕЄСТРАЦІЯ ТЗ НА НОВОГО ВЛАСНИКА ЗА ДОГОВОРОМ ФІНАНСОВОГО ЛІЗИНГУ ТА ДКП ПРЕДМЕТА ЛІЗИНГУ\",\n      \"registrationDepartmentName\": \"ТСЦ 8046\",\n      \"type\": \"ВАНТАЖНИЙ\",\n      \"model\": \"R400\",\n      \"brand\": \"SCANIA\",\n      \"bodyType\": \"СІДЛОВИЙ ТЯГАЧ\",\n      \"fuelType\": \"ДИЗЕЛЬНЕ ПАЛИВО\",\n      \"color\": \"БІЛИЙ\",\n      \"makeYear\": 2016,\n      \"engineCapacity\": 12740,\n      \"ownWeight\": 7940.00,\n      \"totalWeight\": 19000.00,\n      \"lastRegistrationDate\": \"2021-06-01T00:00:00+03:00\",\n      \"purpose\": \"СПЕЦІАЛІЗОВАНИЙ\"\n    }\n  ]\n}"
+        }
+      ]
+    },
+    {
+      "name": "Get Vehicles Owned (with pagination params)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "test_api_key_malog_2025",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://test.malog.com.ua/api/youscore/vehicles/owned?contractorCode=21509937&top=50&skip=0&showCurrentData=False",
+          "protocol": "https",
+          "host": ["test", "malog", "com", "ua"],
+          "path": ["api", "youscore", "vehicles", "owned"],
+          "query": [
+            {
+              "key": "contractorCode",
+              "value": "21509937"
+            },
+            {
+              "key": "top",
+              "value": "50"
+            },
+            {
+              "key": "skip",
+              "value": "0"
+            },
+            {
+              "key": "showCurrentData",
+              "value": "False"
+            }
+          ]
+        },
+        "description": "Same as above but with custom pagination parameters. Note: The endpoint will still fetch all results automatically."
+      },
+      "response": []
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://test.malog.com.ua/api/youscore/health",
+          "protocol": "https",
+          "host": ["test", "malog", "com", "ua"],
+          "path": ["api", "youscore", "health"]
+        },
+        "description": "Check if the YouScore proxy service is operational. No authentication required."
+      },
+      "response": [
+        {
+          "name": "Health Check Success",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://test.malog.com.ua/api/youscore/health",
+              "protocol": "https",
+              "host": ["test", "malog", "com", "ua"],
+              "path": ["api", "youscore", "health"]
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"status\": \"ok\",\n  \"service\": \"YouScore Proxy API\",\n  \"endpoint\": \"https://api.youscore.com.ua/v1/vehicles/owned\",\n  \"documentation\": {\n    \"usage\": \"GET /api/youscore/vehicles/owned?contractorCode=XXX\",\n    \"authentication\": \"Include X-API-Key header with your API key\",\n    \"parameters\": {\n      \"contractorCode\": \"Company code (required)\",\n      \"top\": \"Results per page (optional, default: 100)\",\n      \"skip\": \"Results to skip (optional, default: 0)\",\n      \"showCurrentData\": \"Boolean flag (optional, default: False)\"\n    }\n  }\n}"
+        }
+      ]
+    },
+    {
+      "name": "Error: Missing API Key",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "https://test.malog.com.ua/api/youscore/vehicles/owned?contractorCode=21509937",
+          "protocol": "https",
+          "host": ["test", "malog", "com", "ua"],
+          "path": ["api", "youscore", "vehicles", "owned"],
+          "query": [
+            {
+              "key": "contractorCode",
+              "value": "21509937"
+            }
+          ]
+        },
+        "description": "Test request without API key - should return 401 Unauthorized"
+      },
+      "response": [
+        {
+          "name": "401 Unauthorized",
+          "originalRequest": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "https://test.malog.com.ua/api/youscore/vehicles/owned?contractorCode=21509937",
+              "protocol": "https",
+              "host": ["test", "malog", "com", "ua"],
+              "path": ["api", "youscore", "vehicles", "owned"],
+              "query": [
+                {
+                  "key": "contractorCode",
+                  "value": "21509937"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"error\": \"Missing API key. Please provide X-API-Key header.\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Error: Invalid API Key",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "invalid_key_12345",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://test.malog.com.ua/api/youscore/vehicles/owned?contractorCode=21509937",
+          "protocol": "https",
+          "host": ["test", "malog", "com", "ua"],
+          "path": ["api", "youscore", "vehicles", "owned"],
+          "query": [
+            {
+              "key": "contractorCode",
+              "value": "21509937"
+            }
+          ]
+        },
+        "description": "Test request with invalid API key - should return 401 Unauthorized"
+      },
+      "response": [
+        {
+          "name": "401 Unauthorized",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "invalid_key_12345",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://test.malog.com.ua/api/youscore/vehicles/owned?contractorCode=21509937",
+              "protocol": "https",
+              "host": ["test", "malog", "com", "ua"],
+              "path": ["api", "youscore", "vehicles", "owned"],
+              "query": [
+                {
+                  "key": "contractorCode",
+                  "value": "21509937"
+                }
+              ]
+            }
+          },
+          "status": "Unauthorized",
+          "code": 401,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"error\": \"Invalid API key\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Error: Missing Contractor Code",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "X-API-Key",
+            "value": "test_api_key_malog_2025",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "https://test.malog.com.ua/api/youscore/vehicles/owned",
+          "protocol": "https",
+          "host": ["test", "malog", "com", "ua"],
+          "path": ["api", "youscore", "vehicles", "owned"]
+        },
+        "description": "Test request without contractorCode parameter - should return 400 Bad Request"
+      },
+      "response": [
+        {
+          "name": "400 Bad Request",
+          "originalRequest": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-API-Key",
+                "value": "test_api_key_malog_2025",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "https://test.malog.com.ua/api/youscore/vehicles/owned",
+              "protocol": "https",
+              "host": ["test", "malog", "com", "ua"],
+              "path": ["api", "youscore", "vehicles", "owned"]
+            }
+          },
+          "status": "Bad Request",
+          "code": 400,
+          "_postman_previewlanguage": "json",
+          "header": [
+            {
+              "key": "Content-Type",
+              "value": "application/json"
+            }
+          ],
+          "body": "{\n  \"error\": \"contractorCode is required\"\n}"
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "https://test.malog.com.ua",
+      "type": "string"
+    },
+    {
+      "key": "api_key",
+      "value": "test_api_key_malog_2025",
+      "type": "string"
+    },
+    {
+      "key": "contractor_code",
+      "value": "21509937",
+      "type": "string"
+    }
+  ]
+}

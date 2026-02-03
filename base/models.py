@@ -7,6 +7,7 @@ from user.models import DriverProfile
 from django.core.exceptions import ObjectDoesNotExist
 from .managers import TenantManager, GlobalManager, TenantRelatedManager
 from .tenant import get_current_client
+import secrets
 
 
 # Create your models here.
@@ -104,6 +105,153 @@ class APIToken(models.Model):
         """
         APIToken.objects.all().delete()  # Clear any existing tokens
         APIToken.objects.create(token=token)
+
+
+class ExternalAPIKey(models.Model):
+    """
+    Model for storing API keys that external services use to access our APIs.
+    This provides secure, manageable authentication for external integrations.
+    """
+    key = models.CharField(
+        max_length=64, 
+        unique=True, 
+        db_index=True,
+        help_text="The API key (auto-generated)"
+    )
+    name = models.CharField(
+        max_length=255,
+        help_text="Descriptive name for this API key (e.g., 'YouScore Integration', 'Mobile App')"
+    )
+    description = models.TextField(
+        blank=True,
+        null=True,
+        help_text="Additional details about this API key and its usage"
+    )
+    is_active = models.BooleanField(
+        default=True,
+        help_text="Whether this API key is currently active and can be used"
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    expires_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Optional expiration date for this API key"
+    )
+    last_used_at = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text="Last time this API key was used"
+    )
+    usage_count = models.IntegerField(
+        default=0,
+        help_text="Number of times this API key has been used"
+    )
+    rate_limit = models.IntegerField(
+        default=100,
+        help_text="Maximum number of requests per hour (0 = unlimited)"
+    )
+    allowed_endpoints = models.JSONField(
+        default=list,
+        blank=True,
+        null=True,
+        help_text="List of endpoint patterns this key can access (empty = all endpoints)"
+    )
+    ip_whitelist = models.JSONField(
+        default=list,
+        blank=True,
+        null=True,
+        help_text="List of IP addresses allowed to use this key (empty = any IP)"
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='created_api_keys',
+        help_text="User who created this API key"
+    )
+
+    class Meta:
+        verbose_name = "External API Key"
+        verbose_name_plural = "External API Keys"
+        ordering = ['-created_at']
+
+    def __str__(self):
+        status = "Active" if self.is_active else "Inactive"
+        return f"{self.name} ({status})"
+
+    def save(self, *args, **kwargs):
+        # Generate API key if not provided
+        if not self.key:
+            self.key = self.generate_key()
+        super().save(*args, **kwargs)
+
+    @staticmethod
+    def generate_key(length=32):
+        """
+        Generate a secure random API key.
+        Default length of 32 bytes = 64 hex characters
+        """
+        return secrets.token_hex(length)
+
+    def is_valid(self):
+        """
+        Check if the API key is valid (active and not expired).
+        """
+        if not self.is_active:
+            return False
+        
+        if self.expires_at and timezone.now() > self.expires_at:
+            return False
+        
+        return True
+
+    def record_usage(self):
+        """
+        Record that this API key was used.
+        Updates last_used_at and increments usage_count.
+        """
+        self.last_used_at = timezone.now()
+        self.usage_count += 1
+        self.save(update_fields=['last_used_at', 'usage_count'])
+
+    def check_rate_limit(self):
+        """
+        Check if the API key has exceeded its rate limit.
+        Returns True if within limit, False if exceeded.
+        """
+        if self.rate_limit == 0:  # 0 means unlimited
+            return True
+        
+        # Count requests in the last hour
+        one_hour_ago = timezone.now() - timezone.timedelta(hours=1)
+        # This is a simple implementation. For production, consider using Redis or similar
+        # for better rate limiting
+        return True  # Placeholder - implement proper rate limiting in production
+
+    def can_access_endpoint(self, endpoint_path):
+        """
+        Check if this API key can access the given endpoint.
+        """
+        if not self.allowed_endpoints or self.allowed_endpoints == []:  # Empty/None means all endpoints allowed
+            return True
+        
+        # Check if endpoint matches any allowed pattern
+        for pattern in self.allowed_endpoints:
+            if endpoint_path.startswith(pattern):
+                return True
+        
+        return False
+
+    def can_access_from_ip(self, ip_address):
+        """
+        Check if this API key can be used from the given IP address.
+        """
+        if not self.ip_whitelist or self.ip_whitelist == []:  # Empty/None means all IPs allowed
+            return True
+        
+        return ip_address in self.ip_whitelist
 
 
 class CompanyBank(BaseTenantModel):

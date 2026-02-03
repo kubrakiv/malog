@@ -31,3 +31,6 @@ sovtes_static_token = os.getenv("SOVTES_STATIC_TOKEN")
 API_KEY_OPENAI = os.getenv("API_KEY_OPENAI")
 
 RUPTELA_API_KEY = os.getenv("RUPTELA_API_KEY")
+
+# YouScore API Configuration
+YOUSCORE_API_TOKEN = os.getenv("YOUSCORE_API_TOKEN", "f95c0000d8dfa560d738e552db034d993a822fd4")

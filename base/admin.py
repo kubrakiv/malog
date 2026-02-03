@@ -34,7 +34,8 @@ from .models import (
     SubscriptionPlan,
     ClientSubscription,
     SubscriptionUsage,
-    SubscriptionPlanChangeRequest
+    SubscriptionPlanChangeRequest,
+    ExternalAPIKey,
 )
 
 User = get_user_model()
@@ -294,3 +295,58 @@ admin.site.register(SubscriptionPlan, SubscriptionPlanAdmin)
 admin.site.register(ClientSubscription, ClientSubscriptionAdmin)
 admin.site.register(SubscriptionUsage)
 admin.site.register(SubscriptionPlanChangeRequest, SubscriptionPlanChangeRequestAdmin)
+
+
+# External API Key Admin
+@admin.register(ExternalAPIKey)
+class ExternalAPIKeyAdmin(admin.ModelAdmin):
+    list_display = ['name', 'is_active', 'usage_count', 'last_used_at', 'created_at', 'expires_at', 'masked_key']
+    list_filter = ['is_active', 'created_at', 'last_used_at']
+    search_fields = ['name', 'description', 'key']
+    readonly_fields = ['key', 'created_at', 'updated_at', 'usage_count', 'last_used_at', 'created_by']
+    
+    fieldsets = (
+        ('Basic Information', {
+            'fields': ('name', 'description', 'key', 'is_active')
+        }),
+        ('Access Control', {
+            'fields': ('rate_limit', 'allowed_endpoints', 'ip_whitelist')
+        }),
+        ('Expiration', {
+            'fields': ('expires_at',)
+        }),
+        ('Usage Statistics', {
+            'fields': ('usage_count', 'last_used_at', 'created_by', 'created_at', 'updated_at')
+        }),
+    )
+    
+    def masked_key(self, obj):
+        """Display masked API key for security"""
+        if obj.key:
+            return f"{obj.key[:10]}...{obj.key[-6:]}"
+        return "N/A"
+    masked_key.short_description = 'API Key (Masked)'
+    
+    def save_model(self, request, obj, form, change):
+        """Set the created_by field when creating a new API key"""
+        if not change:  # Only set created_by when creating new object
+            obj.created_by = request.user
+        super().save_model(request, obj, form, change)
+    
+    def has_delete_permission(self, request, obj=None):
+        """Only superusers can delete API keys"""
+        return request.user.is_superuser
+    
+    actions = ['deactivate_keys', 'activate_keys']
+    
+    def deactivate_keys(self, request, queryset):
+        """Bulk deactivate selected API keys"""
+        updated = queryset.update(is_active=False)
+        self.message_user(request, f"Deactivated {updated} API key(s)")
+    deactivate_keys.short_description = "Deactivate selected API keys"
+    
+    def activate_keys(self, request, queryset):
+        """Bulk activate selected API keys"""
+        updated = queryset.update(is_active=True)
+        self.message_user(request, f"Activated {updated} API key(s)")
+    activate_keys.short_description = "Activate selected API keys"

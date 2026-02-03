@@ -47,6 +47,7 @@ urlpatterns = [
     path("api/onboarding/", include("base.urls.onboarding_urls")),
 
     path("api/ruptela/", include("base.urls.ruptela_urls")),
+    path("api/youscore/", include("base.urls.youscore_urls")),
 
     path("api/roles/", include("user.urls.role_urls")),
     path("api/users/", include("user.urls.user_urls")),
