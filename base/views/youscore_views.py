@@ -80,6 +80,109 @@ def _poll_youscore_url(url, headers, max_attempts=30, poll_interval=1):
     }
 
 
+def _authorize_external_request(request):
+    """
+    Validate external API key and access rules.
+
+    Returns:
+        None if authorized, otherwise a Response object.
+    """
+    api_key = request.headers.get('X-API-Key')
+
+    if not api_key:
+        logger.warning("Missing API key in request headers")
+        return Response(
+            {"error": "Missing API key. Please provide X-API-Key header."},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    try:
+        api_key_obj = ExternalAPIKey.objects.get(key=api_key)
+
+        if not api_key_obj.is_valid():
+            logger.warning(f"Expired or inactive API key attempt: {api_key[:10]}...")
+            return Response(
+                {"error": "Invalid or expired API key"},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        if not api_key_obj.can_access_endpoint(request.path):
+            logger.warning(f"API key {api_key_obj.name} attempted to access unauthorized endpoint: {request.path}")
+            return Response(
+                {"error": "This API key is not authorized to access this endpoint"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        client_ip = request.META.get('REMOTE_ADDR')
+        if not api_key_obj.can_access_from_ip(client_ip):
+            logger.warning(f"API key {api_key_obj.name} used from unauthorized IP: {client_ip}")
+            return Response(
+                {"error": "This API key cannot be used from your IP address"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
+        if not api_key_obj.check_rate_limit():
+            logger.warning(f"Rate limit exceeded for API key: {api_key_obj.name}")
+            return Response(
+                {"error": "Rate limit exceeded. Please try again later."},
+                status=status.HTTP_429_TOO_MANY_REQUESTS
+            )
+
+        api_key_obj.record_usage()
+        logger.info(f"Valid API key used: {api_key_obj.name} from IP {client_ip}")
+
+        return None
+
+    except ExternalAPIKey.DoesNotExist:
+        logger.warning(f"Invalid API key attempt: {api_key[:10]}...")
+        return Response(
+            {"error": "Invalid API key"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+
+def _fetch_youscore_with_polling(url, headers, params=None, timeout=30):
+    """
+    Fetch data from YouScore, handling 202 responses by polling currentDataUrl.
+    """
+    response = requests.get(url, headers=headers, params=params, timeout=timeout)
+
+    if response.status_code == 202:
+        response_data = response.json()
+        current_data_url = response_data.get("currentDataUrl")
+
+        if current_data_url:
+            logger.info(f"Polling for data at: {current_data_url}")
+            poll_response = _poll_youscore_url(current_data_url, headers)
+
+            if poll_response.get("error"):
+                return {
+                    "error": poll_response,
+                    "status": status.HTTP_504_GATEWAY_TIMEOUT
+                }
+
+            response = poll_response.get("response")
+        else:
+            return {
+                "error": {
+                    "error": "YouScore API returned 202 but no currentDataUrl provided",
+                    "details": response_data
+                },
+                "status": status.HTTP_202_ACCEPTED
+            }
+
+    if response.status_code != 200:
+        return {
+            "error": {
+                "error": f"YouScore API returned error: {response.status_code}",
+                "details": response.text
+            },
+            "status": response.status_code
+        }
+
+    return {"response": response}
+
+
 
 @api_view(["GET"])
 @permission_classes([AllowAny])  # We'll add custom API key authentication in the decorator
@@ -107,62 +210,9 @@ def get_vehicles_owned(request):
     """
     
     # ── 1. Validate API key from request headers ───────────────────────────────
-    api_key = request.headers.get('X-API-Key')
-    
-    if not api_key:
-        logger.warning("Missing API key in request headers")
-        return Response(
-            {"error": "Missing API key. Please provide X-API-Key header."},
-            status=status.HTTP_401_UNAUTHORIZED
-        )
-    
-    # Validate the API key against the database
-    try:
-        api_key_obj = ExternalAPIKey.objects.get(key=api_key)
-        
-        # Check if the key is valid
-        if not api_key_obj.is_valid():
-            logger.warning(f"Expired or inactive API key attempt: {api_key[:10]}...")
-            return Response(
-                {"error": "Invalid or expired API key"},
-                status=status.HTTP_401_UNAUTHORIZED
-            )
-        
-        # Check endpoint access
-        if not api_key_obj.can_access_endpoint(request.path):
-            logger.warning(f"API key {api_key_obj.name} attempted to access unauthorized endpoint: {request.path}")
-            return Response(
-                {"error": "This API key is not authorized to access this endpoint"},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        # Check IP whitelist if configured
-        client_ip = request.META.get('REMOTE_ADDR')
-        if not api_key_obj.can_access_from_ip(client_ip):
-            logger.warning(f"API key {api_key_obj.name} used from unauthorized IP: {client_ip}")
-            return Response(
-                {"error": "This API key cannot be used from your IP address"},
-                status=status.HTTP_403_FORBIDDEN
-            )
-        
-        # Check rate limit
-        if not api_key_obj.check_rate_limit():
-            logger.warning(f"Rate limit exceeded for API key: {api_key_obj.name}")
-            return Response(
-                {"error": "Rate limit exceeded. Please try again later."},
-                status=status.HTTP_429_TOO_MANY_REQUESTS
-            )
-        
-        # Record usage
-        api_key_obj.record_usage()
-        logger.info(f"Valid API key used: {api_key_obj.name} from IP {client_ip}")
-        
-    except ExternalAPIKey.DoesNotExist:
-        logger.warning(f"Invalid API key attempt: {api_key[:10]}...")
-        return Response(
-            {"error": "Invalid API key"},
-            status=status.HTTP_401_UNAUTHORIZED
-        )
+    auth_response = _authorize_external_request(request)
+    if auth_response is not None:
+        return auth_response
     
     # ── 2. Validate YouScore API token ─────────────────────────────────────────
     if not YOUSCORE_API_TOKEN:
@@ -277,6 +327,119 @@ def get_vehicles_owned(request):
         
         return Response(response_data, status=status.HTTP_200_OK)
         
+    except requests.exceptions.Timeout:
+        logger.error("YouScore API request timeout")
+        return Response(
+            {"error": "Request to YouScore API timed out"},
+            status=status.HTTP_504_GATEWAY_TIMEOUT
+        )
+    except requests.exceptions.RequestException as e:
+        logger.error(f"YouScore API request error: {str(e)}")
+        return Response(
+            {"error": f"Failed to connect to YouScore API: {str(e)}"},
+            status=status.HTTP_502_BAD_GATEWAY
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error in YouScore proxy: {str(e)}")
+        return Response(
+            {"error": "Internal server error occurred"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_company_info(request, natcomid):
+    """
+    Proxy endpoint to fetch company info by contractor code.
+
+    URL: /api/youscore/companyInfo/<natcomid>
+    """
+    auth_response = _authorize_external_request(request)
+    if auth_response is not None:
+        return auth_response
+
+    if not YOUSCORE_API_TOKEN:
+        logger.error("Missing YOUSCORE_API_TOKEN in configuration")
+        return Response(
+            {"error": "Server misconfigured: missing YouScore API credentials"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    headers = {
+        "Authorization": f"Bearer {YOUSCORE_API_TOKEN}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+
+    url = f"{YOUSCORE_BASE_URL}v1/companyInfo/{natcomid}"
+    logger.debug(f"[YouScore] GET {url}")
+
+    try:
+        fetch_result = _fetch_youscore_with_polling(url, headers)
+        if fetch_result.get("error"):
+            return Response(fetch_result["error"], status=fetch_result["status"])
+
+        data = fetch_result["response"].json()
+        return Response(data, status=status.HTTP_200_OK)
+
+    except requests.exceptions.Timeout:
+        logger.error("YouScore API request timeout")
+        return Response(
+            {"error": "Request to YouScore API timed out"},
+            status=status.HTTP_504_GATEWAY_TIMEOUT
+        )
+    except requests.exceptions.RequestException as e:
+        logger.error(f"YouScore API request error: {str(e)}")
+        return Response(
+            {"error": f"Failed to connect to YouScore API: {str(e)}"},
+            status=status.HTTP_502_BAD_GATEWAY
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error in YouScore proxy: {str(e)}")
+        return Response(
+            {"error": "Internal server error occurred"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
+def get_usr_info(request, natcomid):
+    """
+    Proxy endpoint to fetch private entrepreneur (FOP) info by contractor code.
+
+    URL: /api/youscore/usr/<natcomid>?showCurrentData=True
+    """
+    auth_response = _authorize_external_request(request)
+    if auth_response is not None:
+        return auth_response
+
+    if not YOUSCORE_API_TOKEN:
+        logger.error("Missing YOUSCORE_API_TOKEN in configuration")
+        return Response(
+            {"error": "Server misconfigured: missing YouScore API credentials"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    headers = {
+        "Authorization": f"Bearer {YOUSCORE_API_TOKEN}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+
+    url = f"{YOUSCORE_BASE_URL}v1/usr/{natcomid}"
+    params = {"showCurrentData": "True"}
+    logger.debug(f"[YouScore] GET {url} params={params}")
+
+    try:
+        fetch_result = _fetch_youscore_with_polling(url, headers, params=params)
+        if fetch_result.get("error"):
+            return Response(fetch_result["error"], status=fetch_result["status"])
+
+        data = fetch_result["response"].json()
+        return Response(data, status=status.HTTP_200_OK)
+
     except requests.exceptions.Timeout:
         logger.error("YouScore API request timeout")
         return Response(

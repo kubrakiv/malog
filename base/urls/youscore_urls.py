@@ -3,9 +3,20 @@ YouScore API URL Configuration
 """
 
 from django.urls import path
-from base.views.youscore_views import get_vehicles_owned, health_check
+from base.views.youscore_views import (
+    get_company_info,
+    get_usr_info,
+    get_vehicles_owned,
+    health_check,
+)
 
 urlpatterns = [
+    # Company info by contractor code
+    path('companyInfo/<str:natcomid>', get_company_info, name='youscore-company-info'),
+
+    # FOP info by contractor code
+    path('usr/<str:natcomid>', get_usr_info, name='youscore-usr-info'),
+
     # Main endpoint to fetch vehicles owned by contractor
     path('vehicles/owned', get_vehicles_owned, name='youscore-vehicles-owned'),
     
