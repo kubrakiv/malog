@@ -462,6 +462,70 @@ def get_usr_info(request, natcomid):
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
+def get_vehicle_check(request):
+    """
+    Proxy endpoint to check vehicle info by number.
+
+    URL: /api/youscore/vehicles/check?number=<vehicle_number>
+    """
+    auth_response = _authorize_external_request(request)
+    if auth_response is not None:
+        return auth_response
+
+    if not YOUSCORE_API_TOKEN:
+        logger.error("Missing YOUSCORE_API_TOKEN in configuration")
+        return Response(
+            {"error": "Server misconfigured: missing YouScore API credentials"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+    number = request.query_params.get("number")
+    if not number:
+        return Response(
+            {"error": "number is required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+    headers = {
+        "Authorization": f"Bearer {YOUSCORE_API_TOKEN}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+
+    url = f"{YOUSCORE_BASE_URL}v1/vehicles/check"
+    params = {"number": number}
+    logger.debug(f"[YouScore] GET {url} params={params}")
+
+    try:
+        fetch_result = _fetch_youscore_with_polling(url, headers, params=params)
+        if fetch_result.get("error"):
+            return Response(fetch_result["error"], status=fetch_result["status"])
+
+        data = fetch_result["response"].json()
+        return Response(data, status=status.HTTP_200_OK)
+
+    except requests.exceptions.Timeout:
+        logger.error("YouScore API request timeout")
+        return Response(
+            {"error": "Request to YouScore API timed out"},
+            status=status.HTTP_504_GATEWAY_TIMEOUT
+        )
+    except requests.exceptions.RequestException as e:
+        logger.error(f"YouScore API request error: {str(e)}")
+        return Response(
+            {"error": f"Failed to connect to YouScore API: {str(e)}"},
+            status=status.HTTP_502_BAD_GATEWAY
+        )
+    except Exception as e:
+        logger.error(f"Unexpected error in YouScore proxy: {str(e)}")
+        return Response(
+            {"error": "Internal server error occurred"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
 def health_check(request):
     """
     Health check endpoint for YouScore proxy service
