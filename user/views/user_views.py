@@ -18,6 +18,8 @@ from user.serializers import UserSerializer, UserSerializerWithToken, RoleSerial
 
 from django.contrib.auth.hashers import make_password
 from rest_framework import status
+import secrets
+import string
 
 
 class AdminRolePermission(BasePermission):
@@ -176,6 +178,19 @@ class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
 
 
+def _generate_temporary_password(length=16):
+    characters = string.ascii_letters + string.digits + '!@#$%^&*'
+    return ''.join(secrets.choice(characters) for _ in range(length))
+
+
+def _get_manageable_users_queryset(user):
+    if getattr(user, 'is_superuser', False) or user.is_system_admin():
+        return Profile.objects.all()
+    if user.client:
+        return Profile.objects.filter(client=user.client)
+    return Profile.objects.none()
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])  # Add authentication requirement
 def registerUser(request):
@@ -232,7 +247,7 @@ def updateUserProfile(request):
     return Response(serializer.data)
 
 @api_view(['PUT'])
-@permission_classes([AdminRolePermission])
+@permission_classes([AnyAdminPermission])
 def updateUser(request, pk): # this function is for User Edit Page
     data = request.data
     print("updateUser", data)
@@ -240,14 +255,9 @@ def updateUser(request, pk): # this function is for User Edit Page
     role_name = data.get("role")
     role = Role.objects.filter(name=role_name).first()
 
-    # Only allow updating users from the same client
-    user_client = request.user.client
-    if user_client:
-        profile = Profile.objects.filter(client=user_client, id=pk).first()
-        if not profile:
-            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-    else:
-        return Response({'detail': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+    profile = _get_manageable_users_queryset(request.user).filter(id=pk).first()
+    if not profile:
+        return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
     profile.role = role
     profile.first_name = data['first_name']
@@ -273,45 +283,48 @@ def getUserProfile(request):
 
 
 @api_view(['GET'])
-@permission_classes([AdminRolePermission])
+@permission_classes([AnyAdminPermission])
 def getUsers(request):
-    # Only show users from the same client
-    user_client = request.user.client
-    if user_client:
-        profiles = Profile.objects.filter(client=user_client)
-    else:
-        profiles = Profile.objects.none()  # Return empty queryset if no client
+    profiles = _get_manageable_users_queryset(request.user)
     serializer = UserSerializer(profiles, many=True)
     return Response(serializer.data)
 
 
 @api_view(['GET'])
-@permission_classes([AdminRolePermission])
+@permission_classes([AnyAdminPermission])
 def getUserById(request, pk):
-    # Only allow access to users from the same client
-    user_client = request.user.client
-    if user_client:
-        profile = Profile.objects.filter(client=user_client, id=pk).first()
-        if not profile:
-            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-    else:
-        return Response({'detail': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+    profile = _get_manageable_users_queryset(request.user).filter(id=pk).first()
+    if not profile:
+        return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
     
     serializer = UserSerializer(profile, many=False)
     return Response(serializer.data)
 
 
 @api_view(['DELETE'])
-@permission_classes([AdminRolePermission])
+@permission_classes([AnyAdminPermission])
 def deleteUser(request, pk):
-    # Only allow deleting users from the same client
-    user_client = request.user.client
-    if user_client:
-        profileForDeletion = Profile.objects.filter(client=user_client, id=pk).first()
-        if not profileForDeletion:
-            return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
-    else:
-        return Response({'detail': 'Access denied'}, status=status.HTTP_403_FORBIDDEN)
+    profileForDeletion = _get_manageable_users_queryset(request.user).filter(id=pk).first()
+    if not profileForDeletion:
+        return Response({'detail': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
     
     profileForDeletion.delete()
     return Response('Profile was deleted')
+
+
+@api_view(['POST'])
+@permission_classes([SystemAdminPermission])
+def resetUserPassword(request, pk):
+    profile = get_object_or_404(Profile, id=pk)
+
+    new_password = _generate_temporary_password()
+    profile.set_password(new_password)
+    profile.save()
+
+    return Response({
+        'message': f'Password reset for user {profile.username}',
+        'user_id': profile.id,
+        'username': profile.username,
+        'temporary_password': new_password,
+        'registration_password': profile.registration_password,
+    }, status=status.HTTP_200_OK)

@@ -1,14 +1,25 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { listUsers, deleteUser } from "../../actions/userActions";
 import "./UserListPage.scss";
+import PasswordResetModal from "../../components/PasswordResetModal/PasswordResetModal";
 // import MessageComponent from "../../components/MessageComponent/MessageComponent";
-import { FaCheck, FaPencilAlt, FaRegTrashAlt, FaPlus } from "react-icons/fa";
+import {
+  FaCheck,
+  FaPencilAlt,
+  FaRegTrashAlt,
+  FaPlus,
+  FaKey,
+} from "react-icons/fa";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const UserListPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [resettingUserId, setResettingUserId] = useState(null);
+  const [passwordModalData, setPasswordModalData] = useState(null);
 
   const userList = useSelector((state) => state.userList);
   const { loading, users, error } = userList;
@@ -20,6 +31,7 @@ const UserListPage = () => {
 
   const userDelete = useSelector((state) => state.userDelete);
   const { success: successDelete } = userDelete;
+  const isSystemAdmin = userInfo?.role === "system_admin";
 
   useEffect(() => {
     if (userInfo && userInfo.is_admin) {
@@ -54,8 +66,56 @@ const UserListPage = () => {
     navigate("/admin/user/add");
   };
 
+  const handleResetPassword = async (e, user) => {
+    e.stopPropagation();
+
+    if (!window.confirm(`Reset password for ${user.email || user.username}?`)) {
+      return;
+    }
+
+    try {
+      setResettingUserId(user.id);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${userInfo.token}`,
+        },
+      };
+
+      const { data } = await axios.post(
+        `/api/users/${user.id}/reset-password/`,
+        {},
+        config,
+      );
+
+      toast.success(`Password reset for ${data.username}`, {
+        position: "top-right",
+      });
+      setPasswordModalData({
+        username: data.username,
+        password: data.temporary_password,
+      });
+      dispatch(listUsers());
+    } catch (resetError) {
+      const detail =
+        resetError.response?.data?.detail ||
+        resetError.response?.data?.error ||
+        resetError.message;
+      toast.error(detail, {
+        position: "top-right",
+      });
+    } finally {
+      setResettingUserId(null);
+    }
+  };
+
   return (
     <>
+      <PasswordResetModal
+        isOpen={Boolean(passwordModalData)}
+        username={passwordModalData?.username}
+        password={passwordModalData?.password}
+        onClose={() => setPasswordModalData(null)}
+      />
       <div className="points-container">
         <div className="points-header-block">
           <h2 className="table__name">Співробітники компанії</h2>
@@ -130,6 +190,16 @@ const UserListPage = () => {
                       >
                         <FaRegTrashAlt />
                       </button>
+                      {isSystemAdmin && (
+                        <button
+                          title="Reset password"
+                          className="points-table__btn points-table__btn_reset"
+                          onClick={(e) => handleResetPassword(e, user)}
+                          disabled={resettingUserId === user.id}
+                        >
+                          <FaKey />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}

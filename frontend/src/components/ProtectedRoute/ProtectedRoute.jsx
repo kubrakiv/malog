@@ -22,6 +22,12 @@ const ProtectedRoute = ({
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  // System administrators manage the platform itself and should not be
+  // blocked by tenant subscription feature flags.
+  if (userInfo.role === "system_admin") {
+    return children;
+  }
+
   // Show loading while checking subscription
   if (loading) {
     return (
@@ -96,7 +102,7 @@ const ProtectedRoute = ({
                   {subscription.plan_details?.features?.map(
                     (feature, index) => (
                       <li key={index}>{feature}</li>
-                    )
+                    ),
                   )}
                 </ul>
               </div>

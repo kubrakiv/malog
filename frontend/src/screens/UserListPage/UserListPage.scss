@@ -33,3 +33,17 @@
     }
   }
 }
+
+.points-table__btn_reset {
+  background: #f0ad4e;
+  color: white;
+
+  &:hover:not(:disabled) {
+    background: #ec971f;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

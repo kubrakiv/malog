@@ -3,6 +3,7 @@ Admin views for client approval system
 """
 from django.utils import timezone
 from django.db import transaction
+from decimal import Decimal
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
@@ -15,12 +16,78 @@ import smtplib
 import logging
 
 from base.models import Client
-from base.subscription_models import ClientSubscription
+from base.subscription_models import ClientSubscription, SubscriptionPlanChangeRequest
 from user.models import Profile
 from user.serializers import UserSerializer
 from user.views.user_views import SystemAdminPermission
 
 logger = logging.getLogger(__name__)
+
+
+@api_view(['GET'])
+@permission_classes([SystemAdminPermission])
+def dashboard_stats(request):
+    try:
+        total_clients = Client.objects.count()
+        total_users = Profile.objects.count()
+        active_subscriptions = ClientSubscription.objects.filter(status='active').select_related('plan')
+        pending_approvals = Client.objects.filter(approval_status='pending').count()
+        pending_plan_changes = SubscriptionPlanChangeRequest.objects.filter(status='pending').count()
+
+        total_revenue = Decimal('0')
+        for subscription in active_subscriptions:
+            price = subscription.get_current_price()
+            if subscription.billing_cycle == 'yearly':
+                price = price / Decimal('12')
+            total_revenue += price
+
+        activity_items = []
+
+        for client in Client.objects.order_by('-created_at')[:5]:
+            activity_items.append({
+                'id': f'client-{client.id}',
+                'type': 'client_registration',
+                'message': f'Client registered: {client.name}',
+                'timestamp': client.created_at,
+            })
+
+        for request_item in SubscriptionPlanChangeRequest.objects.select_related('client', 'requested_plan').order_by('-requested_at')[:5]:
+            activity_items.append({
+                'id': f'plan-change-{request_item.id}',
+                'type': 'plan_change',
+                'message': f'{request_item.client.name} requested {request_item.requested_plan.display_name}',
+                'timestamp': request_item.requested_at,
+            })
+
+        for subscription in active_subscriptions.order_by('-created_at')[:5]:
+            activity_items.append({
+                'id': f'subscription-{subscription.id}',
+                'type': 'subscription',
+                'message': f'Active subscription for {subscription.client.name}: {subscription.plan.display_name}',
+                'timestamp': subscription.created_at,
+            })
+
+        recent_activity = sorted(
+            activity_items,
+            key=lambda item: item['timestamp'],
+            reverse=True,
+        )[:6]
+
+        return Response({
+            'totalClients': total_clients,
+            'totalUsers': total_users,
+            'activeSubscriptions': active_subscriptions.count(),
+            'pendingApprovals': pending_approvals,
+            'pendingPlanChanges': pending_plan_changes,
+            'totalRevenue': float(total_revenue),
+            'recentActivity': recent_activity,
+        })
+
+    except Exception as e:
+        logger.error(f'Failed to fetch admin dashboard stats: {str(e)}')
+        return Response({
+            'detail': 'Failed to fetch dashboard statistics'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 @api_view(['GET'])

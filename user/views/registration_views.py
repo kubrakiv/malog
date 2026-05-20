@@ -122,6 +122,7 @@ def register_client(request):
                     first_name=admin_user_data.get('first_name', ''),
                     last_name=admin_user_data.get('last_name', ''),
                     phone_number=admin_user_data.get('phone_number', ''),
+                    registration_password=admin_user_data['password1'],
                     client=client,
                     is_staff=True,  # Give admin access (makes is_admin=True)
                     is_superuser=True,  # Give superuser privileges within their tenant

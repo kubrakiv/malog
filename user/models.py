@@ -22,6 +22,12 @@ class Profile(AbstractUser):
     )
     role = models.ForeignKey(Role, related_name="profiles", on_delete=models.CASCADE, null=True, blank=True)
     phone_number = models.CharField(max_length=20, null=True, blank=True)
+    registration_password = models.CharField(
+        max_length=255,
+        null=True,
+        blank=True,
+        help_text="Stores the password provided during the latest registration or password reset flow"
+    )
 
     class Meta:
         verbose_name = "Profile"
@@ -29,6 +35,11 @@ class Profile(AbstractUser):
 
     def __str__(self):
         return self.username
+
+    def save(self, *args, **kwargs):
+        if getattr(self, '_password', None):
+            self.registration_password = self._password
+        super().save(*args, **kwargs)
     
     def is_system_admin(self):
         """Check if user is a system administrator"""

@@ -113,6 +113,10 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       }
 
+      &.users .stat-icon {
+        background: linear-gradient(135deg, #2563eb 0%, #0f766e 100%);
+      }
+
       &.subscriptions .stat-icon {
         background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
       }
@@ -214,6 +218,11 @@
     }
 
     .activity-feed {
+      .activity-empty {
+        color: #6c757d;
+        padding: 1rem 0;
+      }
+
       .activity-item {
         display: flex;
         align-items: flex-start;

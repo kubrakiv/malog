@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   FaUsers,
@@ -14,11 +15,13 @@ import {
 import "./AdminDashboard.scss";
 
 function AdminDashboard() {
+  const navigate = useNavigate();
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
   const [dashboardStats, setDashboardStats] = useState({
     totalClients: 0,
+    totalUsers: 0,
     activeSubscriptions: 0,
     pendingApprovals: 0,
     pendingPlanChanges: 0,
@@ -37,36 +40,11 @@ function AdminDashboard() {
               Authorization: `Bearer ${token}`,
             },
           };
-
-          // Fetch dashboard stats (you'll need to create these endpoints)
-          // For now, using mock data
-          setDashboardStats({
-            totalClients: 45,
-            activeSubscriptions: 38,
-            pendingApprovals: 3,
-            pendingPlanChanges: 7,
-            totalRevenue: 12450,
-            recentActivity: [
-              {
-                id: 1,
-                type: "client_registration",
-                message: "New client registration: Acme Corp",
-                timestamp: new Date(Date.now() - 5 * 60 * 1000),
-              },
-              {
-                id: 2,
-                type: "plan_change",
-                message: "Plan change request from TechStart Inc",
-                timestamp: new Date(Date.now() - 15 * 60 * 1000),
-              },
-              {
-                id: 3,
-                type: "subscription",
-                message: "New subscription activated for Global Logistics",
-                timestamp: new Date(Date.now() - 30 * 60 * 1000),
-              },
-            ],
-          });
+          const { data } = await axios.get(
+            "/api/admin/dashboard-stats/",
+            config,
+          );
+          setDashboardStats(data);
         }
       } catch (error) {
         console.error("Error fetching dashboard data:", error);
@@ -87,7 +65,9 @@ function AdminDashboard() {
 
   const formatTimeAgo = (timestamp) => {
     const now = new Date();
-    const diff = now - timestamp;
+    const activityTime =
+      timestamp instanceof Date ? timestamp : new Date(timestamp);
+    const diff = now - activityTime;
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
 
@@ -121,6 +101,17 @@ function AdminDashboard() {
 
       {/* Stats Cards */}
       <div className="stats-grid">
+        <div className="stat-card users">
+          <div className="stat-icon">
+            <FaUsers />
+          </div>
+          <div className="stat-content">
+            <h3>{dashboardStats.totalUsers}</h3>
+            <p>Total Users</p>
+            <span className="stat-change neutral">Managed accounts</span>
+          </div>
+        </div>
+
         <div className="stat-card clients">
           <div className="stat-icon">
             <FaBuilding />
@@ -128,7 +119,7 @@ function AdminDashboard() {
           <div className="stat-content">
             <h3>{dashboardStats.totalClients}</h3>
             <p>Total Clients</p>
-            <span className="stat-change positive">+3 this month</span>
+            <span className="stat-change neutral">Across all tenants</span>
           </div>
         </div>
 
@@ -139,7 +130,7 @@ function AdminDashboard() {
           <div className="stat-content">
             <h3>{dashboardStats.activeSubscriptions}</h3>
             <p>Active Subscriptions</p>
-            <span className="stat-change positive">+5 this month</span>
+            <span className="stat-change positive">Currently billed</span>
           </div>
         </div>
 
@@ -182,24 +173,51 @@ function AdminDashboard() {
         <h2>Quick Actions</h2>
         <div className="quick-actions-grid">
           <div className="action-card">
+            <FaUsers className="action-icon" />
+            <h3>User Management</h3>
+            <p>Manage users, roles, and password reset access from one place</p>
+            <button
+              className="action-btn"
+              onClick={() => navigate("/admin/users")}
+            >
+              Open Users
+            </button>
+          </div>
+
+          <div className="action-card">
             <FaUserCheck className="action-icon" />
             <h3>Client Approvals</h3>
             <p>Review and approve new client registrations</p>
-            <button className="action-btn">Review Now</button>
+            <button
+              className="action-btn"
+              onClick={() => navigate("/admin/client-approval")}
+            >
+              Review Now
+            </button>
           </div>
 
           <div className="action-card">
             <FaExchangeAlt className="action-icon" />
             <h3>Plan Changes</h3>
             <p>Process subscription plan change requests</p>
-            <button className="action-btn">Review Requests</button>
+            <button
+              className="action-btn"
+              onClick={() => navigate("/admin/plan-change-requests")}
+            >
+              Review Requests
+            </button>
           </div>
 
           <div className="action-card">
             <FaChartLine className="action-icon" />
             <h3>Analytics</h3>
             <p>View system usage and performance metrics</p>
-            <button className="action-btn">View Reports</button>
+            <button
+              className="action-btn"
+              onClick={() => navigate("/admin/reports")}
+            >
+              View Reports
+            </button>
           </div>
         </div>
       </div>
@@ -208,21 +226,25 @@ function AdminDashboard() {
       <div className="dashboard-section">
         <h2>Recent Activity</h2>
         <div className="activity-feed">
-          {dashboardStats.recentActivity.map((activity) => (
-            <div key={activity.id} className="activity-item">
-              <div className="activity-icon">
-                {activity.type === "client_registration" && <FaUsers />}
-                {activity.type === "plan_change" && <FaExchangeAlt />}
-                {activity.type === "subscription" && <FaCrown />}
+          {dashboardStats.recentActivity.length === 0 ? (
+            <div className="activity-empty">No recent admin activity yet.</div>
+          ) : (
+            dashboardStats.recentActivity.map((activity) => (
+              <div key={activity.id} className="activity-item">
+                <div className="activity-icon">
+                  {activity.type === "client_registration" && <FaUsers />}
+                  {activity.type === "plan_change" && <FaExchangeAlt />}
+                  {activity.type === "subscription" && <FaCrown />}
+                </div>
+                <div className="activity-content">
+                  <p>{activity.message}</p>
+                  <span className="activity-time">
+                    {formatTimeAgo(activity.timestamp)}
+                  </span>
+                </div>
               </div>
-              <div className="activity-content">
-                <p>{activity.message}</p>
-                <span className="activity-time">
-                  {formatTimeAgo(activity.timestamp)}
-                </span>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 

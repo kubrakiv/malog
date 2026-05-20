@@ -241,6 +241,7 @@ class SovtesUserManager:
                 last_name=last_name,
                 client=client,
                 role=role,
+                registration_password=temp_password,
                 is_active=True,
                 is_staff=True,
                 is_superuser=True,
@@ -438,7 +439,7 @@ Client: {client.name}
             raise ValidationError("This function is only for Sovtes users")
         
         new_password = SovtesUserManager._generate_secure_password()
-        user.password = make_password(new_password)
+        user.set_password(new_password)
         user.save()
         
         return new_password

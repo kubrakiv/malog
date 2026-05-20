@@ -10,6 +10,7 @@ urlpatterns = [
     path("register-client/", register_client, name="register-client"),
     path("profile/", views.getUserProfile, name="user-profile"),
     path("profile/update/", views.updateUserProfile, name="user-profile-update"),
+    path("<str:pk>/reset-password/", views.resetUserPassword, name="user-reset-password"),
 
     path("", views.getUsers, name="users"),
 
