@@ -11,13 +11,9 @@ BRANCH=staging
 REPO_SSH=git@github.com:kubrakiv/malog.git
 APP_ROOT=/home/kubrakiv/test-malog/malog-app
 CURRENT_DIR=$APP_ROOT/current
-STAMP=$(date +%F_%H-%M-%S)
-REL=$APP_ROOT/releases/$STAMP
 
 echo "Starting deployment..."
 echo "Branch: $BRANCH"
-echo "Release path: $REL"
-echo "Timestamp: $STAMP"
 
 # Show current deployed version (what "current" symlink points to)
 if [ -L "$CURRENT_DIR" ]; then
@@ -33,6 +29,16 @@ elif [ -d "$APP_ROOT/releases" ]; then
 		echo ""
 	fi
 fi
+
+# Optional: prompt for version (can be empty for staging)
+read -p "Enter version (e.g., v1.0.0) or press Enter to use timestamp only: " VERSION
+STAMP=$(date +%Y%m%d_%H%M)
+RELEASE_NAME="${VERSION:+${VERSION}_}${STAMP}"
+REL="$APP_ROOT/releases/$RELEASE_NAME"
+
+echo "Release path: $REL"
+echo "Timestamp: $STAMP"
+echo "📦 Creating release: $RELEASE_NAME"
 
 # Create a release folder
 echo "Creating release folder..."
@@ -65,6 +71,10 @@ ln -sf "$APP_ROOT/shared/.env.staging" "$REL/.env.staging"
 echo "Running database migrations..."
 "$APP_ROOT/shared/venv/bin/python" manage.py migrate --noinput --settings=backend.env.staging
 
+# Collect Django static files (admin CSS/JS and app static) for this release
+echo "Collecting static files..."
+"$APP_ROOT/shared/venv/bin/python" manage.py collectstatic --noinput --settings=backend.env.staging
+
 # Make symlink for media folder
 echo "Creating symlink for media folder..."
 ln -sfn "$APP_ROOT/shared/media" "$REL/media"
@@ -78,3 +88,11 @@ echo "Restarting uwsgi..."
 sudo systemctl restart uwsgi
 
 echo "Deployment completed successfully!"
+echo ""
+echo "=============================================="
+echo "✅ Staging TMS deployment complete!"
+echo "=============================================="
+echo ""
+echo "📦 Release: $RELEASE_NAME"
+echo "📂 Current: $CURRENT_DIR"
+echo ""

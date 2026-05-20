@@ -35,7 +35,8 @@ DATABASES = {
 }
 
 # Static files configuration for staging
-STATIC_URL = "/assets/"
+# Keep admin/static asset URLs on /static/... to avoid unstyled Django admin pages.
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [

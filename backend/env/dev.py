@@ -36,7 +36,8 @@ DATABASES = {
 }
 
 # Static files configuration for development
-STATIC_URL = "static/"
+# Leading slash is required so admin static assets resolve to /static/... (not /admin/static/...).
+STATIC_URL = "/static/"
 STATICFILES_DIRS = [
     BASE_DIR / 'static'
 ]

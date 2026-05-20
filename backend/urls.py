@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.urls import path, re_path, include
 from django.conf import settings # it's access to variables in settings.py file
 from django.conf.urls.static import static # it's a specific function that connects urls
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic import TemplateView
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
@@ -71,7 +72,7 @@ if settings.DEBUG:
     
     # Serve media files in development
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATICFILES_DIRS[0] if settings.STATICFILES_DIRS else None)
+    urlpatterns += staticfiles_urlpatterns()
 
 # # Production/Staging patterns - serve React app
 # if not settings.DEBUG:
