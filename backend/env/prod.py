@@ -9,12 +9,15 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "deltalogistics.cz",
     "www.deltalogistics.cz",
+    "tms.sovtes.com",
     "195.201.96.160",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://deltalogistics.cz",
     "http://deltalogistics.cz",
+    "https://tms.sovtes.com",
+    "http://tms.sovtes.com",
     "https://195.201.96.160",
     "http://195.201.96.160",
 ]
@@ -48,6 +51,8 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "https://malog.com.ua",
     "http://malog.com.ua",
+    "https://tms.sovtes.com",
+    "http://tms.sovtes.com",
 ]
 
 # Email Configuration for production
@@ -58,7 +63,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_SENDER')
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 
-FRONTEND_URL = 'https://malog.com.ua'
+FRONTEND_URL = 'https://tms.sovtes.com'
 
 # Security settings for production
 SECURE_BROWSER_XSS_FILTER = True

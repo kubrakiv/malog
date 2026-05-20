@@ -9,12 +9,15 @@ DEBUG = False
 ALLOWED_HOSTS = [
     "test.malog.com.ua",
     "www.test.malog.com.ua",
+    "test-tms.sovtes.com",
     "91.98.164.83",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://test.malog.com.ua",
     "http://test.malog.com.ua",
+    "https://test-tms.sovtes.com",
+    "http://test-tms.sovtes.com",
     "https://91.98.164.83",
     "http://91.98.164.83",
 ]
@@ -48,6 +51,8 @@ CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "https://test.malog.com.ua",
     "http://test.malog.com.ua",
+    "https://test-tms.sovtes.com",
+    "http://test-tms.sovtes.com",
 ]
 
 # Email Configuration for staging
@@ -58,7 +63,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_SENDER')
 EMAIL_HOST_PASSWORD = os.environ.get('GMAIL_PASSWORD')
 
-FRONTEND_URL = 'https://test.malog.com.ua'
+FRONTEND_URL = 'https://test-tms.sovtes.com'
 
 # Basic security settings for staging
 SECURE_BROWSER_XSS_FILTER = True

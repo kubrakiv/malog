@@ -64,9 +64,9 @@ const TruckRouteMapComponent = ({
       points.find(
         (p) =>
           (p.type === LOADING && !(p.end_date && p.end_time)) ||
-          (p.type === UNLOADING && !(p.end_date && p.end_time))
+          (p.type === UNLOADING && !(p.end_date && p.end_time)),
       ),
-    [JSON.stringify(points)]
+    [JSON.stringify(points)],
   );
 
   const sumActualDistanceKm = (trips) => {
@@ -243,14 +243,19 @@ const TruckRouteMapComponent = ({
       origin,
       destination,
       transportMode: "truck",
+      routingMode: "fast", // prefer highways — this is likely the main fix
+      alternatives: 3, // return up to 3 route options
       return: "polyline,summary,tolls",
       currency: "EUR",
       "vehicle[emissionType]": "euro_6",
-      "vehicle[height]": "3800",
-      "vehicle[width]": "2500",
-      "vehicle[length]": "16500",
-      "vehicle[weight]": "40000",
+      "vehicle[height]": "3800", // mm
+      "vehicle[width]": "2500", // mm
+      "vehicle[length]": "16500", // mm
+      "vehicle[weight]": "40000", // kg — current loaded weight
+      "vehicle[grossWeight]": "40000", // kg — max permissible weight
+      "vehicle[weightPerAxle]": "10000", // kg — required for axle-load restrictions
       "vehicle[axleCount]": "6",
+      "vehicle[tunnelCategory]": "E", // adjust to your cargo (B/C/D/E)
       "exclude[countries]": "CHE",
     };
     if (via.length && window.H) {
@@ -261,21 +266,33 @@ const TruckRouteMapComponent = ({
       params,
       (result) => {
         if (!result?.routes?.length) return;
-        const route = result.routes[0];
 
+        // alternative colors: primary blue, then lighter alternatives
+        const altColors = ["#2D6AC4", "#6FA8DC", "#A4C2F4"];
+
+        result.routes.forEach((route, routeIdx) => {
+          route.sections.forEach((section) => {
+            const line = window.H.geo.LineString.fromFlexiblePolyline(
+              section.polyline,
+            );
+            const poly = new window.H.map.Polyline(line, {
+              style: {
+                lineWidth: routeIdx === 0 ? 6 : 4,
+                strokeColor: altColors[routeIdx] ?? "#A4C2F4",
+                lineDash: routeIdx === 0 ? [] : [8, 4],
+              },
+            });
+            poly.setZIndex(routeIdx === 0 ? 2 : 1);
+            routeGroupRef.current.addObject(poly);
+          });
+        });
+
+        const route = result.routes[0];
         let totalLength = 0;
         let totalDuration = 0;
         let emptyDistance = 0;
 
         route.sections.forEach((section, index) => {
-          const line = window.H.geo.LineString.fromFlexiblePolyline(
-            section.polyline
-          );
-          const poly = new window.H.map.Polyline(line, {
-            style: { lineWidth: 5 },
-          });
-          routeGroupRef.current.addObject(poly);
-
           if (index === 0) {
             const firstLoading = points.find((p) => p.type === LOADING);
             const arriv = section.arrival?.place?.location;
@@ -299,7 +316,7 @@ const TruckRouteMapComponent = ({
           const icon = new window.H.map.Icon(iconSvg(point));
           const marker = new window.H.map.Marker(
             { lat: point.lat, lng: point.lng },
-            { icon }
+            { icon },
           );
           marker.setData(point.label || `${idx + 1}: ${point.type}`);
           marker.addEventListener("tap", (evt) => {
@@ -307,7 +324,7 @@ const TruckRouteMapComponent = ({
               evt.target.getGeometry(),
               {
                 content: evt.target.getData(),
-              }
+              },
             );
             ui.addBubble(bubble);
           });
@@ -351,7 +368,7 @@ const TruckRouteMapComponent = ({
 
             // DEBUG: Log each fare processing
             console.log(
-              `Processing fare: Country=${country}, Value=${value}, Currency=${currency}`
+              `Processing fare: Country=${country}, Value=${value}, Currency=${currency}`,
             );
             console.log(`Original price:`, fare.price);
             console.log(`Converted price:`, fare.convertedPrice);
@@ -359,7 +376,7 @@ const TruckRouteMapComponent = ({
             // Check if we're using EUR
             if (currency !== "EUR") {
               console.warn(
-                `⚠️  WARNING: Expected EUR but got ${currency} for country ${country}!`
+                `⚠️  WARNING: Expected EUR but got ${currency} for country ${country}!`,
               );
             }
 
@@ -386,7 +403,7 @@ const TruckRouteMapComponent = ({
               ([country, value]) => ({
                 country,
                 value: value.toFixed(2),
-              })
+              }),
             ),
             totalEUR: totalTollEUR.toFixed(2),
             // Keep legacy format for compatibility
@@ -396,7 +413,7 @@ const TruckRouteMapComponent = ({
           },
         });
       },
-      (err) => console.error("Route error", err)
+      (err) => console.error("Route error", err),
     );
   }, [JSON.stringify(points)]);
 
@@ -413,6 +430,7 @@ const TruckRouteMapComponent = ({
         origin: `${truckPosition.lat},${truckPosition.lng}`,
         destination: `${pendingPoint.lat},${pendingPoint.lng}`,
         transportMode: "truck",
+        routingMode: "fast",
         return: "polyline,summary",
         currency: "EUR",
         "vehicle[emissionType]": "euro_6",
@@ -420,7 +438,10 @@ const TruckRouteMapComponent = ({
         "vehicle[width]": "2500",
         "vehicle[length]": "16500",
         "vehicle[weight]": "40000",
+        "vehicle[grossWeight]": "40000",
+        "vehicle[weightPerAxle]": "10000",
         "vehicle[axleCount]": "6",
+        "vehicle[tunnelCategory]": "E",
         "exclude[countries]": "CHE",
       };
 
@@ -431,7 +452,7 @@ const TruckRouteMapComponent = ({
           if (!section) return;
 
           const line = window.H.geo.LineString.fromFlexiblePolyline(
-            section.polyline
+            section.polyline,
           );
           const truckLine = new window.H.map.Polyline(line, {
             style: { lineWidth: 4, strokeColor: "#FDA000" },
@@ -441,7 +462,7 @@ const TruckRouteMapComponent = ({
 
           const truckIcon = new window.H.map.Icon(
             "https://img.icons8.com/?size=100&id=LKFOJdUZXTkd&format=png&color=C50000",
-            { size: { w: 36, h: 36 }, anchor: { x: 18, y: 18 } }
+            { size: { w: 36, h: 36 }, anchor: { x: 18, y: 18 } },
           );
           const truckMarker = new window.H.map.Marker(truckPosition, {
             icon: truckIcon,
@@ -456,7 +477,7 @@ const TruckRouteMapComponent = ({
             },
           });
         },
-        (err) => console.error("Truck-to-next route error", err)
+        (err) => console.error("Truck-to-next route error", err),
       );
     }
   }, [
@@ -497,12 +518,12 @@ const TruckRouteMapComponent = ({
     // start/end pins
     const startPin = new window.H.map.Marker(coords[0], {
       icon: new window.H.map.Icon(
-        '<svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="6" fill="#8E44AD"/></svg>'
+        '<svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="6" fill="#8E44AD"/></svg>',
       ),
     });
     const endPin = new window.H.map.Marker(coords.at(-1), {
       icon: new window.H.map.Icon(
-        '<svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="6" width="12" height="12" fill="#8E44AD"/></svg>'
+        '<svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="6" width="12" height="12" fill="#8E44AD"/></svg>',
       ),
     });
     factualGroupRef.current.addObjects([startPin, endPin]);
