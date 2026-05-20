@@ -36,6 +36,7 @@ from .models import (
     SubscriptionUsage,
     SubscriptionPlanChangeRequest,
     ExternalAPIKey,
+    ClientExternalIdentity,
 )
 
 User = get_user_model()
@@ -125,6 +126,23 @@ class ClientAdmin(admin.ModelAdmin):
     get_company_count.short_description = 'Companies'
 
     
+
+
+
+@admin.register(ClientExternalIdentity)
+class ClientExternalIdentityAdmin(admin.ModelAdmin):
+    list_display = (
+        'client',
+        'provider',
+        'external_client_id',
+        'link_status',
+        'link_key',
+        'linked_at',
+        'linked_by',
+    )
+    list_filter = ('provider', 'link_status', 'linked_at')
+    search_fields = ('client__name', 'client__slug', 'external_client_id', 'link_key')
+    readonly_fields = ('created_at', 'updated_at', 'link_key', 'linked_at', 'linked_by')
 
 
 @admin.register(Company)

@@ -5,7 +5,7 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APIClient
 
-from base.models import Client
+from base.models import Client, ClientExternalIdentity
 from base.subscription_models import ClientSubscription, SubscriptionPlan, SubscriptionPlanChangeRequest
 from base.sovtes_auth import SovtesUserManager
 from django.contrib import admin
@@ -266,3 +266,83 @@ class AdminDashboardStatsTests(TestCase):
 		response = self.api_client.get('/api/admin/dashboard-stats/')
 
 		self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+
+class ClientExternalIdentityTests(TestCase):
+	def setUp(self):
+		self.api_client = APIClient()
+		self.system_admin_role = Role.objects.create(name='system_admin')
+		self.system_admin = Profile.objects.create_user(
+			username='external-identity-admin',
+			email='external-identity-admin@example.com',
+			password='SystemAdmin123!',
+			role=self.system_admin_role,
+		)
+
+	def test_registration_creates_pending_sovtes_identity(self):
+		payload = {
+			'client': {
+				'name': 'Identity Client',
+				'slug': 'identity-client',
+			},
+			'admin_user': {
+				'username': 'identity-admin',
+				'email': 'identity-admin@example.com',
+				'password1': 'IdentityPass123!',
+				'password2': 'IdentityPass123!',
+				'first_name': 'Identity',
+				'last_name': 'Admin',
+			},
+			'company': {
+				'name': 'Identity Company',
+			},
+		}
+
+		response = self.api_client.post('/api/users/register-client/', payload, format='json')
+
+		self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+		self.assertIn('sovtes_link_key', response.data)
+
+		client = Client.objects.get(slug='identity-client')
+		identity = ClientExternalIdentity.objects.get(client=client, provider=ClientExternalIdentity.PROVIDER_SOVTES)
+		self.assertEqual(identity.link_status, ClientExternalIdentity.STATUS_PENDING)
+		self.assertIsNone(identity.external_client_id)
+
+	def test_system_admin_can_link_external_identity(self):
+		client = Client.objects.create(name='Manual Link Client', slug='manual-link-client')
+		identity = ClientExternalIdentity.objects.create(
+			client=client,
+			provider=ClientExternalIdentity.PROVIDER_SOVTES,
+			link_status=ClientExternalIdentity.STATUS_PENDING,
+		)
+
+		self.api_client.force_authenticate(user=self.system_admin)
+		response = self.api_client.post(
+			f'/api/admin/external-identities/{identity.id}/link/',
+			{'external_client_id': 'sovtes-client-501'},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		identity.refresh_from_db()
+		self.assertEqual(identity.external_client_id, 'sovtes-client-501')
+		self.assertEqual(identity.link_status, ClientExternalIdentity.STATUS_LINKED)
+
+	def test_sovtes_link_key_auto_binds_pending_identity(self):
+		client = Client.objects.create(name='Auto Bind Client', slug='auto-bind-client')
+		identity = ClientExternalIdentity.objects.create(
+			client=client,
+			provider=ClientExternalIdentity.PROVIDER_SOVTES,
+			link_status=ClientExternalIdentity.STATUS_PENDING,
+		)
+
+		resolved_client = SovtesUserManager.get_or_create_client(
+			client_id='sovtes-client-777',
+			client_name='Sovtes Company 777',
+			link_key=str(identity.link_key),
+		)
+
+		self.assertEqual(resolved_client.id, client.id)
+		identity.refresh_from_db()
+		self.assertEqual(identity.external_client_id, 'sovtes-client-777')
+		self.assertEqual(identity.link_status, ClientExternalIdentity.STATUS_LINKED)

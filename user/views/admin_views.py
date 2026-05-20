@@ -15,13 +15,119 @@ import ssl
 import smtplib
 import logging
 
-from base.models import Client
+from base.models import Client, ClientExternalIdentity
 from base.subscription_models import ClientSubscription, SubscriptionPlanChangeRequest
 from user.models import Profile
 from user.serializers import UserSerializer
 from user.views.user_views import SystemAdminPermission
 
 logger = logging.getLogger(__name__)
+
+
+@api_view(['GET'])
+@permission_classes([SystemAdminPermission])
+def list_client_external_identities(request):
+    provider = request.GET.get('provider', ClientExternalIdentity.PROVIDER_SOVTES)
+    link_status = request.GET.get('status')
+
+    queryset = ClientExternalIdentity.objects.select_related('client', 'linked_by').filter(provider=provider)
+    if link_status:
+        queryset = queryset.filter(link_status=link_status)
+
+    identities = []
+    for identity in queryset.order_by('-updated_at'):
+        identities.append({
+            'id': identity.id,
+            'provider': identity.provider,
+            'external_client_id': identity.external_client_id,
+            'link_status': identity.link_status,
+            'link_key': str(identity.link_key),
+            'linked_at': identity.linked_at,
+            'linked_by': identity.linked_by.username if identity.linked_by else None,
+            'client': {
+                'id': identity.client.id,
+                'name': identity.client.name,
+                'slug': identity.client.slug,
+            },
+            'metadata': identity.metadata,
+        })
+
+    return Response({'count': len(identities), 'results': identities}, status=status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([SystemAdminPermission])
+def link_client_external_identity(request, identity_id):
+    external_client_id = str(request.data.get('external_client_id', '')).strip()
+    if not external_client_id:
+        return Response({'detail': 'external_client_id is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    try:
+        with transaction.atomic():
+            identity = ClientExternalIdentity.objects.select_for_update().select_related('client').get(id=identity_id)
+            conflict_identity = ClientExternalIdentity.objects.select_for_update().filter(
+                provider=identity.provider,
+                external_client_id=external_client_id,
+            ).exclude(id=identity.id).first()
+
+            if conflict_identity and conflict_identity.client_id != identity.client_id:
+                identity.link_status = ClientExternalIdentity.STATUS_CONFLICT
+                metadata = dict(identity.metadata or {})
+                metadata.update({
+                    'conflict_external_client_id': external_client_id,
+                    'conflict_identity_id': conflict_identity.id,
+                })
+                identity.metadata = metadata
+                identity.save(update_fields=['link_status', 'metadata', 'updated_at'])
+
+                return Response(
+                    {'detail': 'external_client_id is already linked to another client', 'conflict_identity_id': conflict_identity.id},
+                    status=status.HTTP_409_CONFLICT,
+                )
+
+            identity.external_client_id = external_client_id
+            identity.link_status = ClientExternalIdentity.STATUS_LINKED
+            identity.linked_at = timezone.now()
+            identity.linked_by = request.user
+            metadata = dict(identity.metadata or {})
+            metadata.update({'linked_via': 'manual_admin_link'})
+            identity.metadata = metadata
+            identity.save(update_fields=['external_client_id', 'link_status', 'linked_at', 'linked_by', 'metadata', 'updated_at'])
+
+        return Response({
+            'message': 'Client external identity linked successfully',
+            'identity_id': identity.id,
+            'client_id': identity.client_id,
+            'provider': identity.provider,
+            'external_client_id': identity.external_client_id,
+            'link_status': identity.link_status,
+        }, status=status.HTTP_200_OK)
+
+    except ClientExternalIdentity.DoesNotExist:
+        return Response({'detail': 'Identity not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes([SystemAdminPermission])
+def reset_client_external_identity(request, identity_id):
+    try:
+        identity = ClientExternalIdentity.objects.get(id=identity_id)
+        identity.external_client_id = None
+        identity.link_status = ClientExternalIdentity.STATUS_PENDING
+        identity.linked_at = None
+        identity.linked_by = None
+        metadata = dict(identity.metadata or {})
+        metadata.update({'reset_via': 'manual_admin_reset'})
+        identity.metadata = metadata
+        identity.save(update_fields=['external_client_id', 'link_status', 'linked_at', 'linked_by', 'metadata', 'updated_at'])
+
+        return Response({
+            'message': 'Client external identity reset to pending',
+            'identity_id': identity.id,
+            'link_status': identity.link_status,
+        }, status=status.HTTP_200_OK)
+    except ClientExternalIdentity.DoesNotExist:
+        return Response({'detail': 'Identity not found'}, status=status.HTTP_404_NOT_FOUND)
 
 
 @api_view(['GET'])

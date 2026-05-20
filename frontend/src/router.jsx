@@ -41,6 +41,7 @@ import PlanChangeRequestsPage from "./screens/AdminPages/PlanChangeRequestsPage/
 import AdminDashboard from "./screens/AdminPages/AdminDashboard/AdminDashboard";
 import AdminSubscriptionPlansPage from "./screens/AdminPages/AdminSubscriptionPlansPage/AdminSubscriptionPlansPage";
 import AdminClientSubscriptionsPage from "./screens/AdminPages/AdminClientSubscriptionsPage/AdminClientSubscriptionsPage";
+import ExternalIdentitiesPage from "./screens/AdminPages/ExternalIdentitiesPage/ExternalIdentitiesPage";
 import OnboardingWizard from "./components/OnboardingWizard/OnboardingWizard";
 
 import { RestrictedRoute } from "./RestrictedRoute";
@@ -276,6 +277,11 @@ const adminRoutes = [
   {
     path: "/admin/client-subscriptions",
     element: <AdminClientSubscriptionsPage />,
+    roles: ["system_admin"],
+  },
+  {
+    path: "/admin/external-identities",
+    element: <ExternalIdentitiesPage />,
     roles: ["system_admin"],
   },
 ];

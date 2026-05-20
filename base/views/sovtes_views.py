@@ -57,11 +57,13 @@ def sovtes_jwt_login(request):
             # Direct fields in payload
             client_id = payload.get('client_id', payload.get('sub', 'unknown'))
             client_name = payload.get('client_name', f'Sovtes Client {client_id}')
+        link_key = payload.get('tms_link_key') or payload.get('link_key')
         
         # Get or create client
         client = SovtesUserManager.get_or_create_client(
             client_id, 
-            client_name=payload.get('client_name', f'Sovtes Client {client_id}')
+            client_name=payload.get('client_name', f'Sovtes Client {client_id}'),
+            link_key=link_key,
         )
         
         # Get or create user
@@ -93,6 +95,7 @@ def sovtes_jwt_login(request):
             'sovtes_data': {
                 'sovtes_user_id': payload.get('sub'),
                 'sovtes_client_id': client_id,
+                'tms_link_key': link_key,
                 'user_type': payload.get('usertype'),
                 'system_language': payload.get('systemlanguage')
             }

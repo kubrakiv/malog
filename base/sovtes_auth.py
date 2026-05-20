@@ -8,9 +8,11 @@ It validates tokens, creates clients and users as needed, and provides session m
 import jwt
 import json
 from datetime import datetime
+import uuid
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+from django.db import transaction
 from django.utils import timezone
 from django.contrib.auth.hashers import make_password
 from datetime import timedelta
@@ -21,7 +23,7 @@ import smtplib
 from email.message import EmailMessage
 import logging
 
-from base.models import Client
+from base.models import Client, ClientExternalIdentity
 from base.subscription_models import SubscriptionPlan, ClientSubscription
 from user.models import Profile, Role
 from base.entry_data import email_sender, gmail_password
@@ -128,7 +130,7 @@ class SovtesUserManager:
     """
     
     @staticmethod
-    def get_or_create_client(client_id, client_name=None):
+    def get_or_create_client(client_id, client_name=None, link_key=None):
         """
         Gets or creates a client based on Sovtes client ID
         
@@ -139,27 +141,103 @@ class SovtesUserManager:
         Returns:
             Client: The client instance
         """
-        # Use Sovtes client ID as slug with prefix
-        client_slug = f"sovtes-{client_id}"
-        
+        provider = ClientExternalIdentity.PROVIDER_SOVTES
+        external_client_id = str(client_id)
+
+        # 1) Primary lookup: explicit provider<->external id mapping.
+        mapping = ClientExternalIdentity.objects.select_related('client').filter(
+            provider=provider,
+            external_client_id=external_client_id,
+        ).first()
+        if mapping:
+            if mapping.link_status != ClientExternalIdentity.STATUS_LINKED:
+                mapping.link_status = ClientExternalIdentity.STATUS_LINKED
+                mapping.linked_at = timezone.now()
+                mapping.save(update_fields=['link_status', 'linked_at', 'updated_at'])
+            print(f"SOVTES CLIENT FOUND VIA MAPPING: {mapping.client.name} (ID: {mapping.client.id})")
+            return mapping.client
+
+        # 2) First-time secure binding via link_key from TMS registration flow.
+        if link_key:
+            try:
+                parsed_link_key = uuid.UUID(str(link_key))
+            except (ValueError, TypeError):
+                parsed_link_key = None
+
+            if parsed_link_key:
+                with transaction.atomic():
+                    pending_mapping = ClientExternalIdentity.objects.select_for_update().select_related('client').filter(
+                        provider=provider,
+                        link_key=parsed_link_key,
+                    ).first()
+
+                    if pending_mapping:
+                        existing_external = ClientExternalIdentity.objects.select_for_update().filter(
+                            provider=provider,
+                            external_client_id=external_client_id,
+                        ).exclude(id=pending_mapping.id).first()
+
+                        if existing_external and existing_external.client_id != pending_mapping.client_id:
+                            pending_mapping.link_status = ClientExternalIdentity.STATUS_CONFLICT
+                            metadata = dict(pending_mapping.metadata or {})
+                            metadata.update({
+                                'conflict_external_client_id': external_client_id,
+                                'conflict_mapping_id': existing_external.id,
+                            })
+                            pending_mapping.metadata = metadata
+                            pending_mapping.save(update_fields=['link_status', 'metadata', 'updated_at'])
+                            raise ValidationError('Sovtes client id is already linked to another TMS client')
+
+                        metadata = dict(pending_mapping.metadata or {})
+                        metadata.update({'linked_via': 'link_key'})
+                        pending_mapping.external_client_id = external_client_id
+                        pending_mapping.link_status = ClientExternalIdentity.STATUS_LINKED
+                        pending_mapping.linked_at = timezone.now()
+                        pending_mapping.metadata = metadata
+                        pending_mapping.save(update_fields=['external_client_id', 'link_status', 'linked_at', 'metadata', 'updated_at'])
+                        print(f"SOVTES CLIENT LINKED VIA LINK_KEY: {pending_mapping.client.name} (ID: {pending_mapping.client.id})")
+                        return pending_mapping.client
+
+        # 3) Legacy fallback: historical slug convention sovtes-<id>.
+        client_slug = f"sovtes-{external_client_id}"
         try:
             client = Client.objects.get(slug=client_slug)
-            print(f"SOVTES CLIENT FOUND: {client.name} (ID: {client.id})")
-        except Client.DoesNotExist:
-            # Create new client
-            client_name = client_name or f"Sovtes Client {client_id}"
-            client = Client.objects.create(
-                name=client_name,
-                slug=client_slug,
-                is_active=True,
-                is_approved=True,  # Auto-approve Sovtes clients
-                approval_status='approved'
+            ClientExternalIdentity.objects.update_or_create(
+                client=client,
+                provider=provider,
+                defaults={
+                    'external_client_id': external_client_id,
+                    'link_status': ClientExternalIdentity.STATUS_LINKED,
+                    'linked_at': timezone.now(),
+                    'metadata': {'linked_via': 'legacy_slug_fallback'},
+                },
             )
-            print(f"SOVTES CLIENT CREATED: {client.name} (ID: {client.id})")
-            
-            # Assign default subscription plan to new Sovtes clients
-            SovtesUserManager._assign_default_subscription(client)
-        
+            print(f"SOVTES CLIENT FOUND VIA LEGACY SLUG: {client.name} (ID: {client.id})")
+            return client
+        except Client.DoesNotExist:
+            pass
+
+        # 4) No mapping found: create a dedicated Sovtes client and mapping.
+        client_name = client_name or f"Sovtes Client {external_client_id}"
+        client = Client.objects.create(
+            name=client_name,
+            slug=client_slug,
+            is_active=True,
+            is_approved=True,
+            approval_status='approved'
+        )
+        ClientExternalIdentity.objects.create(
+            client=client,
+            provider=provider,
+            external_client_id=external_client_id,
+            link_status=ClientExternalIdentity.STATUS_LINKED,
+            linked_at=timezone.now(),
+            metadata={'linked_via': 'auto_create'},
+        )
+        print(f"SOVTES CLIENT CREATED: {client.name} (ID: {client.id})")
+
+        # Assign default subscription plan to new Sovtes clients
+        SovtesUserManager._assign_default_subscription(client)
         return client
     
     @staticmethod

@@ -11,7 +11,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
-from base.models import Client, Company
+from base.models import Client, Company, ClientExternalIdentity
 from base.subscription_models import SubscriptionPlan, ClientSubscription
 from user.models import Profile, Role
 from user.serializers import UserSerializer
@@ -111,6 +111,16 @@ def register_client(request):
             
             # Set current client for tenant-aware models
             set_current_client(client)
+
+            # Create pending Sovtes mapping for future explicit linking.
+            sovtes_identity, _ = ClientExternalIdentity.objects.get_or_create(
+                client=client,
+                provider=ClientExternalIdentity.PROVIDER_SOVTES,
+                defaults={
+                    'link_status': ClientExternalIdentity.STATUS_PENDING,
+                    'metadata': {'created_via': 'tms_registration'},
+                },
+            )
             
             # Create admin user but mark as inactive until approved
             logger.info(f"Creating admin user: {admin_user_data['username']}")
@@ -234,6 +244,7 @@ def register_client(request):
                 'client_id': client.id,
                 'client_name': client.name,
                 'client_slug': client.slug,
+                'sovtes_link_key': str(sovtes_identity.link_key),
                 'approval_status': 'pending',
                 'admin_email': admin_user.email
             }

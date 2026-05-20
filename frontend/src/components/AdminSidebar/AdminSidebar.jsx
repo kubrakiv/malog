@@ -125,6 +125,11 @@ function AdminSidebar() {
           route: "/admin/system-health",
           roles: ["system_admin"],
         },
+        {
+          title: "External Client Links",
+          route: "/admin/external-identities",
+          roles: ["system_admin"],
+        },
       ],
     },
     {
