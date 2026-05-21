@@ -1,48 +1,78 @@
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import Layout from "./Layout";
 import AdminLayout from "./AdminLayout";
-import MainPage from "./screens/MainPage/MainPage";
-import LoginPage from "./screens/LoginPage/LoginPage";
-import StartScreen from "./screens/StartScreen";
-import ProfilePage from "./screens/ProfilePage/ProfilePage";
-import UserListPage from "./screens/UserListPage/UserListPage";
-import UserEditPage from "./screens/UserEditPage/UserEditPage";
+const LoginPage = lazy(() => import("./screens/LoginPage/LoginPage"));
+const StartScreen = lazy(() => import("./screens/StartScreen"));
+const ProfilePage = lazy(() => import("./screens/ProfilePage/ProfilePage"));
+const UserListPage = lazy(() => import("./screens/UserListPage/UserListPage"));
+const UserEditPage = lazy(() => import("./screens/UserEditPage/UserEditPage"));
 // import Orders from "./components/Orders/Orders";
-import OrdersTableComponent from "./components/OrdersTableComponent/OrdersTableComponent";
-import PlanScreen from "./screens/PlanScreen";
-import DragDropPlannerPage from "./screens/DragDropPlannerPage/DragDropPlannerPage";
-import TaskPage from "./screens/TaskPage/TaskPage";
-import TaskTablePage from "./screens/TaskTablePage";
-import Dashboard from "./screens/Dashboard/Dashboard";
-import AddTaskPage from "./screens/AddTaskPage";
-import AddOrder from "./components/AddOrder/AddOrder";
-import MapPage from "./screens/MapPage/MapPage";
-import PointsPage from "./screens/PointsPage/PointsPage";
-import PointPage from "./screens/PointPage/PointPage";
-import OrderPage from "./screens/OrderPage/OrderPage";
-import RegisterPage from "./screens/RegisterPage/RegisterPage";
-import DriverListPage from "./screens/DriverListPage/DriverListPage";
-import TrucksPage from "./screens/TrucksPage";
-import AddDriverPage from "./screens/AddDriverPage";
-import AddUserPage from "./screens/AddUserPage";
+const OrdersTableComponent = lazy(
+  () => import("./components/OrdersTableComponent/OrdersTableComponent"),
+);
+const PlanScreen = lazy(() => import("./screens/PlanScreen"));
+const DragDropPlannerPage = lazy(
+  () => import("./screens/DragDropPlannerPage/DragDropPlannerPage"),
+);
+const TaskPage = lazy(() => import("./screens/TaskPage/TaskPage"));
+const TaskTablePage = lazy(() => import("./screens/TaskTablePage"));
+const Dashboard = lazy(() => import("./screens/Dashboard/Dashboard"));
+const AddTaskPage = lazy(() => import("./screens/AddTaskPage"));
+const AddOrder = lazy(() => import("./components/AddOrder/AddOrder"));
+const MapPage = lazy(() => import("./screens/MapPage/MapPage"));
+const PointsPage = lazy(() => import("./screens/PointsPage/PointsPage"));
+const PointPage = lazy(() => import("./screens/PointPage/PointPage"));
+const OrderPage = lazy(() => import("./screens/OrderPage/OrderPage"));
+const RegisterPage = lazy(() => import("./screens/RegisterPage/RegisterPage"));
+const DriverListPage = lazy(
+  () => import("./screens/DriverListPage/DriverListPage"),
+);
+const TrucksPage = lazy(() => import("./screens/TrucksPage"));
+const AddDriverPage = lazy(() => import("./screens/AddDriverPage"));
+const AddUserPage = lazy(() => import("./screens/AddUserPage"));
 import MainPageComponent from "./screens/MainPageComponent";
-import CareerPage from "./screens/CareerPage";
-import CustomerPage from "./screens/CustomerPage";
-import InvoicePage from "./screens/InvoicePage";
-import InvoiceComponent from "./components/InvoiceComponent";
-import SovtesTenderPage from "../src/screens/SovtesTenderPage";
-import FreeOrdersPage from "../src/screens/FreeOrdersPage";
-import CalculatorPage from "../src/screens/CalculatorPage";
-import RegistrationPendingPage from "./screens/RegistrationPendingPage/RegistrationPendingPage";
-import ClientApprovalPage from "./screens/AdminPages/ClientApprovalPage/ClientApprovalPage";
-import SubscriptionPlansPage from "./screens/SubscriptionPlansPage";
-import SubscriptionManagementPage from "./screens/SubscriptionManagementPage/SubscriptionManagementPage";
-import PlanChangeRequestsPage from "./screens/AdminPages/PlanChangeRequestsPage/PlanChangeRequestsPage";
-import AdminDashboard from "./screens/AdminPages/AdminDashboard/AdminDashboard";
-import AdminSubscriptionPlansPage from "./screens/AdminPages/AdminSubscriptionPlansPage/AdminSubscriptionPlansPage";
-import AdminClientSubscriptionsPage from "./screens/AdminPages/AdminClientSubscriptionsPage/AdminClientSubscriptionsPage";
-import ExternalIdentitiesPage from "./screens/AdminPages/ExternalIdentitiesPage/ExternalIdentitiesPage";
-import OnboardingWizard from "./components/OnboardingWizard/OnboardingWizard";
+const CustomerPage = lazy(() => import("./screens/CustomerPage"));
+const InvoicePage = lazy(() => import("./screens/InvoicePage"));
+const InvoiceComponent = lazy(() => import("./components/InvoiceComponent"));
+const SovtesTenderPage = lazy(() => import("../src/screens/SovtesTenderPage"));
+const FreeOrdersPage = lazy(() => import("../src/screens/FreeOrdersPage"));
+const CalculatorPage = lazy(() => import("../src/screens/CalculatorPage"));
+const RegistrationPendingPage = lazy(
+  () => import("./screens/RegistrationPendingPage/RegistrationPendingPage"),
+);
+const ClientApprovalPage = lazy(
+  () => import("./screens/AdminPages/ClientApprovalPage/ClientApprovalPage"),
+);
+const SubscriptionPlansPage = lazy(
+  () => import("./screens/SubscriptionPlansPage"),
+);
+const SubscriptionManagementPage = lazy(
+  () =>
+    import("./screens/SubscriptionManagementPage/SubscriptionManagementPage"),
+);
+const PlanChangeRequestsPage = lazy(
+  () =>
+    import("./screens/AdminPages/PlanChangeRequestsPage/PlanChangeRequestsPage"),
+);
+const AdminDashboard = lazy(
+  () => import("./screens/AdminPages/AdminDashboard/AdminDashboard"),
+);
+const AdminSubscriptionPlansPage = lazy(
+  () =>
+    import("./screens/AdminPages/AdminSubscriptionPlansPage/AdminSubscriptionPlansPage"),
+);
+const AdminClientSubscriptionsPage = lazy(
+  () =>
+    import("./screens/AdminPages/AdminClientSubscriptionsPage/AdminClientSubscriptionsPage"),
+);
+const ExternalIdentitiesPage = lazy(
+  () =>
+    import("./screens/AdminPages/ExternalIdentitiesPage/ExternalIdentitiesPage"),
+);
+const OnboardingWizard = lazy(
+  () => import("./components/OnboardingWizard/OnboardingWizard"),
+);
 
 import { RestrictedRoute } from "./RestrictedRoute";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
@@ -290,7 +320,9 @@ const generateRoutes = (routes) =>
   routes.map(({ path, element, roles, requiredFeature }) => ({
     path,
     element: (() => {
-      let wrappedElement = element;
+      let wrappedElement = (
+        <Suspense fallback={<div>Loading...</div>}>{element}</Suspense>
+      );
 
       // Wrap with subscription protection if required
       if (requiredFeature) {

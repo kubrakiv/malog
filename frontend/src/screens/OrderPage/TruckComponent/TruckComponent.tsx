@@ -22,29 +22,50 @@ interface Order {
   truck: string;
 }
 
+const isOrder = (value: unknown): value is Order => {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as { id?: unknown; truck?: unknown };
+  return (
+    typeof candidate.id === "number" && typeof candidate.truck === "string"
+  );
+};
+
 const TruckComponent = () => {
   // Use AppDispatch type for dispatch
   const dispatch: AppDispatch = useDispatch();
 
   const trucks = useSelector(
-    (state: RootState) => state.trucksInfo.trucks.data
+    (state: RootState) => state.trucksInfo.trucks.data,
   ) as Truck[];
-  const order: Order = useSelector(
-    (state: RootState) => state.ordersInfo.orderDetails.data
+  const rawOrder = useSelector(
+    (state: RootState) => state.ordersInfo.orderDetails.data,
   );
+  const order = isOrder(rawOrder) ? rawOrder : null;
 
   const [selectedTruck, setSelectedTruck] = useState<string>("");
   const truckOptions = transformSelectOptions(trucks, "plates");
 
   useEffect(() => {
-    setSelectedTruck(order.truck);
+    setSelectedTruck(order?.truck ?? "");
 
     dispatch(listTrucks());
   }, [dispatch, order]);
 
   const handleFormSubmit = () => {
+    if (!order) {
+      return;
+    }
+
     const dataToUpdate = { truck: selectedTruck };
-    dispatch(updateOrder({ dataToUpdate, orderId: order.id }));
+    const updateOrderThunk = updateOrder as unknown as (payload: {
+      dataToUpdate: { truck: string };
+      orderId: number;
+    }) => unknown;
+
+    dispatch(updateOrderThunk({ dataToUpdate, orderId: order.id }));
   };
 
   type ChangeEvent<T> = React.ChangeEvent<T>;

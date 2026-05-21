@@ -155,6 +155,13 @@
 
 .login-form-container {
   padding: 3rem 2rem 2rem 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: stretch;
+  flex-direction: column;
+  background: transparent;
+  width: 100%;
+  min-height: fit-content;
 
   // Login page specific styling for the InputComponent
   .login-form-field {
@@ -205,14 +212,6 @@
       opacity: 0.6;
     }
   }
-
-  display: flex;
-  justify-content: center;
-  align-items: stretch;
-  flex-direction: column;
-  background: transparent;
-  width: 100%;
-  min-height: fit-content;
 
   @keyframes fadeInUp {
     from {

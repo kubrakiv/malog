@@ -45,5 +45,87 @@ export default defineConfig({
 
   build: {
     outDir: "build",
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (!id.includes("node_modules")) {
+            return;
+          }
+
+          const modulePath = id.split("node_modules/")[1] || "";
+          const parts = modulePath.split("/");
+          const packageName = parts[0]?.startsWith("@")
+            ? `${parts[0]}/${parts[1]}`
+            : parts[0];
+
+          if (
+            [
+              "react",
+              "react-dom",
+              "react-router",
+              "react-router-dom",
+              "scheduler",
+            ].includes(packageName)
+          ) {
+            return "framework";
+          }
+
+          if (
+            [
+              "@reduxjs/toolkit",
+              "redux",
+              "react-redux",
+              "redux-thunk",
+              "reselect",
+            ].includes(packageName)
+          ) {
+            return "vendor-redux";
+          }
+
+          if (["primereact", "primeicons", "primeflex"].includes(packageName)) {
+            return "vendor-prime";
+          }
+
+          if (
+            ["@react-google-maps/api", "use-places-autocomplete"].includes(
+              packageName,
+            )
+          ) {
+            return "vendor-maps";
+          }
+
+          if (
+            ["jspdf", "html2canvas", "xlsx", "xlsx-style"].includes(packageName)
+          ) {
+            return `vendor-export-${packageName.replace("@", "").replace("/", "-")}`;
+          }
+
+          if (
+            [
+              "react-icons",
+              "react-select",
+              "react-datepicker",
+              "react-beautiful-dnd",
+            ].includes(packageName)
+          ) {
+            return `vendor-ui-${packageName.replace("@", "").replace("/", "-")}`;
+          }
+
+          if (
+            [
+              "axios",
+              "date-fns",
+              "transliteration",
+              "dompurify",
+              "uuid",
+            ].includes(packageName)
+          ) {
+            return `vendor-utils-${packageName.replace("@", "").replace("/", "-")}`;
+          }
+
+          return "vendor-misc";
+        },
+      },
+    },
   },
 });

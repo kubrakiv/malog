@@ -117,7 +117,7 @@ function useAdvancedMarker(props: AdvancedMarkerProps) {
       !anchorAbove
     )
       console.warn(
-        "not setting anchorAbove automatically set 'transform: translate(0, 50%)' to center the marker on the position. Set this to false to be able to use custom translate values."
+        "not setting anchorAbove automatically set 'transform: translate(0, 50%)' to center the marker on the position. Set this to false to be able to use custom translate values.",
       );
   }, [className, anchorAbove]);
 
@@ -141,27 +141,31 @@ function useAdvancedMarker(props: AdvancedMarkerProps) {
 
     if (onClick && clickable)
       gme.addListener(marker, "click", (e: { domEvent: PointerEvent }) =>
-        onClick(e.domEvent)
+        onClick(e.domEvent),
       );
-    if (onRightClick && clickable)
-      if (onDrag && draggable)
-        marker.content?.addEventListener("contextmenu", onRightClick, {
-          signal,
-        }); // setting marker.addEventListener directly onces this is out of beta
-    gme.addListener(marker, "drag", onDrag);
+    if (onRightClick && clickable && marker.content) {
+      const handleContextMenu: EventListener = (event) => {
+        onRightClick(event as MouseEvent);
+      };
+
+      marker.content.addEventListener("contextmenu", handleContextMenu, {
+        signal,
+      }); // set marker.addEventListener directly once this is out of beta
+    }
+    if (onDrag && draggable) gme.addListener(marker, "drag", onDrag);
     if (onDragStart && draggable)
       gme.addListener(marker, "dragstart", onDragStart);
     if (onDragEnd && draggable) gme.addListener(marker, "dragend", onDragEnd);
 
     if ((onDrag || onDragStart || onDragEnd) && !draggable) {
       console.warn(
-        "You need to set the marker to draggable to listen to drag-events."
+        "You need to set the marker to draggable to listen to drag-events.",
       );
     }
 
     if ((onClick && !clickable) || (onRightClick && !clickable)) {
       console.warn(
-        "You need to set the marker to clickable to listen to click-events."
+        "You need to set the marker to clickable to listen to click-events.",
       );
     }
 
@@ -225,7 +229,7 @@ const AdvancedMarkerComponent = forwardRef(
         {contentContainer !== null && createPortal(children, contentContainer)}
       </AdvancedMarkerContext.Provider>
     );
-  }
+  },
 );
 AdvancedMarkerComponent.displayName = "AdvancedMarker";
 export const AdvancedMarker = AdvancedMarkerComponent;
