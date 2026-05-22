@@ -65,6 +65,8 @@ export default defineConfig({
               "react-router",
               "react-router-dom",
               "scheduler",
+              "react-hot-toast",
+              "use-sync-external-store",
             ].includes(packageName)
           ) {
             return "framework";
@@ -123,7 +125,8 @@ export default defineConfig({
             return `vendor-utils-${packageName.replace("@", "").replace("/", "-")}`;
           }
 
-          return "vendor-misc";
+          // No catch-all — let Rollup handle remaining packages
+          // automatically to preserve correct module init order
         },
       },
     },
