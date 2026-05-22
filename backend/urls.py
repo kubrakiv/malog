@@ -74,16 +74,9 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += staticfiles_urlpatterns()
 
-# # Production/Staging patterns - serve React app
-# if not settings.DEBUG:
-#     # Serve the React app at root
-#     urlpatterns.insert(0, path("", TemplateView.as_view(template_name="index.html")))
-    
-#     # Catch-all URL pattern for React app routes
-#     urlpatterns += [
-#         re_path(r'^.*$', TemplateView.as_view(template_name="index.html")),
-#     ]
-
-# # Always serve media files (handled by Nginx in production, but needed for Django's storage)
-# if not settings.DEBUG:
-#     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+# Production/Staging: serve React app for all non-API routes
+if not settings.DEBUG:
+    urlpatterns += [
+        re_path(r'^(?!api/|admin/|static/|media/).*$', TemplateView.as_view(template_name="index.html")),
+    ]
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
