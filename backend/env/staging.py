@@ -35,14 +35,19 @@ DATABASES = {
 }
 
 # Static files configuration for staging
-# Keep admin/static asset URLs on /static/... to avoid unstyled Django admin pages.
+# Django admin CSS/JS served at /static/
+# Vite build assets served at /assets/ via WhiteNoise WHITENOISE_ROOT
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-    BASE_DIR / 'frontend/build/assets/',
 ]
+
+# WhiteNoise serves the entire Vite build directory at the root URL.
+# This makes /assets/*.js, /favicon.ico, /manifest.json etc. all reachable
+# without any nginx config changes.
+WHITENOISE_ROOT = BASE_DIR / 'frontend' / 'build'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / 'media'
