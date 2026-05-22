@@ -76,7 +76,7 @@ const OnboardingWizard = () => {
   const steps = [
     {
       id: "welcome",
-      title: "Вас вітає MALOG SYSTEMS",
+      title: "Вас вітає TMS SOVTES",
       description:
         "Давайте налаштуємо вашу транспортну компанію за декілька кроків. Ми допоможемо додати автопарк і водіїв, щоб ви могли почати планувати маршрути та керувати автопарком.",
       icon: <FaRocket />,
@@ -99,8 +99,8 @@ const OnboardingWizard = () => {
             onboardingStatus.truck_count === 1
               ? "а"
               : onboardingStatus.truck_count < 5
-              ? "и"
-              : ""
+                ? "и"
+                : ""
           } додано`
         : null,
     },
@@ -118,8 +118,8 @@ const OnboardingWizard = () => {
             onboardingStatus.driver_count === 1
               ? "й"
               : onboardingStatus.driver_count < 5
-              ? "я"
-              : "їв"
+                ? "я"
+                : "їв"
           } додано`
         : null,
     },
@@ -219,7 +219,7 @@ const OnboardingWizard = () => {
         // Show error message
         alert(
           data.message ||
-            "Cannot complete onboarding. Please add required data."
+            "Cannot complete onboarding. Please add required data.",
         );
         // Refresh status
         await fetchOnboardingStatus();
@@ -299,7 +299,7 @@ const OnboardingWizard = () => {
         {currentStep === 0 ? (
           <h1 className="welcome-title">
             <span className="welcome-prefix">Вас вітає</span>
-            <span className="welcome-brand">MALOG SYSTEMS</span>
+            <span className="welcome-brand">TMS SOVTES</span>
           </h1>
         ) : (
           <h1>

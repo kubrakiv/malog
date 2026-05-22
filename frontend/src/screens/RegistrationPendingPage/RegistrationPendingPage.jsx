@@ -37,7 +37,7 @@ const RegistrationPendingPage = () => {
           <h1>Реєстрація очікує схвалення</h1>
 
           <p className="main-message">
-            Дякуємо за реєстрацію в <strong>Malog Systems</strong>!
+            Дякуємо за реєстрацію в <strong>TMS SOVTES</strong>!
           </p>
 
           {registrationInfo && (
@@ -93,8 +93,8 @@ const RegistrationPendingPage = () => {
                 Ви отримаєте повідомлення електронною поштою після схвалення
               </li>
               <li>
-                Після схвалення ви зможете увійти та почати користуватися Malog
-                Systems
+                Після схвалення ви зможете увійти та почати користуватися TMS
+                SOVTES SYSTEM
               </li>
             </ul>
           </div>
@@ -103,7 +103,7 @@ const RegistrationPendingPage = () => {
             <p>Маєте питання щодо реєстрації?</p>
             <p>
               Зв'яжіться з нами:{" "}
-              <a href="mailto:support@malog.com">support@malog.com.ua</a>
+              <a href="mailto:support@sovtes.com.ua">support@sovtes.com.ua</a>
             </p>
           </div>
 

@@ -6,30 +6,24 @@
   border-top: 1px solid rgba($borderColor, 0.3);
 
   .compare-plans-btn {
-    background: linear-gradient(
-      135deg,
-      $sidebarcolor,
-      lighten($sidebarcolor, 10%)
-    );
-    color: white;
-    border: none;
+    background: linear-gradient(135deg, #141b44, #1c2559);
+    color: #f5b51f;
+    border: 1px solid rgba(245, 181, 31, 0.55);
     padding: 1rem 2rem;
     border-radius: 8px;
     font-size: 1.1rem;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.3s ease;
     margin-bottom: 1rem;
-    box-shadow: 0 4px 15px rgba($sidebarcolor, 0.3);
+    box-shadow: 0 8px 20px rgba(20, 27, 68, 0.24);
 
     &:hover {
-      background: linear-gradient(
-        135deg,
-        darken($sidebarcolor, 10%),
-        $sidebarcolor
-      );
+      background: linear-gradient(135deg, #1a2459, #141b44);
+      color: #ffd978;
+      border-color: rgba(245, 181, 31, 0.82);
       transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba($sidebarcolor, 0.4);
+      box-shadow: 0 10px 24px rgba(20, 27, 68, 0.3);
     }
 
     &:active {

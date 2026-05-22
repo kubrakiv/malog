@@ -277,9 +277,9 @@ def send_registration_notifications(client, admin_user):
     """Send notification emails for new registration"""
     try:
         # Email to system admins
-        system_admin_email = getattr(settings, 'SYSTEM_ADMIN_EMAIL', 'admin@malog.com')
+        system_admin_email = getattr(settings, 'SYSTEM_ADMIN_EMAIL', 'admin@sovtes.com.ua')
         
-        # Email to Malog system admins
+        # Email to TMS SOVTES admins
         admin_subject = f'New Client Registration: {client.name}'
         admin_body = f'''
 A new client has registered and needs approval:
@@ -292,7 +292,7 @@ Registration Date: {client.created_at}
 Please review and approve/reject this registration in the admin panel.
 
 Best regards,
-Malog System
+TMS SOVTES
         '''
         
         send_email_via_smtp_registration(admin_subject, admin_body, system_admin_email)
@@ -302,12 +302,12 @@ Malog System
         user_body = f'''
 Dear {admin_user.get_full_name()},
 
-Thank you for registering with Malog TMS. Your registration for {client.name} has been received and is currently pending approval.
+Thank you for registering with TMS SOVTES. Your registration for {client.name} has been received and is currently pending approval.
 
 You will receive another email once your account has been reviewed and approved by our team.
 
 Best regards,
-The Malog Team
+The TMS SOVTES Team
         '''
         
         send_email_via_smtp_registration(user_subject, user_body, admin_user.email)

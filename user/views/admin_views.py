@@ -396,20 +396,20 @@ def send_approval_email(client, admin_user):
     try:
         frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:3000')
         
-        subject = 'Welcome to Malog TMS - Account Approved!'
+        subject = 'Welcome to TMS SOVTES - Account Approved!'
         body = f'''
 Dear {admin_user.get_full_name()},
 
-Great news! Your Malog TMS account for {client.name} has been approved and is now active.
+    Great news! Your TMS SOVTES account for {client.name} has been approved and is now active.
 
 You can now log in at: {frontend_url}/login
 
 Username: {admin_user.username}
 
-Welcome to Malog TMS!
+Welcome to TMS SOVTES!
 
 Best regards,
-The Malog Team
+The TMS SOVTES Team
         '''
         
         send_email_via_smtp_admin(subject, body, admin_user.email)
@@ -422,18 +422,18 @@ The Malog Team
 def send_rejection_email(client, admin_user, reason):
     """Send rejection notification email"""
     try:
-        subject = 'Malog TMS Registration Update'
+        subject = 'TMS SOVTES Registration Update'
         body = f'''
 Dear {admin_user.get_full_name()},
 
-We regret to inform you that your Malog TMS registration for {client.name} has not been approved at this time.
+    We regret to inform you that your TMS SOVTES registration for {client.name} has not been approved at this time.
 
 Reason: {reason}
 
-If you have any questions or would like to reapply, please contact us at support@malog.com.
+If you have any questions or would like to reapply, please contact us at support@sovtes.com.ua.
 
 Best regards,
-The Malog Team
+The TMS SOVTES Team
         '''
         
         send_email_via_smtp_admin(subject, body, admin_user.email)

@@ -38,7 +38,7 @@ function Header() {
           };
           const response = await axios.get(
             "/api/subscriptions/current/",
-            config
+            config,
           );
           setSubscription(response.data);
         }
@@ -88,7 +88,7 @@ function Header() {
 
     try {
       const resultAction = await dispatch(
-        searchOrderByNumber(orderNumber)
+        searchOrderByNumber(orderNumber),
       ).unwrap();
       console.log("Result", resultAction);
       const order = resultAction;
@@ -107,7 +107,7 @@ function Header() {
         </div>
         <div className="header-navbar__title">
           <Link to="/planner" className="logo-link">
-            <span className="logo-text">MALOG SYSTEMS</span>
+            <span className="logo-text">TMS SOVTES</span>
             <span className="logo-hover-effect"></span>
           </Link>
         </div>
@@ -138,8 +138,8 @@ function Header() {
                           {subscription.days_remaining === 1
                             ? "день"
                             : subscription.days_remaining < 5
-                            ? "дні"
-                            : "днів"}
+                              ? "дні"
+                              : "днів"}
                         </>
                       ) : (
                         "Закінчено"

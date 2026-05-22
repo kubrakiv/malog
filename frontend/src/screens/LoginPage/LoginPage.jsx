@@ -31,7 +31,7 @@ const LoginPage = () => {
     Object.values(USER_CONSTANTS).reduce((acc, item) => {
       acc[item] = "";
       return acc;
-    }, {})
+    }, {}),
   );
 
   useEffect(() => {
@@ -94,7 +94,7 @@ const LoginPage = () => {
           {
             position: "top-right",
             style: { color: "black", marginTop: "0rem" },
-          }
+          },
         );
       } else {
         toast.error(error, {
@@ -139,6 +139,9 @@ const LoginPage = () => {
       <div className="background">
         <div className="passport-container">
           <div className="login-form-container">
+            <div className="login-branding">
+              <span className="login-branding__badge">TMS SOVTES</span>
+            </div>
             {isFilled && (
               <MessageComponent color={"red"}>{message}</MessageComponent>
             )}
@@ -147,8 +150,11 @@ const LoginPage = () => {
               onSubmit={(e) => handleSumbitLoginForm(e)}
             >
               <h2 className="login-form__title">Вхід до системи</h2>
+              <p className="login-form__subtitle">
+                Увійдіть у свій обліковий запис для роботи з платформою.
+              </p>
               {
-                <div className="login-form">
+                <div className="login-form__fields">
                   {formFields.map((field, index) => (
                     <div key={index} className="login-form-field">
                       <InputComponent

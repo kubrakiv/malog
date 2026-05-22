@@ -121,7 +121,7 @@ def complete_onboarding(request):
     
     return Response({
         'success': True,
-        'message': 'Onboarding completed successfully! Welcome to MALOG Systems.',
+        'message': 'Onboarding completed successfully! Welcome to TMS SOVTES.',
         'onboarded_at': client.onboarded_at
     })
 

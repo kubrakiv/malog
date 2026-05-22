@@ -18,6 +18,12 @@ import {
   FaClipboardList,
   FaTasks,
   FaUserTie,
+  FaPlay,
+  FaRocket,
+  FaClock,
+  FaCloud,
+  FaWallet,
+  FaTag,
 } from "react-icons/fa";
 import "./StartPageInfo.scss";
 
@@ -104,39 +110,127 @@ function StartPageInfo() {
     },
   ];
 
+  const advantageMetrics = [
+    {
+      icon: <FaChartLine />,
+      title: "Зменшення витрат",
+      value: 30,
+      description: "Оптимізація операційних витрат завдяки автоматизації.",
+    },
+    {
+      icon: <FaRoute />,
+      title: "Швидкість доставки",
+      value: 92,
+      description: "Розумна маршрутизація з актуальними дорожніми даними.",
+    },
+    {
+      icon: <FaTasks />,
+      title: "Контроль процесів",
+      value: 95,
+      description: "Прозорість етапів перевезень у режимі реального часу.",
+    },
+    {
+      icon: <FaUsers />,
+      title: "Масштабування",
+      value: 88,
+      description: "Готовність до росту автопарку без втрати керованості.",
+    },
+  ];
+
+  const heroSignals = [
+    {
+      title: "PROFIT",
+      direction: "up",
+      description: "Прибуток зростає",
+      trend: "+23%",
+      icon: <FaChartLine />,
+      linePoints: "2,24 18,14 32,16 46,10 62,12 78,4",
+    },
+    {
+      title: "COST",
+      direction: "down",
+      description: "Витрати знижуються",
+      trend: "-18%",
+      icon: <FaWallet />,
+      linePoints: "2,4 18,8 32,12 46,14 62,18 78,22",
+    },
+    {
+      title: "PRICE",
+      direction: "up",
+      description: "Ціна зростає",
+      trend: "+15%",
+      icon: <FaTag />,
+      linePoints: "2,26 18,20 32,18 46,12 62,14 78,6",
+    },
+  ];
+
+  const heroTrust = [
+    { icon: <FaShieldAlt />, label: "Безпечно та надійно" },
+    { icon: <FaClock />, label: "Доступ 24/7" },
+    { icon: <FaCloud />, label: "Хмарна платформа" },
+  ];
+
   return (
     <div className="start-page-container">
       <div id="hero-section" className="hero-section">
-        <div className="hero-content">
-          <h1 className="hero-title">MALOG SYSTEMS</h1>
-          <p className="hero-subtitle">
-            Ваше комплексне інноваційне рішення для управління автопарком в
-            режимі реального часу.
-          </p>
-          {/* <p className="hero-description">
-            Автоматизуйте рутинні операції, підвищуйте ефективність перевезень
-            та контролюйте весь автопарк в режимі реального часу з нашою
-            інноваційною платформою.
-          </p> */}
-          <div className="hero-stats">
-            <div className="stat-item">
-              <span className="stat-number">100+</span>
-              <span className="stat-label">Активних транспортних засобів</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-number">24/7</span>
-              <span className="stat-label">Відстеження в реальному часі</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-number">99.9%</span>
-              <span className="stat-label">Час роботи системи</span>
+        <div className="container-page hero-shell">
+          <div className="hero-main">
+            <div className="hero-content">
+              <p className="hero-eyebrow">Український онлайн-сервіс</p>
+              <h1 className="hero-title">
+                TMS <span>SOVTES</span>
+              </h1>
+              <p className="hero-subtitle">
+                Ваше комплексне інноваційне рішення для управління автопарком в
+                режимі реального часу.
+              </p>
+
+              <div className="hero-actions">
+                <button
+                  className="hero-register-btn"
+                  onClick={handleGetStarted}
+                >
+                  <FaRocket />
+                  <span>Реєстрація</span>
+                </button>
+                <button className="hero-demo-btn" type="button">
+                  <FaPlay />
+                  <span>Демо-тур</span>
+                </button>
+              </div>
+
+              <div className="hero-trust">
+                {heroTrust.map((item, index) => (
+                  <div key={index} className="trust-item">
+                    <span className="trust-icon">{item.icon}</span>
+                    <span>{item.label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          <div className="hero-cta">
-            <button className="hero-register-btn" onClick={handleGetStarted}>
-              <span>Реєстрація</span>
-            </button>
+          <div className="hero-stats">
+            {heroSignals.map((signal, index) => (
+              <div
+                key={index}
+                className={`stat-item stat-item--${signal.direction}`}
+              >
+                <div className="stat-body">
+                  <span className="stat-icon">{signal.icon}</span>
+                  <div className="stat-content">
+                    <span className="stat-title">{signal.title}</span>
+                    <span className="stat-label">{signal.description}</span>
+                    <span className="stat-trend">{signal.trend}</span>
+                  </div>
+                  <div className="stat-spark" aria-hidden="true">
+                    <svg viewBox="0 0 80 30" preserveAspectRatio="none">
+                      <polyline points={signal.linePoints} />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
@@ -144,9 +238,11 @@ function StartPageInfo() {
       <div id="features-section" className="features-section">
         <div className="container-page">
           <div className="section-header">
-            <h2>Функції платформи</h2>
+            <h2>
+              Функції <span>платформи</span>
+            </h2>
             <p>
-              Відкрийте для себе потужні інструменти, які роблять Malog Systems
+              Відкрийте для себе потужні інструменти, які роблять TMS SOVTES
               ідеальним вибором для вашої транспортної компанії
             </p>
           </div>
@@ -163,31 +259,62 @@ function StartPageInfo() {
         </div>
       </div>
 
+      <div className="section-bridge" aria-hidden="true">
+        <span>Операційна аналітика</span>
+      </div>
+
       <div id="info-section" className="info-section">
         <div className="container-page">
           <div className="info-grid">
             <div className="info-card">
               <h3>Про систему</h3>
               <p>
-                Malog Systems - це комплексна платформа управління автопарком,
+                TMS SOVTES - це комплексна платформа управління автопарком,
                 призначена для підвищення прибутковості та спрощення
                 транспортних операцій. Побудована з використанням сучасних
                 технологій та штучного інтелекту, вона надає надійні рішення для
                 управління перевезеннями, оптимізації маршрутів та відстеження в
                 реальному часі.
               </p>
+              <div className="system-tags">
+                <span>GPS Моніторинг</span>
+                <span>AI Планування</span>
+                <span>Мультітенантність</span>
+                <span>Аналітика 24/7</span>
+              </div>
             </div>
-            <div className="info-card">
+            <div className="info-card advantages-card">
               <h3>Ключові Переваги</h3>
-              <ul>
-                <li>Зменшення операційних витрат до 30%</li>
-                <li>
-                  Покращення часу доставки завдяки розумному маршрутизації
-                </li>
-                <li>Видимість в реальному часі всіх операцій</li>
-                <li>Масштабована мультітенантна архітектура</li>
-                <li>Комплексна звітність та аналітика</li>
-              </ul>
+              <div className="advantages-overview">
+                <div className="efficiency-ring" aria-hidden="true">
+                  <div className="ring-inner">
+                    <strong>91%</strong>
+                    <span>Ефективність</span>
+                  </div>
+                </div>
+                <p>
+                  Візуальна панель показує ключові зони росту вашої логістики та
+                  дозволяє швидко оцінити операційну ефективність.
+                </p>
+              </div>
+
+              <div className="advantages-list">
+                {advantageMetrics.map((item, index) => (
+                  <div key={index} className="advantage-item">
+                    <div className="advantage-head">
+                      <span className="advantage-icon">{item.icon}</span>
+                      <div>
+                        <h4>{item.title}</h4>
+                        <small>{item.description}</small>
+                      </div>
+                      <span className="advantage-value">{item.value}%</span>
+                    </div>
+                    <div className="advantage-bar">
+                      <span style={{ width: `${item.value}%` }}></span>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -196,7 +323,9 @@ function StartPageInfo() {
       <div id="pricing-section" className="pricing-section">
         <div className="container-page">
           <div className="section-header">
-            <h2>Оберіть ідеальний план</h2>
+            <h2>
+              Оберіть <span>ідеальний план</span>
+            </h2>
             <p>
               Оберіть план підписки, який відповідає потребам вашого бізнесу та
               масштабуйтесь в міру зростання
@@ -337,7 +466,7 @@ function StartPageInfo() {
           <div className="cta-content">
             <h2>Готові трансформувати вашу компанію?</h2>
             <p>
-              Приєднуйтеся до тих, хто вже використовує Malog Systems для
+              Приєднуйтеся до тих, хто вже використовує TMS SOVTES для
               оптимізації своїх перевезень та підвищення ефективності автопарку.
             </p>
             <div className="cta-buttons">

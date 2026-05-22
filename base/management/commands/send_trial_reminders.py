@@ -108,12 +108,12 @@ class Command(BaseCommand):
     def send_trial_reminder_email(self, trial, admin_user, days_before):
         """Send trial reminder email"""
         try:
-            subject = f'Ваш тріальний period Malog TMS закінчується через {days_before} днів'
+            subject = f'Ваш тріальний period TMS SOVTES закінчується через {days_before} днів'
             
             body = f'''
 Привіт {admin_user.get_full_name()},
 
-Ваш тріальний період у Malog TMS закінчується через {days_before} днів.
+Ваш тріальний період у TMS SOVTES закінчується через {days_before} днів.
 
 Деталі вашого тріалу:
 • Компанія: {trial.client.name}
@@ -121,7 +121,7 @@ class Command(BaseCommand):
 • Дата закінчення: {trial.trial_end_date.strftime('%d.%m.%Y')}
 • Кількість вантажівок: {trial.plan.truck_limit if trial.plan.truck_limit != -1 else 'Необмежено'}
 
-Щоб продовжити користуватися всіма можливостями Malog TMS, оновіть свій план до закінчення тріального періоду.
+Щоб продовжити користуватися всіма можливостями TMS SOVTES, оновіть свій план до закінчення тріального періоду.
 
 Переваги оновлення:
 ✓ Безперервний доступ до всіх функцій
@@ -132,7 +132,7 @@ class Command(BaseCommand):
 Оновити план можна у налаштуваннях акаунту або зв'язавшись з нашою командою підтримки.
 
 З найкращими побажаннями,
-Команда Malog TMS
+Команда TMS SOVTES
 
 --
 Цей email було надіслано автоматично. Якщо у вас є питання, зв'яжіться з нами.

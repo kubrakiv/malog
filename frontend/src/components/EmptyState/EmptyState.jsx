@@ -87,7 +87,7 @@ export const PlannerWelcomeBanner = ({ onStartOnboarding, onAddTruck }) => {
           <FaBook />
         </div>
         <div className="banner-text">
-          <h2>Welcome to MALOG Planner! 👋</h2>
+          <h2>Welcome to TMS SOVTES Planner! 👋</h2>
           <p>
             This is where you'll plan routes, assign trucks and drivers, and
             manage your logistics operations. Let's get you started!

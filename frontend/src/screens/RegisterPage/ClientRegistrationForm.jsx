@@ -332,7 +332,7 @@ const ClientRegistrationForm = () => {
 
           localStorage.setItem(
             "pendingRegistration",
-            JSON.stringify(registrationInfo)
+            JSON.stringify(registrationInfo),
           );
 
           toast.success(
@@ -340,7 +340,7 @@ const ClientRegistrationForm = () => {
             {
               position: "top-right",
               duration: 6000,
-            }
+            },
           );
 
           navigate("/registration-pending", {
@@ -348,7 +348,7 @@ const ClientRegistrationForm = () => {
           });
         } else {
           // Handle immediate approval (if implemented)
-          toast.success("Реєстрація успішна! Ласкаво просимо до Malog!", {
+          toast.success("Реєстрація успішна! Ласкаво просимо до TMS SOVTES!", {
             position: "top-right",
             duration: 4000,
           });
@@ -366,7 +366,7 @@ const ClientRegistrationForm = () => {
             result.message || "Реєстрація не вдалась. Спробуйте ще раз.",
             {
               position: "top-right",
-            }
+            },
           );
         }
       }
@@ -714,7 +714,7 @@ const ClientRegistrationForm = () => {
   return (
     <div className="client-registration-form">
       <div className="registration-header">
-        <h2>Приєднуйтесь до Malog Systems</h2>
+        <h2>Приєднуйтесь до TMS SOVTES</h2>
         <p>Платформа управління автопарком</p>
       </div>
 

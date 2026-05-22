@@ -45,7 +45,7 @@ const MainPageHeaderComponent = () => {
       <nav className="nav-bar">
         <div className="main-logo">
           <FaTruck className="logo-icon" />
-          <span className="logo-text">MALOG SYSTEMS</span>
+          <span className="logo-text">TMS SOVTES</span>
         </div>
         <button className="menu-icon" onClick={() => setMenuOpen(!menuOpen)}>
           {menuOpen ? <FaTimes /> : <FaBars />}

@@ -401,12 +401,12 @@ class SovtesUserManager:
         try:
             frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:3000')
             
-            subject = f'Welcome to Malog TMS - Login Credentials for {client.name}'
+            subject = f'Welcome to TMS SOVTES - Login Credentials for {client.name}'
             
             body = f'''
 Dear {user.get_full_name() or user.first_name},
 
-Welcome to Malog TMS! Your account has been successfully created for {client.name}.
+Welcome to TMS SOVTES! Your account has been successfully created for {client.name}.
 
 Your login credentials:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -431,10 +431,10 @@ Getting Started:
 If you have any questions or need assistance, please contact our support team.
 
 Best regards,
-The Malog TMS Team
+The TMS SOVTES Team
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This email was sent automatically from Malog TMS.
+This email was sent automatically from TMS SOVTES.
 Account created: {timezone.now().strftime('%Y-%m-%d %H:%M:%S')} UTC
 Client: {client.name}
             '''
