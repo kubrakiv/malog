@@ -72,15 +72,19 @@ const LoginPage = () => {
       setLoginAttempted(false);
 
       // Check if error is about pending approval using error code or message content
+      // Normalize error to a string — Django can return arrays like ["message"]
+      const errorStr = Array.isArray(error)
+        ? error.join(" ")
+        : String(error || "");
       const isPendingApproval =
         errorCode === "ACCOUNT_PENDING" ||
         (Array.isArray(errorCode) && errorCode.includes("ACCOUNT_PENDING")) ||
-        (error &&
-          (error.includes("pending approval") ||
-            error.includes("Your account is pending approval") ||
-            error.includes("No active account found") ||
-            error.toLowerCase().includes("pending") ||
-            error.toLowerCase().includes("approval")));
+        (errorStr &&
+          (errorStr.includes("pending approval") ||
+            errorStr.includes("Your account is pending approval") ||
+            errorStr.includes("No active account found") ||
+            errorStr.toLowerCase().includes("pending") ||
+            errorStr.toLowerCase().includes("approval")));
 
       console.log("isPendingApproval check:", isPendingApproval);
 
