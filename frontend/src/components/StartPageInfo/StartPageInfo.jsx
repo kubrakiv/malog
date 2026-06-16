@@ -27,11 +27,61 @@ import {
 } from "react-icons/fa";
 import "./StartPageInfo.scss";
 
+const FEATURE_LABELS = {
+  "Fleet Management":       "Управління автопарком",
+  "Driver Management":      "Управління водіями",
+  "Employee Management":    "Управління персоналом",
+  "Route Planner":          "Планування маршрутів",
+  "Orders Management":      "Управління замовленнями",
+  "Route Calculator":       "Калькулятор маршрутів",
+  "Points Management":      "Управління точками",
+  "Invoicing":              "Рахунки-фактури",
+  "Customer Management":    "Управління клієнтами",
+  "Tasks Management":       "Управління завданнями",
+  "Live Map":               "Карта в реальному часі",
+  "Dashboard":              "Аналітика та Звіти",
+  "System Administration":  "Адміністрування",
+  "External Platforms":     "Зовнішні платформи",
+  "Basic Support":          "Базова підтримка",
+};
+
+// Switch between "total" (fixed price per plan) and "per_truck" (price × trucks)
+const PRICING_MODEL = import.meta.env.REACT_APP_PRICING_MODEL || "total";
+
+const PER_TRUCK_PRICES_USD = {
+  base: 10,
+  pro: 15,
+  unlimited: 20,
+};
+
+// Descriptions rewritten for per_truck context (no truck-limit references)
+const PER_TRUCK_DESCRIPTIONS = {
+  base: "Ідеально підходить для малих бізнесів, які розпочинають свій логістичний шлях. Базові інструменти для управління автопарком — платіть лише за кількість вантажівок у вашому парку.",
+  pro: "Ідеально підходить для зростаючих логістичних компаній. Розширені функції: оптимізація маршрутів, управління клієнтами та детальна аналітика — без обмежень на розмір автопарку.",
+  unlimited: "Для великих підприємств із масштабними логістичними операціями. Необмежена кількість вантажівок, усі преміум-функції та персоналізована підтримка.",
+};
+
+// Free tier shown in per_truck mode: 3 trucks, 14 days, no charge
+const PER_TRUCK_FREE_TIER = {
+  id: "free",
+  name: "free",
+  display_name: "Безкоштовно",
+  description: "Спробуйте платформу безкоштовно — до 3 вантажівок протягом 14 днів без жодних зобов'язань.",
+  truck_limit: 3,
+  trial_duration_days: 14,
+  is_trial_plan: true,
+  monthly_price: 0,
+  features: ["Fleet Management", "Driver Management", "Route Planner", "Orders Management", "Employee Management"],
+};
+
 function StartPageInfo() {
   const navigate = useNavigate();
   const [subscriptionPlans, setSubscriptionPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedBilling, setSelectedBilling] = useState("monthly");
+  const [truckCount, setTruckCount] = useState(5);
+
+  const isPerTruckModel = PRICING_MODEL === "per_truck";
 
   useEffect(() => {
     const fetchSubscriptionPlans = async () => {
@@ -327,40 +377,137 @@ function StartPageInfo() {
               Оберіть <span>ідеальний план</span>
             </h2>
             <p>
-              Оберіть план підписки, який відповідає потребам вашого бізнесу та
-              масштабуйтесь в міру зростання
+              {isPerTruckModel
+                ? "Платіть лише за кількість вантажівок у вашому парку — масштабуйтесь без переплат"
+                : "Оберіть план підписки, який відповідає потребам вашого бізнесу та масштабуйтесь в міру зростання"}
             </p>
 
-            <div className="billing-toggle">
-              <button
-                className={selectedBilling === "monthly" ? "active" : ""}
-                onClick={() => setSelectedBilling("monthly")}
-              >
-                Щомісяця
-              </button>
-              <button
-                className={selectedBilling === "yearly" ? "active" : ""}
-                onClick={() => setSelectedBilling("yearly")}
-              >
-                Щорічно
-                <span className="discount-badge">Економія 17%</span>
-              </button>
-            </div>
+            {isPerTruckModel ? (
+              <div className="truck-counter">
+                <label className="truck-counter-label">
+                  <FaTruck />
+                  Кількість вантажівок:
+                  <span className="truck-counter-value">{truckCount}</span>
+                </label>
+                <input
+                  type="range"
+                  min={1}
+                  max={100}
+                  value={truckCount}
+                  onChange={(e) => setTruckCount(Number(e.target.value))}
+                  className="truck-slider"
+                />
+                <div className="truck-slider-ticks">
+                  <span>1</span><span>25</span><span>50</span><span>75</span><span>100+</span>
+                </div>
+              </div>
+            ) : (
+              <div className="billing-toggle">
+                <button
+                  className={selectedBilling === "monthly" ? "active" : ""}
+                  onClick={() => setSelectedBilling("monthly")}
+                >
+                  Щомісяця
+                </button>
+                <button
+                  className={selectedBilling === "yearly" ? "active" : ""}
+                  onClick={() => setSelectedBilling("yearly")}
+                >
+                  Щорічно
+                  <span className="discount-badge">Економія 17%</span>
+                </button>
+              </div>
+            )}
           </div>
+        </div>
 
+        <div className="pricing-grid-wrap">
           {loading ? (
             <div className="loading-plans">
               <div className="loading-spinner"></div>
               <p>Завантаження планів підписки...</p>
             </div>
+          ) : isPerTruckModel ? (
+            /* ── Per-truck pricing cards ── */
+            <div className="pricing-grid pricing-grid--per-truck">
+              {/* Free tier */}
+              {[PER_TRUCK_FREE_TIER, ...subscriptionPlans.filter(
+                (p) => !p.is_trial_plan && PER_TRUCK_PRICES_USD[p.name] !== undefined
+              )].map((plan) => {
+                const perTruckPrice = PER_TRUCK_PRICES_USD[plan.name];
+                const isFree = plan.is_trial_plan;
+                const isFeatured = plan.name === "pro";
+                return (
+                  <div
+                    key={plan.id}
+                    className={`pricing-card${isFeatured ? " featured" : ""}${isFree ? " free-tier" : ""}`}
+                  >
+                    {isFeatured && (
+                      <div className="featured-badge">
+                        <FaCrown /> Найпопулярніший
+                      </div>
+                    )}
+                    {isFree && (
+                      <div className="featured-badge free-badge">
+                        Спробуйте безкоштовно
+                      </div>
+                    )}
+
+                    <div className="plan-header">
+                      <h3>{plan.display_name}</h3>
+                      <div className="price">
+                        {isFree ? (
+                          <>
+                            <span className="amount">0</span>
+                            <span className="period">/ {plan.trial_duration_days} днів</span>
+                          </>
+                        ) : (
+                          <>
+                            <span className="amount">${perTruckPrice}</span>
+                            <span className="period">/вант./міс</span>
+                          </>
+                        )}
+                      </div>
+                      <div className="per-truck-total">
+                        {isFree
+                          ? <><strong>До {plan.truck_limit} вантажівок</strong> · {plan.trial_duration_days} днів</>
+                          : <> = <strong>${perTruckPrice * truckCount}</strong>/міс за {truckCount} вант.</>}
+                      </div>
+                      <p className="plan-description">
+                        {PER_TRUCK_DESCRIPTIONS[plan.name] || plan.description}
+                      </p>
+                    </div>
+
+                    <div className="plan-features">
+                      <ul className="features-list">
+                        {plan.features.map((feature, i) => (
+                          <li key={i}>
+                            <FaCheck className="check-icon" />
+                            {FEATURE_LABELS[feature] || feature}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <button
+                      className={`plan-btn ${isFeatured ? "btn-featured" : "btn-primary"}`}
+                      onClick={() =>
+                        isFree ? handleGetStarted() : handleChoosePlan(plan.id)
+                      }
+                    >
+                      {isFree ? "Почати безкоштовно" : `Обрати ${plan.display_name}`}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
           ) : (
+            /* ── Total pricing cards (original) ── */
             <div className="pricing-grid">
-              {subscriptionPlans.map((plan, index) => (
+              {subscriptionPlans.map((plan) => (
                 <div
                   key={plan.id}
-                  className={`pricing-card ${
-                    plan.name === "pro" ? "featured" : ""
-                  }`}
+                  className={`pricing-card ${plan.name === "pro" ? "featured" : ""}`}
                 >
                   {plan.name === "pro" && (
                     <div className="featured-badge">
@@ -385,7 +532,6 @@ function StartPageInfo() {
                         </div>
                       ) : (
                         <>
-                          <span className="currency"></span>
                           <span className="amount">
                             {(() => {
                               const price =
@@ -401,7 +547,7 @@ function StartPageInfo() {
                         </>
                       )}
                     </div>
-                    {selectedBilling === "yearly" && (
+                    {selectedBilling === "yearly" && !plan.is_trial_plan && (
                       <div className="yearly-total">
                         Оплата щорічно:{" "}
                         {Math.round(plan.yearly_price)
@@ -415,28 +561,24 @@ function StartPageInfo() {
 
                   <div className="plan-features">
                     <div className="truck-limit">
+                      <FaTruck />
                       <strong>
-                        {plan.truck_limit === -1
-                          ? "Необмежено"
-                          : plan.truck_limit}{" "}
-                        Вантажівок
+                        {plan.truck_limit === -1 ? "Необмежено" : plan.truck_limit}{" "}
+                        вантажівок
                       </strong>
                     </div>
-
                     <ul className="features-list">
                       {plan.features.map((feature, featureIndex) => (
                         <li key={featureIndex}>
                           <FaCheck className="check-icon" />
-                          {feature}
+                          {FEATURE_LABELS[feature] || feature}
                         </li>
                       ))}
                     </ul>
                   </div>
 
                   <button
-                    className={`plan-btn ${
-                      plan.name === "pro" ? "btn-featured" : "btn-primary"
-                    }`}
+                    className={`plan-btn ${plan.name === "pro" ? "btn-featured" : "btn-primary"}`}
                     onClick={() => handleChoosePlan(plan.id)}
                   >
                     Обрати {plan.display_name}
@@ -445,7 +587,9 @@ function StartPageInfo() {
               ))}
             </div>
           )}
+        </div>
 
+        <div className="container-page">
           <div className="compare-plans-section">
             <button
               className="compare-plans-btn"

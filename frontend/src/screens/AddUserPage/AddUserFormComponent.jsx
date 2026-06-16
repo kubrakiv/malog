@@ -45,7 +45,7 @@ const AddUserFormComponent = () => {
     Object.values(USER_CONSTANTS).reduce((acc, item) => {
       acc[item] = "";
       return acc;
-    }, {})
+    }, {}),
   );
 
   const userRegister = useSelector((state) => state.userRegister);
@@ -123,7 +123,7 @@ const AddUserFormComponent = () => {
         position: "top-right",
         duration: 4000,
       });
-      navigate("/admin/userlist");
+      navigate("/userlist");
     } catch (error) {
       console.error("User creation error:", error);
       toast.error("Failed to create user. Please try again.", {
@@ -141,7 +141,7 @@ const AddUserFormComponent = () => {
         position: "top-right",
         duration: 4000,
       });
-      navigate("/admin/userlist");
+      navigate("/userlist");
     } else if (error) {
       setMessage("Error registering user!");
       toast.error("Failed to create user. Please try again.", {
@@ -243,7 +243,7 @@ const AddUserFormComponent = () => {
           <button
             type="button"
             className="btn btn-secondary"
-            onClick={() => navigate("/admin/userlist")}
+            onClick={() => navigate("/userlist")}
             disabled={isLoading}
           >
             Cancel

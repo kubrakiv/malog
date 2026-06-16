@@ -16,6 +16,9 @@ import {
 } from "react-icons/fa";
 import "./SubscriptionManagementPage.scss";
 
+const PRICING_MODEL = import.meta.env.REACT_APP_PRICING_MODEL || "total";
+const PER_TRUCK_PRICES_USD = { base: 10, pro: 15, unlimited: 20 };
+
 function SubscriptionManagementPage() {
   const navigate = useNavigate();
   const { isSidebarOpen } = useContext(OpenContext);
@@ -27,6 +30,7 @@ function SubscriptionManagementPage() {
   const [pendingRequests, setPendingRequests] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedBilling, setSelectedBilling] = useState("monthly");
+  const [truckCount, setTruckCount] = useState(5);
 
   // Function to fetch pending requests
   const fetchPendingRequests = async (token, config) => {
@@ -72,6 +76,8 @@ function SubscriptionManagementPage() {
               config
             );
             setSubscription(subscriptionResponse.data);
+              const usage = subscriptionResponse.data?.current_usage?.truck_count;
+              if (usage > 0) setTruckCount(usage);
           } catch (error) {
             if (error.response?.status === 404) {
               console.log("No active subscription found");
@@ -100,6 +106,12 @@ function SubscriptionManagementPage() {
   }, [userInfo, navigate]);
 
   const [submittingPlanId, setSubmittingPlanId] = useState(null);
+
+  const isPerTruckModel =
+    (subscription?.pricing_model || PRICING_MODEL) === "per_truck";
+  const visiblePlans = isPerTruckModel
+    ? availablePlans.filter((p) => ["base", "pro", "unlimited"].includes(p.name))
+    : availablePlans;
   const [bannerOffset, setBannerOffset] = useState(0);
 
   // Adjust top offset when SubscriptionBanner is present so the absolute wrapper
@@ -292,12 +304,23 @@ function SubscriptionManagementPage() {
                   )}
                 </div>
                 <div className="subscription-cost">
-                  <span className="price">
-                    {subscription.plan_details.monthly_price
-                      .toString()
-                      .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}{" "}
-                    ₴/міс
-                  </span>
+                  {isPerTruckModel ? (
+                    <>
+                      <span className="price">
+                        ${PER_TRUCK_PRICES_USD[subscription.plan_details.name] ?? "?"}/вант.
+                      </span>
+                      <span className="smp-per-truck-est">
+                        ≈ ${(PER_TRUCK_PRICES_USD[subscription.plan_details.name] ?? 0) * truckCount}/міс
+                      </span>
+                    </>
+                  ) : (
+                    <span className="price">
+                      {subscription.plan_details.monthly_price
+                        .toString()
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}{" "}
+                      ₴/міс
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -306,11 +329,16 @@ function SubscriptionManagementPage() {
                   <div className="usage-item">
                     <FaTruck className="usage-icon" />
                     <span>
-                      Вантажівки: {subscription.current_usage?.truck_count || 0}{" "}
-                      /{" "}
-                      {subscription.plan_details.truck_limit === -1
-                        ? "Необмежено"
-                        : subscription.plan_details.truck_limit}
+                      Вантажівки: {subscription.current_usage?.truck_count || 0}
+                      {!isPerTruckModel && (
+                        <>
+                          {" "}
+                          /{" "}
+                          {subscription.plan_details.truck_limit === -1
+                            ? "Необмежено"
+                            : subscription.plan_details.truck_limit}
+                        </>
+                      )}
                     </span>
                   </div>
                   <div className="usage-item">
@@ -356,24 +384,46 @@ function SubscriptionManagementPage() {
             вашим потребам
           </p>
 
-          <div className="billing-toggle">
-            <button
-              className={selectedBilling === "monthly" ? "active" : ""}
-              onClick={() => setSelectedBilling("monthly")}
-            >
-              Щомісяця
-            </button>
-            <button
-              className={selectedBilling === "yearly" ? "active" : ""}
-              onClick={() => setSelectedBilling("yearly")}
-            >
-              Щорічно
-              <span className="discount-badge">Економія 17%</span>
-            </button>
-          </div>
+          {isPerTruckModel ? (
+            <div className="smp-truck-counter">
+              <label className="smp-truck-counter-label">
+                Кількість вантажівок:{" "}
+                <strong className="smp-truck-counter-value">{truckCount}</strong>
+              </label>
+              <input
+                type="range"
+                min={1}
+                max={50}
+                value={truckCount}
+                onChange={(e) => setTruckCount(Number(e.target.value))}
+                className="smp-truck-slider"
+              />
+              <div className="smp-truck-slider-ticks">
+                {[1, 10, 20, 30, 40, 50].map((v) => (
+                  <span key={v}>{v}</span>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="billing-toggle">
+              <button
+                className={selectedBilling === "monthly" ? "active" : ""}
+                onClick={() => setSelectedBilling("monthly")}
+              >
+                Щомісяця
+              </button>
+              <button
+                className={selectedBilling === "yearly" ? "active" : ""}
+                onClick={() => setSelectedBilling("yearly")}
+              >
+                Щорічно
+                <span className="discount-badge">Економія 17%</span>
+              </button>
+            </div>
+          )}
 
-          <div className="plans-grid">
-            {availablePlans.map((plan) => (
+          <div className={`plans-grid${isPerTruckModel ? " plans-grid--per-truck" : ""}`}>
+            {visiblePlans.map((plan) => (
               <div
                 key={plan.id}
                 className={`plan-card ${
@@ -383,31 +433,45 @@ function SubscriptionManagementPage() {
                 <div className="plan-header">
                   <h3>{plan.display_name}</h3>
                   <div className="plan-price">
-                    <span className="price">
-                      {getCurrentPlanPrice(plan)} ₴/міс
-                    </span>
-                    {/* <span className="period">/міс</span> */}
+                    {isPerTruckModel ? (
+                      <span className="price">
+                        ${PER_TRUCK_PRICES_USD[plan.name] ?? "?"}/вант.
+                      </span>
+                    ) : (
+                      <span className="price">
+                        {getCurrentPlanPrice(plan)} ₴/міс
+                      </span>
+                    )}
                   </div>
-                  {selectedBilling === "yearly" && (
-                    <div className="yearly-total">
-                      Оплата щорічно:{" "}
-                      {Math.round(plan.yearly_price)
-                        .toString()
-                        .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}{" "}
-                      грн
+                  {isPerTruckModel ? (
+                    <div className="smp-per-truck-total">
+                      = ${(PER_TRUCK_PRICES_USD[plan.name] ?? 0) * truckCount}/міс за{" "}
+                      {truckCount} вант.
                     </div>
+                  ) : (
+                    selectedBilling === "yearly" && (
+                      <div className="yearly-total">
+                        Оплата щорічно:{" "}
+                        {Math.round(plan.yearly_price)
+                          .toString()
+                          .replace(/\B(?=(\d{3})+(?!\d))/g, " ")}{" "}
+                        грн
+                      </div>
+                    )
                   )}
                 </div>
 
                 <div className="plan-limits">
-                  <div className="limit-item">
-                    <FaTruck />
-                    <span>
-                      {plan.truck_limit === -1
-                        ? "Необмежено вантажівок"
-                        : `${plan.truck_limit} вантажівок`}
-                    </span>
-                  </div>
+                  {!isPerTruckModel && (
+                    <div className="limit-item">
+                      <FaTruck />
+                      <span>
+                        {plan.truck_limit === -1
+                          ? "Необмежено вантажівок"
+                          : `${plan.truck_limit} вантажівок`}
+                      </span>
+                    </div>
+                  )}
                   <div className="limit-item">
                     <FaUsers />
                     <span>Підтримка декількох користувачів</span>

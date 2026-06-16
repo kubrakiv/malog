@@ -50,7 +50,7 @@ const UserListPage = () => {
 
   const handleEditModeButton = (e, user) => {
     e.stopPropagation();
-    navigate(`/admin/user/${user.id}/edit`);
+    navigate(`/user/${user.id}/edit`);
   };
 
   const handleDeleteUser = async (e, userId) => {
@@ -63,7 +63,7 @@ const UserListPage = () => {
   const handleAddUserButton = (e) => {
     e.stopPropagation();
     console.log("Add user button clicked");
-    navigate("/admin/user/add");
+    navigate("/user/add");
   };
 
   const handleResetPassword = async (e, user) => {
@@ -116,95 +116,108 @@ const UserListPage = () => {
         password={passwordModalData?.password}
         onClose={() => setPasswordModalData(null)}
       />
-      <div className="points-container">
-        <div className="points-header-block">
-          <h2 className="table__name">Співробітники компанії</h2>
-          <div className="points-header-block__buttons-container">
+      <div className="user-list-page">
+        <div className="user-list-page__hero">
+          <div>
+            <p className="user-list-page__eyebrow">Команда клієнта</p>
+            <h2 className="user-list-page__title">Співробітники компанії</h2>
+            <p className="user-list-page__subtitle">
+              Перегляд та керування користувачами вашого тенанта в одному місці.
+            </p>
+          </div>
+          <div className="user-list-page__actions">
+            <div className="user-list-page__count-chip">
+              {users?.length ?? 0} користувачів
+            </div>
             <button
-              className="points-header-block__add-user-btn"
+              className="user-list-page__add-user-btn"
               title="Додати користувача"
+              type="button"
               onClick={handleAddUserButton}
             >
               <FaPlus />
+              <span>Додати користувача</span>
             </button>
           </div>
         </div>
-        <div className="table-container">
-          <table className="points-table">
-            <thead className="points-table__header">
-              <tr className="points-table__head-row">
-                <th className="points-table__head-th">ID</th>
-                <th className="points-table__head-th">First Name</th>
-                <th className="points-table__head-th">Last Name</th>
-                <th className="points-table__head-th">Phone</th>
-                <th className="points-table__head-th">Email</th>
-                <th className="points-table__head-th">Role</th>
-                <th className="points-table__head-th">Is Admin</th>
-                <th className="points-table__head-th">Actions</th>
-              </tr>
-            </thead>
-            <tbody data-link="row" className="points-table__body">
-              {users &&
-                users.map((user) => (
-                  <tr
-                    key={user.id}
-                    className="points-table__body-row"
-                    onDoubleClick={(e) => handleRowDoubleClick(e, user)}
-                  >
-                    <td className="points-table__body-td">{user.id}</td>
-                    <td className="points-table__body-td">{user.first_name}</td>
-                    <td className="points-table__body-td">{user.last_name}</td>
-                    <td className="points-table__body-td">
-                      {user.phone_number}
-                    </td>
-                    <td className="points-table__body-td">{user.email}</td>
-                    <td className="points-table__body-td">{user.role}</td>
-                    <td className="points-table__body-td">
-                      {user.is_admin ? (
-                        <FaCheck
-                          style={{
-                            color: "green",
-                          }}
-                        />
-                      ) : (
-                        <FaCheck
-                          style={{
-                            color: "red",
-                          }}
-                        />
-                      )}
-                    </td>
 
-                    <td className="points-table__body-td">
-                      <button
-                        title="Edit user"
-                        className="points-table__btn points-table__btn_edit"
-                        onClick={(e) => handleEditModeButton(e, user)}
-                      >
-                        <FaPencilAlt />
-                      </button>
-                      <button
-                        title="Delete user"
-                        className="points-table__btn points-table__btn_delete"
-                        onClick={(e) => handleDeleteUser(e, user.id)}
-                      >
-                        <FaRegTrashAlt />
-                      </button>
-                      {isSystemAdmin && (
+        <div className="user-list-page__table-card">
+          <div className="table-container user-list-page__table-wrap">
+            <table className="points-table user-list-page__table">
+              <thead className="points-table__header">
+                <tr className="points-table__head-row">
+                  <th className="points-table__head-th">ID</th>
+                  <th className="points-table__head-th">First Name</th>
+                  <th className="points-table__head-th">Last Name</th>
+                  <th className="points-table__head-th">Phone</th>
+                  <th className="points-table__head-th">Email</th>
+                  <th className="points-table__head-th">Role</th>
+                  <th className="points-table__head-th">Is Admin</th>
+                  <th className="points-table__head-th">Actions</th>
+                </tr>
+              </thead>
+              <tbody data-link="row" className="points-table__body">
+                {users &&
+                  users.map((user) => (
+                    <tr
+                      key={user.id}
+                      className="points-table__body-row"
+                      onDoubleClick={(e) => handleRowDoubleClick(e, user)}
+                    >
+                      <td className="points-table__body-td">{user.id}</td>
+                      <td className="points-table__body-td">
+                        {user.first_name}
+                      </td>
+                      <td className="points-table__body-td">
+                        {user.last_name}
+                      </td>
+                      <td className="points-table__body-td">
+                        {user.phone_number}
+                      </td>
+                      <td className="points-table__body-td">{user.email}</td>
+                      <td className="points-table__body-td">{user.role}</td>
+                      <td className="points-table__body-td">
+                        {user.is_admin ? (
+                          <FaCheck className="user-list-page__admin-icon user-list-page__admin-icon--yes" />
+                        ) : (
+                          <FaCheck className="user-list-page__admin-icon user-list-page__admin-icon--no" />
+                        )}
+                      </td>
+
+                      <td className="points-table__body-td user-list-page__action-cell">
                         <button
-                          title="Reset password"
-                          className="points-table__btn points-table__btn_reset"
-                          onClick={(e) => handleResetPassword(e, user)}
-                          disabled={resettingUserId === user.id}
+                          title="Edit user"
+                          className="points-table__btn points-table__btn_edit user-list-page__action-btn"
+                          type="button"
+                          onClick={(e) => handleEditModeButton(e, user)}
                         >
-                          <FaKey />
+                          <FaPencilAlt />
                         </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
+                        <button
+                          title="Delete user"
+                          className="points-table__btn points-table__btn_delete user-list-page__action-btn"
+                          type="button"
+                          onClick={(e) => handleDeleteUser(e, user.id)}
+                        >
+                          <FaRegTrashAlt />
+                        </button>
+                        {isSystemAdmin && (
+                          <button
+                            title="Reset password"
+                            className="points-table__btn points-table__btn_reset user-list-page__action-btn"
+                            type="button"
+                            onClick={(e) => handleResetPassword(e, user)}
+                            disabled={resettingUserId === user.id}
+                          >
+                            <FaKey />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>

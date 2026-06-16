@@ -6,8 +6,9 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = SubscriptionPlan
         fields = [
-            'id', 'name', 'display_name', 'description', 'truck_limit', 
-            'monthly_price', 'yearly_price', 'features', 'is_active'
+            'id', 'name', 'display_name', 'description', 'truck_limit',
+            'monthly_price', 'yearly_price', 'features', 'is_active',
+            'is_trial_plan', 'trial_duration_days'
         ]
 
 
@@ -20,9 +21,9 @@ class ClientSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ClientSubscription
         fields = [
-            'id', 'plan', 'plan_details', 'billing_cycle', 'status', 
+            'id', 'plan', 'plan_details', 'billing_cycle', 'pricing_model', 'status',
             'start_date', 'end_date', 'is_trial', 'trial_end_date',
-            'auto_renew', 'next_billing_date', 'current_price', 
+            'auto_renew', 'next_billing_date', 'current_price',
             'days_remaining', 'is_expired'
         ]
 

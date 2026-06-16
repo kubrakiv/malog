@@ -99,7 +99,7 @@ const DriversComponent = () => {
     }
     if (selectedDrivers.length === 1) {
       setSelectedDriver(
-        drivers.find((driver) => driver.profile === selectedDrivers[0])
+        drivers.find((driver) => driver.profile === selectedDrivers[0]),
       );
       setEditDriverProfileMode(true);
       setShowDriverModal(true);
@@ -127,7 +127,7 @@ const DriversComponent = () => {
       return;
     }
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this driver?"
+      "Are you sure you want to delete this driver?",
     );
     if (!confirmDelete) {
       return;
@@ -158,7 +158,7 @@ const DriversComponent = () => {
         } else if (result.meta.requestStatus === "rejected") {
           console.error("Failed to update driver:", result.payload);
         }
-      }
+      },
     );
   };
 
@@ -196,122 +196,155 @@ const DriversComponent = () => {
         }
         header
       />
-      <div className="drivers-container">
+      <div className="drivers-page">
         {showContinueOnboarding && (
-          <div style={{ textAlign: "center", margin: "1.5rem 0" }}>
+          <div className="drivers-page__onboarding-banner">
+            <div>
+              <p className="drivers-page__banner-eyebrow">Онбординг</p>
+              <h3>Потрібно завершити крок з водіями</h3>
+              <p>Додайте або виберіть водіїв, щоб продовжити налаштування.</p>
+            </div>
             <button
-              className="btn-primary"
+              className="drivers-page__banner-btn"
               onClick={() =>
                 navigate("/onboarding", {
                   state: { fromDrivers: true, currentStep: 2 },
                 })
               }
+              type="button"
             >
               Продовжити онбординг
             </button>
           </div>
         )}
-        <div className="drivers-header-block">
-          <h2 className="drivers-table__name">Мої водії</h2>
-          <div className="drivers-header-block__buttons-container">
-            <button
-              className="drivers-header-block__add-driver-btn"
-              title="Додати водія"
-              onClick={handleAddDriverButton}
-            >
-              <FaPlus />
-            </button>
-            <button
-              className="drivers-header-block__delete-driver-btn"
-              title="Видалити вибраних водіїв"
-              onClick={handleDeleteSelectedDrivers}
-            >
-              <FaRegTrashAlt />
-            </button>
-            <button
-              className="drivers-header-block__edit-driver-btn"
-              title="Редагувати водія"
-              onClick={handleEditProfileMode}
-            >
-              <FaPencilAlt />
-            </button>
-            {/* TODO: Add this buttons block to globalComponents */}
+
+        <div className="drivers-page__hero">
+          <div>
+            <p className="drivers-page__eyebrow">Тенантний довідник</p>
+            <h2 className="drivers-page__title">Мої водії</h2>
+            <p className="drivers-page__subtitle">
+              Переглядайте, шукайте та керуйте водіями у зручному картковому
+              інтерфейсі.
+            </p>
+          </div>
+
+          <div className="drivers-page__actions">
+            <div className="drivers-page__count-chip">
+              {drivers?.length ?? 0} водіїв
+            </div>
+            <div className="drivers-page__tools">
+              <div className="drivers-page__action-group">
+                <button
+                  className="drivers-page__action-btn drivers-page__action-btn--add"
+                  title="Додати водія"
+                  onClick={handleAddDriverButton}
+                  type="button"
+                >
+                  <FaPlus />
+                  <span>Додати</span>
+                </button>
+                <button
+                  className="drivers-page__action-btn drivers-page__action-btn--delete"
+                  title="Видалити вибраних водіїв"
+                  onClick={handleDeleteSelectedDrivers}
+                  type="button"
+                >
+                  <FaRegTrashAlt />
+                  <span>Видалити</span>
+                </button>
+                <button
+                  className="drivers-page__action-btn drivers-page__action-btn--edit"
+                  title="Редагувати водія"
+                  onClick={handleEditProfileMode}
+                  type="button"
+                >
+                  <FaPencilAlt />
+                  <span>Редагувати</span>
+                </button>
+              </div>
+
+              <div className="drivers-page__search-inline">
+                <SearchComponent
+                  search={search}
+                  setSearch={setSearch}
+                  placeholder={"пошук водія"}
+                />
+              </div>
+            </div>
           </div>
         </div>
-        <SearchComponent
-          search={search}
-          setSearch={setSearch}
-          placeholder={"Введіть ім'я або прізвище водія"}
-        />
-        <div className="table-container">
-          <table className="drivers-table">
-            <thead className="drivers-table__header">
-              <tr className="drivers-table__head-row">
-                <th className="drivers-table__head-th">ID</th>
-                <th className="drivers-table__head-th">Фото</th>
-                <th className="drivers-table__head-th">Повне ім'я</th>
-                <th className="drivers-table__head-th">Номер телефону</th>
-                <th className="drivers-table__head-th">Посада</th>
-                <th className="drivers-table__head-th">Автомобіль</th>
-                <th className="drivers-table__head-th"></th>
-              </tr>
-            </thead>
-            <tbody data-link="row" className="drivers-table__body">
-              {drivers &&
-                drivers
-                  .filter((item) => {
-                    const searchTerm = search.toLowerCase();
-                    return (
-                      searchTerm === "" ||
-                      item.full_name.toLowerCase().includes(searchTerm)
-                    );
-                  })
-                  .map((driver, index) => (
-                    <tr
-                      key={driver.profile}
-                      className={cn("drivers-table__body-row", {
-                        "drivers-table__body-row_active":
-                          selectedDrivers.includes(driver.profile),
-                      })}
-                      onDoubleClick={(e) => handleRowDoubleClick(e, driver)}
-                    >
-                      <td className="drivers-table__body-td">{index + 1}</td>
-                      <td className="drivers-table__body-td drivers-table__body-td_image">
-                        <img
-                          src={
-                            driver.image
-                              ? `${BASE_URL}${driver.image}`
-                              : driverImagePlaceholder
-                          }
-                          alt=""
-                        />
-                      </td>
-                      <td className="drivers-table__body-td">
-                        {driver.full_name}
-                      </td>
-                      <td className="drivers-table__body-td">
-                        {driver.phone_number}
-                      </td>
-                      <td className="drivers-table__body-td">
-                        {driver.position}
-                      </td>
-                      <td className="drivers-table__body-td">
-                        {driver.trucks && driver?.trucks[0]?.plates}
-                      </td>
-                      <td className="drivers-table__body-td">
-                        <input
-                          type="checkbox"
-                          className="drivers-table__checkbox"
-                          checked={selectedDrivers.includes(driver.profile)}
-                          onChange={() => {
-                            handleCheckboxChange(driver.profile);
-                          }}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-            </tbody>
-          </table>
+
+        <div className="drivers-page__table-card">
+          <div className="table-container drivers-page__table-wrap">
+            <table className="drivers-table">
+              <thead className="drivers-table__header">
+                <tr className="drivers-table__head-row">
+                  <th className="drivers-table__head-th">ID</th>
+                  <th className="drivers-table__head-th">Фото</th>
+                  <th className="drivers-table__head-th">Повне ім'я</th>
+                  <th className="drivers-table__head-th">Номер телефону</th>
+                  <th className="drivers-table__head-th">Посада</th>
+                  <th className="drivers-table__head-th">Автомобіль</th>
+                  <th className="drivers-table__head-th"></th>
+                </tr>
+              </thead>
+              <tbody data-link="row" className="drivers-table__body">
+                {drivers &&
+                  drivers
+                    .filter((item) => {
+                      const searchTerm = search.toLowerCase();
+                      return (
+                        searchTerm === "" ||
+                        item.full_name.toLowerCase().includes(searchTerm)
+                      );
+                    })
+                    .map((driver, index) => (
+                      <tr
+                        key={driver.profile}
+                        className={cn("drivers-table__body-row", {
+                          "drivers-table__body-row_active":
+                            selectedDrivers.includes(driver.profile),
+                        })}
+                        onDoubleClick={(e) => handleRowDoubleClick(e, driver)}
+                      >
+                        <td className="drivers-table__body-td">{index + 1}</td>
+                        <td className="drivers-table__body-td drivers-table__body-td_image">
+                          <img
+                            src={
+                              driver.image
+                                ? `${BASE_URL}${driver.image}`
+                                : driverImagePlaceholder
+                            }
+                            alt=""
+                          />
+                        </td>
+                        <td className="drivers-table__body-td">
+                          {driver.full_name}
+                        </td>
+                        <td className="drivers-table__body-td">
+                          {driver.phone_number}
+                        </td>
+                        <td className="drivers-table__body-td">
+                          {driver.position}
+                        </td>
+                        <td className="drivers-table__body-td">
+                          {driver.trucks && driver?.trucks[0]?.plates}
+                        </td>
+                        <td className="drivers-table__body-td">
+                          <input
+                            type="checkbox"
+                            className="drivers-table__checkbox"
+                            checked={selectedDrivers.includes(driver.profile)}
+                            onChange={() => {
+                              handleCheckboxChange(driver.profile);
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </>

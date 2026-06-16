@@ -9,6 +9,7 @@ from base.views.youscore_views import (
     get_vehicle_check,
     get_vehicles_owned,
     health_check,
+    lookup_company_for_registration,
 )
 
 urlpatterns = [
@@ -24,6 +25,9 @@ urlpatterns = [
     # Vehicle check by number
     path('vehicles/check', get_vehicle_check, name='youscore-vehicle-check'),
     
+    # Public registration lookup (no X-API-Key required)
+    path('register/company-lookup/<str:edrpou>', lookup_company_for_registration, name='youscore-reg-company-lookup'),
+
     # Health check endpoint
     path('health', health_check, name='youscore-health-check'),
 ]

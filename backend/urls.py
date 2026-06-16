@@ -41,6 +41,7 @@ urlpatterns = [
     path("api/fm-track-proxy/", include("base.urls.fm_truck_proxy_urls")),
     path("api/import/", include("base.urls.import_route_urls")),
     path("api/assign-truck-driver/", include("base.urls.assign_truck_and_driver_urls")),
+    path("api/sovtes/", include("base.urls.sovtes_fleet_urls")),
     path("api/sovtes/", include("base.urls.sovtes_tenders_urls")),
     path("api/sovtes-auth/", include("base.urls.sovtes_auth_urls")),
     path("api/admin/sovtes/", include("base.urls.sovtes_user_management_urls")),

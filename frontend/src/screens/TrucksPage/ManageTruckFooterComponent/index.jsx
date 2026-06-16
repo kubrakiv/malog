@@ -1,6 +1,10 @@
 import React from "react";
 
-const ManageTruckFooterComponent = ({ onCloseModal, canAddTruck = true }) => {
+const ManageTruckFooterComponent = ({
+  onCloseModal,
+  canAddTruck = true,
+  saveLabel = "Записати",
+}) => {
   return (
     <>
       <div className="end-time__footer">
@@ -14,7 +18,7 @@ const ManageTruckFooterComponent = ({ onCloseModal, canAddTruck = true }) => {
           type="submit"
           disabled={!canAddTruck}
         >
-          {canAddTruck ? "Записати" : "Limit reached"}
+          {canAddTruck ? saveLabel : "Limit reached"}
         </button>
         <button
           title="Close Window"

@@ -48,7 +48,7 @@ const UserEditPage = () => {
   useEffect(() => {
     if (successUpdate) {
       dispatch({ type: USER_UPDATE_RESET });
-      navigate("/admin/userlist");
+      navigate("/userlist");
     } else {
       if (!user || user.id !== Number(id)) {
         dispatch(getUserDetails(Number(id)));
@@ -86,7 +86,7 @@ const UserEditPage = () => {
     });
 
   const goBackHandler = () => {
-    navigate("/admin/userlist");
+    navigate("/userlist");
     dispatch({ type: USER_UPDATE_RESET });
     setSelectedRole(null);
     notify();
@@ -137,25 +137,38 @@ const UserEditPage = () => {
   };
 
   return (
-    <div>
+    <div className="user-edit-page">
       <PasswordResetModal
         isOpen={Boolean(passwordModalData)}
         username={passwordModalData?.username}
         password={passwordModalData?.password}
         onClose={() => setPasswordModalData(null)}
       />
-      <button className="btn button" onClick={goBackHandler}>
+      <button
+        className="user-edit-page__back-btn"
+        onClick={goBackHandler}
+        type="button"
+      >
         Назад
       </button>
-      <div className="passport-container">
-        <div className="login-form-container">
-          <h3>User Edit Page</h3>
+      <div className="passport-container user-edit-page__shell">
+        <div className="login-form-container user-edit-page__card">
+          <div className="user-edit-page__header">
+            <p className="user-edit-page__eyebrow">Редагування співробітника</p>
+            <h3>User Edit Page</h3>
+            <p className="user-edit-page__subtitle">
+              Оновіть дані користувача та збережіть зміни в профілі тенанта.
+            </p>
+          </div>
           {loading ? (
             <div>Loading...</div>
           ) : (
             error && <MessageComponent color={"red"}>{error}</MessageComponent>
           )}
-          <form className="login-form" onSubmit={(e) => submitHandler(e)}>
+          <form
+            className="login-form user-edit-page__form"
+            onSubmit={(e) => submitHandler(e)}
+          >
             <div className="login-form__input-group">
               <label htmlFor="name">Ім'я</label>
               <input
@@ -230,12 +243,12 @@ const UserEditPage = () => {
               </select>
             </div>
 
-            <button className="button" type="submit">
+            <button className="button user-edit-page__submit-btn" type="submit">
               Оновити дані
             </button>
             {isSystemAdmin && user?.id && (
               <button
-                className="button"
+                className="button user-edit-page__reset-btn"
                 type="button"
                 onClick={handleResetPassword}
                 disabled={isResettingPassword}

@@ -14,12 +14,24 @@ import "./style.scss";
 
 const { REACT_APP_PROXY: BASE_URL } = import.meta.env;
 
-const TruckCardComponent = ({ truck, closeModal }) => {
+const TruckCardComponent = ({ truck, closeModal, forceFormView = false }) => {
   const [selectedTab, setSelectedTab] = useState("basic");
   const { basicDetails, normsDetails } = getTruckDetails(truck);
   const trailerDetails = getTrailerDetails(truck?.trailer_details);
 
   const editModeTruck = useSelector(selectEditModeTruck);
+
+  if (editModeTruck || forceFormView) {
+    return (
+      <ManageTruckComponent
+        onEditMode={true}
+        initialTruckData={truck}
+        onCloseModal={closeModal}
+        activeTab={selectedTab}
+        setActiveTab={setSelectedTab}
+      />
+    );
+  }
 
   return (
     <>
@@ -68,16 +80,6 @@ const TruckCardComponent = ({ truck, closeModal }) => {
                     ))}
                   </div>
                 </>
-              )}
-
-              {editModeTruck && (
-                <ManageTruckComponent
-                  onEditMode={editModeTruck}
-                  initialTruckData={truck}
-                  onCloseModal={closeModal}
-                  activeTab={selectedTab}
-                  setActiveTab={setSelectedTab}
-                />
               )}
             </div>
             <div className="truck-card-details__content-block">

@@ -306,6 +306,13 @@
           display: block;
           line-height: 1;
         }
+
+        .smp-per-truck-est {
+          display: block;
+          font-size: 0.9rem;
+          color: rgba(255, 255, 255, 0.85);
+          margin-top: 0.4rem;
+        }
       }
     }
 
@@ -463,12 +470,65 @@
     }
   }
 
+  .smp-truck-counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 420px;
+    margin: 0 auto 2.5rem;
+
+    .smp-truck-counter-label {
+      font-size: 1rem;
+      color: #444;
+      font-weight: 500;
+    }
+
+    .smp-truck-counter-value {
+      color: $headerColor;
+      font-size: 1.15rem;
+    }
+
+    .smp-truck-slider {
+      width: 100%;
+      accent-color: $headerColor;
+      height: 6px;
+      cursor: pointer;
+    }
+
+    .smp-truck-slider-ticks {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+
+      span {
+        font-size: 0.75rem;
+        color: #888;
+      }
+    }
+  }
+
+  .smp-per-truck-total {
+    font-size: 0.85rem;
+    color: #555;
+    text-align: center;
+    margin-bottom: 0.5rem;
+  }
+
   .plans-grid {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 1.5rem;
     margin-top: 1.5rem;
     max-width: 100%;
+
+    &--per-truck {
+      grid-template-columns: repeat(3, 1fr);
+
+      @media (max-width: 900px) {
+        grid-template-columns: 1fr;
+      }
+    }
 
     @media (max-width: 1200px) {
       grid-template-columns: repeat(2, 1fr);

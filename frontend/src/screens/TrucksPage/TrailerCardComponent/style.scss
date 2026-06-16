@@ -1,0 +1,193 @@
+@import "../../../styles/utils/vars";
+
+.trailer-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 420px;
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+
+  // ── Header ────────────────────────────────────────────────────────────────
+  &__header {
+    background: linear-gradient(135deg, $sidebarcolor 0%, lighten($sidebarcolor, 12%) 100%);
+    padding: 1.1rem 1.25rem 1rem;
+  }
+
+  &__header-main {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  &__brand {
+    font-size: 1.45rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.02em;
+    line-height: 1.2;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+  }
+
+  &__header-badges {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    margin-top: 0.25rem;
+  }
+
+  &__plate-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.75rem;
+    background: rgba(255, 255, 255, 0.92);
+    color: #1a2f36;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  }
+
+  &__sovtes-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.28rem 0.65rem;
+    background: rgba(255, 255, 255, 0.18);
+    color: rgba(255, 255, 255, 0.92);
+    border-radius: 999px;
+    font-size: 0.74rem;
+    font-weight: 700;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    letter-spacing: 0.02em;
+  }
+
+  &__sovtes-icon {
+    font-size: 0.68rem;
+    opacity: 0.85;
+  }
+
+  // ── Body ──────────────────────────────────────────────────────────────────
+  &__body {
+    padding: 0.75rem 1rem 0.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    overflow-y: auto;
+    max-height: calc(100vh - 240px);
+
+    scrollbar-width: thin;
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 2px; }
+    &::-webkit-scrollbar-thumb { background: #ccc; border-radius: 2px; }
+  }
+
+  // ── Section ───────────────────────────────────────────────────────────────
+  &__section {
+    background: #f5f8fa;
+    border-radius: 8px;
+    padding: 0.6rem 0.75rem 0.5rem;
+    border: 1px solid rgba($sidebarcolor, 0.1);
+  }
+
+  &__section-title {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: lighten($sidebarcolor, 5%);
+    margin: 0 0 0.5rem;
+    padding-bottom: 0.35rem;
+    border-bottom: 1px solid rgba($sidebarcolor, 0.12);
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.35rem 0.75rem;
+  }
+
+  // ── Field ─────────────────────────────────────────────────────────────────
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.12rem;
+    padding: 0.35rem 0.4rem;
+    border-radius: 6px;
+    transition: background 0.12s ease;
+
+    &:hover {
+      background: rgba($sidebarcolor, 0.04);
+    }
+  }
+
+  &__field-label {
+    display: flex;
+    align-items: center;
+    gap: 0.32rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: $colorGray;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__field-icon {
+    display: flex;
+    align-items: center;
+    font-size: 0.65rem;
+    opacity: 0.75;
+    color: $sidebarcolor;
+  }
+
+  &__field-value {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #1a2f36;
+    padding-left: 0.05rem;
+
+    &--empty {
+      color: #b0bec5;
+      font-weight: 400;
+      font-style: italic;
+    }
+  }
+}
+
+// Footer override — make "Редагувати" button styled nicely
+.trailer-card ~ .end-time__footer,
+.trailer-card .end-time__footer {
+  border-radius: 0 0 12px 12px;
+}
+
+.order-details__footer-btn {
+  padding: 6px 14px;
+  border-radius: 18px;
+  font-weight: 600;
+  font-size: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.06);
+
+  &_edit {
+    border: 1px solid rgba($sidebarcolor, 0.35);
+    background: rgba($sidebarcolor, 0.07);
+    color: $sidebarcolor;
+
+    &:hover {
+      background: rgba($sidebarcolor, 0.14);
+      border-color: rgba($sidebarcolor, 0.55);
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba($sidebarcolor, 0.12);
+    }
+  }
+}

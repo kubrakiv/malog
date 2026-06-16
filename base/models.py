@@ -327,12 +327,14 @@ class CompanyBank(BaseTenantModel):
 
 class Company(BaseTenantModel):
     name = models.CharField(max_length=255)
+    name_en = models.CharField(max_length=255, null=True, blank=True)
     nip_number = models.CharField(max_length=50, null=True, blank=True)
     vat_number = models.CharField(max_length=50, null=True, blank=True)
     phone = models.CharField(max_length=50, null=True, blank=True)
     email = models.EmailField("Email Billing", max_length=255, null=True, blank=True)
     website = models.CharField(max_length=250, null=True, blank=True)
     post_address = models.CharField(max_length=250, null=True, blank=True)
+    legal_address = models.CharField(max_length=250, null=True, blank=True)
     bank = models.ForeignKey(
         CompanyBank,
         related_name="companies",
@@ -400,6 +402,7 @@ class Trailer(BaseTenantModel):
     year = models.IntegerField(null=True, blank=True)
     entry_mileage = models.CharField(max_length=50, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    sovtes_id = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return f"Trailer plates: {self.plates}"
@@ -416,6 +419,7 @@ class Truck(BaseTenantModel):
     entry_mileage = models.CharField(max_length=50, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     gps_id = models.CharField(max_length=50, null=True, blank=True)
+    sovtes_id = models.CharField(max_length=100, null=True, blank=True)
     diesel_norm = models.DecimalField(
         max_digits=5, decimal_places=2, null=True, blank=True,
         help_text="Liters of Diesel per 100 km"

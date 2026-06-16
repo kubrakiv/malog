@@ -526,6 +526,88 @@ def get_vehicle_check(request):
 
 @api_view(["GET"])
 @permission_classes([AllowAny])
+def lookup_company_for_registration(request, edrpou):
+    """
+    Public endpoint for the registration form.
+    No X-API-Key required — calls YouScore internally using the server token.
+    Returns mapped fields for autofill: name (UA), nameEn, address, phone, email.
+    """
+    if not YOUSCORE_API_TOKEN:
+        return Response(
+            {"error": "Server misconfigured: missing YouScore API credentials"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    if not edrpou.isdigit() or len(edrpou) not in (8, 10):
+        return Response(
+            {"error": "Невірний формат ЄДРПОУ. Очікується 8 або 10 цифр."},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    headers = {
+        "Authorization": f"Bearer {YOUSCORE_API_TOKEN}",
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+    }
+
+    url = f"{YOUSCORE_BASE_URL}v1/companyInfo/{edrpou}"
+    logger.debug(f"[YouScore][reg-lookup] GET {url}")
+
+    _YOUSCORE_ERROR_MESSAGES = {
+        "ForbiddenDueToExpiredKey": "Використано ліміт запитів",
+        "Unauthorized":             "Помилка авторизації сервісу",
+        "NotFound":                 "Компанію не знайдено",
+        "TooManyRequests":          "Перевищено ліміт запитів",
+    }
+
+    try:
+        fetch_result = _fetch_youscore_with_polling(url, headers)
+        if fetch_result.get("error"):
+            err = fetch_result["error"]
+            http_status = fetch_result.get("status", status.HTTP_502_BAD_GATEWAY)
+
+            # Try to extract a user-friendly message from the YouScore error details
+            user_message = None
+            details_raw = err.get("details", "")
+            if details_raw:
+                try:
+                    import json as _json
+                    details = _json.loads(details_raw) if isinstance(details_raw, str) else details_raw
+                    code = details.get("code", "")
+                    user_message = _YOUSCORE_ERROR_MESSAGES.get(code) or details.get("message")
+                except Exception:
+                    pass
+
+            return Response(
+                {"error": err.get("error", "YouScore error"), "user_message": user_message},
+                status=http_status,
+            )
+
+        data = fetch_result["response"].json()
+
+        return Response(
+            {
+                "name":      data.get("name", ""),
+                "shortName": data.get("shortName", data.get("name", "")),
+                "nameEn":    data.get("nameEn", data.get("nameEN", "")),
+                "address":   data.get("address", data.get("legalAddress", data.get("registrationAddress", ""))),
+                "phone":     data.get("phone", data.get("phoneNumber", "")),
+                "email":     data.get("email", ""),
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    except requests.exceptions.Timeout:
+        return Response({"error": "Request to YouScore API timed out"}, status=status.HTTP_504_GATEWAY_TIMEOUT)
+    except requests.exceptions.RequestException as e:
+        return Response({"error": f"Failed to connect to YouScore API: {str(e)}"}, status=status.HTTP_502_BAD_GATEWAY)
+    except Exception as e:
+        logger.error(f"Unexpected error in company registration lookup: {str(e)}")
+        return Response({"error": "Internal server error occurred"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET"])
+@permission_classes([AllowAny])
 def health_check(request):
     """
     Health check endpoint for YouScore proxy service

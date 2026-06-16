@@ -1,25 +1,208 @@
 .trucks-page {
-  &__header {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 10px;
-    border-bottom: 2px solid #ddd;
-  }
-  &__title {
-    margin: 0 15px;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-weight: 500;
-    color: #777;
-    transition: color 0.3s;
+  min-height: calc(100vh - 110px);
+  padding: 1.25rem 1.5rem 1.75rem;
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(16, 118, 128, 0.12),
+      transparent 32%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(245, 248, 250, 0.96) 0%,
+      rgba(242, 244, 246, 1) 100%
+    );
 
-    &:hover {
-      color: #000;
+  &__onboarding-banner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    padding: 1rem 1.25rem;
+    border: 1px solid rgba(15, 84, 92, 0.08);
+    border-radius: 18px;
+    background: rgba(255, 255, 255, 0.82);
+    box-shadow: 0 14px 30px rgba(15, 84, 92, 0.08);
+    backdrop-filter: blur(12px);
+
+    h3 {
+      margin: 0;
+      color: #0d2230;
+      font-size: 1.1rem;
     }
 
-    &.active {
-      color: #000;
-      border-bottom: 3px solid #007bff; // Active tab underline color
+    p {
+      margin: 0.35rem 0 0;
+      color: #5a6874;
+    }
+  }
+
+  &__banner-eyebrow {
+    margin: 0 0 0.35rem;
+    color: #0f7680;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  &__banner-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.85rem 1.15rem;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #0f7680 0%, #11a3b1 100%);
+    color: #fff;
+    font-weight: 700;
+    box-shadow: 0 12px 24px rgba(15, 118, 128, 0.18);
+
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+
+  &__hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    padding: 1.15rem 1.35rem;
+    border: 1px solid rgba(15, 84, 92, 0.08);
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 14px 30px rgba(15, 84, 92, 0.08);
+    backdrop-filter: blur(12px);
+  }
+
+  &__eyebrow {
+    margin: 0 0 0.35rem;
+    color: #0f7680;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  &__title {
+    margin: 0;
+    color: #0d2230;
+    font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+  }
+
+  &__subtitle {
+    max-width: 720px;
+    margin: 0.5rem 0 0;
+    color: #5a6874;
+    font-size: 0.98rem;
+    line-height: 1.5;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    min-width: 460px;
+  }
+
+  &__actions-top {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+  }
+
+  &__hero-tools {
+    width: fit-content;
+    max-width: 100%;
+    align-self: flex-end;
+  }
+
+  &__count-chip {
+    padding: 0.7rem 1rem;
+    border-radius: 999px;
+    background: rgba(16, 118, 128, 0.08);
+    color: #0f7680;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  &__tab-group {
+    display: flex;
+    gap: 0.55rem;
+    flex-wrap: wrap;
+  }
+
+  &__tab-btn {
+    padding: 0.8rem 1rem;
+    border-radius: 12px;
+    border: 1px solid rgba(15, 84, 92, 0.14);
+    background: #fff;
+    color: #415260;
+    font-weight: 700;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: rgba(15, 118, 128, 0.08);
+      color: #0f7680;
+    }
+
+    &--active {
+      border-color: transparent;
+      background: linear-gradient(135deg, #0f7680 0%, #11a3b1 100%);
+      color: #fff;
+      box-shadow: 0 10px 20px rgba(15, 118, 128, 0.22);
+    }
+  }
+
+  &__content {
+    min-height: 420px;
+  }
+
+  @media (max-width: 900px) {
+    padding: 1rem;
+
+    &__hero,
+    &__onboarding-banner {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    &__actions {
+      width: 100%;
+      justify-content: space-between;
+      align-items: stretch;
+      min-width: 0;
+    }
+
+    &__actions-top {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    &__hero-tools {
+      max-width: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    &__hero,
+    &__onboarding-banner {
+      border-radius: 16px;
+    }
+
+    &__tab-btn {
+      flex: 1 1 140px;
+      text-align: center;
     }
   }
 }

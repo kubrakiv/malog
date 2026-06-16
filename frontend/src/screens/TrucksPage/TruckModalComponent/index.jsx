@@ -27,6 +27,7 @@ const TruckModalComponent = ({ selectedTruck }) => {
           <TruckCardComponent
             truck={selectedTruck}
             closeModal={handleCloseModal}
+            forceFormView={true}
           />
         }
       />

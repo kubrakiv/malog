@@ -1,21 +1,18 @@
-import React from "react";
-import MainPageHeaderComponent from "../MainPageComponent/MainPageHeaderComponent";
-import FooterComponent from "../MainPageComponent/FooterComponent";
+import StartPageHeader from "../../components/StartPageHeader/StartPageHeader";
+import StartPageFooter from "../../components/StartPageFooter/StartPageFooter";
 import SubscriptionPlansPage from "./SubscriptionPlansPage";
 
 import "../MainPageComponent/style.scss";
 
 const SubscriptionPlansPageWithLayout = () => {
   return (
-    <>
-      <div className="main-page">
-        <MainPageHeaderComponent />
-        <main>
-          <SubscriptionPlansPage />
-        </main>
-        <FooterComponent />
-      </div>
-    </>
+    <div className="main-page">
+      <StartPageHeader />
+      <main>
+        <SubscriptionPlansPage />
+      </main>
+      <StartPageFooter />
+    </div>
   );
 };
 

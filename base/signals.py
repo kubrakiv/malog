@@ -36,14 +36,20 @@ def handle_trailer_assignment(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Truck)
 def create_trailer_assignment(sender, instance, created, **kwargs):
-    if instance.trailer:
-        # Create a new TrailerAssignment object for the new trailer
-        TrailerAssignment.objects.create(
-            truck=instance,
-            trailer=instance.trailer,
-            start_date=timezone.now(),
-            is_active=True,
-        )
+    if not instance.trailer:
+        return
+    # Skip if an active assignment for this trailer already exists (no real change)
+    if not created:
+        active = TrailerAssignment.objects.filter(truck=instance, is_active=True).first()
+        if active and active.trailer == instance.trailer:
+            return
+    TrailerAssignment.objects.create(
+        truck=instance,
+        trailer=instance.trailer,
+        client=instance.client,
+        start_date=timezone.now(),
+        is_active=True,
+    )
 
 
 @receiver(pre_save, sender=Truck)
@@ -72,14 +78,20 @@ def handle_driver_assignment(sender, instance, **kwargs):
 
 @receiver(post_save, sender=Truck)
 def create_driver_assignment(sender, instance, created, **kwargs):
-    if instance.driver:
-        # Create a new DriverAssignment object for the new driver
-        DriverAssignment.objects.create(
-            truck=instance,
-            driver_profile=instance.driver,
-            start_date=timezone.now(),
-            is_active=True,
-        )
+    if not instance.driver:
+        return
+    # Skip if an active assignment for this driver already exists (no real change)
+    if not created:
+        active = DriverAssignment.objects.filter(truck=instance, is_active=True).first()
+        if active and active.driver_profile == instance.driver:
+            return
+    DriverAssignment.objects.create(
+        truck=instance,
+        driver_profile=instance.driver,
+        client=instance.client,
+        start_date=timezone.now(),
+        is_active=True,
+    )
 
 
 # @receiver(post_save, sender=Order)

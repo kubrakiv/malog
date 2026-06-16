@@ -61,46 +61,80 @@ const TrucksPage = () => {
     navigate("/onboarding", { state: { fromTrucks: true } });
   };
 
+  const activeCount =
+    activeTab === "trucks" ? (trucks?.length ?? 0) : (trailers?.length ?? 0);
+
   return (
-    <>
-      <div className="trucks-page">
-        <div className="trucks-page__header">
-          <h3
-            className={`trucks-page__title ${
-              activeTab === "trucks" ? "active" : ""
-            }`}
-            onClick={() => setActiveTab("trucks")}
-          >
-            Тягачі
-          </h3>
-          <h3
-            className={`trucks-page__title ${
-              activeTab === "trailers" ? "active" : ""
-            }`}
-            onClick={() => setActiveTab("trailers")}
-          >
-            Причіпи
-          </h3>
-        </div>
-        {showContinueOnboarding && (
-          <div style={{ textAlign: "center", margin: "1.5rem 0" }}>
-            <button className="btn-primary" onClick={handleContinueOnboarding}>
-              Продовжити онбординг
-            </button>
+    <div className="trucks-page">
+      {showContinueOnboarding && (
+        <div className="trucks-page__onboarding-banner">
+          <div>
+            <p className="trucks-page__banner-eyebrow">Онбординг</p>
+            <h3>Потрібно завершити крок з транспортом</h3>
+            <p>Додайте тягач або причіп, щоб перейти до наступного кроку.</p>
           </div>
+          <button
+            className="trucks-page__banner-btn"
+            onClick={handleContinueOnboarding}
+            type="button"
+          >
+            Продовжити онбординг
+          </button>
+        </div>
+      )}
+
+      <div className="trucks-page__hero">
+        <div>
+          <p className="trucks-page__eyebrow">Тенантний довідник</p>
+          <h2 className="trucks-page__title">Транспорт</h2>
+          <p className="trucks-page__subtitle">
+            Керуйте тягачами та причепами в єдиному інтерфейсі з швидким
+            редагуванням та пошуком.
+          </p>
+        </div>
+
+        <div className="trucks-page__actions">
+          <div className="trucks-page__actions-top">
+            <div className="trucks-page__count-chip">{activeCount} записів</div>
+            <div className="trucks-page__tab-group">
+              <button
+                className={`trucks-page__tab-btn ${
+                  activeTab === "trucks" ? "trucks-page__tab-btn--active" : ""
+                }`}
+                onClick={() => setActiveTab("trucks")}
+                type="button"
+              >
+                Тягачі
+              </button>
+              <button
+                className={`trucks-page__tab-btn ${
+                  activeTab === "trailers" ? "trucks-page__tab-btn--active" : ""
+                }`}
+                onClick={() => setActiveTab("trailers")}
+                type="button"
+              >
+                Причіпи
+              </button>
+            </div>
+          </div>
+
+          <div id="fleet-hero-tools" className="trucks-page__hero-tools" />
+        </div>
+      </div>
+
+      <div className="trucks-page__content">
+        {activeTab === "trucks" && (
+          <TrucksTableComponent
+            trucks={trucks}
+            trailers={trailers}
+            drivers={drivers}
+          />
+        )}
+        {activeTab === "trailers" && (
+          <TrailersTableComponent trailers={trailers} />
         )}
       </div>
-      {activeTab === "trucks" && (
-        <TrucksTableComponent
-          trucks={trucks}
-          trailers={trailers}
-          drivers={drivers}
-        />
-      )}
-      {activeTab === "trailers" && (
-        <TrailersTableComponent trailers={trailers} />
-      )}
-    </>
+    </div>
   );
 };
 

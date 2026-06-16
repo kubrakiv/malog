@@ -49,6 +49,11 @@ class ClientSubscription(models.Model):
         ('monthly', 'Monthly'),
         ('yearly', 'Yearly'),
     ]
+
+    PRICING_MODEL_CHOICES = [
+        ('total', 'Per Plan'),
+        ('per_truck', 'Per Truck'),
+    ]
     
     STATUS_CHOICES = [
         ('active', 'Active'),
@@ -66,6 +71,7 @@ class ClientSubscription(models.Model):
     )
     plan = models.ForeignKey(SubscriptionPlan, on_delete=models.CASCADE)
     billing_cycle = models.CharField(max_length=10, choices=BILLING_CYCLE_CHOICES, default='monthly')
+    pricing_model = models.CharField(max_length=10, choices=PRICING_MODEL_CHOICES, default='total')
     status = models.CharField(max_length=15, choices=STATUS_CHOICES, default='active')
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()

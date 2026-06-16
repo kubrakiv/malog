@@ -1,123 +1,132 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import MainPageHeaderComponent from "../MainPageComponent/MainPageHeaderComponent";
-import FooterComponent from "../MainPageComponent/FooterComponent";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaTruck, FaCheck, FaEnvelope, FaBuilding, FaCalendarAlt } from "react-icons/fa";
+import { MdHourglassTop } from "react-icons/md";
 import "./RegistrationPendingPage.scss";
 
 const RegistrationPendingPage = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [registrationInfo, setRegistrationInfo] = useState(null);
 
   useEffect(() => {
-    // Try to get registration info from location state first
-    if (location.state && location.state.registrationData) {
+    window.scrollTo(0, 0);
+    if (location.state?.registrationData) {
       setRegistrationInfo(location.state.registrationData);
     } else {
-      // Try to get from localStorage as fallback
       const storedInfo = localStorage.getItem("pendingRegistration");
       if (storedInfo) {
         try {
           setRegistrationInfo(JSON.parse(storedInfo));
-        } catch (error) {
-          console.error("Error parsing stored registration info:", error);
+        } catch {
+          // ignore parse error
         }
       }
     }
   }, [location.state]);
 
+  const formattedDate = registrationInfo?.registration_date
+    ? new Date(registrationInfo.registration_date).toLocaleDateString("uk-UA", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      })
+    : null;
+
   return (
-    <div className="registration-pending-page">
-      <MainPageHeaderComponent />
-      <div className="registration-pending-container">
-        <div className="registration-pending-card">
-          <div className="icon-section">
-            <div className="pending-icon">⏳</div>
-          </div>
+    <div className="rpp-background">
+      <div className="rpp-card">
 
-          <h1>Реєстрація очікує схвалення</h1>
+        {/* Logo */}
+        <button type="button" className="rpp-logo" onClick={() => navigate("/")}>
+          <FaTruck className="rpp-logo-icon" />
+          TMS SOVTES
+        </button>
 
-          <p className="main-message">
-            Дякуємо за реєстрацію в <strong>TMS SOVTES</strong>!
-          </p>
-
-          {registrationInfo && (
-            <div className="registration-details">
-              <h3>Деталі реєстрації</h3>
-              <div className="details-grid">
-                <div className="detail-item">
-                  <span className="detail-label">Компанія:</span>
-                  <span className="detail-value">
-                    {registrationInfo.client_name}
-                  </span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Ідентифікатор:</span>
-                  <span className="detail-value">
-                    {registrationInfo.client_slug}
-                  </span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Електронна пошта:</span>
-                  <span className="detail-value">
-                    {registrationInfo.admin_email}
-                  </span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">Дата подачі:</span>
-                  <span className="detail-value">
-                    {new Date().toLocaleDateString("uk-UA", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
-                </div>
-              </div>
-            </div>
-          )}
-
-          <div className="status-info">
-            <div className="status-item">
-              <span className="status-label">Статус:</span>
-              <span className="status-value pending">Очікує перевірки</span>
-            </div>
-          </div>
-
-          <div className="info-section">
-            <h3>Що відбувається далі?</h3>
-            <ul>
-              <li>Наша команда розгляне вашу заявку протягом 24-48 годин</li>
-              <li>
-                Ви отримаєте повідомлення електронною поштою після схвалення
-              </li>
-              <li>
-                Після схвалення ви зможете увійти та почати користуватися TMS
-                SOVTES SYSTEM
-              </li>
-            </ul>
-          </div>
-
-          <div className="contact-info">
-            <p>Маєте питання щодо реєстрації?</p>
-            <p>
-              Зв'яжіться з нами:{" "}
-              <a href="mailto:support@sovtes.com.ua">support@sovtes.com.ua</a>
-            </p>
-          </div>
-
-          <div className="actions">
-            <Link to="/login" className="btn btn-secondary">
-              Спробувати увійти
-            </Link>
-            <Link to="/" className="btn btn-primary">
-              На головну
-            </Link>
-          </div>
+        {/* Icon + title */}
+        <div className="rpp-icon-wrap">
+          <MdHourglassTop className="rpp-hourglass" />
         </div>
+
+        <h1 className="rpp-title">
+          Заявка на <span>розгляді</span>
+        </h1>
+        <p className="rpp-subtitle">
+          Дякуємо за реєстрацію в <strong>TMS SOVTES</strong>!<br />
+          Наша команда розгляне вашу заявку протягом 24–48 годин.
+        </p>
+
+        {/* Status badge */}
+        <div className="rpp-status-badge">
+          <span className="rpp-status-dot" />
+          Очікує перевірки
+        </div>
+
+        {/* Registration details */}
+        {registrationInfo && (
+          <div className="rpp-details">
+            <h3 className="rpp-details-title">Деталі реєстрації</h3>
+            <div className="rpp-details-grid">
+              {registrationInfo.client_name && (
+                <div className="rpp-detail-item">
+                  <FaBuilding className="rpp-detail-icon" />
+                  <div>
+                    <span className="rpp-detail-label">Компанія</span>
+                    <span className="rpp-detail-value">{registrationInfo.client_name}</span>
+                  </div>
+                </div>
+              )}
+              {registrationInfo.admin_email && (
+                <div className="rpp-detail-item">
+                  <FaEnvelope className="rpp-detail-icon" />
+                  <div>
+                    <span className="rpp-detail-label">Електронна пошта</span>
+                    <span className="rpp-detail-value">{registrationInfo.admin_email}</span>
+                  </div>
+                </div>
+              )}
+              {formattedDate && (
+                <div className="rpp-detail-item rpp-detail-item--full">
+                  <FaCalendarAlt className="rpp-detail-icon" />
+                  <div>
+                    <span className="rpp-detail-label">Дата подачі</span>
+                    <span className="rpp-detail-value">{formattedDate}</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Next steps */}
+        <div className="rpp-steps">
+          <h3 className="rpp-steps-title">Що відбувається далі?</h3>
+          <ul className="rpp-steps-list">
+            <li><FaCheck className="rpp-step-check" />Наша команда розгляне вашу заявку протягом 24–48 годин</li>
+            <li><FaCheck className="rpp-step-check" />Ви отримаєте сповіщення на електронну пошту після схвалення</li>
+            <li><FaCheck className="rpp-step-check" />Після схвалення ви зможете увійти та почати роботу</li>
+          </ul>
+        </div>
+
+        {/* Contact */}
+        <p className="rpp-contact">
+          Маєте питання?{" "}
+          <a href="mailto:support@sovtes.com.ua">support@sovtes.com.ua</a>
+        </p>
+
+        {/* Actions */}
+        <div className="rpp-actions">
+          <Link to="/login" className="rpp-btn rpp-btn--secondary">
+            Увійти
+          </Link>
+          <Link to="/" className="rpp-btn rpp-btn--primary">
+            На головну
+          </Link>
+        </div>
+
       </div>
-      <FooterComponent />
     </div>
   );
 };

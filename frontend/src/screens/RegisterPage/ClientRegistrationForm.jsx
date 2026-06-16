@@ -1,13 +1,32 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { FaTruck, FaCheck, FaCrown, FaSpinner, FaTimes } from "react-icons/fa";
 import InputComponent from "../../globalComponents/InputComponent";
 import MessageComponent from "../../components/MessageComponent/MessageComponent";
 import { registerClient } from "../../actions/userActions";
 
 import "./ClientRegistrationForm.scss";
+
+const FEATURE_LABELS = {
+  "Fleet Management":    "Управління автопарком",
+  "Driver Management":   "Управління водіями",
+  "Employee Management": "Управління персоналом",
+  "Route Planner":       "Планування маршрутів",
+  "Orders Management":   "Управління замовленнями",
+  "Route Calculator":    "Калькулятор маршрутів",
+  "Points Management":   "Управління точками",
+  "Invoicing":           "Рахунки-фактури",
+  "Customer Management": "Управління клієнтами",
+  "Tasks Management":    "Управління завданнями",
+  "Live Map":            "Карта в реальному часі",
+  "Dashboard":           "Аналітика та Звіти",
+  "System Administration": "Адміністрування",
+  "External Platforms":  "Зовнішні платформи",
+  "Basic Support":       "Базова підтримка",
+};
 
 const ClientRegistrationForm = () => {
   const navigate = useNavigate();
@@ -19,17 +38,22 @@ const ClientRegistrationForm = () => {
   const [hasAttemptedSubmit, setHasAttemptedSubmit] = useState(false);
   const [subscriptionPlans, setSubscriptionPlans] = useState([]);
   const [plansLoading, setPlansLoading] = useState(false);
+  const [edrpouStatus, setEdrpouStatus] = useState(null); // null | 'loading' | 'found' | 'not_found' | 'error'
+  const [edrpouMessage, setEdrpouMessage] = useState("");
+  const edrpouTimerRef = useRef(null);
 
   // Form data state
   const [formData, setFormData] = useState({
     // Client data
     clientName: "",
+    companyNameEng: "",
     clientSlug: "",
 
     // Company data
     companyEmail: "",
     companyPhone: "",
     companyAddress: "",
+    companyLegalAddress: "",
     companyVatNumber: "",
 
     // Admin user data
@@ -42,8 +66,9 @@ const ClientRegistrationForm = () => {
     confirmPassword: "",
 
     // Subscription data
-    subscriptionPlan: "trial", // Default to trial plan
-    billingCycle: "monthly", // Default to monthly
+    subscriptionPlan: "trial",
+    billingCycle: "monthly",
+    pricingModel: import.meta.env.REACT_APP_PRICING_MODEL || "total",
   });
 
   // Load subscription plans on component mount
@@ -158,41 +183,73 @@ const ClientRegistrationForm = () => {
       .join("");
   };
 
-  // Auto-generate slug from company name (supports Ukrainian)
-  const handleClientNameChange = (e) => {
-    const name = e.target.value;
-
-    // First transliterate Ukrainian to Latin
-    const transliterated = transliterateToLatin(name);
-
-    // Then create slug from transliterated text
-    const slug = transliterated
+  // Slug generation helper
+  const generateSlug = (text) => {
+    const transliterated = transliterateToLatin(text);
+    return transliterated
       .toLowerCase()
-      .replace(/[^a-z0-9\s-]/g, "") // Remove special characters
-      .replace(/\s+/g, "-") // Replace spaces with hyphens
-      .replace(/-+/g, "-") // Replace multiple hyphens with single
-      .replace(/^-+|-+$/g, "") // Remove leading/trailing hyphens
+      .replace(/[^a-z0-9\s-]/g, "")
+      .replace(/\s+/g, "-")
+      .replace(/-+/g, "-")
+      .replace(/^-+|-+$/g, "")
       .trim();
+  };
 
-    setFormData((prev) => ({
-      ...prev,
-      clientName: name,
-      clientSlug: slug,
-    }));
+  // Auto-generate slug from English company name
+  const handleCompanyNameEngChange = (e) => {
+    const name = e.target.value;
+    const slug = generateSlug(name);
+    setFormData((prev) => ({ ...prev, companyNameEng: name, clientSlug: slug }));
+  };
+
+  // ЄДРПОУ field change — debounce lookup after 8+ digits
+  const handleEdrpouChange = (e) => {
+    const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+    setFormData((prev) => ({ ...prev, companyVatNumber: value }));
+    setEdrpouStatus(null);
+    setEdrpouMessage("");
+
+    if (edrpouTimerRef.current) clearTimeout(edrpouTimerRef.current);
+
+    if (value.length === 8 || value.length === 10) {
+      setEdrpouStatus("loading");
+      edrpouTimerRef.current = setTimeout(() => fetchCompanyByEdrpou(value), 600);
+    }
+  };
+
+  const fetchCompanyByEdrpou = async (edrpou) => {
+    try {
+      const { data } = await axios.get(`/api/youscore/register/company-lookup/${edrpou}`);
+      setEdrpouStatus("found");
+
+      const engName = data.nameEn || "";
+      setFormData((prev) => ({
+        ...prev,
+        clientName:          data.name      || prev.clientName,
+        companyNameEng:      engName        || prev.companyNameEng,
+        clientSlug:          engName ? generateSlug(engName) : prev.clientSlug,
+        companyLegalAddress: data.address   || prev.companyLegalAddress,
+        companyPhone:        data.phone     || prev.companyPhone,
+        companyEmail:        data.email     || prev.companyEmail,
+      }));
+    } catch (err) {
+      const data = err.response?.data;
+      if (err.response?.status === 404) {
+        setEdrpouStatus("not_found");
+        setEdrpouMessage("Компанію не знайдено");
+      } else {
+        setEdrpouStatus("error");
+        setEdrpouMessage(data?.user_message || "Помилка пошуку");
+      }
+    }
   };
 
   const validateStep = (step) => {
     const newErrors = {};
 
     if (step === 1) {
-      // Validate company information
       if (!formData.clientName.trim()) {
-        newErrors.clientName = "Назва компанії обов'язкова";
-      }
-      if (!formData.clientSlug.trim()) {
-        newErrors.clientSlug = "Ідентифікатор компанії обов'язковий";
-      } else if (!/^[a-z0-9-]+$/.test(formData.clientSlug)) {
-        newErrors.clientSlug = "Дозволені лише малі літери, цифри та дефіси";
+        newErrors.clientName = "Назва компанії (UA) обов'язкова";
       }
       if (
         formData.companyEmail &&
@@ -290,16 +347,19 @@ const ClientRegistrationForm = () => {
     setIsLoading(true);
 
     try {
+      const slug = formData.clientSlug || generateSlug(formData.companyNameEng || formData.clientName);
       const registrationData = {
         client: {
           name: formData.clientName,
-          slug: formData.clientSlug,
+          slug,
         },
         company: {
-          name: formData.clientName, // Use client name as initial company name
+          name: formData.clientName,
+          name_en: formData.companyNameEng,
           email: formData.companyEmail,
           phone: formData.companyPhone,
           address: formData.companyAddress,
+          legal_address: formData.companyLegalAddress,
           vat_number: formData.companyVatNumber,
         },
         admin_user: {
@@ -314,6 +374,7 @@ const ClientRegistrationForm = () => {
         subscription: {
           plan: formData.subscriptionPlan,
           billing_cycle: formData.billingCycle,
+          pricing_model: formData.pricingModel,
         },
       };
 
@@ -403,35 +464,66 @@ const ClientRegistrationForm = () => {
     <div className="registration-step">
       <h3>Інформація про компанію</h3>
       <p className="step-description">
-        Почнемо з налаштування профілю вашої компанії
+        Введіть ЄДРПОУ — дані компанії заповняться автоматично
       </p>
 
+      {/* Row 1: ЄДРПОУ — full width */}
+      <div className="form-row form-row--full">
+        <div className="form-group edrpou-group">
+          <InputComponent
+            label="ЄДРПОУ"
+            name="companyVatNumber"
+            type="text"
+            placeholder="Введіть 8-значний код ЄДРПОУ"
+            value={formData.companyVatNumber}
+            onChange={handleEdrpouChange}
+            error={hasAttemptedSubmit ? errors.companyVatNumber : ""}
+          />
+          {edrpouStatus === "loading" && (
+            <span className="edrpou-status edrpou-status--loading">
+              <FaSpinner className="edrpou-spinner" /> Пошук компанії...
+            </span>
+          )}
+          {edrpouStatus === "found" && (
+            <span className="edrpou-status edrpou-status--found">
+              <FaCheck /> Компанію знайдено
+            </span>
+          )}
+          {(edrpouStatus === "not_found" || edrpouStatus === "error") && (
+            <span className="edrpou-status edrpou-status--error">
+              <FaTimes /> {edrpouMessage}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* Row 2: Company name ENG | Company name UA */}
       <div className="form-row">
         <div className="form-group">
           <InputComponent
-            label="Назва Компанії *"
+            label="Назва Компанії ENG"
+            name="companyNameEng"
+            type="text"
+            placeholder="Company name in English"
+            value={formData.companyNameEng}
+            onChange={handleCompanyNameEngChange}
+            error={hasAttemptedSubmit ? errors.companyNameEng : ""}
+          />
+        </div>
+        <div className="form-group">
+          <InputComponent
+            label="Назва Компанії UA *"
             name="clientName"
             type="text"
             placeholder="Назва вашої компанії"
             value={formData.clientName}
-            onChange={handleClientNameChange}
-            error={hasAttemptedSubmit ? errors.clientName : ""}
-          />
-        </div>
-        <div className="form-group">
-          <InputComponent
-            label="Ідентифікатор Компанії *"
-            name="clientSlug"
-            type="text"
-            placeholder="ідентифікатор-компанії"
-            value={formData.clientSlug}
             onChange={handleInputChange}
-            error={hasAttemptedSubmit ? errors.clientSlug : ""}
-            helperText="Ідентифікатор (формується автоматично з назви)"
+            error={hasAttemptedSubmit ? errors.clientName : ""}
           />
         </div>
       </div>
 
+      {/* Row 3: Email | Phone */}
       <div className="form-row">
         <div className="form-group">
           <InputComponent
@@ -457,28 +549,17 @@ const ClientRegistrationForm = () => {
         </div>
       </div>
 
-      <div className="form-row">
+      {/* Row 4: Legal address — full width */}
+      <div className="form-row form-row--full">
         <div className="form-group">
           <InputComponent
-            label="ЄДРПОУ"
-            name="companyVatNumber"
-            type="text"
-            placeholder="Введіть номер ЄДРПОУ"
-            value={formData.companyVatNumber}
-            onChange={handleInputChange}
-            error={hasAttemptedSubmit ? errors.companyVatNumber : ""}
-            // helperText="Опціонально - код ЄДРПОУ вашої компанії"
-          />
-        </div>
-        <div className="form-group">
-          <InputComponent
-            label="Адреса Компанії"
-            name="companyAddress"
+            label="Юридична Адреса"
+            name="companyLegalAddress"
             type="textarea"
-            placeholder="Введіть адресу вашої компанії"
-            value={formData.companyAddress}
+            placeholder="Юридична адреса компанії"
+            value={formData.companyLegalAddress}
             onChange={handleInputChange}
-            error={hasAttemptedSubmit ? errors.companyAddress : ""}
+            error={hasAttemptedSubmit ? errors.companyLegalAddress : ""}
             rows={3}
           />
         </div>
@@ -582,7 +663,7 @@ const ClientRegistrationForm = () => {
   );
 
   const renderStep3 = () => (
-    <div className="step-content subscription-step">
+    <div className="subscription-step">
       <div className="subscription-header">
         <h3>Оберіть ваш план підписки</h3>
         <p>Оберіть план, який найкраще відповідає потребам вашого бізнесу</p>
@@ -598,9 +679,7 @@ const ClientRegistrationForm = () => {
             <button
               className={formData.billingCycle === "monthly" ? "active" : ""}
               onClick={() =>
-                handleInputChange({
-                  target: { name: "billingCycle", value: "monthly" },
-                })
+                handleInputChange({ target: { name: "billingCycle", value: "monthly" } })
               }
             >
               Щомісяця
@@ -608,9 +687,7 @@ const ClientRegistrationForm = () => {
             <button
               className={formData.billingCycle === "yearly" ? "active" : ""}
               onClick={() =>
-                handleInputChange({
-                  target: { name: "billingCycle", value: "yearly" },
-                })
+                handleInputChange({ target: { name: "billingCycle", value: "yearly" } })
               }
             >
               Щорічно
@@ -622,79 +699,57 @@ const ClientRegistrationForm = () => {
             {subscriptionPlans.map((plan) => (
               <div
                 key={plan.name}
-                className={`plan-card ${
-                  formData.subscriptionPlan === plan.name ? "selected" : ""
-                }`}
+                className={`plan-card${formData.subscriptionPlan === plan.name ? " selected" : ""}${plan.name === "pro" ? " featured" : ""}`}
                 onClick={() =>
-                  handleInputChange({
-                    target: { name: "subscriptionPlan", value: plan.name },
-                  })
+                  handleInputChange({ target: { name: "subscriptionPlan", value: plan.name } })
                 }
               >
+                {plan.name === "pro" && (
+                  <div className="plan-card-badge">
+                    <FaCrown /> Найпопулярніший
+                  </div>
+                )}
+
                 <div className="plan-header">
-                  <h4>
-                    {plan.display_name}
-                    {plan.is_trial_plan && (
-                      <span className="trial-badge">БЕЗКОШТОВНО</span>
-                    )}
-                  </h4>
+                  <h4>{plan.display_name}</h4>
                   <div className="plan-price">
                     {plan.is_trial_plan ? (
                       <div className="trial-price">
-                        <span className="price">0 грн</span>
-                        <span className="period">
-                          /{plan.trial_duration_days} днів
+                        <span className="price-amount">0</span>
+                        <span className="price-period">
+                          грн/{plan.trial_duration_days}д
                         </span>
                       </div>
                     ) : (
                       <>
-                        <span className="price">
-                          $
-                          {formData.billingCycle === "yearly"
-                            ? plan.yearly_price
-                            : plan.monthly_price}
+                        <span className="price-amount">
+                          {(formData.billingCycle === "yearly"
+                            ? Math.round(plan.yearly_price / 12)
+                            : Math.round(plan.monthly_price)
+                          ).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
                         </span>
-                        <span className="period">
-                          /
-                          {formData.billingCycle === "yearly"
-                            ? "рік"
-                            : "місяць"}
-                        </span>
+                        <span className="price-period">₴/міс</span>
                       </>
                     )}
                   </div>
                 </div>
 
                 <div className="plan-features">
-                  <div className="truck-limit">
+                  <div className="plan-truck-limit">
+                    <FaTruck />
                     <strong>
-                      {plan.truck_limit === -1
-                        ? "Необмежено вантажівок"
-                        : `До ${plan.truck_limit} вантажівок`}
+                      {plan.truck_limit === -1 ? "Необмежено" : plan.truck_limit}{" "}
+                      вантажівок
                     </strong>
                   </div>
-
-                  <ul className="features-list">
-                    {plan.features.map((feature, index) => (
-                      <li key={index}>✓ {feature}</li>
+                  <ul className="plan-features-list">
+                    {plan.features.slice(0, 6).map((feature, idx) => (
+                      <li key={idx}>
+                        <FaCheck className="plan-check" />
+                        {FEATURE_LABELS[feature] || feature}
+                      </li>
                     ))}
                   </ul>
-                </div>
-
-                <div className="plan-description">
-                  <p>{plan.description}</p>
-                  {plan.is_trial_plan && (
-                    <div className="trial-benefits">
-                      <p className="trial-highlight">
-                        🎉 Спробуйте всі функції безкоштовно протягом{" "}
-                        {plan.trial_duration_days} днів!
-                      </p>
-                      <p className="trial-note">
-                        Жодних зобов'язань • Легке оновлення • Скасування в
-                        будь-який час
-                      </p>
-                    </div>
-                  )}
                 </div>
               </div>
             ))}
@@ -702,9 +757,6 @@ const ClientRegistrationForm = () => {
 
           {hasAttemptedSubmit && errors.subscriptionPlan && (
             <div className="error-message">{errors.subscriptionPlan}</div>
-          )}
-          {hasAttemptedSubmit && errors.billingCycle && (
-            <div className="error-message">{errors.billingCycle}</div>
           )}
         </>
       )}
@@ -714,8 +766,12 @@ const ClientRegistrationForm = () => {
   return (
     <div className="client-registration-form">
       <div className="registration-header">
-        <h2>Приєднуйтесь до TMS SOVTES</h2>
-        <p>Платформа управління автопарком</p>
+        <button type="button" className="reg-logo" onClick={() => navigate("/")}>
+          <FaTruck className="reg-logo-icon" />
+          TMS SOVTES
+        </button>
+        <h2>Приєднуйтесь до <span>TMS SOVTES</span></h2>
+        <p>Платформа управління транспортом</p>
       </div>
 
       {renderStepIndicator()}

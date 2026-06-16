@@ -70,7 +70,7 @@ class TrailerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trailer
-        fields = ["id", "plates", "brand", "entry_date", "end_date", "price", "entry_mileage", "vin_code", "year", "truck"]
+        fields = ["id", "plates", "brand", "entry_date", "end_date", "price", "entry_mileage", "vin_code", "year", "truck", "sovtes_id"]
 
     def get_truck(self, obj):
         truck = obj.trucks.first()
@@ -105,6 +105,7 @@ class TruckSerializer(serializers.ModelSerializer):
             "adblue_norm",
             "driver_details",
             "trailer_details",
+            "sovtes_id",
         ]
 
     

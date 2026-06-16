@@ -82,16 +82,22 @@ def createTruck(request):
 
 
 @api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
 def deleteTruck(request, pk):
+    allowed_roles = {"admin", "client_admin", "system_admin"}
+    user_role = getattr(getattr(request.user, "role", None), "name", None)
+    if not request.user.is_superuser and user_role not in allowed_roles:
+        return Response(
+            {"error": "You do not have permission to delete trucks"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
     try:
-        truck = Truck.objects.get(id=pk)
+        truck = Truck.objects.get(id=pk, client=request.user.client)
     except Truck.DoesNotExist:
         return Response("Truck does not exist", status=status.HTTP_404_NOT_FOUND)
-    
-    # Serialize the truck before deleting
-    serializer = TruckSerializer(truck, many=False)
-    truck.delete()
 
+    truck.delete()
     return Response({"message": "Truck deleted"})
 
 

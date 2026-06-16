@@ -104,6 +104,47 @@ class SystemAdminPasswordResetTests(TestCase):
 		self.assertEqual(response.status_code, status.HTTP_200_OK)
 		self.assertTrue(any(user['id'] == self.target_user.id for user in response.data))
 
+	def test_client_admin_list_excludes_system_admin_users(self):
+		client = Client.objects.create(
+			name='Tenant Client',
+			slug='tenant-client',
+			is_active=True,
+			is_approved=True,
+			approval_status='approved',
+		)
+		client_admin_role = Role.objects.create(name='client_admin')
+		client_admin = Profile.objects.create_user(
+			username='tenant-admin-user',
+			email='tenant-admin-user@example.com',
+			password='TenantAdmin123!',
+			role=client_admin_role,
+			client=client,
+			is_staff=True,
+			is_superuser=True,
+		)
+		tenant_user = Profile.objects.create_user(
+			username='tenant-employee',
+			email='tenant-employee@example.com',
+			password='TenantEmployee123!',
+			client=client,
+		)
+		system_user = Profile.objects.create_user(
+			username='tenant-system-user',
+			email='tenant-system-user@example.com',
+			password='SystemUser123!',
+			role=self.system_admin_role,
+			client=client,
+		)
+
+		self.api_client.force_authenticate(user=client_admin)
+
+		response = self.api_client.get('/api/users/')
+
+		self.assertEqual(response.status_code, status.HTTP_200_OK)
+		returned_ids = {user['id'] for user in response.data}
+		self.assertIn(tenant_user.id, returned_ids)
+		self.assertNotIn(system_user.id, returned_ids)
+
 
 class ProfileAdminPasswordResetTests(TestCase):
 	def setUp(self):

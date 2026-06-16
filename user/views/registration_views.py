@@ -143,15 +143,15 @@ def register_client(request):
                 logger.error(f"Failed to create admin user: {str(e)}")
                 raise
             
-            # Get or create admin role
+            # Get or create client_admin role
             try:
                 admin_role, created = Role.objects.get_or_create(
-                    name='admin',
-                    defaults={'name': 'admin'}
+                    name='client_admin',
+                    defaults={'name': 'client_admin'}
                 )
                 admin_user.role = admin_role
                 admin_user.save()
-                logger.info(f"Admin role assigned successfully")
+                logger.info(f"client_admin role assigned successfully")
             except Exception as e:
                 logger.error(f"Failed to assign admin role: {str(e)}")
                 raise
@@ -161,9 +161,11 @@ def register_client(request):
             try:
                 company = Company.objects.create(
                     name=company_data.get('name', client_data['name']),
+                    name_en=company_data.get('name_en', ''),
                     email=company_data.get('email', ''),
                     phone=company_data.get('phone', ''),
                     post_address=company_data.get('address', ''),
+                    legal_address=company_data.get('legal_address', ''),
                     vat_number=company_data.get('vat_number', ''),
                     client=client
                 )
@@ -177,8 +179,9 @@ def register_client(request):
                 try:
                     plan_name = subscription_data.get('plan', 'base')
                     billing_cycle = subscription_data.get('billing_cycle', 'monthly')
-                    
-                    logger.info(f"Creating subscription with plan: {plan_name}, billing: {billing_cycle}")
+                    pricing_model = subscription_data.get('pricing_model', 'total')
+
+                    logger.info(f"Creating subscription with plan: {plan_name}, billing: {billing_cycle}, pricing_model: {pricing_model}")
                     
                     # Get the subscription plan
                     subscription_plan = SubscriptionPlan.objects.get(name=plan_name, is_active=True)
@@ -196,6 +199,7 @@ def register_client(request):
                             client=client,
                             plan=subscription_plan,
                             billing_cycle=billing_cycle,
+                            pricing_model=pricing_model,
                             status='pending',  # Will become 'trial' when client is approved
                             start_date=start_date,
                             end_date=end_date,
@@ -216,6 +220,7 @@ def register_client(request):
                             client=client,
                             plan=subscription_plan,
                             billing_cycle=billing_cycle,
+                            pricing_model=pricing_model,
                             status='pending',  # Will be activated when client is approved
                             start_date=start_date,
                             end_date=end_date,

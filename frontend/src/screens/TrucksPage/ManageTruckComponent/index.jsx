@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import cn from "classnames";
+import { FaLink, FaSync, FaSearch, FaTimes } from "react-icons/fa";
 
 import {
   createTruck,
@@ -14,6 +15,13 @@ import {
   setSelectedTruck,
 } from "../../../features/trucks/trucksSlice";
 
+import {
+  fetchSovtesTrucks,
+  resyncSovtesTruck,
+  linkSovtesTruck,
+} from "../../../features/sovtesFleet/sovtesFleetOperations";
+import { listTrucks } from "../../../features/trucks/trucksOperations";
+
 import { TRUCK_CONSTANTS } from "../../../constants/global";
 import { formFields } from "./truckFormFields.jsx";
 import { formatDateForInput } from "../../../utils/formatDate";
@@ -22,6 +30,245 @@ import ManageTruckFooterComponent from "../ManageTruckFooterComponent";
 import InputComponent from "../../../globalComponents/InputComponent";
 
 import "./style.scss";
+
+const _extractStr = (val) => {
+  if (val == null) return "";
+  if (typeof val === "object")
+    return val.title_ru || val.title || val.name || String(val.id ?? "");
+  return String(val);
+};
+
+const _getPlates = (v) =>
+  _extractStr(v.number || v.carNumber || v.govNumber || v.plates) || "—";
+
+const _getBrand = (v) =>
+  _extractStr(v.make || v.brandTitle || v.brand) || "";
+
+const _normalizePlate = (p) =>
+  String(p || "").replace(/[\s-]/g, "").toUpperCase();
+
+// Inline Sovtes section rendered inside the edit modal
+const SovtesSection = ({ truck, onResyncSuccess }) => {
+  const dispatch = useDispatch();
+  const sovtesTrucks = useSelector((s) => s.sovtesFleetInfo?.trucks || []);
+  const syncingIds = useSelector((s) => s.sovtesFleetInfo?.syncingIds || []);
+
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [chosenSovtesId, setChosenSovtesId] = useState(null);
+  const [fetchedOnce, setFetchedOnce] = useState(false);
+
+  const isLinked = Boolean(truck.sovtes_id);
+  const isSyncing = syncingIds.includes(String(truck.sovtes_id));
+
+  // Once trucks load from Sovtes, auto-select the plate match if nothing is chosen yet
+  useEffect(() => {
+    if (!pickerOpen || chosenSovtesId) return;
+    const unsynced = sovtesTrucks.filter((t) => !t.already_synced);
+    const match = findPlateMatch(unsynced);
+    if (match) setChosenSovtesId(match.id);
+  }, [sovtesTrucks, pickerOpen]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const findPlateMatch = (list) => {
+    const localPlate = _normalizePlate(truck.plates);
+    if (!localPlate) return null;
+    return list.find(
+      (t) => _normalizePlate(_getPlates(t)) === localPlate
+    ) || null;
+  };
+
+  const openPicker = () => {
+    const unsynced = sovtesTrucks.filter((t) => !t.already_synced);
+    const match = findPlateMatch(unsynced);
+    if (match) setChosenSovtesId(match.id);
+    else setChosenSovtesId(null);
+
+    if (!fetchedOnce) {
+      dispatch(fetchSovtesTrucks());
+      setFetchedOnce(true);
+    }
+    setPickerOpen(true);
+    setQuery("");
+  };
+
+  const handleResync = async () => {
+    // Find the Sovtes vehicle by sovtes_id in the fetched list,
+    // or build a minimal object the backend can use (just needs id).
+    const sovtesVehicle = sovtesTrucks.find(
+      (t) => String(t.id) === String(truck.sovtes_id)
+    ) || { id: truck.sovtes_id };
+
+    const result = await dispatch(resyncSovtesTruck(sovtesVehicle));
+    if (resyncSovtesTruck.fulfilled.match(result)) {
+      onResyncSuccess(result.payload);
+      dispatch(listTrucks());
+    }
+  };
+
+  const handleLinkConfirm = async () => {
+    if (!chosenSovtesId) return;
+    const sovtesVehicle = sovtesTrucks.find(
+      (t) => String(t.id) === String(chosenSovtesId)
+    );
+    if (!sovtesVehicle) return;
+
+    const result = await dispatch(
+      linkSovtesTruck({ ...sovtesVehicle, local_truck_id: truck.id })
+    );
+    if (linkSovtesTruck.fulfilled.match(result)) {
+      onResyncSuccess(result.payload);
+      dispatch(listTrucks());
+      setPickerOpen(false);
+    }
+  };
+
+  const unsyncedSovtes = sovtesTrucks.filter((t) => !t.already_synced);
+
+  const localPlateNorm = _normalizePlate(truck.plates);
+  const isPlateMatch = (t) =>
+    localPlateNorm && _normalizePlate(_getPlates(t)) === localPlateNorm;
+
+  const filtered = unsyncedSovtes
+    .filter((t) => {
+      if (!query) return true;
+      const q = query.toLowerCase();
+      return (
+        _getPlates(t).toLowerCase().includes(q) ||
+        _getBrand(t).toLowerCase().includes(q) ||
+        _extractStr(t.model).toLowerCase().includes(q)
+      );
+    })
+    // Plate matches bubble to top
+    .sort((a, b) => (isPlateMatch(b) ? 1 : 0) - (isPlateMatch(a) ? 1 : 0));
+
+  return (
+    <div className="truck-sovtes-section">
+      {isLinked ? (
+        <div className="truck-sovtes-section__linked">
+          <span className="truck-sovtes-section__badge">
+            <FaSync />
+            Sovtes&nbsp;
+            <span className="truck-sovtes-section__badge-id">
+              #{truck.sovtes_id}
+            </span>
+          </span>
+          <button
+            type="button"
+            className="truck-sovtes-section__resync-btn"
+            onClick={handleResync}
+            disabled={isSyncing}
+            title="Оновити дані з Sovtes"
+          >
+            {isSyncing
+              ? <FaSync className="truck-sovtes-section__spinner" />
+              : <FaSync />}
+            {isSyncing ? "Оновлення…" : "Оновити з Sovtes"}
+          </button>
+        </div>
+      ) : (
+        <div className="truck-sovtes-section__unlinked">
+          {!pickerOpen ? (
+            <button
+              type="button"
+              className="truck-sovtes-section__link-btn"
+              onClick={openPicker}
+            >
+              <FaLink />
+              Прив'язати до Sovtes
+            </button>
+          ) : (
+            <div className="truck-sovtes-section__picker">
+              <div className="truck-sovtes-section__picker-header">
+                <span>Оберіть тягач зі Sovtes</span>
+                <button
+                  type="button"
+                  className="truck-sovtes-section__picker-close"
+                  onClick={() => setPickerOpen(false)}
+                  aria-label="Закрити"
+                >
+                  <FaTimes />
+                </button>
+              </div>
+
+              <div className="truck-sovtes-section__picker-search">
+                <FaSearch className="truck-sovtes-section__search-icon" />
+                <input
+                  type="text"
+                  placeholder="Пошук за номером, маркою…"
+                  value={query}
+                  onChange={(e) => setQuery(e.target.value)}
+                  className="truck-sovtes-section__search-input"
+                  autoFocus
+                />
+              </div>
+
+              <div className="truck-sovtes-section__picker-list">
+                {filtered.length === 0 && (
+                  <p className="truck-sovtes-section__picker-empty">
+                    {unsyncedSovtes.length === 0
+                      ? "Немає доступних тягачів у Sovtes"
+                      : "Нічого не знайдено"}
+                  </p>
+                )}
+                {filtered.map((t) => {
+                  const matched = isPlateMatch(t);
+                  return (
+                    <button
+                      key={t.id}
+                      type="button"
+                      className={cn(
+                        "truck-sovtes-section__picker-option",
+                        chosenSovtesId === t.id && "truck-sovtes-section__picker-option--selected",
+                        matched && "truck-sovtes-section__picker-option--match"
+                      )}
+                      onClick={() => setChosenSovtesId(t.id)}
+                    >
+                      <span className="truck-sovtes-section__picker-plates-row">
+                        <span className="truck-sovtes-section__picker-plates">
+                          {_getPlates(t)}
+                        </span>
+                        {matched && (
+                          <span className="truck-sovtes-section__picker-match-badge">
+                            збіг за номером
+                          </span>
+                        )}
+                      </span>
+                      <span className="truck-sovtes-section__picker-meta">
+                        {[_getBrand(t), _extractStr(t.model)]
+                          .filter(Boolean)
+                          .join(" ")}
+                        {t.vin ? ` · ${t.vin}` : ""}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="truck-sovtes-section__picker-actions">
+                <button
+                  type="button"
+                  className="truck-sovtes-section__picker-cancel"
+                  onClick={() => setPickerOpen(false)}
+                >
+                  Скасувати
+                </button>
+                <button
+                  type="button"
+                  className="truck-sovtes-section__picker-confirm"
+                  onClick={handleLinkConfirm}
+                  disabled={!chosenSovtesId}
+                >
+                  <FaLink />
+                  Прив'язати
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const ManageTruckComponent = ({
   onCloseModal,
@@ -51,17 +298,21 @@ const ManageTruckComponent = ({
   });
 
   const [truckFields, setTruckFields] = useState(() => {
-    if (initialTruckData) {
-      return {
-        ...initialTruckData,
-      };
+    if (initialTruckData?.id) {
+      return { ...initialTruckData };
     }
-
     return Object.values(TRUCK_CONSTANTS).reduce((acc, item) => {
       acc[item] = "";
       return acc;
     }, {});
   });
+
+  // Re-populate form when a different truck is selected (modal content stays mounted)
+  useEffect(() => {
+    if (initialTruckData?.id) {
+      setTruckFields({ ...initialTruckData });
+    }
+  }, [initialTruckData?.id]);
 
   // Check truck limits when creating new truck
   useEffect(() => {
@@ -75,7 +326,7 @@ const ManageTruckComponent = ({
           };
           const response = await axios.get(
             "/api/subscriptions/check-truck-limit/",
-            config
+            config,
           );
           setTruckLimitCheck({
             canAddTruck: response.data.can_add_truck,
@@ -135,9 +386,22 @@ const ManageTruckComponent = ({
           <div className="truck-card-details">
             <div className="add-truck__content">
               <div className="add-truck__content-block">
-                {!onEditMode && (
-                  <h3 className="add-truck__title">Додати автомобіль</h3>
+                <h3 className="add-truck__title">
+                  {initialTruckData
+                    ? "Редагувати автомобіль"
+                    : "Додати автомобіль"}
+                </h3>
+
+                {/* Sovtes link / resync */}
+                {initialTruckData && (
+                  <SovtesSection
+                    truck={truckFields}
+                    onResyncSuccess={(updated) =>
+                      setTruckFields((prev) => ({ ...prev, ...updated }))
+                    }
+                  />
                 )}
+
                 {/* Subscription limit warning */}
                 {!initialTruckData && !truckLimitCheck.loading && (
                   <div
@@ -168,7 +432,7 @@ const ManageTruckComponent = ({
                               100,
                               (truckLimitCheck.currentTruckCount /
                                 truckLimitCheck.truckLimit) *
-                                100
+                                100,
                             )}%`,
                             backgroundColor: truckLimitCheck.canAddTruck
                               ? "$sidebarcolor"
@@ -198,7 +462,7 @@ const ManageTruckComponent = ({
                   <button
                     className={cn(
                       "truck-card-details__tab",
-                      activeTab === "basic" && "active"
+                      activeTab === "basic" && "active",
                     )}
                     type="button"
                     onClick={() => setActiveTab("basic")}
@@ -208,7 +472,7 @@ const ManageTruckComponent = ({
                   <button
                     className={cn(
                       "truck-card-details__tab",
-                      activeTab === "norms" && "active"
+                      activeTab === "norms" && "active",
                     )}
                     type="button"
                     onClick={() => setActiveTab("norms")}
@@ -224,7 +488,7 @@ const ManageTruckComponent = ({
                           className={cn(
                             "add-truck__content-row-block",
                             initialTruckData !== null &&
-                              "add-truck__content-row-block_edit-mode"
+                              "add-truck__content-row-block_edit-mode",
                           )}
                           key={`fields-row-${fields[0].id}`}
                         >
@@ -256,7 +520,7 @@ const ManageTruckComponent = ({
                           className={cn(
                             "add-truck__content-row-block",
                             initialTruckData !== null &&
-                              "add-truck__content-row-block_edit-mode"
+                              "add-truck__content-row-block_edit-mode",
                           )}
                           key={`fields-row-${fields[0].id}`}
                         >
@@ -283,27 +547,13 @@ const ManageTruckComponent = ({
                 </div>
               </div>
             </div>
-            {!initialTruckData && (
-              <ManageTruckFooterComponent
-                onCloseModal={onCloseModal}
-                canAddTruck={truckLimitCheck.canAddTruck}
-              />
-            )}
-            {initialTruckData && (
-              <div className="edit-truck__footer">
-                <button
-                  title={
-                    initialTruckData ? "Оновити тягач" : "Додати менеджера"
-                  }
-                  style={{ margin: "0px 0px 5px 5px" }}
-                  className="end-time__footer-btn end-time__footer-btn_save"
-                  type="submit"
-                  // disabled={initialTruckData ? isFormValid : !isFormValid}
-                >
-                  {initialTruckData ? "Оновити тягач" : "Додати менеджера"}
-                </button>
-              </div>
-            )}
+            <ManageTruckFooterComponent
+              onCloseModal={onCloseModal}
+              canAddTruck={
+                initialTruckData ? true : truckLimitCheck.canAddTruck
+              }
+              saveLabel={initialTruckData ? "Оновити тягач" : "Записати"}
+            />
           </div>
         </div>
       </form>

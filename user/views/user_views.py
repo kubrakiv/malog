@@ -184,10 +184,10 @@ def _generate_temporary_password(length=16):
 
 
 def _get_manageable_users_queryset(user):
-    if getattr(user, 'is_superuser', False) or user.is_system_admin():
+    if user.is_system_admin():
         return Profile.objects.all()
     if user.client:
-        return Profile.objects.filter(client=user.client)
+        return Profile.objects.filter(client=user.client).exclude(role__name='system_admin')
     return Profile.objects.none()
 
 
