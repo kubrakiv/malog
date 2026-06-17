@@ -30,3 +30,7 @@ media/
 # OS
 .DS_Store
 Thumbs.db
+
+# Deploy scripts (server-specific)
+malog_uwsgi.ini
+scripts/tms.deploy.sh

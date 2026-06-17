@@ -1,15 +1,12 @@
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
-from django.db.models import Q
 from django.db.models import IntegerField
 from django.db.models.functions import Cast, Substr, Length
 from user.models import DriverProfile
 from django.core.exceptions import ObjectDoesNotExist
 from .managers import TenantManager, GlobalManager, TenantRelatedManager
 from .tenant import get_current_client
-import secrets
-import uuid
 
 
 # Create your models here.
@@ -34,8 +31,7 @@ class BaseTenantModel(models.Model):
 
     def save(self, *args, **kwargs):
         # Auto-assign current client if not set
-        skip_assignment = kwargs.pop('skip_client_assignment', False)
-        if not self.client_id and not skip_assignment:
+        if not self.client_id and not kwargs.get('skip_client_assignment'):
             current_client = get_current_client()
             if current_client:
                 self.client = current_client
@@ -47,37 +43,9 @@ class Client(models.Model):
     """
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, help_text="Unique identifier for the client")
-    is_active = models.BooleanField(default=False, help_text="Client is active and can use the system")
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
-    # Approval system fields
-    is_approved = models.BooleanField(default=False, help_text="Client has been approved by system admin")
-    approval_status = models.CharField(
-        max_length=20,
-        choices=[
-            ('pending', 'Pending Review'),
-            ('approved', 'Approved'),
-            ('rejected', 'Rejected'),
-        ],
-        default='pending',
-        help_text="Current approval status"
-    )
-    approved_by = models.ForeignKey(
-        'user.Profile',
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='approved_clients',
-        help_text="System admin who approved/rejected this client"
-    )
-    approved_at = models.DateTimeField(null=True, blank=True, help_text="When the client was approved/rejected")
-    rejection_reason = models.TextField(blank=True, null=True, help_text="Reason for rejection if applicable")
-    
-    # Onboarding tracking fields
-    is_onboarded = models.BooleanField(default=False, help_text="Client has completed the onboarding wizard")
-    onboarded_at = models.DateTimeField(null=True, blank=True, help_text="When the client completed onboarding")
-    planner_tutorial_shown = models.BooleanField(default=False, help_text="Planner tutorial has been shown to client users")
     
     # Additional client-specific settings can be added here
     settings = models.JSONField(default=dict, blank=True, help_text="Client-specific configuration")
@@ -87,62 +55,6 @@ class Client(models.Model):
     
     def __str__(self):
         return self.name
-
-
-class ClientExternalIdentity(models.Model):
-    PROVIDER_SOVTES = 'sovtes'
-    PROVIDER_CHOICES = [
-        (PROVIDER_SOVTES, 'Sovtes'),
-    ]
-
-    STATUS_PENDING = 'pending'
-    STATUS_LINKED = 'linked'
-    STATUS_CONFLICT = 'conflict'
-    STATUS_DISABLED = 'disabled'
-    STATUS_CHOICES = [
-        (STATUS_PENDING, 'Pending'),
-        (STATUS_LINKED, 'Linked'),
-        (STATUS_CONFLICT, 'Conflict'),
-        (STATUS_DISABLED, 'Disabled'),
-    ]
-
-    client = models.ForeignKey(
-        'base.Client',
-        on_delete=models.CASCADE,
-        related_name='external_identities',
-    )
-    provider = models.CharField(max_length=32, choices=PROVIDER_CHOICES)
-    external_client_id = models.CharField(max_length=255, null=True, blank=True)
-    link_status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_PENDING)
-    link_key = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
-    linked_at = models.DateTimeField(null=True, blank=True)
-    linked_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='linked_external_client_identities',
-    )
-    metadata = models.JSONField(default=dict, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ['-created_at']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['provider', 'external_client_id'],
-                condition=Q(external_client_id__isnull=False),
-                name='uq_external_identity_provider_external_id',
-            ),
-            models.UniqueConstraint(
-                fields=['client', 'provider'],
-                name='uq_external_identity_client_provider',
-            ),
-        ]
-
-    def __str__(self):
-        return f"{self.client.name} / {self.provider} / {self.external_client_id or 'unlinked'}"
 
 
 class APIToken(models.Model):
@@ -165,153 +77,6 @@ class APIToken(models.Model):
         APIToken.objects.create(token=token)
 
 
-class ExternalAPIKey(models.Model):
-    """
-    Model for storing API keys that external services use to access our APIs.
-    This provides secure, manageable authentication for external integrations.
-    """
-    key = models.CharField(
-        max_length=64, 
-        unique=True, 
-        db_index=True,
-        help_text="The API key (auto-generated)"
-    )
-    name = models.CharField(
-        max_length=255,
-        help_text="Descriptive name for this API key (e.g., 'YouScore Integration', 'Mobile App')"
-    )
-    description = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Additional details about this API key and its usage"
-    )
-    is_active = models.BooleanField(
-        default=True,
-        help_text="Whether this API key is currently active and can be used"
-    )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    expires_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        help_text="Optional expiration date for this API key"
-    )
-    last_used_at = models.DateTimeField(
-        null=True,
-        blank=True,
-        help_text="Last time this API key was used"
-    )
-    usage_count = models.IntegerField(
-        default=0,
-        help_text="Number of times this API key has been used"
-    )
-    rate_limit = models.IntegerField(
-        default=100,
-        help_text="Maximum number of requests per hour (0 = unlimited)"
-    )
-    allowed_endpoints = models.JSONField(
-        default=list,
-        blank=True,
-        null=True,
-        help_text="List of endpoint patterns this key can access (empty = all endpoints)"
-    )
-    ip_whitelist = models.JSONField(
-        default=list,
-        blank=True,
-        null=True,
-        help_text="List of IP addresses allowed to use this key (empty = any IP)"
-    )
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='created_api_keys',
-        help_text="User who created this API key"
-    )
-
-    class Meta:
-        verbose_name = "External API Key"
-        verbose_name_plural = "External API Keys"
-        ordering = ['-created_at']
-
-    def __str__(self):
-        status = "Active" if self.is_active else "Inactive"
-        return f"{self.name} ({status})"
-
-    def save(self, *args, **kwargs):
-        # Generate API key if not provided
-        if not self.key:
-            self.key = self.generate_key()
-        super().save(*args, **kwargs)
-
-    @staticmethod
-    def generate_key(length=32):
-        """
-        Generate a secure random API key.
-        Default length of 32 bytes = 64 hex characters
-        """
-        return secrets.token_hex(length)
-
-    def is_valid(self):
-        """
-        Check if the API key is valid (active and not expired).
-        """
-        if not self.is_active:
-            return False
-        
-        if self.expires_at and timezone.now() > self.expires_at:
-            return False
-        
-        return True
-
-    def record_usage(self):
-        """
-        Record that this API key was used.
-        Updates last_used_at and increments usage_count.
-        """
-        self.last_used_at = timezone.now()
-        self.usage_count += 1
-        self.save(update_fields=['last_used_at', 'usage_count'])
-
-    def check_rate_limit(self):
-        """
-        Check if the API key has exceeded its rate limit.
-        Returns True if within limit, False if exceeded.
-        """
-        if self.rate_limit == 0:  # 0 means unlimited
-            return True
-        
-        # Count requests in the last hour
-        one_hour_ago = timezone.now() - timezone.timedelta(hours=1)
-        # This is a simple implementation. For production, consider using Redis or similar
-        # for better rate limiting
-        return True  # Placeholder - implement proper rate limiting in production
-
-    def can_access_endpoint(self, endpoint_path):
-        """
-        Check if this API key can access the given endpoint.
-        """
-        if not self.allowed_endpoints or self.allowed_endpoints == []:  # Empty/None means all endpoints allowed
-            return True
-        
-        # Check if endpoint matches any allowed pattern
-        for pattern in self.allowed_endpoints:
-            if endpoint_path.startswith(pattern):
-                return True
-        
-        return False
-
-    def can_access_from_ip(self, ip_address):
-        """
-        Check if this API key can be used from the given IP address.
-        """
-        if not self.ip_whitelist or self.ip_whitelist == []:  # Empty/None means all IPs allowed
-            return True
-        
-        return ip_address in self.ip_whitelist
-
-
 class CompanyBank(BaseTenantModel):
     name = models.CharField(max_length=255)
     bank_address = models.CharField(max_length=250, null=True, blank=True)
@@ -327,14 +92,12 @@ class CompanyBank(BaseTenantModel):
 
 class Company(BaseTenantModel):
     name = models.CharField(max_length=255)
-    name_en = models.CharField(max_length=255, null=True, blank=True)
     nip_number = models.CharField(max_length=50, null=True, blank=True)
     vat_number = models.CharField(max_length=50, null=True, blank=True)
     phone = models.CharField(max_length=50, null=True, blank=True)
     email = models.EmailField("Email Billing", max_length=255, null=True, blank=True)
     website = models.CharField(max_length=250, null=True, blank=True)
     post_address = models.CharField(max_length=250, null=True, blank=True)
-    legal_address = models.CharField(max_length=250, null=True, blank=True)
     bank = models.ForeignKey(
         CompanyBank,
         related_name="companies",
@@ -402,7 +165,6 @@ class Trailer(BaseTenantModel):
     year = models.IntegerField(null=True, blank=True)
     entry_mileage = models.CharField(max_length=50, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    sovtes_id = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return f"Trailer plates: {self.plates}"
@@ -419,7 +181,6 @@ class Truck(BaseTenantModel):
     entry_mileage = models.CharField(max_length=50, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     gps_id = models.CharField(max_length=50, null=True, blank=True)
-    sovtes_id = models.CharField(max_length=100, null=True, blank=True)
     diesel_norm = models.DecimalField(
         max_digits=5, decimal_places=2, null=True, blank=True,
         help_text="Liters of Diesel per 100 km"
@@ -1224,8 +985,4 @@ class Expense(BaseTenantModel):
 
 #     def __str__(self):
 #         return f"{self.segment_type.title()} Segment {self.segment_index} of Order {self.order_id}"
-
-
-# Import subscription models
-from .subscription_models import SubscriptionPlan, ClientSubscription, SubscriptionUsage, SubscriptionPlanChangeRequest
 
