@@ -31,12 +31,14 @@ from .models import (
     Expense,
     ExpenseType,
     FuelPrice,
+    ExternalAPIKey,
+    ClientExternalIdentity,
+)
+from .subscription_models import (
     SubscriptionPlan,
     ClientSubscription,
     SubscriptionUsage,
     SubscriptionPlanChangeRequest,
-    ExternalAPIKey,
-    ClientExternalIdentity,
 )
 
 User = get_user_model()

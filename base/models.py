@@ -1,7 +1,8 @@
+import uuid
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
-from django.db.models import IntegerField
+from django.db.models import IntegerField, Q
 from django.db.models.functions import Cast, Substr, Length
 from user.models import DriverProfile
 from django.core.exceptions import ObjectDoesNotExist
@@ -985,4 +986,85 @@ class Expense(BaseTenantModel):
 
 #     def __str__(self):
 #         return f"{self.segment_type.title()} Segment {self.segment_index} of Order {self.order_id}"
+
+
+class ExternalAPIKey(models.Model):
+    key = models.CharField(max_length=64, unique=True, db_index=True, help_text="The API key (auto-generated)")
+    name = models.CharField(max_length=255, help_text="Descriptive name for this API key")
+    description = models.TextField(null=True, blank=True, help_text="Additional details about this API key and its usage")
+    is_active = models.BooleanField(default=True, help_text="Whether this API key is currently active and can be used")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    expires_at = models.DateTimeField(null=True, blank=True, help_text="Optional expiration date for this API key")
+    last_used_at = models.DateTimeField(null=True, blank=True, help_text="Last time this API key was used")
+    usage_count = models.IntegerField(default=0, help_text="Number of times this API key has been used")
+    rate_limit = models.IntegerField(default=100, help_text="Maximum number of requests per hour (0 = unlimited)")
+    allowed_endpoints = models.JSONField(default=list, blank=True, null=True, help_text="List of endpoint patterns this key can access (empty = all endpoints)")
+    ip_whitelist = models.JSONField(default=list, blank=True, null=True, help_text="List of IP addresses allowed to use this key (empty = any IP)")
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="created_api_keys",
+        help_text="User who created this API key",
+    )
+
+    class Meta:
+        verbose_name = "External API Key"
+        verbose_name_plural = "External API Keys"
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return self.name
+
+
+class ClientExternalIdentity(models.Model):
+    PROVIDER_SOVTES = "sovtes"
+    PROVIDER_CHOICES = [(PROVIDER_SOVTES, "Sovtes")]
+
+    STATUS_PENDING = "pending"
+    STATUS_LINKED = "linked"
+    STATUS_CONFLICT = "conflict"
+    STATUS_DISABLED = "disabled"
+    STATUS_CHOICES = [
+        (STATUS_PENDING, "Pending"),
+        (STATUS_LINKED, "Linked"),
+        (STATUS_CONFLICT, "Conflict"),
+        (STATUS_DISABLED, "Disabled"),
+    ]
+
+    client = models.ForeignKey("base.Client", on_delete=models.CASCADE, related_name="external_identities")
+    provider = models.CharField(max_length=32, choices=PROVIDER_CHOICES)
+    external_client_id = models.CharField(max_length=255, null=True, blank=True)
+    link_status = models.CharField(max_length=16, choices=STATUS_CHOICES, default=STATUS_PENDING)
+    link_key = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    linked_at = models.DateTimeField(null=True, blank=True)
+    linked_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="linked_external_client_identities",
+    )
+    metadata = models.JSONField(default=dict, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=("provider", "external_client_id"),
+                condition=Q(external_client_id__isnull=False),
+                name="uq_external_identity_provider_external_id",
+            ),
+            models.UniqueConstraint(
+                fields=("client", "provider"),
+                name="uq_external_identity_client_provider",
+            ),
+        ]
+
+    def __str__(self):
+        return f"{self.client} — {self.provider} ({self.link_status})"
 

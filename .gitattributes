@@ -15,6 +15,9 @@
 *.yml text eol=lf
 *.yaml text eol=lf
 
+# Shell scripts must use LF or the shebang breaks on Linux
+*.sh text eol=lf
+
 # Specifically ensure requirements files are treated as text
 requirements*.txt text eol=lf
 

@@ -63,9 +63,9 @@ npm ci
 npm run build
 cd "$REL"
 
-# Make symlink to .env.production from shared to release
-echo "Creating symlink to .env.production..."
-ln -sf "$APP_ROOT/shared/.env.production" "$REL/.env.production"
+# Make symlink to .env.prod from shared to release
+echo "Creating symlink to .env.prod..."
+ln -sf "$APP_ROOT/shared/.env.prod" "$REL/.env.prod"
 
 # Run database migrations
 echo "Running database migrations..."
