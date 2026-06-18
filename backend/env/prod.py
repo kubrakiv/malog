@@ -35,13 +35,17 @@ DATABASES = {
 }
 
 # Static files configuration for production
-STATIC_URL = "/assets/"
+# Django admin CSS/JS served at /static/
+# WhiteNoise serves the entire Vite build directory at the root,
+# making /assets/*.js, /favicon.ico, /manifest.json etc. all reachable.
+STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-    BASE_DIR / 'frontend/build/assets/',
 ]
+
+WHITENOISE_ROOT = BASE_DIR / 'frontend' / 'build'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / 'media'
@@ -78,6 +82,3 @@ SECURE_HSTS_SECONDS = 31536000  # 1 year
 SECURE_HSTS_PRELOAD = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
-
-# Performance optimizations for production
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
