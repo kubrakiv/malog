@@ -26,4 +26,19 @@ git checkout staging
 git merge develop
 git tag -a v1.0.1 -F release-notes\RELEASE_NOTES_v1.0.1.md
 git push --atomic origin staging v1.0.0
+
+
+
+git push origin develop
+
+git checkout staging
+git merge develop
+git push origin staging
+
+git checkout main
+git merge staging
+git push origin main
+
+git checkout develop
+
 ```

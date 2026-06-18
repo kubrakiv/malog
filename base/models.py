@@ -42,18 +42,42 @@ class Client(models.Model):
     """
     Client model - the main tenant entity that provides data isolation
     """
+    APPROVAL_STATUS_CHOICES = [
+        ('pending', 'Pending Review'),
+        ('approved', 'Approved'),
+        ('rejected', 'Rejected'),
+    ]
+
     name = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True, help_text="Unique identifier for the client")
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    
-    # Additional client-specific settings can be added here
+
+    is_approved = models.BooleanField(default=False, help_text="Client has been approved by system admin")
+    approval_status = models.CharField(
+        max_length=20, choices=APPROVAL_STATUS_CHOICES, default='pending',
+        help_text="Current approval status"
+    )
+    approved_at = models.DateTimeField(null=True, blank=True, help_text="When the client was approved/rejected")
+    rejection_reason = models.TextField(null=True, blank=True, help_text="Reason for rejection if applicable")
+    approved_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        null=True, blank=True,
+        on_delete=models.SET_NULL,
+        related_name='approved_clients',
+        help_text="System admin who approved/rejected this client"
+    )
+
+    is_onboarded = models.BooleanField(default=False, help_text="Client has completed the onboarding wizard")
+    onboarded_at = models.DateTimeField(null=True, blank=True, help_text="When the client completed onboarding")
+    planner_tutorial_shown = models.BooleanField(default=False, help_text="Planner tutorial has been shown to client users")
+
     settings = models.JSONField(default=dict, blank=True, help_text="Client-specific configuration")
-    
+
     class Meta:
         ordering = ['name']
-    
+
     def __str__(self):
         return self.name
 
@@ -99,6 +123,8 @@ class Company(BaseTenantModel):
     email = models.EmailField("Email Billing", max_length=255, null=True, blank=True)
     website = models.CharField(max_length=250, null=True, blank=True)
     post_address = models.CharField(max_length=250, null=True, blank=True)
+    legal_address = models.CharField(max_length=250, null=True, blank=True)
+    name_en = models.CharField(max_length=255, null=True, blank=True)
     bank = models.ForeignKey(
         CompanyBank,
         related_name="companies",
@@ -166,6 +192,7 @@ class Trailer(BaseTenantModel):
     year = models.IntegerField(null=True, blank=True)
     entry_mileage = models.CharField(max_length=50, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    sovtes_id = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         return f"Trailer plates: {self.plates}"
@@ -182,6 +209,7 @@ class Truck(BaseTenantModel):
     entry_mileage = models.CharField(max_length=50, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     gps_id = models.CharField(max_length=50, null=True, blank=True)
+    sovtes_id = models.CharField(max_length=100, null=True, blank=True)
     diesel_norm = models.DecimalField(
         max_digits=5, decimal_places=2, null=True, blank=True,
         help_text="Liters of Diesel per 100 km"
