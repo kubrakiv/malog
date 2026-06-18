@@ -28,6 +28,28 @@ const FEATURE_LABELS = {
   "Basic Support":       "Базова підтримка",
 };
 
+const PRICING_MODEL = import.meta.env.REACT_APP_PRICING_MODEL || "total";
+
+const PER_TRUCK_PRICES_USD = { base: 10, pro: 15, unlimited: 20 };
+
+const PER_TRUCK_DESCRIPTIONS = {
+  base: "Ідеально підходить для малих бізнесів, які розпочинають свій логістичний шлях. Базові інструменти для управління автопарком — платіть лише за кількість вантажівок у вашому парку.",
+  pro: "Ідеально підходить для зростаючих логістичних компаній. Розширені функції: оптимізація маршрутів, управління клієнтами та детальна аналітика — без обмежень на розмір автопарку.",
+  unlimited: "Для великих підприємств із масштабними логістичними операціями. Необмежена кількість вантажівок, усі преміум-функції та персоналізована підтримка.",
+};
+
+const PER_TRUCK_FREE_TIER = {
+  id: "free",
+  name: "trial",
+  display_name: "Безкоштовно",
+  description: "Спробуйте платформу безкоштовно — до 3 вантажівок протягом 14 днів без жодних зобов'язань.",
+  truck_limit: 3,
+  trial_duration_days: 14,
+  is_trial_plan: true,
+  monthly_price: 0,
+  features: ["Fleet Management", "Driver Management", "Route Planner", "Orders Management", "Employee Management"],
+};
+
 const ClientRegistrationForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -41,6 +63,7 @@ const ClientRegistrationForm = () => {
   const [edrpouStatus, setEdrpouStatus] = useState(null); // null | 'loading' | 'found' | 'not_found' | 'error'
   const [edrpouMessage, setEdrpouMessage] = useState("");
   const edrpouTimerRef = useRef(null);
+  const [truckCount, setTruckCount] = useState(5);
 
   // Form data state
   const [formData, setFormData] = useState({
@@ -70,6 +93,11 @@ const ClientRegistrationForm = () => {
     billingCycle: "monthly",
     pricingModel: import.meta.env.REACT_APP_PRICING_MODEL || "total",
   });
+
+  const isPerTruckModel = PRICING_MODEL === "per_truck";
+  const visiblePlans = isPerTruckModel
+    ? [PER_TRUCK_FREE_TIER, ...subscriptionPlans.filter((p) => !p.is_trial_plan && PER_TRUCK_PRICES_USD[p.name] !== undefined)]
+    : subscriptionPlans;
 
   // Load subscription plans on component mount
   useEffect(() => {
@@ -675,28 +703,53 @@ const ClientRegistrationForm = () => {
         </div>
       ) : (
         <>
-          <div className="billing-toggle">
-            <button
-              className={formData.billingCycle === "monthly" ? "active" : ""}
-              onClick={() =>
-                handleInputChange({ target: { name: "billingCycle", value: "monthly" } })
-              }
-            >
-              Щомісяця
-            </button>
-            <button
-              className={formData.billingCycle === "yearly" ? "active" : ""}
-              onClick={() =>
-                handleInputChange({ target: { name: "billingCycle", value: "yearly" } })
-              }
-            >
-              Щорічно
-              <span className="discount-badge">Економія 17%</span>
-            </button>
-          </div>
+          {isPerTruckModel ? (
+            <div className="truck-counter">
+              <label className="truck-counter-label">
+                <FaTruck />
+                Кількість вантажівок:
+                <span className="truck-counter-value">{truckCount}</span>
+              </label>
+              <input
+                type="range"
+                min={1}
+                max={100}
+                value={truckCount}
+                onChange={(e) => setTruckCount(Number(e.target.value))}
+                className="truck-slider"
+              />
+              <div className="truck-slider-ticks">
+                <span>1</span>
+                <span>25</span>
+                <span>50</span>
+                <span>75</span>
+                <span>100+</span>
+              </div>
+            </div>
+          ) : (
+            <div className="billing-toggle">
+              <button
+                className={formData.billingCycle === "monthly" ? "active" : ""}
+                onClick={() =>
+                  handleInputChange({ target: { name: "billingCycle", value: "monthly" } })
+                }
+              >
+                Щомісяця
+              </button>
+              <button
+                className={formData.billingCycle === "yearly" ? "active" : ""}
+                onClick={() =>
+                  handleInputChange({ target: { name: "billingCycle", value: "yearly" } })
+                }
+              >
+                Щорічно
+                <span className="discount-badge">Економія 17%</span>
+              </button>
+            </div>
+          )}
 
           <div className="subscription-plans">
-            {subscriptionPlans.map((plan) => (
+            {visiblePlans.map((plan) => (
               <div
                 key={plan.name}
                 className={`plan-card${formData.subscriptionPlan === plan.name ? " selected" : ""}${plan.name === "pro" ? " featured" : ""}`}
@@ -712,36 +765,57 @@ const ClientRegistrationForm = () => {
 
                 <div className="plan-header">
                   <h4>{plan.display_name}</h4>
-                  <div className="plan-price">
-                    {plan.is_trial_plan ? (
+                  {isPerTruckModel && plan.is_trial_plan ? (
+                    <div className="plan-price">
                       <div className="trial-price">
                         <span className="price-amount">0</span>
                         <span className="price-period">
                           грн/{plan.trial_duration_days}д
                         </span>
                       </div>
-                    ) : (
-                      <>
-                        <span className="price-amount">
+                    </div>
+                  ) : isPerTruckModel && PER_TRUCK_PRICES_USD[plan.name] !== undefined ? (
+                    <div className="per-truck-price">
+                      <div className="per-truck-price-row">
+                        <span className="price-amount">${PER_TRUCK_PRICES_USD[plan.name]}</span>
+                        <span className="price-period">/вант./міс</span>
+                      </div>
+                      <div className="price-per-truck-total">
+                        = <strong>${PER_TRUCK_PRICES_USD[plan.name] * truckCount}</strong>/міс за {truckCount} вант.
+                      </div>
+                    </div>
+                  ) : plan.is_trial_plan ? (
+                    <div className="plan-price">
+                      <div className="trial-price">
+                        <span className="price-amount">0</span>
+                        <span className="price-period">
+                          грн/{plan.trial_duration_days}д
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="plan-price">
+                      <span className="price-amount">
                           {(formData.billingCycle === "yearly"
                             ? Math.round(plan.yearly_price / 12)
                             : Math.round(plan.monthly_price)
                           ).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")}
                         </span>
                         <span className="price-period">₴/міс</span>
-                      </>
-                    )}
-                  </div>
+                    </div>
+                  )}
                 </div>
 
                 <div className="plan-features">
-                  <div className="plan-truck-limit">
-                    <FaTruck />
-                    <strong>
-                      {plan.truck_limit === -1 ? "Необмежено" : plan.truck_limit}{" "}
-                      вантажівок
-                    </strong>
-                  </div>
+                  {!isPerTruckModel && (
+                    <div className="plan-truck-limit">
+                      <FaTruck />
+                      <strong>
+                        {plan.truck_limit === -1 ? "Необмежено" : plan.truck_limit}{" "}
+                        вантажівок
+                      </strong>
+                    </div>
+                  )}
                   <ul className="plan-features-list">
                     {plan.features.slice(0, 6).map((feature, idx) => (
                       <li key={idx}>

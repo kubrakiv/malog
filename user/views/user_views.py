@@ -132,7 +132,7 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
                         'approval_status': user.client.approval_status,
                         'error_code': 'ACCOUNT_PENDING'
                     })
-                
+
                 # Check if user is inactive but has an approved client
                 if not user.is_active and user.client and user.client.is_approved:
                     raise serializers.ValidationError({

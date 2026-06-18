@@ -59,6 +59,8 @@ echo "Installing Python dependencies..."
 # Build frontend
 echo "Building frontend..."
 cd "$REL/frontend"
+echo "Generating frontend/.env from shared config..."
+grep '^REACT_APP_' "$APP_ROOT/shared/.env.prod" > .env
 npm ci
 npm run build
 cd "$REL"

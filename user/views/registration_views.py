@@ -100,7 +100,7 @@ def register_client(request):
                 client = Client.objects.create(
                     name=client_data['name'],
                     slug=client_data['slug'],
-                    is_active=False,  # Inactive until approved
+                    is_active=False,
                     is_approved=False,
                     approval_status='pending'
                 )

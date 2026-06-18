@@ -202,12 +202,12 @@ def list_pending_clients(request):
     """List all pending client registrations"""
     try:
         clients = Client.objects.filter(approval_status='pending').order_by('-created_at')
-        
+
         client_data = []
         for client in clients:
             admin_user = client.users.filter(is_staff=True).first()
             company = client.company_set.first()
-            
+
             client_data.append({
                 'id': client.id,
                 'name': client.name,
@@ -250,7 +250,7 @@ def approve_client(request, client_id):
                 'success': False,
                 'message': f'Client is already {client.approval_status}'
             }, status=status.HTTP_400_BAD_REQUEST)
-        
+
         with transaction.atomic():
             # Update client status
             client.is_approved = True
@@ -339,13 +339,13 @@ def reject_client(request, client_id):
                 'success': False,
                 'message': f'Client is already {client.approval_status}'
             }, status=status.HTTP_400_BAD_REQUEST)
-        
+
         if not rejection_reason.strip():
             return Response({
                 'success': False,
                 'message': 'Rejection reason is required.'
             }, status=status.HTTP_400_BAD_REQUEST)
-        
+
         with transaction.atomic():
             # Update client status
             client.is_approved = False
