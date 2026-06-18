@@ -260,6 +260,7 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                   <th className="trucks-table__head-th">Номер авто</th>
                   <th className="trucks-table__head-th">Причіп</th>
                   <th className="trucks-table__head-th">Водій</th>
+                  <th className="trucks-table__head-th">Колона</th>
                   <th className="trucks-table__head-th">Рік випуску</th>
                   <th className="trucks-table__head-th">VIN</th>
                   <th className="trucks-table__head-th">GPS ID</th>
@@ -321,6 +322,15 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                           />
                         ) : (
                           truck.driver_details?.full_name
+                        )}
+                      </td>
+                      <td className="trucks-table__body-td">
+                        {truck.current_unit ? (
+                          <span className="trucks-table__unit-badge">
+                            {truck.current_unit.name}
+                          </span>
+                        ) : (
+                          <span className="trucks-table__unit-empty">—</span>
                         )}
                       </td>
                       <td className="trucks-table__body-td">{truck.year}</td>

@@ -23,8 +23,8 @@ from base.serializers import (
 @api_view(["GET"])
 def getDocument(request, pk):
   try:
-    order_file = OrderFile.objects.get(pk=pk)
-    serializer = OrderFileSerializer(order_file, many=False)
+    order_file = OrderFile.objects.get(pk=pk, order__client=request.user.client)
+    serializer = OrderFileSerializer(order_file, many=False, context={'request': request})
     return Response(serializer.data)
   except OrderFile.DoesNotExist:
     return Response({"error": 'Document not found'}, status=status.HTTP_404_NOT_FOUND)
@@ -33,9 +33,9 @@ def getDocument(request, pk):
 @api_view(["GET"])
 def getDocuments(request, pk):
   try:
-    order_files = OrderFile.objects.filter(order_id=pk)
-    serializer = OrderFileSerializer(order_files, many=True)
-    
+    order_files = OrderFile.objects.filter(order_id=pk, order__client=request.user.client)
+    serializer = OrderFileSerializer(order_files, many=True, context={'request': request})
+
     # documents = [{'file_name': order_file.file.name, 'file_type': order_file.file_type.name, 'uploaded_at': order_file.uploaded_at } for order_file in order_files]
     return Response({'documents': serializer.data}, status=status.HTTP_200_OK)
   except OrderFile.DoesNotExist:
@@ -53,8 +53,8 @@ def uploadDocuments(request):
   print("Order_id: ", order_id)
   print("File Type: ", file_type_name)
 
-  order = Order.objects.filter(pk=order_id).first()
-  file_type = FileType.objects.filter(name=file_type_name).first()
+  order = Order.objects.filter(pk=order_id, client=request.user.client).first()
+  file_type = FileType.objects.filter(name=file_type_name, client=request.user.client).first()
 
   if request.method == "POST":
 
@@ -65,7 +65,8 @@ def uploadDocuments(request):
           order_file = OrderFile.objects.create(
             order=order,
             file_type=file_type,
-            file=document
+            file=document,
+            client=request.user.client,
           )
 
       return Response({'message': 'Files uploaded successfully'}, status=status.HTTP_201_CREATED)
@@ -76,7 +77,7 @@ def uploadDocuments(request):
 @api_view(["DELETE"])
 def deleteDocument(request, pk):
   try:
-    order_file = OrderFile.objects.get(pk=pk)
+    order_file = OrderFile.objects.get(pk=pk, order__client=request.user.client)
     order_file.delete()
     return Response({'message': 'Document deleted successfully'}, status=status.HTTP_200_OK)
   except OrderFile.DoesNotExist:

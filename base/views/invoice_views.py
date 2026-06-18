@@ -16,8 +16,8 @@ from user.models import Profile
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def getInvoices(request):
-    invoices = Invoice.objects.all()  # Get the first company or None if no company exists
-    serializer = InvoiceSerializer(invoices, many=True)
+    invoices = Invoice.objects.filter(client=request.user.client)
+    serializer = InvoiceSerializer(invoices, many=True, context={'request': request})
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -25,11 +25,11 @@ def getInvoices(request):
 @permission_classes([IsAuthenticated])
 def getInvoice(request, pk):
     try:
-        invoice = Invoice.objects.get(id=pk)
+        invoice = Invoice.objects.get(id=pk, client=request.user.client)
     except Invoice.DoesNotExist:
         return Response("Invoice does not exist", status=status.HTTP_404_NOT_FOUND)
 
-    serializer = InvoiceSerializer(invoice, many=False)
+    serializer = InvoiceSerializer(invoice, many=False, context={'request': request})
     return Response(serializer.data)
 
 
@@ -44,17 +44,17 @@ def createInvoice(request):
     customer_id = data.get("customer_id")
 
     # Check if an invoice already exists for the given order
-    if Invoice.objects.filter(order_id=order_id).exists():
+    if Invoice.objects.filter(order_id=order_id, client=request.user.client).exists():
         return Response(
             {"error": "Invoice for this order already exists. Use the update endpoint."},
             status=400
         )
-    
+
     user = Profile.objects.get(id=user_id) if user_id else None
-    order = Order.objects.get(id=order_id) if order_id else None
-    company = Company.objects.get(id=company_id) if company_id else None
-    currency = Currency.objects.get(id=currency_id) if currency_id else None
-    customer = Customer.objects.get(id=customer_id) if customer_id else None
+    order = Order.objects.get(id=order_id, client=request.user.client) if order_id else None
+    company = Company.objects.get(id=company_id, client=request.user.client) if company_id else None
+    currency = Currency.objects.get(id=currency_id, client=request.user.client) if currency_id else None
+    customer = Customer.objects.get(id=customer_id, client=request.user.client) if customer_id else None
 
     # Create new invoice
     invoice = Invoice.objects.create(
@@ -79,9 +79,10 @@ def createInvoice(request):
         send_date=data.get("send_date"),
         accepted_date=data.get("accepted_date"),
         user=user,
+        client=request.user.client,
     )
 
-    serializer = InvoiceSerializer(invoice, many=False)
+    serializer = InvoiceSerializer(invoice, many=False, context={'request': request})
     return Response(serializer.data)
 
 
@@ -89,12 +90,12 @@ def createInvoice(request):
 @permission_classes([IsAuthenticated])
 def deleteInvoice(request, pk):
     try:
-        invoice = Invoice.objects.get(id=pk)
+        invoice = Invoice.objects.get(id=pk, client=request.user.client)
     except Invoice.DoesNotExist:
         return Response("Invoice does not exist", status=status.HTTP_404_NOT_FOUND)
 
     # Serialize the invoice before deleting
-    serializer = InvoiceSerializer(invoice, many=False)
+    serializer = InvoiceSerializer(invoice, many=False, context={'request': request})
     invoice.delete()
 
     return Response({"message": "Invoice deleted"})
@@ -104,10 +105,10 @@ def deleteInvoice(request, pk):
 @permission_classes([IsAuthenticated])
 def updateInvoice(request, pk):
     try:
-        invoice = Invoice.objects.get(pk=pk)
+        invoice = Invoice.objects.get(pk=pk, client=request.user.client)
     except Invoice.DoesNotExist:
         return Response({"error": "Invoice not found"}, status=404)
-    
+
     data = request.data
     print("Update Invoice Data: ", data)
 
@@ -117,10 +118,10 @@ def updateInvoice(request, pk):
     currency_id = data.get("currency")
     customer_id = data.get("customer_id")
 
-    company = Company.objects.get(id=company_id) if company_id else invoice.company
-    order = Order.objects.get(id=order_id) if order_id else invoice.order
-    currency = Currency.objects.get(id=currency_id) if currency_id else invoice.currency
-    customer = Customer.objects.get(id=customer_id) if customer_id else invoice.customer
+    company = Company.objects.get(id=company_id, client=request.user.client) if company_id else invoice.company
+    order = Order.objects.get(id=order_id, client=request.user.client) if order_id else invoice.order
+    currency = Currency.objects.get(id=currency_id, client=request.user.client) if currency_id else invoice.currency
+    customer = Customer.objects.get(id=customer_id, client=request.user.client) if customer_id else invoice.customer
 
     # Update fields
     invoice.service_name = data.get("service_name", invoice.service_name)
@@ -148,7 +149,7 @@ def updateInvoice(request, pk):
     invoice.save()
 
     # Serialize and return updated data
-    serializer = InvoiceSerializer(invoice)
+    serializer = InvoiceSerializer(invoice, context={'request': request})
     return Response(serializer.data)
 
 
@@ -156,7 +157,7 @@ def updateInvoice(request, pk):
 @permission_classes([IsAuthenticated])
 def updateInvoiceDueDate(request, pk):
     try:
-        invoice = Invoice.objects.get(pk=pk)
+        invoice = Invoice.objects.get(pk=pk, client=request.user.client)
     except Invoice.DoesNotExist:
         return Response({"error": "Invoice not found"}, status=404)
     
@@ -164,6 +165,6 @@ def updateInvoiceDueDate(request, pk):
     invoice.payment_date = data.get("payment_date", invoice.payment_date)
     invoice.save()
 
-    serializer = InvoiceSerializer(invoice)
+    serializer = InvoiceSerializer(invoice, context={'request': request})
     return Response(serializer.data)
 

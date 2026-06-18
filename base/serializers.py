@@ -24,6 +24,8 @@ from .models import (
     Invoice,
     OrderStatusHistory,
     FuelPrice,
+    TruckUnit,
+    TruckUnitAssignment,
 )
 from user.models import (
     DriverProfile
@@ -77,13 +79,34 @@ class TrailerSerializer(serializers.ModelSerializer):
         return truck.plates if truck else None
     
 
+class TruckUnitSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TruckUnit
+        fields = ["id", "name"]
+
+
+class TruckUnitAssignmentSerializer(serializers.ModelSerializer):
+    unit_name = serializers.CharField(source="unit.name", read_only=True)
+
+    class Meta:
+        model = TruckUnitAssignment
+        fields = ["id", "truck", "unit", "unit_name", "start_date", "end_date", "is_active"]
+
+
 class TruckSerializer(serializers.ModelSerializer):
     trailer = serializers.CharField(
         source="trailer.plates", required=False, allow_null=True
     )
-    # driver = serializers.CharField()
     driver_details = DriverProfileSerializer(source="driver", many=False, read_only=True)
     trailer_details = TrailerSerializer(source="trailer", many=False, read_only=True)
+    current_unit = serializers.SerializerMethodField()
+
+    def get_current_unit(self, obj):
+        assignment = obj.unit_assignments.filter(is_active=True).first()
+        if assignment:
+            return {"id": assignment.unit.id, "name": assignment.unit.name}
+        return None
+
     class Meta:
         model = Truck
         fields = [
@@ -106,6 +129,7 @@ class TruckSerializer(serializers.ModelSerializer):
             "driver_details",
             "trailer_details",
             "sovtes_id",
+            "current_unit",
         ]
 
     
@@ -196,6 +220,13 @@ class PointSerializer(serializers.ModelSerializer):
             "created_at",
         ]
 
+    def _get_client(self):
+        """Helper method to get client from request context"""
+        try:
+            return self.context['request'].user.client
+        except (KeyError, AttributeError):
+            return None
+
     def update(self, instance, validated_data):
         print("Validated Data:")
         print(validated_data)
@@ -220,19 +251,22 @@ class PointSerializer(serializers.ModelSerializer):
 
         if customer_data:
             customer_instance, _ = Customer.objects.get_or_create(
-                name=customer_data["name"]
+                name=customer_data["name"],
+                defaults={'client': self._get_client()}
             )
             instance.customer = customer_instance
 
         if country_data:
             country_instance, _ = Country.objects.get_or_create(
-                name=country_data["name"]
+                name=country_data["name"],
+                defaults={'client': self._get_client()}
             )
             instance.country = country_instance
 
         if company_data:
             company_instance, _ = PointCompany.objects.get_or_create(
-                name=company_data["name"]
+                name=company_data["name"],
+                defaults={'client': self._get_client()}
             )
             instance.company_name = company_instance
 
@@ -308,6 +342,13 @@ class TaskSerializer(serializers.ModelSerializer):
             "point_details",
         ]
 
+    def _get_client(self):
+        """Helper method to get client from request context"""
+        try:
+            return self.context['request'].user.client
+        except (KeyError, AttributeError):
+            return None
+
     def create(self, validated_data):
         print("Validated Data:", validated_data)
 
@@ -321,17 +362,26 @@ class TaskSerializer(serializers.ModelSerializer):
 
         # Creating or getting instances for foreign keys
         driver_instance = (
-            DriverProfile.objects.get_or_create(full_name=driver_data["full_name"])[0]
+            DriverProfile.objects.get_or_create(
+                full_name=driver_data["full_name"],
+                defaults={'client': self._get_client()}
+            )[0]
             if driver_data
             else None
         )
         truck_instance = (
-            Truck.objects.get_or_create(plates=truck_data["plates"])[0]
+            Truck.objects.get_or_create(
+                plates=truck_data["plates"],
+                defaults={'client': self._get_client()}
+            )[0]
             if truck_data
             else None
         )
         type_instance = (
-            TaskType.objects.get_or_create(name=type_data["name"])[0]
+            TaskType.objects.get_or_create(
+                name=type_data["name"],
+                defaults={'client': self._get_client()}
+            )[0]
             if type_data
             else None
         )
@@ -370,16 +420,23 @@ class TaskSerializer(serializers.ModelSerializer):
 
         if driver_data:
             driver_instance, _ = DriverProfile.objects.get_or_create(
-                full_name=driver_data["full_name"]
+                full_name=driver_data["full_name"],
+                defaults={'client': self._get_client()}
             )
             instance.driver = driver_instance
 
         if truck_data:
-            truck_instance, _ = Truck.objects.get_or_create(plates=truck_data["plates"])
+            truck_instance, _ = Truck.objects.get_or_create(
+                plates=truck_data["plates"],
+                defaults={'client': self._get_client()}
+            )
             instance.truck = truck_instance
 
         if type_data:
-            type_instance, _ = TaskType.objects.get_or_create(name=type_data["name"])
+            type_instance, _ = TaskType.objects.get_or_create(
+                name=type_data["name"],
+                defaults={'client': self._get_client()}
+            )
             instance.type = type_instance
 
         if order_data:
@@ -480,7 +537,7 @@ class OrderSerializer(serializers.ModelSerializer):
     customer_manager = serializers.CharField(
         source="customer_manager.full_name", required=False, allow_null=True
     )
-    
+
 
     loading_address = serializers.SerializerMethodField()
     unloading_address = serializers.SerializerMethodField()
@@ -548,6 +605,13 @@ class OrderSerializer(serializers.ModelSerializer):
             "notice",
             "created_at",
         ]
+
+    def _get_client(self):
+        """Helper method to get client from request context"""
+        try:
+            return self.context['request'].user.client
+        except (KeyError, AttributeError):
+            return None
 
     def get_current_status(self, obj):
         # Filter for the active status
@@ -680,14 +744,16 @@ class OrderSerializer(serializers.ModelSerializer):
 
         if driver_data:
             driver_instance, _ = DriverProfile.objects.get_or_create(
-                full_name=driver_data["full_name"]
+                full_name=driver_data["full_name"],
+                defaults={'client': self._get_client()}
             )
             instance.driver = driver_instance
 
         if truck_data is not None:
             try:
                 truck_instance, _ = Truck.objects.get_or_create(
-                    plates=truck_data["plates"]
+                    plates=truck_data["plates"],
+                    defaults={'client': self._get_client()}
                 )
                 if truck_instance is not None:
                     instance.truck = truck_instance
@@ -697,31 +763,36 @@ class OrderSerializer(serializers.ModelSerializer):
 
         if customer_data:
             customer_instance, _ = Customer.objects.get_or_create(
-                name=customer_data["name"]
+                name=customer_data["name"],
+                defaults={'client': self._get_client()}
             )
             instance.customer = customer_instance
 
         if customer_manager_data:
             customer_manager_instance, _ = CustomerManager.objects.get_or_create(
-                full_name=customer_manager_data["full_name"]
+                full_name=customer_manager_data["full_name"],
+                defaults={'client': self._get_client()}
             )
             instance.customer_manager = customer_manager_instance
-        
+
         if platform_data:
             platform_instance, _ = Platform.objects.get_or_create(
-                name=platform_data["name"]
+                name=platform_data["name"],
+                defaults={'client': self._get_client()}
             )
             instance.platform = platform_instance
-        
+
         if payment_type_data:
             payment_type_instance, _ = PaymentType.objects.get_or_create(
-                name=payment_type_data["name"]
+                name=payment_type_data["name"],
+                defaults={'client': self._get_client()}
             )
             instance.payment_type = payment_type_instance
 
         if currency_data:
             currency_instance, _ = Currency.objects.get_or_create(
-                short_name=currency_data["short_name"]
+                short_name=currency_data["short_name"],
+                defaults={'client': self._get_client()}
             )
             instance.currency = currency_instance
 

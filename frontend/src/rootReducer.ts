@@ -33,6 +33,7 @@ import pointCompanyReducer from "./features/pointCompanies/pointCompanySlice";
 import sovtesReducer from "./features/orderImport/orderImportSlice";
 import sovtesTendersReducer from "./features/sovtesTenders/sovtesTendersSlices";
 import sovtesFleetReducer from "./features/sovtesFleet/sovtesFleetSlice";
+import truckUnitsReducer from "./features/truckUnits/truckUnitsSlice";
 import {
   pendingClientsReducer,
   approveClientReducer,
@@ -70,6 +71,7 @@ const rootReducer = combineReducers({
   sovtesInfo: sovtesReducer,
   sovtesTendersInfo: sovtesTendersReducer,
   sovtesFleetInfo: sovtesFleetReducer,
+  truckUnitsInfo: truckUnitsReducer,
   pendingClients: pendingClientsReducer,
   approveClient: approveClientReducer,
   rejectClient: rejectClientReducer,

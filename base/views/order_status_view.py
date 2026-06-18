@@ -9,13 +9,13 @@ from base.serializers import OrderStatusHistorySerializer
 def updateOrderStatus(request, order_id):
     print("Order Status Data: ", request.data)
     try:
-        order = Order.objects.get(pk=order_id)
+        order = Order.objects.get(pk=order_id, client=request.user.client)
         new_status_id = request.data.get("status_id")
 
         if not new_status_id:
             return Response({"error": "Status ID is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        new_status = OrderStatus.objects.get(pk=new_status_id)
+        new_status = OrderStatus.objects.get(pk=new_status_id, client=request.user.client)
 
         # Debugging
         print(f"Old Status: {order.current_status}")
@@ -38,14 +38,14 @@ def getOrderStatusHistory(request, order_id):
     """
     try:
         # Fetch the order's status history
-        history = OrderStatusHistory.objects.filter(order_id=order_id).order_by("-started_at")
+        history = OrderStatusHistory.objects.filter(order_id=order_id, order__client=request.user.client).order_by("-started_at")
         if not history.exists():
             return Response(
                 {"message": "No status history found for this order."},
                 status=status.HTTP_404_NOT_FOUND,
             )
          # Serialize the status history
-        serializer = OrderStatusHistorySerializer(history, many=True)
+        serializer = OrderStatusHistorySerializer(history, many=True, context={'request': request})
         return Response(serializer.data)
     
     except Order.DoesNotExist:

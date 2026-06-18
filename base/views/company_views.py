@@ -13,9 +13,9 @@ from base.serializers import CompanySerializer
 
 @api_view(["GET"])
 def getCompany(request):
-    company = Company.objects.first()  # Get the first company or None if no company exists
+    company = Company.objects.filter(client=request.user.client).first()
     if company:
-        serializer = CompanySerializer(company, many=False)
+        serializer = CompanySerializer(company, many=False, context={'request': request})
         return Response(serializer.data, status=status.HTTP_200_OK)
     else:
         return Response(

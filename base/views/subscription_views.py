@@ -20,7 +20,7 @@ from base.models import Truck, Client
 def get_subscription_plans(request):
     """Get all available subscription plans"""
     plans = SubscriptionPlan.objects.filter(is_active=True)
-    serializer = SubscriptionPlanSerializer(plans, many=True)
+    serializer = SubscriptionPlanSerializer(plans, many=True, context={'request': request})
     return Response(serializer.data)
 
 
@@ -31,8 +31,8 @@ def get_client_subscription(request):
     try:
         client = request.user.client
         subscription = ClientSubscription.objects.get(client=client, status='active')
-        serializer = ClientSubscriptionSerializer(subscription)
-        
+        serializer = ClientSubscriptionSerializer(subscription, context={'request': request})
+
         # Add current usage data
         current_truck_count = Truck.objects.filter(client=client).count()
         
@@ -89,8 +89,8 @@ def create_subscription(request):
             end_date=end_date,
             status='active'
         )
-        
-        serializer = ClientSubscriptionSerializer(subscription)
+
+        serializer = ClientSubscriptionSerializer(subscription, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
         
     except Exception as e:
@@ -125,8 +125,8 @@ def upgrade_subscription(request):
         # Update the subscription
         current_subscription.plan = new_plan
         current_subscription.save()
-        
-        serializer = ClientSubscriptionSerializer(current_subscription)
+
+        serializer = ClientSubscriptionSerializer(current_subscription, context={'request': request})
         return Response(serializer.data)
         
     except ClientSubscription.DoesNotExist:
@@ -152,8 +152,8 @@ def cancel_subscription(request):
         subscription.status = 'cancelled'
         subscription.auto_renew = False
         subscription.save()
-        
-        serializer = ClientSubscriptionSerializer(subscription)
+
+        serializer = ClientSubscriptionSerializer(subscription, context={'request': request})
         return Response(serializer.data)
         
     except ClientSubscription.DoesNotExist:
@@ -253,7 +253,7 @@ def change_subscription_plan(request):
             if existing_request:
                 return Response({
                     'error': 'You already have a pending plan change request',
-                    'existing_request': SubscriptionPlanChangeRequestSerializer(existing_request).data
+                    'existing_request': SubscriptionPlanChangeRequestSerializer(existing_request, context={'request': request}).data
                 }, status=status.HTTP_400_BAD_REQUEST)
             
             # Create the plan change request
@@ -265,8 +265,8 @@ def change_subscription_plan(request):
                 reason=reason,
                 requested_by=request.user
             )
-            
-            serializer = SubscriptionPlanChangeRequestSerializer(change_request)
+
+            serializer = SubscriptionPlanChangeRequestSerializer(change_request, context={'request': request})
             return Response({
                 'message': 'Plan change request submitted successfully. It will be reviewed by an administrator.',
                 'request': serializer.data
@@ -298,7 +298,7 @@ def get_plan_change_requests(request):
     
     status_filter = request.GET.get('status', 'pending')
     requests = SubscriptionPlanChangeRequest.objects.filter(status=status_filter)
-    serializer = SubscriptionPlanChangeRequestSerializer(requests, many=True)
+    serializer = SubscriptionPlanChangeRequestSerializer(requests, many=True, context={'request': request})
     return Response(serializer.data)
 
 
@@ -324,8 +324,8 @@ def approve_plan_change_request(request, request_id):
         
         # Approve the request (this will update the subscription)
         change_request.approve(request.user, admin_notes)
-        
-        serializer = SubscriptionPlanChangeRequestSerializer(change_request)
+
+        serializer = SubscriptionPlanChangeRequestSerializer(change_request, context={'request': request})
         return Response({
             'message': 'Plan change request approved successfully',
             'request': serializer.data
@@ -360,8 +360,8 @@ def reject_plan_change_request(request, request_id):
         
         # Reject the request
         change_request.reject(request.user, admin_notes)
-        
-        serializer = SubscriptionPlanChangeRequestSerializer(change_request)
+
+        serializer = SubscriptionPlanChangeRequestSerializer(change_request, context={'request': request})
         return Response({
             'message': 'Plan change request rejected',
             'request': serializer.data
@@ -381,7 +381,7 @@ def get_my_plan_change_requests(request):
     try:
         client = request.user.client
         requests = SubscriptionPlanChangeRequest.objects.filter(client=client)
-        serializer = SubscriptionPlanChangeRequestSerializer(requests, many=True)
+        serializer = SubscriptionPlanChangeRequestSerializer(requests, many=True, context={'request': request})
         return Response(serializer.data)
         
     except Exception as e:
@@ -406,12 +406,12 @@ def admin_subscription_plans(request):
     if request.method == 'GET':
         # Get all plans including inactive ones for admin
         plans = SubscriptionPlan.objects.all().order_by('name')
-        serializer = SubscriptionPlanSerializer(plans, many=True)
+        serializer = SubscriptionPlanSerializer(plans, many=True, context={'request': request})
         return Response(serializer.data)
     
     elif request.method == 'POST':
         # Create new subscription plan
-        serializer = SubscriptionPlanSerializer(data=request.data)
+        serializer = SubscriptionPlanSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -438,12 +438,12 @@ def admin_subscription_plan_detail(request, plan_id):
         )
     
     if request.method == 'GET':
-        serializer = SubscriptionPlanSerializer(plan)
+        serializer = SubscriptionPlanSerializer(plan, context={'request': request})
         return Response(serializer.data)
-    
+
     elif request.method in ['PUT', 'PATCH']:
         partial = request.method == 'PATCH'
-        serializer = SubscriptionPlanSerializer(plan, data=request.data, partial=partial)
+        serializer = SubscriptionPlanSerializer(plan, data=request.data, partial=partial, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -492,7 +492,7 @@ def admin_client_subscriptions(request):
         # Serialize data with additional client information
         subscriptions_data = []
         for subscription in queryset:
-            serializer = ClientSubscriptionSerializer(subscription)
+            serializer = ClientSubscriptionSerializer(subscription, context={'request': request})
             subscription_data = serializer.data
             
             # Add client name for easier display
@@ -529,17 +529,17 @@ def admin_client_subscription_detail(request, subscription_id):
         )
     
     if request.method == 'GET':
-        serializer = ClientSubscriptionSerializer(subscription)
+        serializer = ClientSubscriptionSerializer(subscription, context={'request': request})
         subscription_data = serializer.data
         subscription_data['client_name'] = subscription.client.name if subscription.client else 'Unknown Client'
         return Response(subscription_data)
-    
+
     elif request.method == 'PATCH':
         # Allow updating specific fields like status
         allowed_fields = ['status', 'end_date', 'billing_cycle']
         update_data = {k: v for k, v in request.data.items() if k in allowed_fields}
-        
-        serializer = ClientSubscriptionSerializer(subscription, data=update_data, partial=True)
+
+        serializer = ClientSubscriptionSerializer(subscription, data=update_data, partial=True, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             response_data = serializer.data
@@ -564,7 +564,7 @@ def get_subscription_history(request):
     try:
         client = request.user.client
         subscriptions = ClientSubscription.objects.filter(client=client).order_by('-created_at')
-        serializer = ClientSubscriptionSerializer(subscriptions, many=True)
+        serializer = ClientSubscriptionSerializer(subscriptions, many=True, context={'request': request})
         return Response(serializer.data)
     except Exception as e:
         return Response(
@@ -625,8 +625,8 @@ def start_trial(request):
             status='trial',
             auto_renew=False  # Trials don't auto-renew
         )
-        
-        serializer = ClientSubscriptionSerializer(subscription)
+
+        serializer = ClientSubscriptionSerializer(subscription, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
         
     except Exception as e:
@@ -689,8 +689,8 @@ def convert_trial_to_paid(request):
             auto_renew=True,
             next_billing_date=end_date
         )
-        
-        serializer = ClientSubscriptionSerializer(paid_subscription)
+
+        serializer = ClientSubscriptionSerializer(paid_subscription, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
         
     except Exception as e:
@@ -732,8 +732,8 @@ def extend_trial(request):
         
         # Extend trial
         trial_subscription.extend_trial(additional_days)
-        
-        serializer = ClientSubscriptionSerializer(trial_subscription)
+
+        serializer = ClientSubscriptionSerializer(trial_subscription, context={'request': request})
         return Response({
             'message': f'Trial extended by {additional_days} days',
             'subscription': serializer.data
@@ -774,7 +774,7 @@ def get_trial_status(request):
             'is_active': trial_subscription.is_trial_active,
             'days_remaining': trial_subscription.trial_days_remaining,
             'trial_end_date': trial_subscription.trial_end_date,
-            'plan': SubscriptionPlanSerializer(trial_subscription.plan).data,
+            'plan': SubscriptionPlanSerializer(trial_subscription.plan, context={'request': request}).data,
             'current_usage': {
                 'truck_count': current_truck_count,
                 'truck_limit': trial_subscription.plan.truck_limit,

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import cn from "classnames";
-import { FaLink, FaSync, FaSearch, FaTimes } from "react-icons/fa";
+import { FaLink, FaSync, FaSearch, FaTimes, FaLayerGroup, FaChevronDown, FaHistory } from "react-icons/fa";
 
 import {
   createTruck,
@@ -21,6 +21,11 @@ import {
   linkSovtesTruck,
 } from "../../../features/sovtesFleet/sovtesFleetOperations";
 import { listTrucks } from "../../../features/trucks/trucksOperations";
+import {
+  listTruckUnits,
+  assignTruckUnit,
+  getTruckUnitHistory,
+} from "../../../features/truckUnits/truckUnitsOperations";
 
 import { TRUCK_CONSTANTS } from "../../../constants/global";
 import { formFields } from "./truckFormFields.jsx";
@@ -270,6 +275,149 @@ const SovtesSection = ({ truck, onResyncSuccess }) => {
   );
 };
 
+// ─── Unit (Колона) section ────────────────────────────────────────────────────
+
+const UnitSection = ({ truck, onUnitChange }) => {
+  const dispatch = useDispatch();
+  const units = useSelector((s) => s.truckUnitsInfo?.units || []);
+  const assigning = useSelector((s) => s.truckUnitsInfo?.assigning || false);
+  const history = useSelector((s) => s.truckUnitsInfo?.history?.[truck.id] || []);
+
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [selectedUnitId, setSelectedUnitId] = useState(truck.current_unit?.id ?? null);
+
+  useEffect(() => {
+    if (!units.length) dispatch(listTruckUnits());
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    setSelectedUnitId(truck.current_unit?.id ?? null);
+  }, [truck.id, truck.current_unit?.id]);
+
+  const handleSave = async () => {
+    const result = await dispatch(assignTruckUnit({ truck_id: truck.id, unit_id: selectedUnitId }));
+    if (assignTruckUnit.fulfilled.match(result)) {
+      dispatch(listTrucks());
+      onUnitChange(selectedUnitId
+        ? units.find((u) => u.id === selectedUnitId) || null
+        : null
+      );
+      setPickerOpen(false);
+    }
+  };
+
+  const handleOpenHistory = () => {
+    dispatch(getTruckUnitHistory(truck.id));
+    setHistoryOpen((v) => !v);
+  };
+
+  const formatDate = (iso) => {
+    if (!iso) return "—";
+    return new Date(iso).toLocaleDateString("uk-UA", { day: "2-digit", month: "2-digit", year: "numeric" });
+  };
+
+  const currentUnit = units.find((u) => u.id === truck.current_unit?.id);
+  const isDirty = selectedUnitId !== (truck.current_unit?.id ?? null);
+
+  return (
+    <div className="truck-unit-section">
+      <div className="truck-unit-section__row">
+        <span className="truck-unit-section__label">
+          <FaLayerGroup className="truck-unit-section__label-icon" />
+          Колона
+        </span>
+
+        {!pickerOpen ? (
+          <div className="truck-unit-section__current">
+            {currentUnit ? (
+              <span className="truck-unit-section__unit-badge">{currentUnit.name}</span>
+            ) : (
+              <span className="truck-unit-section__unit-empty">не призначено</span>
+            )}
+            <button
+              type="button"
+              className="truck-unit-section__change-btn"
+              onClick={() => setPickerOpen(true)}
+            >
+              <FaChevronDown />
+              Змінити
+            </button>
+            <button
+              type="button"
+              className="truck-unit-section__history-btn"
+              onClick={handleOpenHistory}
+              title="Історія переміщень"
+            >
+              <FaHistory />
+            </button>
+          </div>
+        ) : (
+          <div className="truck-unit-section__picker">
+            <select
+              className="truck-unit-section__select"
+              value={selectedUnitId ?? ""}
+              onChange={(e) => setSelectedUnitId(e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">— без колони —</option>
+              {units.map((u) => (
+                <option key={u.id} value={u.id}>{u.name}</option>
+              ))}
+            </select>
+            <div className="truck-unit-section__picker-actions">
+              <button
+                type="button"
+                className="truck-unit-section__picker-cancel"
+                onClick={() => { setPickerOpen(false); setSelectedUnitId(truck.current_unit?.id ?? null); }}
+              >
+                Скасувати
+              </button>
+              <button
+                type="button"
+                className="truck-unit-section__picker-save"
+                onClick={handleSave}
+                disabled={!isDirty || assigning}
+              >
+                {assigning ? <FaSync className="truck-unit-section__spinner" /> : null}
+                {assigning ? "Збереження…" : "Зберегти"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {historyOpen && (
+        <div className="truck-unit-section__history">
+          {history.length === 0 ? (
+            <p className="truck-unit-section__history-empty">Немає записів про переміщення</p>
+          ) : (
+            <table className="truck-unit-section__history-table">
+              <thead>
+                <tr>
+                  <th>Колона</th>
+                  <th>Початок</th>
+                  <th>Кінець</th>
+                </tr>
+              </thead>
+              <tbody>
+                {history.map((h) => (
+                  <tr key={h.id} className={h.is_active ? "truck-unit-section__history-row--active" : ""}>
+                    <td>{h.unit_name}</td>
+                    <td>{formatDate(h.start_date)}</td>
+                    <td>{h.is_active ? <span className="truck-unit-section__history-now">зараз</span> : formatDate(h.end_date)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ─── Main component ───────────────────────────────────────────────────────────
+
 const ManageTruckComponent = ({
   onCloseModal,
   onEditMode,
@@ -398,6 +546,16 @@ const ManageTruckComponent = ({
                     truck={truckFields}
                     onResyncSuccess={(updated) =>
                       setTruckFields((prev) => ({ ...prev, ...updated }))
+                    }
+                  />
+                )}
+
+                {/* Колона (unit) assignment */}
+                {initialTruckData && (
+                  <UnitSection
+                    truck={truckFields}
+                    onUnitChange={(unit) =>
+                      setTruckFields((prev) => ({ ...prev, current_unit: unit }))
                     }
                   />
                 )}

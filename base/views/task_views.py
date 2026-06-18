@@ -45,23 +45,23 @@ def getTasks(request):
             print("week_range", week_range)
             start_date = week_range.monday()
             end_date = week_range.sunday()
-            tasks = Task.objects.filter(start_date__range=[start_date, end_date])
+            tasks = Task.objects.filter(start_date__range=[start_date, end_date], client=request.user.client)
         except ValueError:
             return Response({"error": "Invalid year or week"}, status=400)
     else:
-        tasks = Task.objects.all()
+        tasks = Task.objects.filter(client=request.user.client)
     
     print("tasks", tasks)
     print("========================")
 
-    serializer = TaskSerializer(tasks, many=True)
+    serializer = TaskSerializer(tasks, many=True, context={'request': request})
     return Response(serializer.data)
 
 
 @api_view(["GET"])
 def getTask(request, pk):
-    task = Task.objects.get(id=pk)
-    serializer = TaskSerializer(task, many=False)
+    task = Task.objects.get(id=pk, client=request.user.client)
+    serializer = TaskSerializer(task, many=False, context={'request': request})
     return Response(serializer.data)
 
 
@@ -92,11 +92,11 @@ def createTask(request):
         if end_date == "":
             end_date = None
 
-        driver = DriverProfile.objects.filter(full_name=driver_name).first()
-        truck = Truck.objects.filter(plates=truck_plate).first()
-        task_type = TaskType.objects.filter(name=task_type_name).first()
-        order = Order.objects.filter(number=order_number).first()
-        point = Point.objects.filter(id=data.get("point_details", {}).get("id")).first()
+        driver = DriverProfile.objects.filter(full_name=driver_name, client=request.user.client).first()
+        truck = Truck.objects.filter(plates=truck_plate, client=request.user.client).first()
+        task_type = TaskType.objects.filter(name=task_type_name, client=request.user.client).first()
+        order = Order.objects.filter(number=order_number, client=request.user.client).first()
+        point = Point.objects.filter(id=data.get("point_details", {}).get("id"), client=request.user.client).first()
 
         task = Task.objects.create(
             title=data.get("title"),
@@ -109,8 +109,9 @@ def createTask(request):
             type=task_type,
             order=order,
             point=point,
+            client=request.user.client,
         )
-        serializer = TaskSerializer(task, many=False)
+        serializer = TaskSerializer(task, many=False, context={'request': request})
         return Response(serializer.data)
     except Exception as e:
         print(f"Error in createTask: {str(e)}")
@@ -119,7 +120,7 @@ def createTask(request):
 
 @api_view(["PUT"])
 def editTask(request, pk):
-    task = Task.objects.get(id=pk)
+    task = Task.objects.get(id=pk, client=request.user.client)
     print(task)
     # Convert empty strings to None for 'end_date' and 'end_time'
     data = request.data.copy()
@@ -134,7 +135,7 @@ def editTask(request, pk):
 
 
 
-    serializer = TaskSerializer(instance=task, data=data, partial=True)
+    serializer = TaskSerializer(instance=task, data=data, partial=True, context={'request': request})
     if serializer.is_valid():
         serializer.save()
     else: 
@@ -147,11 +148,11 @@ def editTask(request, pk):
 @api_view(["DELETE"])
 def deleteTask(request, pk):
     try:
-        task = Task.objects.get(id=pk)
+        task = Task.objects.get(id=pk, client=request.user.client)
     except Task.DoesNotExist:
         return Response({"error": "Task not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = TaskSerializer(task, many=False)
+    serializer = TaskSerializer(task, many=False, context={'request': request})
     task.delete()
 
     return Response({"message": "Task deleted successfully", "data": serializer.data})

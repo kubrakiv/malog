@@ -12,7 +12,7 @@ from base.serializers import CountriesSerializer
 
 @api_view(["GET"])
 def getCountries(request):
-    countries = Country.objects.all()
-    serializer = CountriesSerializer(countries, many=True)
+    countries = Country.objects.filter(client=request.user.client)
+    serializer = CountriesSerializer(countries, many=True, context={'request': request})
     return Response(serializer.data)
     

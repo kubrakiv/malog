@@ -16,6 +16,6 @@ from base.serializers import FileTypeSerializer
 
 @api_view(["GET"])
 def getFileTypes(request):
-    file_types = FileType.objects.all()
-    serializer = FileTypeSerializer(file_types, many=True)
+    file_types = FileType.objects.filter(client=request.user.client)
+    serializer = FileTypeSerializer(file_types, many=True, context={'request': request})
     return Response(serializer.data)

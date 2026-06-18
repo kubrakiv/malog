@@ -17,8 +17,8 @@ from base.subscription_models import ClientSubscription
 
 @api_view(["GET"])
 def getTrucks(request):
-    trucks = Truck.objects.all()
-    serializer = TruckSerializer(trucks, many=True)
+    trucks = Truck.objects.filter(client=request.user.client)
+    serializer = TruckSerializer(trucks, many=True, context={'request': request})
     return Response(serializer.data)
 
 
@@ -77,7 +77,7 @@ def createTruck(request):
         gps_id=data.get("gps_id"),
         client=client,  # Add the client from request.user.client
     )
-    serializer = TruckSerializer(truck, many=False)
+    serializer = TruckSerializer(truck, many=False, context={'request': request})
     return Response(serializer.data)
 
 
@@ -107,7 +107,7 @@ def updateTruckTrailerAndDriver(request, pk):
     print("TRUCK DATA", data)
     try:
         # Get the truck instance
-        truck = Truck.objects.get(id=pk)
+        truck = Truck.objects.get(id=pk, client=request.user.client)
     except Truck.DoesNotExist:
         return Response({"error": "Truck not found"}, status=404)
 
@@ -115,7 +115,7 @@ def updateTruckTrailerAndDriver(request, pk):
     trailer_plates = data.get("trailer")
     if trailer_plates:
         try:
-            trailer = Trailer.objects.get(plates=trailer_plates)
+            trailer = Trailer.objects.get(plates=trailer_plates, client=request.user.client)
             truck.trailer = trailer
         except Trailer.DoesNotExist:
             return Response({"error": "Trailer not found"}, status=404)
@@ -126,7 +126,7 @@ def updateTruckTrailerAndDriver(request, pk):
     driver_name = data.get("driver")
     if driver_name:
         try:
-            driver = DriverProfile.objects.get(full_name=driver_name)
+            driver = DriverProfile.objects.get(full_name=driver_name, client=request.user.client)
             truck.driver = driver
         except DriverProfile.DoesNotExist:
             return Response({"error": "Driver not found"}, status=404)
@@ -137,14 +137,14 @@ def updateTruckTrailerAndDriver(request, pk):
     truck.save()
 
     # Serialize the updated truck data and return it
-    serializer = TruckSerializer(instance=truck, partial=True)
+    serializer = TruckSerializer(instance=truck, partial=True, context={'request': request})
     return Response(serializer.data)
 
 @api_view(["PUT"])
 def updateTruck(request, pk):
     print("UPDATE TRUCK DATA", request.data)
     try:
-        truck = Truck.objects.get(id=pk)
+        truck = Truck.objects.get(id=pk, client=request.user.client)
     except Truck.DoesNotExist:
         return Response({"error": "Truck not found"}, status=404)
 
@@ -176,7 +176,7 @@ def updateTruck(request, pk):
     truck.tire_cost_per_km = data.get("tire_cost_per_km")
 
     truck.save()
-    serializer = TruckSerializer(instance=truck, partial=True)
+    serializer = TruckSerializer(instance=truck, partial=True, context={'request': request})
     return Response(serializer.data)
 
     

@@ -308,3 +308,19 @@
     }
   }
 }
+
+.trucks-table__unit-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  background: rgba($sidebarcolor, 0.1);
+  color: $sidebarcolor;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.trucks-table__unit-empty {
+  color: #b0bec5;
+}

@@ -21,15 +21,15 @@ from base.serializers import PointSerializer
 
 @api_view(["GET"])
 def getPoints(request):
-    points = Point.objects.all()
-    serializer = PointSerializer(points, many=True)
+    points = Point.objects.filter(client=request.user.client)
+    serializer = PointSerializer(points, many=True, context={'request': request})
     return Response(serializer.data)
 
 
 @api_view(["GET"])
 def getPoint(request, pk):
-    point = Point.objects.get(id=pk)
-    serializer = PointSerializer(point, many=False)
+    point = Point.objects.get(id=pk, client=request.user.client)
+    serializer = PointSerializer(point, many=False, context={'request': request})
     return Response(serializer.data)
 
 
@@ -42,8 +42,8 @@ def createPoint(request):
     customer_name = data.get("customer")
 
     country = Country.objects.filter(name=country_name).first()
-    company, created = PointCompany.objects.get_or_create(name=company_name)
-    customer = Customer.objects.filter(name=customer_name).first()
+    company, created = PointCompany.objects.get_or_create(name=company_name, client=request.user.client)
+    customer = Customer.objects.filter(name=customer_name, client=request.user.client).first()
 
     point = Point.objects.create(
         country=country,
@@ -55,14 +55,15 @@ def createPoint(request):
         gps_longitude=data.get("gps_longitude"),
         company_name=company,
         customer=customer,
+        client=request.user.client,
     )
-    serializer = PointSerializer(point, many=False)
+    serializer = PointSerializer(point, many=False, context={'request': request})
     return Response(serializer.data)
 
 
 @api_view(["PUT"])
 def editPoint(request, pk):
-    point = get_object_or_404(Point, id=pk)
+    point = get_object_or_404(Point, id=pk, client=request.user.client)
     data = request.data
 
     # Extract country from request data
@@ -77,8 +78,8 @@ def editPoint(request, pk):
     # Debugging: print the updated data before passing to serializer
     print("Updated Request Data: ", data)
 
-    serializer = PointSerializer(instance=point, data=data, partial=True)
-    
+    serializer = PointSerializer(instance=point, data=data, partial=True, context={'request': request})
+
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)
@@ -91,11 +92,11 @@ def editPoint(request, pk):
 @api_view(["DELETE"])
 def deletePoint(request, pk):
     try:
-        point = Point.objects.get(id=pk)
+        point = Point.objects.get(id=pk, client=request.user.client)
     except Point.DoesNotExist:
         return Response({"error": "Point not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = PointSerializer(point, many=False)
+    serializer = PointSerializer(point, many=False, context={'request': request})
     point.delete()
 
     return Response({"message": "Point deleted successfully", "data": serializer.data})

@@ -163,7 +163,7 @@ def syncSovtesTruck(request):
             year=_int_year(sovtes_data.get("year_of_manufact") or sovtes_data.get("year")),
         )
 
-        serializer = TruckSerializer(truck)
+        serializer = TruckSerializer(truck, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     except Exception as e:
@@ -182,14 +182,14 @@ def resyncSovtesTruck(request):
             return Response({"error": "Sovtes truck ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            truck = Truck.objects.get(sovtes_id=sovtes_id)
+            truck = Truck.objects.get(sovtes_id=sovtes_id, client=request.user.client)
         except Truck.DoesNotExist:
             return Response({"error": "Synced truck not found"}, status=status.HTTP_404_NOT_FOUND)
 
         _apply_sovtes_truck_fields(truck, sovtes_data)
         truck.save()
 
-        serializer = TruckSerializer(truck)
+        serializer = TruckSerializer(truck, context={'request': request})
         return Response(serializer.data)
 
     except Exception as e:
@@ -226,7 +226,7 @@ def syncSovtesTrailer(request):
             year=_int_year(sovtes_data.get("year_of_manufact") or sovtes_data.get("year")),
         )
 
-        serializer = TrailerSerializer(trailer)
+        serializer = TrailerSerializer(trailer, context={'request': request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
     except Exception as e:
@@ -286,7 +286,7 @@ def linkSovtesTruck(request):
             )
 
         try:
-            truck = Truck.objects.get(id=local_truck_id)
+            truck = Truck.objects.get(id=local_truck_id, client=request.user.client)
         except Truck.DoesNotExist:
             return Response({"error": "Local truck not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -310,7 +310,7 @@ def linkSovtesTruck(request):
         _apply_sovtes_truck_fields(truck, data)
         truck.save()
 
-        serializer = TruckSerializer(truck)
+        serializer = TruckSerializer(truck, context={'request': request})
         return Response(serializer.data)
 
     except Exception as e:
@@ -333,7 +333,7 @@ def linkSovtesTrailer(request):
             )
 
         try:
-            trailer = Trailer.objects.get(id=local_trailer_id)
+            trailer = Trailer.objects.get(id=local_trailer_id, client=request.user.client)
         except Trailer.DoesNotExist:
             return Response({"error": "Local trailer not found"}, status=status.HTTP_404_NOT_FOUND)
 
@@ -355,7 +355,7 @@ def linkSovtesTrailer(request):
         _apply_sovtes_trailer_fields(trailer, data)
         trailer.save()
 
-        serializer = TrailerSerializer(trailer)
+        serializer = TrailerSerializer(trailer, context={'request': request})
         return Response(serializer.data)
 
     except Exception as e:
@@ -374,14 +374,14 @@ def resyncSovtesTrailer(request):
             return Response({"error": "Sovtes trailer ID is required"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            trailer = Trailer.objects.get(sovtes_id=sovtes_id)
+            trailer = Trailer.objects.get(sovtes_id=sovtes_id, client=request.user.client)
         except Trailer.DoesNotExist:
             return Response({"error": "Synced trailer not found"}, status=status.HTTP_404_NOT_FOUND)
 
         _apply_sovtes_trailer_fields(trailer, sovtes_data)
         trailer.save()
 
-        serializer = TrailerSerializer(trailer)
+        serializer = TrailerSerializer(trailer, context={'request': request})
         return Response(serializer.data)
 
     except Exception as e:
@@ -417,7 +417,7 @@ def resyncAllSovtesTrucks(request):
             truck.save()
             updated.append(truck)
 
-        serializer = TruckSerializer(updated, many=True)
+        serializer = TruckSerializer(updated, many=True, context={'request': request})
         return Response({"updated": len(updated), "trucks": serializer.data})
 
     except Exception as e:
@@ -453,7 +453,7 @@ def resyncAllSovtesTrailers(request):
             trailer.save()
             updated.append(trailer)
 
-        serializer = TrailerSerializer(updated, many=True)
+        serializer = TrailerSerializer(updated, many=True, context={'request': request})
         return Response({"updated": len(updated), "trailers": serializer.data})
 
     except Exception as e:

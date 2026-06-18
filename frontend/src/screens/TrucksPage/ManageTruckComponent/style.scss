@@ -598,6 +598,224 @@
   to   { transform: rotate(360deg); }
 }
 
+// ── Unit (Колона) section ─────────────────────────────────────────────────────
+.truck-unit-section {
+  margin: 0 0.3rem 0.4rem;
+  border: 1px solid rgba($sidebarcolor, 0.15);
+  border-radius: 8px;
+  background: rgba($sidebarcolor, 0.03);
+  overflow: hidden;
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.45rem 0.65rem;
+    flex-wrap: wrap;
+  }
+
+  &__label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.32rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: $sidebarcolor;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+  }
+
+  &__label-icon {
+    font-size: 0.72rem;
+    opacity: 0.8;
+  }
+
+  &__current {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+
+  &__unit-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    background: rgba($sidebarcolor, 0.12);
+    color: $sidebarcolor;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  &__unit-empty {
+    font-size: 0.8rem;
+    color: #aab5be;
+    font-style: italic;
+  }
+
+  &__change-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.25rem 0.6rem;
+    border: 1px solid rgba($sidebarcolor, 0.25);
+    border-radius: 6px;
+    background: #fff;
+    color: $sidebarcolor;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.12s ease;
+
+    &:hover {
+      background: rgba($sidebarcolor, 0.07);
+    }
+  }
+
+  &__history-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.45rem;
+    border: 1px solid rgba($sidebarcolor, 0.18);
+    border-radius: 6px;
+    background: transparent;
+    color: $colorGray;
+    font-size: 0.72rem;
+    cursor: pointer;
+    transition: background 0.12s ease, color 0.12s ease;
+
+    &:hover {
+      background: rgba($sidebarcolor, 0.07);
+      color: $sidebarcolor;
+    }
+  }
+
+  &__picker {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    flex: 1;
+    padding: 0.1rem 0 0.1rem 0;
+  }
+
+  &__select {
+    width: 100%;
+    padding: 0.38rem 0.6rem;
+    border: 1px solid rgba($sidebarcolor, 0.25);
+    border-radius: 7px;
+    background: #fff;
+    font-size: 0.82rem;
+    color: #1a2f36;
+    outline: none;
+
+    &:focus {
+      border-color: rgba($sidebarcolor, 0.5);
+      box-shadow: 0 0 0 2px rgba($sidebarcolor, 0.1);
+    }
+  }
+
+  &__picker-actions {
+    display: flex;
+    gap: 0.4rem;
+    justify-content: flex-end;
+  }
+
+  &__picker-cancel {
+    padding: 0.3rem 0.65rem;
+    border: 1px solid rgba($sidebarcolor, 0.15);
+    border-radius: 6px;
+    background: #fff;
+    color: #5a6874;
+    font-size: 0.76rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover { background: rgba($sidebarcolor, 0.05); }
+  }
+
+  &__picker-save {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.3rem 0.75rem;
+    border: none;
+    border-radius: 6px;
+    background: $sidebarcolor;
+    color: #fff;
+    font-size: 0.76rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: filter 0.12s ease;
+
+    &:hover:not(:disabled) { filter: brightness(1.1); }
+
+    &:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+  }
+
+  &__spinner {
+    animation: sovtes-truck-spin 0.8s linear infinite;
+  }
+
+  &__history {
+    border-top: 1px solid rgba($sidebarcolor, 0.1);
+    padding: 0.4rem 0.65rem 0.5rem;
+    background: rgba($sidebarcolor, 0.02);
+  }
+
+  &__history-empty {
+    font-size: 0.78rem;
+    color: #aab5be;
+    margin: 0;
+    text-align: center;
+    padding: 0.25rem 0;
+  }
+
+  &__history-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.78rem;
+
+    th {
+      text-align: left;
+      font-weight: 700;
+      color: $colorGray;
+      padding: 0.2rem 0.4rem 0.3rem;
+      border-bottom: 1px solid rgba($sidebarcolor, 0.12);
+      text-transform: uppercase;
+      font-size: 0.68rem;
+      letter-spacing: 0.04em;
+    }
+
+    td {
+      padding: 0.28rem 0.4rem;
+      color: #2d3f48;
+      border-bottom: 1px solid rgba($sidebarcolor, 0.06);
+    }
+  }
+
+  &__history-row--active td {
+    font-weight: 600;
+    color: $sidebarcolor;
+  }
+
+  &__history-now {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    background: rgba($sidebarcolor, 0.1);
+    color: $sidebarcolor;
+    font-size: 0.7rem;
+    font-weight: 700;
+  }
+}
+
 // Subscription info styles
 .subscription-info {
   margin: 0.3rem 0.3rem;

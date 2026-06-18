@@ -16,6 +16,6 @@ from base.serializers import TaskTypeSerializer
 
 @api_view(["GET"])
 def getTaskTypes(request):
-    task_types = TaskType.objects.all()
-    serializer = TaskTypeSerializer(task_types, many=True)
+    task_types = TaskType.objects.filter(client=request.user.client)
+    serializer = TaskTypeSerializer(task_types, many=True, context={'request': request})
     return Response(serializer.data)

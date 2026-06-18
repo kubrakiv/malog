@@ -20,14 +20,14 @@ from base.serializers import (
 
 @api_view(["GET"])
 def getPlatforms(request):
-    platforms = Platform.objects.all()
-    serializer = PlatformSerializer(platforms, many=True)
+    platforms = Platform.objects.filter(client=request.user.client)
+    serializer = PlatformSerializer(platforms, many=True, context={'request': request})
     return Response(serializer.data)
 
 
 @api_view(["GET"])
 def getPlatform(request, pk):
-    platform = Platform.objects.get(id=pk)
-    serializer = PlatformSerializer(platform, many=False)
+    platform = Platform.objects.get(id=pk, client=request.user.client)
+    serializer = PlatformSerializer(platform, many=False, context={'request': request})
     return Response(serializer.data)
 

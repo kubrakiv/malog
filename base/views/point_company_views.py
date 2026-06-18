@@ -12,7 +12,7 @@ from base.serializers import PointCompaniesSerializer
 
 @api_view(["GET"])
 def getPointCompanies(request):
-    companies = PointCompany.objects.all()
-    serializer = PointCompaniesSerializer(companies, many=True)
+    companies = PointCompany.objects.filter(client=request.user.client)
+    serializer = PointCompaniesSerializer(companies, many=True, context={'request': request})
     return Response(serializer.data)
     

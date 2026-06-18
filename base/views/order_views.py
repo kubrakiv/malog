@@ -37,7 +37,7 @@ class OrderPagination(PageNumberPagination):
 
 @api_view(["GET"])
 def getOrders(request):
-    orders = Order.objects.prefetch_related("tasks").all().order_by("-id")
+    orders = Order.objects.filter(client=request.user.client).prefetch_related("tasks").all().order_by("-id")
 
     # Apply filters
     driver = request.GET.get("driver")
@@ -74,8 +74,8 @@ def getOrders(request):
                 else task.start_time,
             ),
         )
-        order_data = OrderSerializer(order).data
-        order_data["tasks"] = TaskSerializer(sorted_tasks, many=True).data
+        order_data = OrderSerializer(order, context={'request': request}).data
+        order_data["tasks"] = TaskSerializer(sorted_tasks, many=True, context={'request': request}).data
         serialized_orders.append(order_data)
 
     return paginator.get_paginated_response(serialized_orders)
@@ -89,8 +89,8 @@ def searchOrderByNumber(request):
         return Response({"error": "Missing order_number parameter"}, status=status.HTTP_400_BAD_REQUEST)
 
     try:
-        order = Order.objects.get(order_number=order_number)
-        serializer = OrderSerializer(order)
+        order = Order.objects.get(order_number=order_number, client=request.user.client)
+        serializer = OrderSerializer(order, context={'request': request})
         return Response(serializer.data)
     except Order.DoesNotExist:
         return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
@@ -130,7 +130,7 @@ def searchOrderByNumber(request):
 @api_view(["GET"])
 def getOrder(request, pk):
     # Fetch order with prefetch_related for optimization
-    order = Order.objects.prefetch_related("tasks").get(id=pk)
+    order = Order.objects.prefetch_related("tasks").get(id=pk, client=request.user.client)
 
     # Sorting tasks within the order; parse strings to datetime if necessary
     sorted_tasks = sorted(
@@ -146,8 +146,8 @@ def getOrder(request, pk):
     )
 
     # Serialize order and manually insert serialized, sorted tasks
-    order_data = OrderSerializer(order).data
-    order_data["tasks"] = TaskSerializer(sorted_tasks, many=True).data
+    order_data = OrderSerializer(order, context={'request': request}).data
+    order_data["tasks"] = TaskSerializer(sorted_tasks, many=True, context={'request': request}).data
 
     return Response(order_data)
 
@@ -165,21 +165,21 @@ def createOrder(request):
     currency_name = data.get("currency")
 
     user = Profile.objects.get(id=user_id) if user_id else None
-    platform = Platform.objects.filter(name=platform_name).first() if platform_name else None
-    payment_type = PaymentType.objects.filter(name=payment_type_name).first() if payment_type_name else None
-    currency = Currency.objects.filter(short_name=currency_name).first() if currency_name else None
+    platform = Platform.objects.filter(name=platform_name, client=request.user.client).first() if platform_name else None
+    payment_type = PaymentType.objects.filter(name=payment_type_name, client=request.user.client).first() if payment_type_name else None
+    currency = Currency.objects.filter(short_name=currency_name, client=request.user.client).first() if currency_name else None
     customer = (
-        Customer.objects.filter(name=customer_name).first() if customer_name else None
+        Customer.objects.filter(name=customer_name, client=request.user.client).first() if customer_name else None
     )
     customer_manager = (
-        CustomerManager.objects.filter(full_name=customer_manager_name).first()
+        CustomerManager.objects.filter(full_name=customer_manager_name, client=request.user.client).first()
         if customer_manager_name
         else None
     )
 
-    truck = Truck.objects.filter(plates=truck_plates).first() if truck_plates else None
+    truck = Truck.objects.filter(plates=truck_plates, client=request.user.client).first() if truck_plates else None
     driver = (
-        DriverProfile.objects.filter(full_name=driver_name).first() if driver_name else None
+        DriverProfile.objects.filter(full_name=driver_name, client=request.user.client).first() if driver_name else None
     )
 
     data["user"] = user
@@ -190,24 +190,25 @@ def createOrder(request):
     data["customer_manager"] = customer_manager
     data["truck"] = truck
     data["driver"] = driver
+    data["client"] = request.user.client
 
     # order = Order(customer=customer, customer_manager=customer_manager, truck=truck, driver=driver, **data)
     order = Order(**data)
     order.save()
 
-    serializer = OrderSerializer(order, many=False)
+    serializer = OrderSerializer(order, many=False, context={'request': request})
     return Response(serializer.data)
 
 
 @api_view(["PUT"])
 def editOrder(request, pk):
-    order = get_object_or_404(Order, id=pk)
+    order = get_object_or_404(Order, id=pk, client=request.user.client)
     data = request.data.copy()
 
     print("Processed Data: ", data)
 
     # Serialize and validate the data
-    serializer = OrderSerializer(instance=order, data=data, partial=True)
+    serializer = OrderSerializer(instance=order, data=data, partial=True, context={'request': request})
     if serializer.is_valid():
         serializer.save()
         print("Serializer Data: ", serializer.data)
@@ -220,12 +221,12 @@ def editOrder(request, pk):
 @api_view(["DELETE"])
 def deleteOrder(request, pk):
     try:
-        order = Order.objects.get(id=pk)
+        order = Order.objects.get(id=pk, client=request.user.client)
     except Order.DoesNotExist:
         message = {"detail": "Order does not exist"}
         return Response(message, status=status.HTTP_404_NOT_FOUND)
 
-    serializer = OrderSerializer(order, many=False)
+    serializer = OrderSerializer(order, many=False, context={'request': request})
     orderData = serializer.data
 
     order.delete()

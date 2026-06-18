@@ -15,8 +15,8 @@ from base.serializers import TrailerSerializer
 
 @api_view(["GET"])
 def getTrailers(request):
-    trailers = Trailer.objects.all()
-    serializer = TrailerSerializer(trailers, many=True)
+    trailers = Trailer.objects.filter(client=request.user.client)
+    serializer = TrailerSerializer(trailers, many=True, context={'request': request})
     return Response(serializer.data)
 
 
@@ -53,14 +53,14 @@ def createTrailer(request):
         entry_mileage=data.get("entry_mileage"),
         price=price,
     )
-    serializer = TrailerSerializer(trailer, many=False)
+    serializer = TrailerSerializer(trailer, many=False, context={'request': request})
     return Response(serializer.data)
     
 
 @api_view(["DELETE"])
 def deleteTrailer(request, pk):
     try:
-        trailer = Trailer.objects.get(id=pk)
+        trailer = Trailer.objects.get(id=pk, client=request.user.client)
         trailer.delete()
         return Response("Trailer deleted")
     except Trailer.DoesNotExist as e:
@@ -70,9 +70,9 @@ def deleteTrailer(request, pk):
 
 @api_view(["PUT"])
 def updateTrailer(request, pk):
-    trailer = Trailer.objects.get(id=pk)
-    
-    serializer = TrailerSerializer(instance=trailer, data=request.data, partial=True)
+    trailer = Trailer.objects.get(id=pk, client=request.user.client)
+
+    serializer = TrailerSerializer(instance=trailer, data=request.data, partial=True, context={'request': request})
     if serializer.is_valid():
         serializer.save()
 

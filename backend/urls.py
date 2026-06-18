@@ -24,6 +24,7 @@ urlpatterns = [
     path("api/tasks/", include("base.urls.task_urls")),
     path("api/points/", include("base.urls.point_urls")),
     path("api/trucks/", include("base.urls.truck_urls")),
+    path("api/truck-units/", include("base.urls.truck_unit_urls")),
     path("api/trailers/", include("base.urls.trailer_urls")),
     path("api/customers/", include("base.urls.customer_urls")),
     path("api/customer-managers/", include("base.urls.customer_manager_urls")),
