@@ -448,13 +448,12 @@ Client: {client.name}
 
             # Send email using SMTP with STARTTLS
             context = ssl.create_default_context()
-            with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+            with smtplib.SMTP('smtp-relay.gmail.com', 587) as smtp:
                 smtp.ehlo()
                 smtp.starttls(context=context)
                 smtp.ehlo()
-                smtp.login(email_sender, gmail_password)
                 smtp.send_message(email_message)
-                
+
             logger.info(f"Welcome email sent to {user.email} for Sovtes user {user.username}")
             print(f"WELCOME EMAIL SENT: {user.email}")
             return True

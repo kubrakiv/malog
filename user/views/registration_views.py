@@ -335,13 +335,12 @@ def send_email_via_smtp_registration(subject, body, recipient_email):
 
         # Send email using SMTP with STARTTLS
         context = ssl.create_default_context()
-        with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+        with smtplib.SMTP('smtp-relay.gmail.com', 587) as smtp:
             smtp.ehlo()  # Identify with the server
             smtp.starttls(context=context)  # Upgrade to secure connection
             smtp.ehlo()  # Re-identify after starting TLS
-            smtp.login(email_sender, gmail_password)
             smtp.send_message(email_message)
             logger.info(f"Registration email sent successfully to {recipient_email}")
-            
+
     except Exception as e:
         logger.error(f'Failed to send registration email to {recipient_email}: {str(e)}')
