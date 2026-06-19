@@ -181,5 +181,5 @@ AUTH_USER_MODEL = "user.Profile"
 
 # Email Configuration - will be overridden in environment-specific settings
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'noreply@malog.com'
-SYSTEM_ADMIN_EMAIL = 'admin@malog.com'
+DEFAULT_FROM_EMAIL = 'tms@sovtes.com'
+SYSTEM_ADMIN_EMAIL = 'tms@sovtes.com'
