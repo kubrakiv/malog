@@ -19,7 +19,6 @@ from datetime import timedelta
 import secrets
 import string
 import ssl
-import smtplib
 from email.message import EmailMessage
 import logging
 
@@ -27,6 +26,7 @@ from base.models import Client, ClientExternalIdentity
 from base.subscription_models import SubscriptionPlan, ClientSubscription
 from user.models import Profile, Role
 from base.entry_data import email_sender, gmail_password
+from base.utils.smtp_utils import IPv4SMTP
 
 logger = logging.getLogger(__name__)
 
@@ -448,7 +448,12 @@ Client: {client.name}
 
             # Send email using SMTP with STARTTLS
             context = ssl.create_default_context()
-            with smtplib.SMTP('smtp-relay.gmail.com', 587) as smtp:
+            with IPv4SMTP(
+                settings.EMAIL_HOST,
+                settings.EMAIL_PORT,
+                timeout=20,
+                local_hostname=settings.EMAIL_LOCAL_HOSTNAME,
+            ) as smtp:
                 smtp.ehlo()
                 smtp.starttls(context=context)
                 smtp.ehlo()
@@ -606,5 +611,3 @@ Client: {client.name}
             }
         except ClientSubscription.DoesNotExist:
             return None
-
-

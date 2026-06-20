@@ -3,12 +3,12 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from base.entry_data import email_sender, gmail_password
+from base.utils.smtp_utils import IPv4SMTP
 
 from urllib.parse import unquote
 
 from email.message import EmailMessage
 import ssl
-import smtplib
 import os
 
 # EMAIL GENERATION FUNCTIONS
@@ -163,7 +163,12 @@ def send_email_via_smtp(email_message):
     Send the given EmailMessage object using SMTP with STARTTLS.
     """
     context = ssl.create_default_context()
-    with smtplib.SMTP('smtp-relay.gmail.com', 587) as smtp:
+    with IPv4SMTP(
+        settings.EMAIL_HOST,
+        settings.EMAIL_PORT,
+        timeout=20,
+        local_hostname=settings.EMAIL_LOCAL_HOSTNAME,
+    ) as smtp:
         smtp.ehlo()  # Identify with the server
         smtp.starttls(context=context)  # Upgrade to secure connection
         smtp.ehlo()  # Re-identify after starting TLS

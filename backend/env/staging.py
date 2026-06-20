@@ -68,6 +68,7 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = ''
 EMAIL_HOST_PASSWORD = ''
+EMAIL_LOCAL_HOSTNAME = 'test-tms.sovtes.com'
 
 FRONTEND_URL = 'https://test-tms.sovtes.com'
 
@@ -85,5 +86,4 @@ LOGGING = {
         "django.server":  {"handlers": ["console"], "level": "ERROR", "propagate": False},
     },
 }
-
 
