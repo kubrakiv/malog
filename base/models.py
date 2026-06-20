@@ -1077,6 +1077,40 @@ class ExternalAPIKey(models.Model):
     def __str__(self):
         return self.name
 
+    def is_valid(self):
+        """Return whether this key is active and has not expired."""
+        return self.is_active and (
+            self.expires_at is None or self.expires_at > timezone.now()
+        )
+
+    def can_access_endpoint(self, endpoint_path):
+        """Allow every endpoint unless one or more path prefixes are configured."""
+        if not self.allowed_endpoints:
+            return True
+        return any(endpoint_path.startswith(path) for path in self.allowed_endpoints)
+
+    def can_access_from_ip(self, ip_address):
+        """Allow every address unless an IP whitelist is configured."""
+        if not self.ip_whitelist:
+            return True
+        return ip_address in self.ip_whitelist
+
+    def check_rate_limit(self):
+        """Rate-limit hook; zero and the current placeholder policy allow requests."""
+        # There is no per-request timestamp store yet, so an hourly limit cannot
+        # be calculated correctly from the cumulative usage_count field.
+        return True
+
+    def record_usage(self):
+        """Update usage statistics after a request is authorized."""
+        now = timezone.now()
+        type(self).objects.filter(pk=self.pk).update(
+            last_used_at=now,
+            usage_count=models.F("usage_count") + 1,
+        )
+        self.last_used_at = now
+        self.usage_count += 1
+
 
 class ClientExternalIdentity(models.Model):
     PROVIDER_SOVTES = "sovtes"
@@ -1126,4 +1160,3 @@ class ClientExternalIdentity(models.Model):
 
     def __str__(self):
         return f"{self.client} — {self.provider} ({self.link_status})"
-
