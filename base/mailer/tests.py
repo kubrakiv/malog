@@ -26,6 +26,63 @@ class MailMessageTests(SimpleTestCase):
         self.assertEqual(admin_message["From"], "tms@sovtes.com")
         self.assertEqual(admin_message["To"], "admin@sovtes.com")
         self.assertEqual(user_message["To"], "owner@example.com")
+        self.assertTrue(admin_message.is_multipart())
+        self.assertEqual(
+            {part.get_content_type() for part in admin_message.iter_parts()},
+            {"text/plain", "text/html"},
+        )
+
+    @override_settings(
+        DEFAULT_FROM_EMAIL="tms@sovtes.com",
+        SYSTEM_ADMIN_EMAIL="admin@sovtes.com",
+    )
+    def test_dynamic_values_are_escaped_in_html(self):
+        client = SimpleNamespace(
+            name="<Example & Co>", slug="example", created_at="now"
+        )
+        user = SimpleNamespace(
+            email="owner@example.com",
+            get_full_name=lambda: "Owner <script>",
+        )
+
+        message = messages.registration_admin(client, user)
+        html = message.get_body(preferencelist=("html",)).get_content()
+
+        self.assertIn("&lt;Example &amp; Co&gt;", html)
+        self.assertNotIn("<script>", html)
+
+    @override_settings(
+        DEFAULT_FROM_EMAIL="tms@sovtes.com",
+        ORDER_EMAIL_CC="billing@example.com",
+    )
+    def test_order_message_uses_system_client_and_authenticated_sender(self):
+        message = messages.order_documents(
+            customer="Recipient Customer",
+            customer_manager="Customer Manager",
+            recipient="customer@example.com",
+            order_number="ORD-42",
+            route="Kyiv - Lviv",
+            payment_type="by copies",
+            price="1200",
+            currency="EUR",
+            invoice_number="INV-42",
+            invoice_date="20.06.2026",
+            cmr_number="CMR-42",
+            post_address="Kyiv",
+            sender_company="Carrier Client LLC",
+            sender_name="Olena Sender",
+            sender_position="Логіст",
+            sender_phone="+380501234567",
+            sender_email="olena@carrier.example",
+        )
+
+        plain = message.get_body(preferencelist=("plain",)).get_content()
+        html = message.get_body(preferencelist=("html",)).get_content()
+
+        self.assertIn("Компанія: Carrier Client LLC", plain)
+        self.assertIn("Olena Sender, Логіст", plain)
+        self.assertIn("Carrier Client LLC", html)
+        self.assertIn("olena@carrier.example", html)
 
 
 class MailActionTests(SimpleTestCase):
