@@ -35,7 +35,8 @@ def register_client(request):
     """
     try:
         data = request.data
-        logger.info(f"Registration request received: {data}")
+        # Never log the complete payload: admin_user contains plaintext passwords.
+        logger.info("Client registration request received")
         
         # Extract data from request
         client_data = data.get('client', {})
@@ -43,10 +44,11 @@ def register_client(request):
         company_data = data.get('company', {})
         subscription_data = data.get('subscription', {})
         
-        logger.info(f"Client data: {client_data}")
-        logger.info(f"Admin user data: {admin_user_data}")
-        logger.info(f"Company data: {company_data}")
-        logger.info(f"Subscription data: {subscription_data}")
+        logger.info(
+            "Registration requested for client slug=%s and username=%s",
+            client_data.get('slug'),
+            admin_user_data.get('username'),
+        )
         
         # Validate required fields
         if not client_data.get('name'):
@@ -67,6 +69,22 @@ def register_client(request):
         
         if admin_user_data.get('password1') != admin_user_data.get('password2'):
             return Response({'detail': 'Passwords do not match'}, status=status.HTTP_400_BAD_REQUEST)
+
+        phone_number = admin_user_data.get('phone_number', '')
+        phone_max_length = Profile._meta.get_field('phone_number').max_length
+        if not isinstance(phone_number, str):
+            return Response(
+                {'detail': 'Phone number must be text', 'error_code': 'INVALID_PHONE_NUMBER'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        if len(phone_number) > phone_max_length:
+            return Response(
+                {
+                    'detail': f'Phone number must not exceed {phone_max_length} characters',
+                    'error_code': 'PHONE_NUMBER_TOO_LONG',
+                },
+                status=status.HTTP_400_BAD_REQUEST,
+            )
         
         # Check if client slug already exists
         if Client.objects.filter(slug=client_data['slug']).exists():
@@ -131,7 +149,7 @@ def register_client(request):
                     password=admin_user_data['password1'],
                     first_name=admin_user_data.get('first_name', ''),
                     last_name=admin_user_data.get('last_name', ''),
-                    phone_number=admin_user_data.get('phone_number', ''),
+                    phone_number=phone_number,
                     registration_password=admin_user_data['password1'],
                     client=client,
                     is_staff=True,  # Give admin access (makes is_admin=True)

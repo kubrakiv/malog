@@ -303,6 +303,9 @@ const ClientRegistrationForm = () => {
       if (!formData.lastName.trim()) {
         newErrors.lastName = "Прізвище обов'язкове";
       }
+      if (formData.phoneNumber.length > 20) {
+        newErrors.phoneNumber = "Phone number must not exceed 20 characters";
+      }
       if (!formData.password) {
         newErrors.password = "Пароль обов'язковий";
       } else if (formData.password.length < 8) {
@@ -558,6 +561,7 @@ const ClientRegistrationForm = () => {
             label="Електронна Пошта"
             name="companyEmail"
             type="email"
+            autoComplete="section-company email"
             placeholder="info@trans.com.ua"
             value={formData.companyEmail}
             onChange={handleInputChange}
@@ -569,6 +573,7 @@ const ClientRegistrationForm = () => {
             label="Телефон Компанії"
             name="companyPhone"
             type="tel"
+            autoComplete="section-company tel"
             placeholder="+380 (99) 123-45-67"
             value={formData.companyPhone}
             onChange={handleInputChange}
@@ -608,6 +613,7 @@ const ClientRegistrationForm = () => {
             label="Ім'я Користувача *"
             name="username"
             type="text"
+            autoComplete="section-admin username"
             placeholder="ім'я_користувача"
             value={formData.username}
             onChange={handleInputChange}
@@ -619,6 +625,7 @@ const ClientRegistrationForm = () => {
             label="Електронна пошта *"
             name="email"
             type="email"
+            autoComplete="section-admin email"
             placeholder="info@trans.com.ua"
             value={formData.email}
             onChange={handleInputChange}
@@ -633,6 +640,7 @@ const ClientRegistrationForm = () => {
             label="Ім'я *"
             name="firstName"
             type="text"
+            autoComplete="section-admin given-name"
             placeholder="Іван"
             value={formData.firstName}
             onChange={handleInputChange}
@@ -644,6 +652,7 @@ const ClientRegistrationForm = () => {
             label="Прізвище *"
             name="lastName"
             type="text"
+            autoComplete="section-admin family-name"
             placeholder="Іваненко"
             value={formData.lastName}
             onChange={handleInputChange}
@@ -655,6 +664,8 @@ const ClientRegistrationForm = () => {
             label="Номер Телефону"
             name="phoneNumber"
             type="tel"
+            autoComplete="section-admin tel"
+            maxLength={20}
             placeholder="+380 (99) 123-45-67"
             value={formData.phoneNumber}
             onChange={handleInputChange}
@@ -669,6 +680,7 @@ const ClientRegistrationForm = () => {
             label="Пароль *"
             name="password"
             type="password"
+            autoComplete="new-password"
             placeholder="Введіть надійний пароль"
             value={formData.password}
             onChange={handleInputChange}
@@ -680,6 +692,7 @@ const ClientRegistrationForm = () => {
             label="Підтвердити Пароль *"
             name="confirmPassword"
             type="password"
+            autoComplete="new-password"
             placeholder="Підтвердіть свій пароль"
             value={formData.confirmPassword}
             onChange={handleInputChange}

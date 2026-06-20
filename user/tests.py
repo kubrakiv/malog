@@ -387,3 +387,25 @@ class ClientExternalIdentityTests(TestCase):
 		identity.refresh_from_db()
 		self.assertEqual(identity.external_client_id, 'sovtes-client-777')
 		self.assertEqual(identity.link_status, ClientExternalIdentity.STATUS_LINKED)
+
+
+class ClientRegistrationValidationTests(TestCase):
+	def test_rejects_phone_number_longer_than_model_limit(self):
+		response = APIClient().post(
+			'/api/users/register-client/',
+			{
+				'client': {'name': 'Long Phone Client', 'slug': 'long-phone-client'},
+				'admin_user': {
+					'username': 'long-phone-admin',
+					'email': 'admin@example.com',
+					'password1': 'StrongPassword123!',
+					'password2': 'StrongPassword123!',
+					'phone_number': '+380991234567, +380991234568',
+				},
+			},
+			format='json',
+		)
+
+		self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+		self.assertEqual(response.data['error_code'], 'PHONE_NUMBER_TOO_LONG')
+		self.assertFalse(Client.objects.filter(slug='long-phone-client').exists())

@@ -12,6 +12,8 @@ const InputComponent = ({
   multiple,
   type,
   required,
+  maxLength,
+  autoComplete,
   style = null,
   error = null,
   helperText = null,
@@ -40,6 +42,8 @@ const InputComponent = ({
           onKeyDown={onKeyDown}
           autoFocus={autoFocus}
           required={required}
+          maxLength={maxLength}
+          autoComplete={autoComplete}
         />
       </div>
       {error && <span className="input-error-text">{error}</span>}
