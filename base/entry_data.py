@@ -14,10 +14,8 @@ lkw_auth = {
 
 api_key = os.getenv("GOOGLE_API_KEY") # for ivan.kubrak.eu GMAIL
 
-# data for message and email sending
+# data for message sending
 phone = "+380504186484"
-email_sender = os.getenv("EMAIL_SENDER")
-gmail_password = os.getenv("GMAIL_PASSWORD") # for ivan.kubrak.eu GMAIL
 email_receiver = "kubrak.ivan@gmail.com"
 
 

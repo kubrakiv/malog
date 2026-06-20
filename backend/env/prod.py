@@ -61,12 +61,8 @@ CORS_ALLOWED_ORIGINS = [
 
 # Email Configuration for production
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp-relay.gmail.com'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
 EMAIL_LOCAL_HOSTNAME = 'tms.sovtes.com'
+EMAIL_FORCE_IPV4 = True
 
 FRONTEND_URL = 'https://tms.sovtes.com'
 

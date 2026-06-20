@@ -8,14 +8,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework import status
-from django.conf import settings
-from base.entry_data import email_sender, gmail_password
-from email.message import EmailMessage
-import ssl
-import smtplib
 import logging
 
 from base.models import Client, ClientExternalIdentity
+from base.mailer import send_account_approved, send_account_rejected
 from base.subscription_models import ClientSubscription, SubscriptionPlanChangeRequest
 from user.models import Profile
 from user.serializers import UserSerializer
@@ -267,7 +263,7 @@ def approve_client(request, client_id):
                 admin_user.save()
                 
                 # Send approval email
-                send_approval_email(client, admin_user)
+                send_account_approved(client, admin_user)
             
             # Activate pending subscription if exists, or create default subscription
             pending_subscription = ClientSubscription.objects.filter(
@@ -358,7 +354,7 @@ def reject_client(request, client_id):
             # Send rejection email
             admin_user = client.users.filter(is_staff=True).first()
             if admin_user:
-                send_rejection_email(client, admin_user, rejection_reason)
+                send_account_rejected(client, admin_user, rejection_reason)
             
             # Cancel pending subscription if exists  
             pending_subscription = ClientSubscription.objects.filter(
@@ -389,79 +385,3 @@ def reject_client(request, client_id):
             'success': False,
             'message': 'Failed to reject client. Please try again.'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-def send_approval_email(client, admin_user):
-    """Send approval notification email"""
-    try:
-        frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:3000')
-        
-        subject = 'Welcome to TMS SOVTES - Account Approved!'
-        body = f'''
-Dear {admin_user.get_full_name()},
-
-    Great news! Your TMS SOVTES account for {client.name} has been approved and is now active.
-
-You can now log in at: {frontend_url}/login
-
-Username: {admin_user.username}
-
-Welcome to TMS SOVTES!
-
-Best regards,
-The TMS SOVTES Team
-        '''
-        
-        send_email_via_smtp_admin(subject, body, admin_user.email)
-        logger.info(f'Approval email sent to {admin_user.email} for client {client.name}')
-        
-    except Exception as e:
-        logger.error(f'Failed to send approval email: {str(e)}')
-
-
-def send_rejection_email(client, admin_user, reason):
-    """Send rejection notification email"""
-    try:
-        subject = 'TMS SOVTES Registration Update'
-        body = f'''
-Dear {admin_user.get_full_name()},
-
-    We regret to inform you that your TMS SOVTES registration for {client.name} has not been approved at this time.
-
-Reason: {reason}
-
-If you have any questions or would like to reapply, please contact us at support@sovtes.com.ua.
-
-Best regards,
-The TMS SOVTES Team
-        '''
-        
-        send_email_via_smtp_admin(subject, body, admin_user.email)
-        logger.info(f'Rejection email sent to {admin_user.email} for client {client.name}')
-        
-    except Exception as e:
-        logger.error(f'Failed to send rejection email: {str(e)}')
-
-
-def send_email_via_smtp_admin(subject, body, recipient_email):
-    """Send email using SMTP with the same logic as send_email_views.py"""
-    try:
-        # Create email message
-        email_message = EmailMessage()
-        email_message['From'] = email_sender
-        email_message['To'] = recipient_email
-        email_message['Subject'] = subject
-        email_message.set_content(body)
-
-        # Send email using SMTP with STARTTLS
-        context = ssl.create_default_context()
-        with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
-            smtp.ehlo()  # Identify with the server
-            smtp.starttls(context=context)  # Upgrade to secure connection
-            smtp.ehlo()  # Re-identify after starting TLS
-            smtp.login(email_sender, gmail_password)
-            smtp.send_message(email_message)
-            logger.info(f"Admin email sent successfully to {recipient_email}")
-            
-    except Exception as e:
-        logger.error(f'Failed to send admin email to {recipient_email}: {str(e)}')

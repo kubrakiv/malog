@@ -18,15 +18,12 @@ from django.contrib.auth.hashers import make_password
 from datetime import timedelta
 import secrets
 import string
-import ssl
-from email.message import EmailMessage
 import logging
 
 from base.models import Client, ClientExternalIdentity
 from base.subscription_models import SubscriptionPlan, ClientSubscription
 from user.models import Profile, Role
-from base.entry_data import email_sender, gmail_password
-from base.utils.smtp_utils import IPv4SMTP
+from base.mailer import send_sovtes_welcome
 
 logger = logging.getLogger(__name__)
 
@@ -334,7 +331,7 @@ class SovtesUserManager:
             print(f"IMPORTANT: This password is for emergency access only. User should authenticate via Sovtes JWT.")
             
             # Send welcome email with login credentials
-            SovtesUserManager._send_welcome_email(user, temp_password, client)
+            send_sovtes_welcome(user, temp_password, client)
             
             return user, True
     
@@ -390,84 +387,9 @@ class SovtesUserManager:
     
     @staticmethod
     def _send_welcome_email(user, temporary_password, client):
-        """
-        Send welcome email with login credentials to a new Sovtes user
-        
-        Args:
-            user (Profile): The user profile
-            temporary_password (str): The temporary password
-            client (Client): The client instance
-        """
-        try:
-            frontend_url = getattr(settings, 'FRONTEND_URL', 'http://localhost:3000')
-            
-            subject = f'Welcome to TMS SOVTES - Login Credentials for {client.name}'
-            
-            body = f'''
-Dear {user.get_full_name() or user.first_name},
+        """Backward-compatible wrapper for the centralized mail action."""
+        return send_sovtes_welcome(user, temporary_password, client)
 
-Welcome to TMS SOVTES! Your account has been successfully created for {client.name}.
-
-Your login credentials:
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-👤 Username: {user.username}
-📧 Email: {user.email}
-🔑 Temporary Password: {temporary_password}
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-🌐 Login URL: {frontend_url}/login
-
-IMPORTANT SECURITY NOTES:
-🔒 This password is for EMERGENCY ACCESS ONLY
-🔑 You should primarily authenticate via your Sovtes JWT token
-⚠️  Please keep these credentials secure and do not share them
-📝 Store this password safely - you won't receive it again
-
-Getting Started:
-1. Visit {frontend_url}/main to access the application
-2. Use your Sovtes system to authenticate (recommended)
-3. Only use username/password for emergency access
-
-If you have any questions or need assistance, please contact our support team.
-
-Best regards,
-The TMS SOVTES Team
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-This email was sent automatically from TMS SOVTES.
-Account created: {timezone.now().strftime('%Y-%m-%d %H:%M:%S')} UTC
-Client: {client.name}
-            '''
-            
-            # Create email message
-            email_message = EmailMessage()
-            email_message['From'] = email_sender
-            email_message['To'] = user.email
-            email_message['Subject'] = subject
-            email_message.set_content(body)
-
-            # Send email using SMTP with STARTTLS
-            context = ssl.create_default_context()
-            with IPv4SMTP(
-                settings.EMAIL_HOST,
-                settings.EMAIL_PORT,
-                timeout=20,
-                local_hostname=settings.EMAIL_LOCAL_HOSTNAME,
-            ) as smtp:
-                smtp.ehlo()
-                smtp.starttls(context=context)
-                smtp.ehlo()
-                smtp.send_message(email_message)
-
-            logger.info(f"Welcome email sent to {user.email} for Sovtes user {user.username}")
-            print(f"WELCOME EMAIL SENT: {user.email}")
-            return True
-            
-        except Exception as e:
-            logger.error(f'Failed to send welcome email to {user.email}: {str(e)}')
-            print(f"FAILED TO SEND EMAIL: {user.email} - {str(e)}")
-            return False
-    
     @staticmethod
     def get_user_temp_password_info(user):
         """

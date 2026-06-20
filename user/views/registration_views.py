@@ -15,12 +15,8 @@ from base.models import Client, Company, ClientExternalIdentity
 from base.subscription_models import SubscriptionPlan, ClientSubscription
 from user.models import Profile, Role
 from user.serializers import UserSerializer
-from django.conf import settings
-from base.entry_data import email_sender, gmail_password
 from base.tenant import set_current_client
-from email.message import EmailMessage
-import ssl
-import smtplib
+from base.mailer import send_registration_notifications
 import logging
 from datetime import timedelta
 from django.utils import timezone
@@ -294,71 +290,3 @@ def register_client(request):
             'error': str(e),
             'type': type(e).__name__
         }, status=status.HTTP_400_BAD_REQUEST)
-
-
-def send_registration_notifications(client, admin_user):
-    """Send notification emails for new registration"""
-    try:
-        # Email to system admins
-        system_admin_email = getattr(settings, 'SYSTEM_ADMIN_EMAIL', 'admin@sovtes.com.ua')
-        
-        # Email to TMS SOVTES admins
-        admin_subject = f'New Client Registration: {client.name}'
-        admin_body = f'''
-A new client has registered and needs approval:
-
-Company: {client.name}
-Slug: {client.slug}
-Admin User: {admin_user.get_full_name()} ({admin_user.email})
-Registration Date: {client.created_at}
-
-Please review and approve/reject this registration in the admin panel.
-
-Best regards,
-TMS SOVTES
-        '''
-        
-        send_email_via_smtp_registration(admin_subject, admin_body, system_admin_email)
-        
-        # Email to the registering user
-        user_subject = 'Registration Received - Pending Approval'
-        user_body = f'''
-Dear {admin_user.get_full_name()},
-
-Thank you for registering with TMS SOVTES. Your registration for {client.name} has been received and is currently pending approval.
-
-You will receive another email once your account has been reviewed and approved by our team.
-
-Best regards,
-The TMS SOVTES Team
-        '''
-        
-        send_email_via_smtp_registration(user_subject, user_body, admin_user.email)
-        
-        logger.info(f'Registration notification emails sent for client: {client.name}')
-        
-    except Exception as e:
-        logger.error(f'Failed to send registration notification emails: {str(e)}')
-
-
-def send_email_via_smtp_registration(subject, body, recipient_email):
-    """Send email using SMTP with the same logic as send_email_views.py"""
-    try:
-        # Create email message
-        email_message = EmailMessage()
-        email_message['From'] = email_sender
-        email_message['To'] = recipient_email
-        email_message['Subject'] = subject
-        email_message.set_content(body)
-
-        # Send email using SMTP with STARTTLS
-        context = ssl.create_default_context()
-        with smtplib.SMTP('smtp-relay.gmail.com', 587) as smtp:
-            smtp.ehlo()  # Identify with the server
-            smtp.starttls(context=context)  # Upgrade to secure connection
-            smtp.ehlo()  # Re-identify after starting TLS
-            smtp.send_message(email_message)
-            logger.info(f"Registration email sent successfully to {recipient_email}")
-
-    except Exception as e:
-        logger.error(f'Failed to send registration email to {recipient_email}: {str(e)}')

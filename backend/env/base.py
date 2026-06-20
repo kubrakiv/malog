@@ -179,7 +179,16 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # Custom user model
 AUTH_USER_MODEL = "user.Profile"
 
-# Email Configuration - will be overridden in environment-specific settings
+# Central email configuration. Environment files only override delivery behavior.
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-DEFAULT_FROM_EMAIL = 'tms@sovtes.com'
-SYSTEM_ADMIN_EMAIL = 'tms@sovtes.com'
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'smtp-relay.gmail.com')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', 'true').lower() == 'true'
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+EMAIL_TIMEOUT = int(os.getenv('EMAIL_TIMEOUT', '20'))
+EMAIL_FORCE_IPV4 = os.getenv('EMAIL_FORCE_IPV4', 'false').lower() == 'true'
+EMAIL_LOCAL_HOSTNAME = os.getenv('EMAIL_LOCAL_HOSTNAME', 'localhost')
+DEFAULT_FROM_EMAIL = os.getenv('EMAIL_SENDER', 'tms@sovtes.com')
+SYSTEM_ADMIN_EMAIL = os.getenv('SYSTEM_ADMIN_EMAIL', 'tms@sovtes.com')
+ORDER_EMAIL_CC = os.getenv('ORDER_EMAIL_CC', 'kurchenko.v@deltalogistics.cz')
