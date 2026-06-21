@@ -66,90 +66,121 @@
 
   &__hero {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    gap: 1.5rem;
+    gap: 1rem;
     margin-bottom: 1rem;
-    padding: 1.15rem 1.35rem;
+    padding: 0.85rem 1.25rem;
     border: 1px solid rgba(15, 84, 92, 0.08);
     border-radius: 20px;
     background: rgba(255, 255, 255, 0.8);
     box-shadow: 0 14px 30px rgba(15, 84, 92, 0.08);
     backdrop-filter: blur(12px);
-  }
-
-  &__eyebrow {
-    margin: 0 0 0.35rem;
-    color: #0f7680;
-    font-size: 0.8rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
+    position: relative;
+    z-index: 10;
   }
 
   &__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     margin: 0;
     color: #0d2230;
-    font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+    font-size: clamp(1.4rem, 2.2vw, 2rem);
     line-height: 1.1;
     letter-spacing: -0.03em;
   }
 
-  &__subtitle {
-    max-width: 720px;
-    margin: 0.5rem 0 0;
-    color: #5a6874;
-    font-size: 0.98rem;
-    line-height: 1.5;
+  &__info-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(15, 118, 128, 0.12);
+    color: #0f7680;
+    font-size: 0.68rem;
+    font-weight: 800;
+    font-style: italic;
+    cursor: default;
+    flex-shrink: 0;
+    position: relative;
+
+    &::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 0;
+      transform: none;
+      background: #1a2a35;
+      color: #fff;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 400;
+      font-style: normal;
+      white-space: normal;
+      width: 260px;
+      line-height: 1.45;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+      z-index: 20;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: calc(100% + 2px);
+      left: 5px;
+      transform: none;
+      border: 4px solid transparent;
+      border-bottom-color: #1a2a35;
+      z-index: 20;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    &:hover::after,
+    &:hover::before {
+      opacity: 1;
+    }
   }
 
   &__actions {
     display: flex;
-    align-items: flex-end;
-    flex-direction: column;
-    gap: 0.55rem;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-    min-width: 460px;
-  }
-
-  &__actions-top {
-    display: flex;
     align-items: center;
-    gap: 0.8rem;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-
-  &__hero-tools {
-    width: fit-content;
-    max-width: 100%;
-    align-self: flex-end;
+    gap: 0.55rem;
+    flex-shrink: 0;
   }
 
   &__count-chip {
-    padding: 0.7rem 1rem;
+    padding: 0.38rem 0.8rem;
     border-radius: 999px;
     background: rgba(16, 118, 128, 0.08);
     color: #0f7680;
+    font-size: 0.82rem;
     font-weight: 700;
     white-space: nowrap;
   }
 
   &__tab-group {
     display: flex;
-    gap: 0.55rem;
-    flex-wrap: wrap;
+    gap: 0.35rem;
   }
 
   &__tab-btn {
-    padding: 0.8rem 1rem;
-    border-radius: 12px;
+    padding: 0.38rem 0.85rem;
+    border-radius: 10px;
     border: 1px solid rgba(15, 84, 92, 0.14);
     background: #fff;
     color: #415260;
+    font-size: 0.85rem;
     font-weight: 700;
-    transition: all 0.2s ease;
+    transition: all 0.18s ease;
 
     &:hover {
       background: rgba(15, 118, 128, 0.08);
@@ -160,7 +191,7 @@
       border-color: transparent;
       background: linear-gradient(135deg, #0f7680 0%, #11a3b1 100%);
       color: #fff;
-      box-shadow: 0 10px 20px rgba(15, 118, 128, 0.22);
+      box-shadow: 0 6px 14px rgba(15, 118, 128, 0.22);
     }
   }
 
@@ -179,18 +210,7 @@
 
     &__actions {
       width: 100%;
-      justify-content: space-between;
-      align-items: stretch;
-      min-width: 0;
-    }
-
-    &__actions-top {
-      width: 100%;
-      justify-content: space-between;
-    }
-
-    &__hero-tools {
-      max-width: none;
+      justify-content: flex-start;
     }
   }
 
@@ -198,11 +218,6 @@
     &__hero,
     &__onboarding-banner {
       border-radius: 16px;
-    }
-
-    &__tab-btn {
-      flex: 1 1 140px;
-      text-align: center;
     }
   }
 }

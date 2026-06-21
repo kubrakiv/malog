@@ -1,18 +1,17 @@
-import { useLayoutEffect, useState } from "react";
-import { createPortal } from "react-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { useDispatch } from "react-redux";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt, FaSync } from "react-icons/fa";
 import cn from "classnames";
 import SearchComponent from "../../../globalComponents/SearchComponent";
 
 import TrailerModalComponent from "../TrailerModalComponent";
 import AddTrailerModalComponent from "../AddTrailerModalComponent";
-import SovtesSyncModal from "../SovtesSyncModal";
 
 import {
   setSelectedTrailer,
   setShowTrailerModal,
   setShowAddTrailerModal,
+  setEditModeTrailer,
 } from "../../../features/trailers/trailersSlice";
 
 import {
@@ -42,11 +41,6 @@ const TrailersTableComponent = ({ trailers }) => {
   const dispatch = useDispatch();
   const [selectedTrailers, setSelectedTrailers] = useState([]);
   const [search, setSearch] = useState("");
-  const [heroToolsHost, setHeroToolsHost] = useState(null);
-
-  const showSovtesModal = useSelector(
-    (state) => state.sovtesFleetInfo.showModal
-  );
 
   const handleCheckBoxChange = (trailerID) => {
     setSelectedTrailers((prev) => {
@@ -59,8 +53,6 @@ const TrailersTableComponent = ({ trailers }) => {
 
   const handleRowDoubleClick = (e, trailer) => {
     e.stopPropagation();
-    console.log("double click for trailer", trailer);
-
     dispatch(setShowTrailerModal(true));
     dispatch(setSelectedTrailer(trailer));
   };
@@ -69,97 +61,67 @@ const TrailersTableComponent = ({ trailers }) => {
     dispatch(setShowAddTrailerModal(true));
   };
 
-  const handleDeleteSelectedTrailers = async () => {
-    if (selectedTrailers.length === 0) {
-      window.alert("Виберіть автомобіль для видалення");
-      return;
-    }
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this truck?",
-    );
-    if (!confirmDelete) {
-      return;
-    }
-
-    if (confirmDelete) {
-      try {
-        for (let trailerID of selectedTrailers) {
-          await dispatch(deleteTrailer(trailerID)).unwrap();
-        }
-        setSelectedTrailers([]);
-        await dispatch(listTrailers());
-      } catch (error) {
-        console.error("Error deleting trucks:", error.message);
-      }
-    }
+  const handleEditSelected = () => {
+    if (selectedTrailers.length !== 1) return;
+    const trailer = trailers.find((t) => t.id === selectedTrailers[0]);
+    if (!trailer) return;
+    dispatch(setSelectedTrailer(trailer));
+    dispatch(setEditModeTrailer(true));
+    dispatch(setShowTrailerModal(true));
   };
 
-  useLayoutEffect(() => {
-    if (typeof document !== "undefined") {
-      setHeroToolsHost(document.getElementById("fleet-hero-tools"));
+  const handleDeleteSelectedTrailers = async () => {
+    if (selectedTrailers.length === 0) {
+      window.alert("Виберіть причіп для видалення");
+      return;
     }
-  }, []);
+    if (!window.confirm("Are you sure you want to delete selected trailers?")) return;
 
-  const controls = (
-    <div className="fleet-panel__actions fleet-panel__actions--in-hero">
-      <div className="fleet-panel__tools">
-        <div className="fleet-panel__action-group">
-          <button
-            className="fleet-panel__action-btn fleet-panel__action-btn--add"
-            title="Додати причіп"
-            onClick={handleAddTrailerButton}
-            type="button"
-          >
-            <FaPlus />
-            <span>Додати</span>
-          </button>
-          <button
-            className="fleet-panel__action-btn fleet-panel__action-btn--delete"
-            title="Видалити вибрані причепи"
-            onClick={handleDeleteSelectedTrailers}
-            type="button"
-          >
-            <FaRegTrashAlt />
-            <span>Видалити</span>
-          </button>
-          <button
-            className="fleet-panel__action-btn fleet-panel__action-btn--edit"
-            title="Редагування доступне через подвійний клік по рядку"
-            type="button"
-            disabled
-          >
-            <FaPencilAlt />
-            <span>Подвійний клік</span>
-          </button>
-          <button
-            className="fleet-panel__action-btn fleet-panel__action-btn--sovtes"
-            title="Синхронізувати зі Sovtes"
-            onClick={() => dispatch(setShowSovtesSyncModal(true))}
-            type="button"
-          >
-            <FaSync />
-            <span>Sovtes</span>
-          </button>
-        </div>
-
-        <div className="fleet-panel__search-inline">
-          <SearchComponent
-            search={search}
-            setSearch={setSearch}
-            placeholder={"пошук авто"}
-          />
-        </div>
-      </div>
-    </div>
-  );
+    try {
+      for (let trailerID of selectedTrailers) {
+        await dispatch(deleteTrailer(trailerID)).unwrap();
+      }
+      setSelectedTrailers([]);
+      await dispatch(listTrailers());
+    } catch (error) {
+      console.error("Error deleting trailers:", error.message);
+    }
+  };
 
   return (
     <>
       <TrailerModalComponent />
       <AddTrailerModalComponent />
-      {showSovtesModal && <SovtesSyncModal />}
       <div className="fleet-panel">
-        {heroToolsHost && createPortal(controls, heroToolsHost)}
+        <div className="fleet-toolbar">
+          <div className="fleet-toolbar__search">
+            <SearchComponent search={search} setSearch={setSearch} placeholder="пошук причепів" />
+          </div>
+          <div className="fleet-toolbar__sep" />
+          <div className="fleet-toolbar__group">
+            <button className="fleet-toolbar__btn fleet-toolbar__btn--add" title="Додати причіп" onClick={handleAddTrailerButton} type="button"><FaPlus /></button>
+            <button className="fleet-toolbar__btn fleet-toolbar__btn--delete" title="Видалити вибрані" onClick={handleDeleteSelectedTrailers} type="button"><FaRegTrashAlt /></button>
+          </div>
+          <div className="fleet-toolbar__sep" />
+          <div className="fleet-toolbar__group">
+            <button
+              className="fleet-toolbar__btn fleet-toolbar__btn--edit"
+              title={selectedTrailers.length === 1 ? "Редагувати причіп" : "Подвійний клік для редагування"}
+              onClick={handleEditSelected}
+              disabled={selectedTrailers.length !== 1}
+              type="button"
+            >
+              <FaPencilAlt />
+            </button>
+          </div>
+          <div className="fleet-toolbar__sep" />
+          <div className="fleet-toolbar__group">
+            <button className="fleet-toolbar__btn fleet-toolbar__btn--sovtes" title="Синхронізація зі Sovtes" onClick={() => dispatch(setShowSovtesSyncModal({ show: true, tab: "trailers" }))} type="button"><FaSync /></button>
+          </div>
+          {selectedTrailers.length > 0 && (
+            <span className="fleet-toolbar__badge">{selectedTrailers.length} обрано</span>
+          )}
+        </div>
 
         <div className="fleet-panel__table-card">
           <div className="table-container fleet-panel__table-wrap">

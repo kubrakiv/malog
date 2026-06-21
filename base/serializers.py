@@ -28,7 +28,8 @@ from .models import (
     TruckUnitAssignment,
 )
 from user.models import (
-    DriverProfile
+    DriverProfile,
+    LogistProfile,
 )
 from user.serializers import UserSerializer, DriverProfileSerializer
 import os
@@ -52,13 +53,32 @@ class CompanyBankSerializer(serializers.ModelSerializer):
 
 
 class CompanySerializer(serializers.ModelSerializer):
-    bank = CompanyBankSerializer(source="bank.name", many=False, read_only=True)
+    bank = CompanyBankSerializer(read_only=True)
+    banks = CompanyBankSerializer(many=True, read_only=True)
     client_name = serializers.CharField(source="client.name", read_only=True)
 
     class Meta:
         model = Company
         fields = "__all__"
         read_only_fields = ['client', 'created_at', 'updated_at']
+
+
+class CompanyWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Company
+        fields = [
+            'name', 'name_en', 'nip_number', 'vat_number',
+            'phone', 'email', 'website', 'post_address', 'legal_address',
+        ]
+
+
+class CompanyBankWriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyBank
+        fields = [
+            'name', 'bank_address', 'iban_cz', 'iban_eur',
+            'account_number_cz', 'account_number_eur', 'swift_code',
+        ]
 
 
 class FuelPriceSerializer(serializers.ModelSerializer):
@@ -78,6 +98,21 @@ class TrailerSerializer(serializers.ModelSerializer):
         truck = obj.trucks.first()
         return truck.plates if truck else None
     
+
+class LogistProfileSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    username = serializers.CharField(source="profile.username", read_only=True)
+
+    class Meta:
+        model = LogistProfile
+        fields = ["profile", "username", "full_name", "phone_number", "position"]
+
+    def get_full_name(self, obj):
+        first = obj.profile.first_name or ""
+        last = obj.profile.last_name or ""
+        name = f"{first} {last}".strip()
+        return name or obj.profile.username
+
 
 class TruckUnitSerializer(serializers.ModelSerializer):
     class Meta:
@@ -99,6 +134,7 @@ class TruckSerializer(serializers.ModelSerializer):
     )
     driver_details = DriverProfileSerializer(source="driver", many=False, read_only=True)
     trailer_details = TrailerSerializer(source="trailer", many=False, read_only=True)
+    logist_details = LogistProfileSerializer(source="logist", many=False, read_only=True)
     current_unit = serializers.SerializerMethodField()
 
     def get_current_unit(self, obj):
@@ -123,11 +159,13 @@ class TruckSerializer(serializers.ModelSerializer):
             "gps_id",
             "trailer",
             "driver",
+            "logist",
             "diesel_norm",
             "tire_cost_per_km",
             "adblue_norm",
             "driver_details",
             "trailer_details",
+            "logist_details",
             "sovtes_id",
             "current_unit",
         ]

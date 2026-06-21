@@ -13,24 +13,18 @@
     }
     &__list-item {
         font-size: 1em;
-        padding: 5px 10px;
 
         &:hover {
             background-color: rgba(108, 129, 127, 0.3);
             cursor: pointer;
             border-radius: 6px;
         }
-        // &:first-child {
-        //     border-radius: 0 6px 0 0;
-        // }
-
-        // &:last-child {
-        //     border-radius: 0 0 6px 0;
-        // }
     }
     &__link {
+        display: block;
+        width: 100%;
         color: $backgroundcolor;
         text-decoration: none;
-        padding: 5px;
+        padding: 5px 10px;
     }
 }

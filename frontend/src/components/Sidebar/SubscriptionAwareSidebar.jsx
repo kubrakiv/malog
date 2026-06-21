@@ -3,6 +3,7 @@ import sidebarMenuItems from "./sidebarMenuItems";
 import OpenContext from "../OpenContext";
 import SidebarItem from "./SidebarItem/SidebarItem";
 import useSubscription from "../../hooks/useSubscription";
+import Footer from "../Footer/Footer";
 
 import "./Sidebar.scss";
 
@@ -132,7 +133,7 @@ const SubscriptionAwareSidebar = ({ children }) => {
             {isSidebarOpen && <span>Loading menu...</span>}
           </div>
         </div>
-        <main className="page__main">{children}</main>
+        <main className="page__main">{children}<Footer /></main>
       </div>
     );
   }
@@ -153,7 +154,7 @@ const SubscriptionAwareSidebar = ({ children }) => {
             </div>
           )}
         </div>
-        <main className="page__main">{children}</main>
+        <main className="page__main">{children}<Footer /></main>
       </div>
     );
   }
@@ -176,7 +177,7 @@ const SubscriptionAwareSidebar = ({ children }) => {
           </div>
         )}
       </div>
-      <main className="page__main">{children}</main>
+      <main className="page__main">{children}<Footer /></main>
     </div>
   );
 };

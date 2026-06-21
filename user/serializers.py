@@ -13,7 +13,7 @@ class DriverProfileSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = DriverProfile
-        fields = ["profile", "first_name", "last_name", "middle_name", "full_name", "email", "phone_number", "position", "license_series", "license_number", "birth_date", "started_work", "finished_work", "country", "image", "trucks"]
+        fields = ["profile", "first_name", "last_name", "middle_name", "full_name", "email", "phone_number", "position", "license_series", "license_number", "birth_date", "started_work", "finished_work", "country", "image", "trucks", "sovtes_id"]
 
 
 

@@ -1,4 +1,69 @@
-.add-task-details__row-block_select {
-    // z-index: 100;
-    // position: absolute;
+@import "../../styles/utils/_vars";
+
+.add-task-details {
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 6px;
+  }
+
+  &__content-block {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  &__content-row-block {
+    background-color: #f2f5f6;
+    border: 1px solid #cdd8db;
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+
+  &__row-block {
+    width: 100%;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: $tableHeaderColor;
+    border-radius: 0 0 6px 6px;
+    padding: 8px 10px;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  &__footer-btn {
+    padding: 6px 16px;
+    color: #fff;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.85rem;
+    transition: background-color 0.15s;
+
+    &_save {
+      background-color: #1a9e3a;
+      &:hover {
+        background-color: #15832f;
+      }
+    }
+
+    &_close {
+      background-color: #e53e3e;
+      &:hover {
+        background-color: #c53030;
+      }
+    }
+  }
 }

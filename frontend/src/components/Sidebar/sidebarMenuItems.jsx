@@ -36,16 +36,16 @@ const menuItems = [
     icon: <FaTruckMoving />,
     childrens: [
       {
+        path: "/company",
+        title: "Про компанію",
+      },
+      {
         path: "/userlist",
         title: "Співробітники",
       },
       {
-        path: "/drivers",
-        title: "Водії",
-      },
-      {
         path: "/trucks",
-        title: "Автомобілі",
+        title: "Автопарк",
       },
     ],
   },

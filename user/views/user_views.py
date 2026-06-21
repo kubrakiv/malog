@@ -312,6 +312,28 @@ def deleteUser(request, pk):
     return Response('Profile was deleted')
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def getLogists(request):
+    """Return all logist profiles belonging to the current client."""
+    profiles = Profile.objects.filter(
+        client=request.user.client,
+        role__name='logist',
+    ).select_related('logistprofile')
+    data = []
+    for p in profiles:
+        logist = getattr(p, 'logistprofile', None)
+        full_name = f"{p.first_name} {p.last_name}".strip() or p.username
+        data.append({
+            'id': p.id,
+            'username': p.username,
+            'full_name': full_name,
+            'phone_number': logist.phone_number if logist else p.phone_number,
+            'position': logist.position if logist else None,
+        })
+    return Response(data)
+
+
 @api_view(['POST'])
 @permission_classes([SystemAdminPermission])
 def resetUserPassword(request, pk):

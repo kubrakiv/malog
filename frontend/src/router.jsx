@@ -73,6 +73,7 @@ const ExternalIdentitiesPage = lazy(
 const OnboardingWizard = lazy(
   () => import("./components/OnboardingWizard/OnboardingWizard"),
 );
+const CompanyPage = lazy(() => import("./screens/CompanyPage"));
 
 import { RestrictedRoute } from "./RestrictedRoute";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
@@ -88,6 +89,11 @@ const routes = [
     path: "/subscriptions",
     element: <SubscriptionManagementPage />,
     roles: ["client_admin"],
+  },
+  {
+    path: "/company",
+    element: <CompanyPage />,
+    roles: ["system_admin", "client_admin"],
   },
   {
     path: "/main",

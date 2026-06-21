@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -7,6 +7,7 @@ import { generateDatesArray } from "./dateFunctions";
 
 import {
   FaAngleDown,
+  FaAngleRight,
   FaAngleUp,
   FaFileAlt,
   FaTrailer,
@@ -37,6 +38,7 @@ import {
 import { selectTrucks } from "../../features/trucks/trucksSelectors";
 import { listTrucks } from "../../features/trucks/trucksOperations";
 import { selectTasksByWeek } from "../../features/tasks/tasksSelectors";
+import { listTruckUnits } from "../../features/truckUnits/truckUnitsOperations";
 
 import DayTasks from "../Tasks/DayTasks";
 import WeekSwitcherComponent from "../WeekSwitcherComponent/WeekSwitcherComponent";
@@ -46,6 +48,7 @@ import StartTimeModalComponent from "./StartTimeModalComponent/StartTimeModalCom
 import ServiceTaskModalComponent from "./ServiceTaskModalComponent/ServiceTaskModalComponent";
 import SwitchComponent from "../SwitchComponent/SwitchComponent";
 import TruckOnMapModalComponent from "./TruckOnMapModalComponent";
+import PlannerFilterDropdown from "./PlannerFilterDropdown";
 
 import "./WeekPlanner.scss";
 
@@ -66,6 +69,14 @@ export const WeekPlanner = () => {
     useSelector(selectSwitchers);
 
   const trucks = useSelector(selectTrucks);
+  const units = useSelector((state) => state.truckUnitsInfo.units);
+  const userInfo = useSelector((state) => state.userLogin.userInfo);
+
+  const [filterUnit, setFilterUnit] = useState(null);
+  const [filterLogist, setFilterLogist] = useState(() =>
+    userInfo?.role === "logist" ? userInfo.id : null
+  );
+  const [logists, setLogists] = useState([]);
 
   const tasksByWeek = useSelector(selectTasksByWeek);
   const currentKey = `${year}-${week}`;
@@ -227,15 +238,44 @@ export const WeekPlanner = () => {
   const date = new Date();
 
   const [expandedTruckId, setExpandedTruckId] = useState(null);
+  const [collapsedUnits, setCollapsedUnits] = useState(new Set());
+
+  const toggleUnit = (unitId) => {
+    setCollapsedUnits((prev) => {
+      const next = new Set(prev);
+      if (next.has(unitId)) next.delete(unitId);
+      else next.add(unitId);
+      return next;
+    });
+  };
 
   const [datesArray, setDatesArray] = useState(
     generateDatesArray(date, week, year)
   );
 
-  // Use real trucks if available, otherwise use placeholders
-  const displayTrucks = trucks.length > 0 ? trucks : createPlaceholderTrucks();
+  const visibleTrucks = useMemo(() => {
+    let result = trucks;
+    if (filterUnit) {
+      result = result.filter(
+        (t) => t.current_unit && String(t.current_unit.id) === String(filterUnit)
+      );
+    }
+    if (filterLogist) {
+      result = result.filter(
+        (t) => t.logist && String(t.logist) === String(filterLogist)
+      );
+    }
+    return result;
+  }, [trucks, filterUnit, filterLogist]);
+
+  // Use real trucks if available, otherwise show placeholders (no trucks at all)
+  const displayTrucks =
+    trucks.length === 0
+      ? createPlaceholderTrucks()
+      : visibleTrucks;
   const placeholderTasks =
     trucks.length === 0 ? createPlaceholderTasks(datesArray) : [];
+
 
   console.log("tasks", tasks);
   console.log("tasksByWeek", tasksByWeek);
@@ -250,6 +290,19 @@ export const WeekPlanner = () => {
     dispatch(listTrucks());
     dispatch(listDrivers());
     dispatch(listTaskTypes());
+    dispatch(listTruckUnits());
+
+    const token = userInfo?.token;
+    if (token) {
+      import("axios").then(({ default: axios }) => {
+        axios
+          .get("/api/users/logists/", {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+          .then(({ data }) => setLogists(data))
+          .catch(() => {});
+      });
+    }
   }, []);
 
   const keysToPrefetch = useMemo(() => {
@@ -378,14 +431,25 @@ export const WeekPlanner = () => {
 
       <div className="planner-container">
         <div className="week-number">
-          <button
-            className="week-number__btn-add-route"
-            title="Додати маршрут"
-            onClick={() => handleAddRouteBtn()}
-          >
-            {/* <FaFileAlt /> */}
-            Створити замовлення
-          </button>
+          <div className="week-number__left">
+            <div className="planner-filters">
+              <PlannerFilterDropdown
+                label="Колона"
+                value={filterUnit}
+                options={units.map((u) => ({ label: u.name, value: u.id }))}
+                onChange={setFilterUnit}
+              />
+              <PlannerFilterDropdown
+                label="Логіст"
+                value={filterLogist}
+                options={logists.map((l) => ({
+                  label: l.full_name || l.username,
+                  value: l.id,
+                }))}
+                onChange={setFilterLogist}
+              />
+            </div>
+          </div>
           <div className="week-number__switcher">
             <WeekSwitcherComponent
               year={year}
@@ -394,26 +458,28 @@ export const WeekPlanner = () => {
               handleYearChange={handleYearChange}
             />
           </div>
-          <SwitchComponent
-            title="Водій"
-            isToggled={isToggledDriver}
-            onToggle={handleShowDriver}
-          />
-          <SwitchComponent
-            title="Заявка"
-            isToggled={isToggledOrderNumber}
-            onToggle={handleShowOrderNumber}
-          />
-          <SwitchComponent
-            title="Замовник"
-            isToggled={isToggledCustomer}
-            onToggle={handleShowCustomer}
-          />
-          <SwitchComponent
-            title="Завдання"
-            isToggled={isToggledTaskType}
-            onToggle={handleShowTaskType}
-          />
+          <div className="week-number__right">
+            <SwitchComponent
+              title="Водій"
+              isToggled={isToggledDriver}
+              onToggle={handleShowDriver}
+            />
+            <SwitchComponent
+              title="Заявка"
+              isToggled={isToggledOrderNumber}
+              onToggle={handleShowOrderNumber}
+            />
+            <SwitchComponent
+              title="Замовник"
+              isToggled={isToggledCustomer}
+              onToggle={handleShowCustomer}
+            />
+            <SwitchComponent
+              title="Завдання"
+              isToggled={isToggledTaskType}
+              onToggle={handleShowTaskType}
+            />
+          </div>
         </div>
 
         <hr className="divide-block" />
@@ -437,12 +503,24 @@ export const WeekPlanner = () => {
                 })}
               </div>
 
-              {displayTrucks
-                .filter((truck) => truck.end_date === null)
-                .map((truck) => {
-                  console.log("DatesArray", datesArray);
-                  console.log(`TASKS Week${week}`, tasks);
-                  // For placeholder trucks, return placeholder tasks for first truck, empty for others
+              {(() => {
+                const filteredTrucks = displayTrucks.filter(
+                  (t) => t.end_date === null
+                );
+
+                // Group trucks by current_unit, preserving truck order
+                const groupMap = new Map();
+                filteredTrucks.forEach((truck) => {
+                  const unitId = truck.current_unit?.id ?? "unassigned";
+                  const unitName = truck.current_unit?.name ?? "Без колони";
+                  if (!groupMap.has(unitId)) {
+                    groupMap.set(unitId, { id: unitId, name: unitName, trucks: [] });
+                  }
+                  groupMap.get(unitId).trucks.push(truck);
+                });
+                const groups = Array.from(groupMap.values());
+
+                const renderTruckRow = (truck) => {
                   const weeklyTasks = truck.isPlaceholder
                     ? truck.id === "placeholder-1"
                       ? datesArray.map((date) =>
@@ -457,114 +535,66 @@ export const WeekPlanner = () => {
                             (task) =>
                               isSameDate(task.start_date, date[1]) &&
                               task.truck === truck.plates &&
-                              task.type !== "Start" // Exclude service tasks
+                              task.type !== "Start"
                           )
                           .sort((a, b) => {
-                            // Compare based on start_date and start_time
                             const startDateComparison =
                               new Date(a.start_date + " " + a.start_time) -
                               new Date(b.start_date + " " + b.start_time);
-
-                            if (startDateComparison !== 0) {
-                              return startDateComparison;
-                            }
-
-                            // If start_date and start_time are equal, fallback to end_date and end_time
+                            if (startDateComparison !== 0) return startDateComparison;
                             return (
                               new Date(a.end_date + " " + a.end_time) -
                               new Date(b.end_date + " " + b.end_time)
                             );
                           })
                       );
-                  console.log("weeklyTasks", weeklyTasks);
 
                   return (
                     <div
-                      className={`week-truck__row ${
-                        truck.isPlaceholder
-                          ? "week-truck__row--placeholder"
-                          : ""
-                      }`}
+                      className={`week-truck__row ${truck.isPlaceholder ? "week-truck__row--placeholder" : ""}`}
                       key={truck.id}
                     >
                       <div className="week-truck__day-container">
                         <div className="week-truck__first-col">
                           <div
-                            className={`week-truck__truck-plates ${
-                              truck.isPlaceholder
-                                ? "week-truck__truck-plates--clickable"
-                                : ""
-                            }`}
-                            onClick={
-                              truck.isPlaceholder
-                                ? handlePlaceholderTruckClick
-                                : undefined
-                            }
-                            title={
-                              truck.isPlaceholder
-                                ? "Click to add trucks"
-                                : undefined
-                            }
+                            className={`week-truck__truck-plates ${truck.isPlaceholder ? "week-truck__truck-plates--clickable" : ""}`}
+                            onClick={truck.isPlaceholder ? handlePlaceholderTruckClick : undefined}
+                            title={truck.isPlaceholder ? "Click to add trucks" : undefined}
                           >
-                            <span className="week-truck__truck-plates_icon">
-                              {<FaTruck />}
-                            </span>
+                            <span className="week-truck__truck-plates_icon"><FaTruck /></span>
                             <span>{truck.plates}</span>
                           </div>
                           {truck.trailer && (
                             <div className="week-truck__trailer-plates">
-                              <span className="week-truck__trailer-plates_icon">
-                                {<FaTrailer />}
-                              </span>
+                              <span className="week-truck__trailer-plates_icon"><FaTrailer /></span>
                               <span>{truck.trailer}</span>
                             </div>
                           )}
                           {truck?.driver_details && (
                             <div
-                              className={`week-truck__driver-details ${
-                                truck.isPlaceholder
-                                  ? "week-truck__driver-details--clickable"
-                                  : ""
-                              }`}
-                              onClick={
-                                truck.isPlaceholder
-                                  ? handlePlaceholderDriverClick
-                                  : () => toggleDetails(truck.id)
-                              }
-                              title={
-                                truck.isPlaceholder
-                                  ? "Click to add drivers"
-                                  : undefined
-                              }
+                              className={`week-truck__driver-details ${truck.isPlaceholder ? "week-truck__driver-details--clickable" : ""}`}
+                              onClick={truck.isPlaceholder ? handlePlaceholderDriverClick : () => toggleDetails(truck.id)}
+                              title={truck.isPlaceholder ? "Click to add drivers" : undefined}
                             >
                               <div className="week-truck__driver-details_title">
                                 <span className="week-truck__driver-details_name">
                                   {truck?.driver_details?.full_name}
                                 </span>
                                 <span className="week-truck__driver-details_arrow">
-                                  {expandedTruckId === truck.id ? (
-                                    <FaAngleUp />
-                                  ) : (
-                                    <FaAngleDown />
-                                  )}
+                                  {expandedTruckId === truck.id ? <FaAngleUp /> : <FaAngleDown />}
                                 </span>
                               </div>
                             </div>
                           )}
                           {expandedTruckId === truck.id && (
                             <span className="week-truck__driver-details_phone-number">
-                              {truck?.driver &&
-                                truck?.driver_details?.phone_number}
+                              {truck?.driver && truck?.driver_details?.phone_number}
                             </span>
                           )}
                         </div>
                       </div>
-
                       {weeklyTasks.map((dayTasks, dayNumber) => (
-                        <div
-                          className="week-truck__day-container"
-                          key={dayNumber}
-                        >
+                        <div className="week-truck__day-container" key={dayNumber}>
                           <DayTasks
                             tasks={dayTasks}
                             truckId={truck.id}
@@ -580,7 +610,26 @@ export const WeekPlanner = () => {
                       ))}
                     </div>
                   );
-                })}
+                };
+
+                return groups.map((group) => (
+                  <Fragment key={group.id}>
+                    <div
+                      className="week-unit-group__header"
+                      onClick={() => toggleUnit(group.id)}
+                    >
+                      <div className="week-unit-group__title-cell">
+                        <span className="week-unit-group__arrow">
+                          {collapsedUnits.has(group.id) ? <FaAngleRight /> : <FaAngleDown />}
+                        </span>
+                        <span className="week-unit-group__name">{group.name}</span>
+                        <span className="week-unit-group__count">{group.trucks.length}</span>
+                      </div>
+                    </div>
+                    {!collapsedUnits.has(group.id) && group.trucks.map(renderTruckRow)}
+                  </Fragment>
+                ));
+              })()}
             </div>
           </div>
         </div>

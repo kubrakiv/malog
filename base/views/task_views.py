@@ -32,6 +32,7 @@ import isoweek
 #     return Response(serializer.data)
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def getTasks(request):
     year = request.GET.get("year")
     week = request.GET.get("week")
@@ -59,6 +60,7 @@ def getTasks(request):
 
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def getTask(request, pk):
     task = Task.objects.get(id=pk, client=request.user.client)
     serializer = TaskSerializer(task, many=False, context={'request': request})
@@ -66,6 +68,7 @@ def getTask(request, pk):
 
 
 @api_view(["POST"])
+@permission_classes([IsAuthenticated])
 def createTask(request):
     try:
         data = request.data
@@ -119,6 +122,7 @@ def createTask(request):
 
 
 @api_view(["PUT"])
+@permission_classes([IsAuthenticated])
 def editTask(request, pk):
     task = Task.objects.get(id=pk, client=request.user.client)
     print(task)
@@ -146,6 +150,7 @@ def editTask(request, pk):
 
 
 @api_view(["DELETE"])
+@permission_classes([IsAuthenticated])
 def deleteTask(request, pk):
     try:
         task = Task.objects.get(id=pk, client=request.user.client)

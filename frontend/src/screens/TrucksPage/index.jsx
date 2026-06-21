@@ -9,6 +9,8 @@ import { listDrivers } from "../../actions/driverActions";
 import { setShowAddTruckModal } from "../../features/trucks/trucksSlice";
 import TrucksTableComponent from "./TrucksTableComponent";
 import TrailersTableComponent from "./TrailersTableComponent";
+import DriversComponent from "../../components/DriversComponent/DriversComponent";
+import SovtesSyncModal from "./SovtesSyncModal";
 import "./style.scss";
 
 const TrucksPage = () => {
@@ -19,6 +21,7 @@ const TrucksPage = () => {
   const trucks = useSelector(selectTrucks);
   const trailers = useSelector(selectTrailers);
   const drivers = useSelector((state) => state.driversInfo.drivers.data);
+  const showSovtesModal = useSelector((state) => state.sovtesFleetInfo.showModal);
 
   const [activeTab, setActiveTab] = useState("trucks");
   const [showContinueOnboarding, setShowContinueOnboarding] = useState(false);
@@ -62,7 +65,9 @@ const TrucksPage = () => {
   };
 
   const activeCount =
-    activeTab === "trucks" ? (trucks?.length ?? 0) : (trailers?.length ?? 0);
+    activeTab === "trucks" ? (trucks?.length ?? 0)
+    : activeTab === "trailers" ? (trailers?.length ?? 0)
+    : (drivers?.length ?? 0);
 
   return (
     <div className="trucks-page">
@@ -84,41 +89,47 @@ const TrucksPage = () => {
       )}
 
       <div className="trucks-page__hero">
-        <div>
-          <p className="trucks-page__eyebrow">Тенантний довідник</p>
-          <h2 className="trucks-page__title">Транспорт</h2>
-          <p className="trucks-page__subtitle">
-            Керуйте тягачами та причепами в єдиному інтерфейсі з швидким
-            редагуванням та пошуком.
-          </p>
-        </div>
+        <h2 className="trucks-page__title">
+          Автопарк
+          <span
+            className="trucks-page__info-badge"
+            data-tooltip="Керуйте тягачами, причепами та водіями в єдиному інтерфейсі."
+          >
+            i
+          </span>
+        </h2>
 
         <div className="trucks-page__actions">
-          <div className="trucks-page__actions-top">
-            <div className="trucks-page__count-chip">{activeCount} записів</div>
-            <div className="trucks-page__tab-group">
-              <button
-                className={`trucks-page__tab-btn ${
-                  activeTab === "trucks" ? "trucks-page__tab-btn--active" : ""
-                }`}
-                onClick={() => setActiveTab("trucks")}
-                type="button"
-              >
-                Тягачі
-              </button>
-              <button
-                className={`trucks-page__tab-btn ${
-                  activeTab === "trailers" ? "trucks-page__tab-btn--active" : ""
-                }`}
-                onClick={() => setActiveTab("trailers")}
-                type="button"
-              >
-                Причіпи
-              </button>
-            </div>
+          <span className="trucks-page__count-chip">{activeCount} записів</span>
+          <div className="trucks-page__tab-group">
+            <button
+              className={`trucks-page__tab-btn ${
+                activeTab === "trucks" ? "trucks-page__tab-btn--active" : ""
+              }`}
+              onClick={() => setActiveTab("trucks")}
+              type="button"
+            >
+              Тягачі
+            </button>
+            <button
+              className={`trucks-page__tab-btn ${
+                activeTab === "trailers" ? "trucks-page__tab-btn--active" : ""
+              }`}
+              onClick={() => setActiveTab("trailers")}
+              type="button"
+            >
+              Причіпи
+            </button>
+            <button
+              className={`trucks-page__tab-btn ${
+                activeTab === "drivers" ? "trucks-page__tab-btn--active" : ""
+              }`}
+              onClick={() => setActiveTab("drivers")}
+              type="button"
+            >
+              Водії
+            </button>
           </div>
-
-          <div id="fleet-hero-tools" className="trucks-page__hero-tools" />
         </div>
       </div>
 
@@ -133,7 +144,12 @@ const TrucksPage = () => {
         {activeTab === "trailers" && (
           <TrailersTableComponent trailers={trailers} />
         )}
+        {activeTab === "drivers" && (
+          <DriversComponent embedded />
+        )}
       </div>
+
+      {showSovtesModal && <SovtesSyncModal />}
     </div>
   );
 };

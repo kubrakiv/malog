@@ -4,7 +4,7 @@ from django.conf import settings
 from django.utils import timezone
 from django.db.models import IntegerField, Q
 from django.db.models.functions import Cast, Substr, Length
-from user.models import DriverProfile
+from user.models import DriverProfile, LogistProfile
 from django.core.exceptions import ObjectDoesNotExist
 from .managers import TenantManager, GlobalManager, TenantRelatedManager
 from .tenant import get_current_client
@@ -103,6 +103,13 @@ class APIToken(models.Model):
 
 
 class CompanyBank(BaseTenantModel):
+    company = models.ForeignKey(
+        'Company',
+        related_name='banks',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     name = models.CharField(max_length=255)
     bank_address = models.CharField(max_length=250, null=True, blank=True)
     iban_cz = models.CharField(max_length=50, null=True, blank=True)
@@ -193,6 +200,8 @@ class Trailer(BaseTenantModel):
     entry_mileage = models.CharField(max_length=50, null=True, blank=True)
     price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     sovtes_id = models.CharField(max_length=100, null=True, blank=True)
+    is_removed = models.BooleanField(default=False)
+    is_removed_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Trailer plates: {self.plates}"
@@ -240,6 +249,15 @@ class Truck(BaseTenantModel):
         blank=True,
         null=True,
     )
+    logist = models.ForeignKey(
+        LogistProfile,
+        related_name="trucks",
+        on_delete=models.SET_NULL,
+        blank=True,
+        null=True,
+    )
+    is_removed = models.BooleanField(default=False)
+    is_removed_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return f"Truck plates: {self.plates}"

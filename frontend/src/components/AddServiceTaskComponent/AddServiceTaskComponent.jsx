@@ -21,6 +21,8 @@ import InputComponent from "../../globalComponents/InputComponent";
 
 import { TASK_CONSTANTS } from "../../constants/global";
 
+import "./AddServiceTaskComponent.scss";
+
 import { selectTrucks } from "../../features/trucks/trucksSelectors";
 import { formatDateForInput } from "../../utils/formatDate";
 import { formFields } from "./taskFormFields";

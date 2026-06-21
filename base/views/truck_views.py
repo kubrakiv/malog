@@ -1,5 +1,4 @@
-from django.shortcuts import render, get_object_or_404
-from django.db import transaction
+from django.utils import timezone
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -8,8 +7,13 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from base.models import Truck, Trailer, DriverProfile
+from user.models import LogistProfile
 from base.serializers import TruckSerializer
 from base.subscription_models import ClientSubscription
+from base.views.sovtes_fleet_views import (
+    _push_truck_to_sovtes,
+    _delete_truck_from_sovtes,
+)
 
 
 # TRUCK VIEWS
@@ -17,7 +21,7 @@ from base.subscription_models import ClientSubscription
 
 @api_view(["GET"])
 def getTrucks(request):
-    trucks = Truck.objects.filter(client=request.user.client)
+    trucks = Truck.objects.filter(client=request.user.client, is_removed=False)
     serializer = TruckSerializer(trucks, many=True, context={'request': request})
     return Response(serializer.data)
 
@@ -26,11 +30,10 @@ def getTrucks(request):
 @permission_classes([IsAuthenticated])
 def createTruck(request):
     try:
-        # Check subscription limits
         client = request.user.client
         subscription = ClientSubscription.objects.get(client=client, status='active')
-        
-        current_truck_count = Truck.objects.filter(client=client).count()
+
+        current_truck_count = Truck.objects.filter(client=client, is_removed=False).count()
         if not subscription.can_create_truck(current_truck_count):
             return Response(
                 {
@@ -46,22 +49,12 @@ def createTruck(request):
             {'error': 'No active subscription found'},
             status=status.HTTP_403_FORBIDDEN
         )
-    
+
     data = request.data
 
-    end_date = data.get("end_date")
-    if end_date == "":
-        end_date = None
-
-    entry_date = data.get("entry_date")
-    if entry_date == "":
-        entry_date = None
-    
-    year = data.get("year")
-    if year == "":
-        year = None
-
-    # Convert price to an integer
+    end_date = data.get("end_date") or None
+    entry_date = data.get("entry_date") or None
+    year = data.get("year") or None
     price = int(float(data.get("price"))) if data.get("price") else None
 
     truck = Truck.objects.create(
@@ -75,7 +68,7 @@ def createTruck(request):
         entry_mileage=data.get("entry_mileage"),
         price=price,
         gps_id=data.get("gps_id"),
-        client=client,  # Add the client from request.user.client
+        client=client,
     )
     serializer = TruckSerializer(truck, many=False, context={'request': request})
     return Response(serializer.data)
@@ -93,21 +86,36 @@ def deleteTruck(request, pk):
         )
 
     try:
-        truck = Truck.objects.get(id=pk, client=request.user.client)
+        truck = Truck.objects.get(id=pk, client=request.user.client, is_removed=False)
     except Truck.DoesNotExist:
-        return Response("Truck does not exist", status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "Truck not found"}, status=status.HTTP_404_NOT_FOUND)
 
-    truck.delete()
-    return Response({"message": "Truck deleted"})
+    sovtes_id = truck.sovtes_id
+
+    # Soft-delete in TMS
+    truck.is_removed = True
+    truck.is_removed_at = timezone.now()
+    truck.save(update_fields=["is_removed", "is_removed_at"])
+
+    # Mirror deletion in Sovtes if the truck was synced
+    sovtes_result = None
+    if sovtes_id:
+        try:
+            sovtes_result = _delete_truck_from_sovtes(sovtes_id)
+        except Exception as e:
+            sovtes_result = {"status": "error", "message": str(e)}
+
+    return Response({
+        "message": "Truck removed",
+        "sovtes": sovtes_result,
+    })
 
 
 @api_view(["PUT"])
 def updateTruckTrailerAndDriver(request, pk):
     data = request.data
-    print("TRUCK DATA", data)
     try:
-        # Get the truck instance
-        truck = Truck.objects.get(id=pk, client=request.user.client)
+        truck = Truck.objects.get(id=pk, client=request.user.client, is_removed=False)
     except Truck.DoesNotExist:
         return Response({"error": "Truck not found"}, status=404)
 
@@ -120,7 +128,7 @@ def updateTruckTrailerAndDriver(request, pk):
         except Trailer.DoesNotExist:
             return Response({"error": "Trailer not found"}, status=404)
     elif trailer_plates is None or trailer_plates == "":
-        truck.trailer = None  # Clear trailer if null/empty
+        truck.trailer = None
 
     # Handle driver update
     driver_name = data.get("driver")
@@ -131,52 +139,56 @@ def updateTruckTrailerAndDriver(request, pk):
         except DriverProfile.DoesNotExist:
             return Response({"error": "Driver not found"}, status=404)
     elif driver_name is None or driver_name == "":
-        truck.driver = None  # Clear driver if null/empty
+        truck.driver = None
 
-    # Save the truck instance with the updated data
+    # Handle logist update
+    logist_id = data.get("logist")
+    if logist_id:
+        try:
+            logist = LogistProfile.objects.get(profile__id=logist_id, profile__client=request.user.client)
+            truck.logist = logist
+        except LogistProfile.DoesNotExist:
+            return Response({"error": "Logist not found"}, status=404)
+    elif "logist" in data and (logist_id is None or logist_id == ""):
+        truck.logist = None
+
     truck.save()
 
-    # Serialize the updated truck data and return it
     serializer = TruckSerializer(instance=truck, partial=True, context={'request': request})
     return Response(serializer.data)
 
+
 @api_view(["PUT"])
 def updateTruck(request, pk):
-    print("UPDATE TRUCK DATA", request.data)
     try:
-        truck = Truck.objects.get(id=pk, client=request.user.client)
+        truck = Truck.objects.get(id=pk, client=request.user.client, is_removed=False)
     except Truck.DoesNotExist:
         return Response({"error": "Truck not found"}, status=404)
 
     data = request.data
 
-    end_date = data.get("end_date")
-    if end_date == "":
-        end_date = None
-
-    entry_date = data.get("entry_date")
-    if entry_date == "":
-        entry_date = None
-
-    # Convert price to an integer
-    price = int(float(data.get("price"))) if data.get("price") else None
-
-    truck.brand = data.get("brand")
-    truck.model = data.get("model")
+    truck.brand = data.get("brand") or None
+    truck.model = data.get("model") or None
     truck.plates = data.get("plates")
-    truck.vin_code = data.get("vin_code")
-    truck.year = data.get("year")
-    truck.entry_date = entry_date
-    truck.end_date = end_date
-    truck.entry_mileage = data.get("entry_mileage")
-    truck.price = price
-    truck.gps_id = data.get("gps_id")
-    truck.diesel_norm = data.get("diesel_norm")
-    truck.adblue_norm = data.get("adblue_norm")
-    truck.tire_cost_per_km = data.get("tire_cost_per_km")
+    truck.vin_code = data.get("vin_code") or None
+    truck.year = int(data.get("year")) if data.get("year") else None
+    truck.entry_date = data.get("entry_date") or None
+    truck.end_date = data.get("end_date") or None
+    truck.entry_mileage = data.get("entry_mileage") or None
+    truck.price = int(float(data.get("price"))) if data.get("price") else None
+    truck.gps_id = data.get("gps_id") or None
+    truck.diesel_norm = data.get("diesel_norm") or None
+    truck.adblue_norm = data.get("adblue_norm") or None
+    truck.tire_cost_per_km = data.get("tire_cost_per_km") or None
 
     truck.save()
+
+    # Push changes to Sovtes if this truck is linked
+    if truck.sovtes_id:
+        try:
+            _push_truck_to_sovtes(truck)
+        except Exception:
+            pass  # Sovtes push failure must not block TMS response
+
     serializer = TruckSerializer(instance=truck, partial=True, context={'request': request})
     return Response(serializer.data)
-
-    

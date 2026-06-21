@@ -5,7 +5,6 @@ import { useEffect, Suspense } from "react";
 
 import SubscriptionAwareSidebar from "./components/Sidebar/SubscriptionAwareSidebar";
 import Header from "./components/Header/Header";
-import Footer from "./components/Footer/Footer";
 import SubscriptionBanner from "./components/SubscriptionBanner/SubscriptionBanner";
 import SovtesAuthHandler from "./components/SovtesAuthHandler/SovtesAuthHandler";
 
@@ -40,7 +39,6 @@ const Layout = () => {
           <Outlet />
           <Toaster position="top-right" reverseOrder={false} />
         </SubscriptionAwareSidebar>
-        <Footer />
       </Suspense>
     </div>
   ) : (

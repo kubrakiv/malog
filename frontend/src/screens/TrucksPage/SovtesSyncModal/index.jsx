@@ -6,6 +6,7 @@ import {
   FaCheck,
   FaTruck,
   FaTrailer,
+  FaUser,
   FaChevronDown,
   FaChevronUp,
   FaLink,
@@ -22,6 +23,11 @@ import {
   linkSovtesTrailer,
   resyncAllSovtesTrucks,
   resyncAllSovtesTrailers,
+  fetchSovtesDrivers,
+  syncSovtesDriver,
+  resyncSovtesDriver,
+  linkSovtesDriver,
+  resyncAllSovtesDrivers,
 } from "../../../features/sovtesFleet/sovtesFleetOperations";
 import {
   setShowSovtesSyncModal,
@@ -29,6 +35,7 @@ import {
 } from "../../../features/sovtesFleet/sovtesFleetSlice";
 import { listTrucks } from "../../../features/trucks/trucksOperations";
 import { listTrailers } from "../../../features/trailers/trailersOperations";
+import { listDrivers } from "../../../features/drivers/driversOperations";
 import "./style.scss";
 
 const extractStr = (val) => {
@@ -75,14 +82,28 @@ const getPlates = (v) =>
 const getBrand = (v) =>
   extractStr(v.brandTitle || v.brand || v.make) || "—";
 
-// Picker shown when user clicks "Зв'язати" — lets them pick a local unlinked vehicle
-const LinkPicker = ({ sovtesVehicle, localItems, onConfirm, onCancel, loading }) => {
+const getDriverName = (v) => {
+  const last = extractStr(v.lastname || v.lastName || v.last_name);
+  const first = extractStr(v.firstname || v.firstName || v.first_name);
+  const patronymic = extractStr(v.patronymic || v.middleName || v.middle_name);
+  const fromParts = [last, first, patronymic].filter(Boolean).join(" ");
+  return fromParts || extractStr(v.fullName || v.full_name || v.name) || "—";
+};
+
+// Picker shown when user clicks "Зв'язати" — lets them pick a local unlinked item
+const LinkPicker = ({ sovtesVehicle, localItems, onConfirm, onCancel, loading, isDriverTab }) => {
   const [query, setQuery] = useState("");
   const [chosenId, setChosenId] = useState(null);
 
   const filtered = localItems.filter((item) => {
     if (!query) return true;
     const q = query.toLowerCase();
+    if (isDriverTab) {
+      return (
+        (item.full_name || "").toLowerCase().includes(q) ||
+        (item.phone_number || "").toLowerCase().includes(q)
+      );
+    }
     return (
       (item.plates || "").toLowerCase().includes(q) ||
       (item.brand || "").toLowerCase().includes(q) ||
@@ -90,18 +111,24 @@ const LinkPicker = ({ sovtesVehicle, localItems, onConfirm, onCancel, loading })
     );
   });
 
+  const sovtesLabel = isDriverTab ? getDriverName(sovtesVehicle) : getPlates(sovtesVehicle);
+  const emptyMsg = isDriverTab ? "Немає незв'язаних водіїв" : "Немає незв'язаного транспорту";
+  const searchPlaceholder = isDriverTab
+    ? "Пошук за ім'ям, телефоном…"
+    : "Пошук за номером, маркою, моделлю…";
+
   return (
     <div className="sovtes-modal__link-picker">
       <p className="sovtes-modal__link-picker-hint">
         Оберіть існуючий запис для прив'язки до Sovtes&nbsp;
-        <strong>{getPlates(sovtesVehicle)}</strong>:
+        <strong>{sovtesLabel}</strong>:
       </p>
 
       <div className="sovtes-modal__link-search">
         <FaSearch className="sovtes-modal__link-search-icon" />
         <input
           type="text"
-          placeholder="Пошук за номером, маркою, моделлю…"
+          placeholder={searchPlaceholder}
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           className="sovtes-modal__link-search-input"
@@ -112,27 +139,35 @@ const LinkPicker = ({ sovtesVehicle, localItems, onConfirm, onCancel, loading })
       <div className="sovtes-modal__link-list">
         {filtered.length === 0 && (
           <p className="sovtes-modal__link-empty">
-            {localItems.length === 0
-              ? "Немає незв'язаного транспорту"
-              : "Нічого не знайдено"}
+            {localItems.length === 0 ? emptyMsg : "Нічого не знайдено"}
           </p>
         )}
-        {filtered.map((item) => (
-          <button
-            key={item.id}
-            type="button"
-            className={`sovtes-modal__link-option${chosenId === item.id ? " sovtes-modal__link-option--selected" : ""}`}
-            onClick={() => setChosenId(item.id)}
-          >
-            <span className="sovtes-modal__link-option-plates">
-              {item.plates || "—"}
-            </span>
-            <span className="sovtes-modal__link-option-meta">
-              {[item.brand, item.model].filter(Boolean).join(" ") || "—"}
-              {item.vin_code ? ` · ${item.vin_code}` : ""}
-            </span>
-          </button>
-        ))}
+        {filtered.map((item) => {
+          const itemId = isDriverTab ? item.profile : item.id;
+          return (
+            <button
+              key={itemId}
+              type="button"
+              className={`sovtes-modal__link-option${chosenId === itemId ? " sovtes-modal__link-option--selected" : ""}`}
+              onClick={() => setChosenId(itemId)}
+            >
+              {isDriverTab ? (
+                <>
+                  <span className="sovtes-modal__link-option-plates">{item.full_name || "—"}</span>
+                  <span className="sovtes-modal__link-option-meta">{item.phone_number || ""}</span>
+                </>
+              ) : (
+                <>
+                  <span className="sovtes-modal__link-option-plates">{item.plates || "—"}</span>
+                  <span className="sovtes-modal__link-option-meta">
+                    {[item.brand, item.model].filter(Boolean).join(" ") || "—"}
+                    {item.vin_code ? ` · ${item.vin_code}` : ""}
+                  </span>
+                </>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       <div className="sovtes-modal__link-actions">
@@ -160,24 +195,27 @@ const LinkPicker = ({ sovtesVehicle, localItems, onConfirm, onCancel, loading })
 
 const SovtesSyncModal = () => {
   const dispatch = useDispatch();
-  const { trucks, trailers, loading, syncingIds, resyncingAll, error } =
+  const { trucks, trailers, drivers, loading, syncingIds, resyncingAll, error, modalInitialTab } =
     useSelector((state) => state.sovtesFleetInfo);
 
   const localTrucks = useSelector((s) => s.trucksInfo?.trucks?.data || []);
   const localTrailers = useSelector((s) => s.trailersInfo?.trailers?.data || []);
+  const localDrivers = useSelector((s) => s.driversInfo?.drivers?.data || []);
 
-  const [activeTab, setActiveTab] = useState("trucks");
+  const [activeTab, setActiveTab] = useState(modalInitialTab ?? "trucks");
   const [expandedId, setExpandedId] = useState(null);
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [addingAll, setAddingAll] = useState(false);
-  const [linkingId, setLinkingId] = useState(null); // sovtes vehicle.id being linked
+  const [linkingId, setLinkingId] = useState(null);
 
-  const items = activeTab === "trucks" ? trucks : trailers;
+  const isDriverTab = activeTab === "drivers";
+  const items = activeTab === "trucks" ? trucks : activeTab === "trailers" ? trailers : drivers;
   const unsyncedItems = items.filter((v) => !v.already_synced);
   const syncedItems = items.filter((v) => v.already_synced);
 
-  const unlinkedLocal =
-    activeTab === "trucks"
+  const unlinkedLocal = isDriverTab
+    ? localDrivers.filter((d) => !d.sovtes_id)
+    : activeTab === "trucks"
       ? localTrucks.filter((t) => !t.sovtes_id)
       : localTrailers.filter((t) => !t.sovtes_id);
 
@@ -185,11 +223,9 @@ const SovtesSyncModal = () => {
     setExpandedId(null);
     setSelectedIds(new Set());
     setLinkingId(null);
-    if (activeTab === "trucks") {
-      dispatch(fetchSovtesTrucks());
-    } else {
-      dispatch(fetchSovtesTrailers());
-    }
+    if (activeTab === "trucks") dispatch(fetchSovtesTrucks());
+    else if (activeTab === "trailers") dispatch(fetchSovtesTrailers());
+    else dispatch(fetchSovtesDrivers());
   }, [activeTab, dispatch]);
 
   const handleClose = () => dispatch(setShowSovtesSyncModal(false));
@@ -212,25 +248,28 @@ const SovtesSyncModal = () => {
 
   const refreshLocal = () => {
     if (activeTab === "trucks") dispatch(listTrucks());
-    else dispatch(listTrailers());
+    else if (activeTab === "trailers") dispatch(listTrailers());
+    else dispatch(listDrivers());
   };
 
   const syncOne = async (vehicle) => {
-    const action = activeTab === "trucks" ? syncSovtesTruck : syncSovtesTrailer;
+    const action = isDriverTab ? syncSovtesDriver
+      : activeTab === "trucks" ? syncSovtesTruck : syncSovtesTrailer;
     const result = await dispatch(action(vehicle));
     if (action.fulfilled.match(result)) refreshLocal();
   };
 
   const handleResync = async (e, vehicle) => {
     e.stopPropagation();
-    const action = activeTab === "trucks" ? resyncSovtesTruck : resyncSovtesTrailer;
+    const action = isDriverTab ? resyncSovtesDriver
+      : activeTab === "trucks" ? resyncSovtesTruck : resyncSovtesTrailer;
     const result = await dispatch(action(vehicle));
     if (action.fulfilled.match(result)) refreshLocal();
   };
 
   const handleResyncAll = async () => {
-    const action =
-      activeTab === "trucks" ? resyncAllSovtesTrucks : resyncAllSovtesTrailers;
+    const action = isDriverTab ? resyncAllSovtesDrivers
+      : activeTab === "trucks" ? resyncAllSovtesTrucks : resyncAllSovtesTrailers;
     const result = await dispatch(action());
     if (action.fulfilled.match(result)) refreshLocal();
   };
@@ -259,8 +298,18 @@ const SovtesSyncModal = () => {
     const vehicle = items.find((v) => v.id === linkingId);
     if (!vehicle || !localId) return;
 
-    const action = activeTab === "trucks" ? linkSovtesTruck : linkSovtesTrailer;
-    const idKey = activeTab === "trucks" ? "local_truck_id" : "local_trailer_id";
+    let action, idKey;
+    if (isDriverTab) {
+      action = linkSovtesDriver;
+      idKey = "local_driver_id";
+    } else if (activeTab === "trucks") {
+      action = linkSovtesTruck;
+      idKey = "local_truck_id";
+    } else {
+      action = linkSovtesTrailer;
+      idKey = "local_trailer_id";
+    }
+
     const result = await dispatch(action({ ...vehicle, [idKey]: localId }));
     if (action.fulfilled.match(result)) {
       refreshLocal();
@@ -305,6 +354,13 @@ const SovtesSyncModal = () => {
             type="button"
           >
             <FaTrailer /><span>Причепи</span>
+          </button>
+          <button
+            className={`sovtes-modal__tab${activeTab === "drivers" ? " sovtes-modal__tab--active" : ""}`}
+            onClick={() => { dispatch(clearSovtesFleetError()); setActiveTab("drivers"); }}
+            type="button"
+          >
+            <FaUser /><span>Водії</span>
           </button>
         </div>
 
@@ -383,7 +439,7 @@ const SovtesSyncModal = () => {
 
           {!loading && !error && items.length === 0 && (
             <div className="sovtes-modal__state">
-              <p>Немає транспорту у Sovtes</p>
+              <p>{isDriverTab ? "Немає водіїв у Sovtes" : "Немає транспорту у Sovtes"}</p>
             </div>
           )}
 
@@ -396,11 +452,13 @@ const SovtesSyncModal = () => {
                 const selected = selectedIds.has(vehicle.id);
                 const isLinking = linkingId === vehicle.id;
 
-                const plates = getPlates(vehicle);
-                const brand = getBrand(vehicle);
-                const model = extractStr(vehicle.model);
-                const vin = extractStr(vehicle.vin || vehicle.vin_code) || "—";
-                const year = extractStr(vehicle.year_of_manufact ?? vehicle.year) || "—";
+                const plates = isDriverTab ? getDriverName(vehicle) : getPlates(vehicle);
+                const brand = isDriverTab
+                  ? (extractStr(vehicle.maincellphone || vehicle.phone || vehicle.phoneNumber || vehicle.phone_number) || "")
+                  : getBrand(vehicle);
+                const model = isDriverTab ? "" : extractStr(vehicle.model);
+                const vin = isDriverTab ? "" : (extractStr(vehicle.vin || vehicle.vin_code) || "—");
+                const year = isDriverTab ? "" : (extractStr(vehicle.year_of_manufact ?? vehicle.year) || "—");
 
                 return (
                   <div
@@ -440,8 +498,8 @@ const SovtesSyncModal = () => {
                         <div className="sovtes-modal__item-plates">{plates}</div>
                         <div className="sovtes-modal__item-details">
                           <span>{brand}{model ? ` ${model}` : ""}</span>
-                          {vin !== "—" && <span className="sovtes-modal__item-vin">VIN: {vin}</span>}
-                          {year !== "—" && <span>{year}</span>}
+                          {vin && vin !== "—" && <span className="sovtes-modal__item-vin">VIN: {vin}</span>}
+                          {year && year !== "—" && <span>{year}</span>}
                           <span className="sovtes-modal__item-id">ID: {vehicle.id}</span>
                         </div>
                       </div>
@@ -517,6 +575,7 @@ const SovtesSyncModal = () => {
                           onConfirm={handleLinkConfirm}
                           onCancel={() => setLinkingId(null)}
                           loading={isSyncing(vehicle.id)}
+                          isDriverTab={isDriverTab}
                         />
                       ) : (
                         <VehicleDetails vehicle={vehicle} />

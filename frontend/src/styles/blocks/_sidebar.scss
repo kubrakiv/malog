@@ -1,8 +1,11 @@
+@import "../utils/vars";
+
 .container-sidebar {
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: calc(100vh - 45px); // Adjust based on the header height
+  height: calc(100vh - 45px);
+  overflow: hidden;
   position: relative;
-  //   overflow: hidden; // Prevents the entire page from scrolling
+  background-color: $sidebarcolor;
 }

@@ -5,48 +5,71 @@ hr.divide-block {
   margin-left: 0;
 }
 
-.week-number {
+.planner-filters {
   display: flex;
-  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.week-number {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   width: 100%;
-  gap: 5px;
+  gap: 8px;
+  padding: 4px 0;
 
-  &__switcher {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+  &__left {
     display: flex;
     align-items: center;
-    z-index: 1;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+
+  &__switcher {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-end;
   }
 
   &__btn-add-route {
-    margin-right: auto;
-    background-color: green;
-    border-radius: 4px;
-    padding: 6px;
+    white-space: nowrap;
+    background-color: #1a9e3a;
+    border-radius: 8px;
+    padding: 6px 12px;
     color: white;
     border: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+
     &:hover {
-      background-color: rgb(20, 179, 20);
-      cursor: pointer;
+      background-color: #15832f;
     }
+
     & a {
       color: white;
       text-decoration: none;
     }
   }
+
   &__btn-show-driver {
-    margin-left: auto;
     background-color: rgb(232, 86, 198);
     border-radius: 4px;
-    // z-index: 3;
     padding: 5px;
     color: white;
+    border: none;
+    cursor: pointer;
     &:hover {
-      background-color: rgb(232, 86, 198, 0.8);
-      cursor: pointer;
+      background-color: rgba(232, 86, 198, 0.8);
     }
   }
 
@@ -65,8 +88,8 @@ hr.divide-block {
     height: 30px;
     width: 30px;
     border-radius: 4px;
+    cursor: pointer;
     &:hover {
-      cursor: pointer;
       background-color: $headerColor;
     }
   }
@@ -256,6 +279,58 @@ hr.divide-block {
       }
     }
   }
+}
+
+.week-unit-group {
+  &__header {
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    width: 100%;
+    margin: 4px 1px 1px 1px;
+    background-color: rgba(42, 97, 111, 0.12);
+    border-left: 3px solid rgba(42, 97, 111, 0.5);
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s;
+
+    &:hover {
+      background-color: rgba(42, 97, 111, 0.2);
+    }
+  }
+
+  &__title-cell {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    min-width: 130px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: rgb(4, 91, 98);
+    white-space: nowrap;
+  }
+
+  &__arrow {
+    font-size: 0.7rem;
+    opacity: 0.7;
+  }
+
+  &__name {
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  &__count {
+    background: rgba(4, 91, 98, 0.15);
+    color: rgb(4, 91, 98);
+    border-radius: 10px;
+    padding: 1px 7px;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+
 }
 
 .planner-button {
