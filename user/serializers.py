@@ -1,3 +1,7 @@
+import base64
+import uuid
+
+from django.core.files.base import ContentFile
 from rest_framework import serializers
 from .models import Profile, Role, DriverProfile
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -8,9 +12,19 @@ class TruckField(serializers.RelatedField):
         return {'id': value.id, 'plates': value.plates}
 
 
+class Base64ImageField(serializers.ImageField):
+    def to_internal_value(self, data):
+        if isinstance(data, str) and data.startswith('data:'):
+            header, imgstr = data.split(';base64,', 1)
+            ext = header.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name=f"{uuid.uuid4()}.{ext}")
+        return super().to_internal_value(data)
+
+
 class DriverProfileSerializer(serializers.ModelSerializer):
     trucks = TruckField(many=True, read_only=True)
-    
+    image = Base64ImageField(required=False, allow_null=True)
+
     class Meta:
         model = DriverProfile
         fields = ["profile", "first_name", "last_name", "middle_name", "full_name", "email", "phone_number", "position", "license_series", "license_number", "birth_date", "started_work", "finished_work", "country", "image", "trucks", "sovtes_id"]

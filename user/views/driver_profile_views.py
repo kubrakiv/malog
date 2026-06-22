@@ -38,15 +38,11 @@ def getDriverProfile(request, pk):
 @api_view(["PUT"])
 def updateDriverProfile(request, pk):
     driver = DriverProfile.objects.get(profile__id=pk)
-    print("Driver to Update: ", driver)
-    print("Request Data: ", request.data)
     serializer = DriverProfileSerializer(instance=driver, data=request.data, partial=True)
     if serializer.is_valid():
         serializer.save()
-        print("Saved data:", serializer.data)
-    else:
-        print("Serializer errors:", serializer.errors)
-    return Response(serializer.data if serializer.is_valid() else serializer.errors, status=200 if serializer.is_valid() else 400)
+        return Response(serializer.data, status=200)
+    return Response(serializer.errors, status=400)
 
 
 @api_view(["POST"])

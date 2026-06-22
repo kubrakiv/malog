@@ -5,7 +5,7 @@ import { selectTrucks } from "../../features/trucks/trucksSelectors";
 import { selectTrailers } from "../../features/trailers/trailersSelectors";
 import { listTrucks } from "../../features/trucks/trucksOperations";
 import { listTrailers } from "../../features/trailers/trailersOperations";
-import { listDrivers } from "../../actions/driverActions";
+import { listDrivers } from "../../features/drivers/driversOperations";
 import { setShowAddTruckModal } from "../../features/trucks/trucksSlice";
 import TrucksTableComponent from "./TrucksTableComponent";
 import TrailersTableComponent from "./TrailersTableComponent";
