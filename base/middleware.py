@@ -206,10 +206,13 @@ class UserActivityMiddleware(MiddlewareMixin):
         if not self._should_log(request):
             return
 
-        if hasattr(request, 'user') and request.user.is_authenticated:
+        # JWT takes priority: the Django session user may be the admin user
+        # (logged into /admin/ in the same browser), not the API caller.
+        jwt_user = self._user_from_jwt(request)
+        if jwt_user:
+            request._activity_user = jwt_user
+        elif hasattr(request, 'user') and request.user.is_authenticated:
             request._activity_user = request.user
-        else:
-            request._activity_user = self._user_from_jwt(request)
 
     def _should_log(self, request):
         return (
