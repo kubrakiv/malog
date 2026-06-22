@@ -261,10 +261,14 @@ class UserSessionInline(admin.TabularInline):
     readonly_fields = ['login_at', 'logout_at', 'duration_col', 'status_col', 'ip_address']
 
     def duration_col(self, obj):
+        if not obj.pk:
+            return '-'
         return _fmt_duration(obj)
     duration_col.short_description = 'Тривалість'
 
     def status_col(self, obj):
+        if not obj.pk:
+            return '-'
         if obj.is_active:
             return format_html('<span style="color:#19a34a;font-weight:700;">● Активна</span>')
         return format_html('<span style="color:#94a3b8;">○ Завершена</span>')
@@ -284,12 +288,16 @@ class UserActivityInline(admin.TabularInline):
     readonly_fields = ['timestamp', 'method_col', 'action_label', 'path', 'status_col']
 
     def method_col(self, obj):
+        if not obj.pk:
+            return '-'
         colours = {'GET': '#64748b', 'POST': '#19a34a', 'PUT': '#d97706', 'PATCH': '#d97706', 'DELETE': '#dc2626'}
         colour = colours.get(obj.method, '#172033')
         return format_html('<span style="color:{};font-weight:700;font-family:monospace;">{}</span>', colour, obj.method)
     method_col.short_description = 'Метод'
 
     def status_col(self, obj):
+        if not obj.pk:
+            return '-'
         colour = '#19a34a' if obj.status_code < 400 else ('#d97706' if obj.status_code < 500 else '#dc2626')
         return format_html('<span style="color:{};font-weight:700;">{}</span>', colour, obj.status_code)
     status_col.short_description = 'Статус'
