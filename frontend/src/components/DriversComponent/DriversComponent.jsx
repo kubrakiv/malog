@@ -80,8 +80,8 @@ const DriversComponent = ({ embedded = false }) => {
 
   const handleRowDoubleClick = (e, driver) => {
     e.stopPropagation();
-    dispatch(setSelectedDriver(driver));
-    dispatch(setShowDriverModal(true));
+    setLocalSelectedDriver(driver);
+    setShowDriverModal(true);
   };
 
   const handleAddDriverButton = () => {

@@ -14,6 +14,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from user.models import Profile, Role, AdminProfile, LogistProfile, DriverProfile
+from django.db import transaction
 from user.serializers import UserSerializer, UserSerializerWithToken, RoleSerializer
 
 from django.contrib.auth.hashers import make_password
@@ -233,30 +234,35 @@ def registerUser(request):
 	role = Role.objects.filter(name=role_name).first()
 
 	try:
-		# Assign the same client as the requesting user
 		user_client = request.user.client
 		plain_password = data['password']
+		phone = data.get('phone_number', '')
 
-		profile = Profile.objects.create(
-            role=role,
-            client=user_client,  # Assign client
-			first_name=data['first_name'],
-            last_name=data['last_name'],
-			username=data['email'],
-			email=data['email'],
-            phone_number=data['phone_number'],
-			password=make_password(plain_password),
-            registration_password=plain_password,
-		)
+		with transaction.atomic():
+			profile = Profile.objects.create(
+	            role=role,
+	            client=user_client,
+				first_name=data['first_name'],
+	            last_name=data['last_name'],
+				username=data['email'],
+				email=data['email'],
+	            phone_number=phone,
+				password=make_password(plain_password),
+	            registration_password=plain_password,
+			)
+
+			if role_name == 'logist':
+				LogistProfile.objects.create(profile=profile, phone_number=phone)
+			elif role_name in ('client_admin', 'admin'):
+				AdminProfile.objects.create(profile=profile, phone_number=phone)
 
 		company = Company.all_objects.filter(client=user_client).first()
 		mailer_actions.send_new_user_welcome(profile, plain_password, user_client, company)
 
 		serializer = UserSerializerWithToken(profile, many=False)
 		return Response(serializer.data)
-	except:
-		message = {'detail': 'Profile with this email already exists'}
-		return Response(message, status=status.HTTP_400_BAD_REQUEST)
+	except Exception as e:
+		return Response({'detail': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['PUT'])
