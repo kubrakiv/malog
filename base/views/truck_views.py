@@ -143,18 +143,21 @@ def updateTruckTrailerAndDriver(request, pk):
     elif driver_name is None or driver_name == "":
         truck.driver = None
 
-    # Handle logist update
-    logist_id = data.get("logist")
-    if logist_id:
-        try:
-            logist = LogistProfile.objects.get(profile__id=logist_id, profile__client=request.user.client)
-            truck.logist = logist
-        except LogistProfile.DoesNotExist:
-            return Response({"error": "Logist not found"}, status=404)
-    elif "logist" in data and (logist_id is None or logist_id == ""):
-        truck.logist = None
-
     truck.save()
+
+    # Handle logist update (ManyToMany — must come after save())
+    if "logist" in data:
+        logist_ids = data.get("logist")
+        if not logist_ids:
+            truck.logist.clear()
+        else:
+            if not isinstance(logist_ids, list):
+                logist_ids = [logist_ids]
+            logists = LogistProfile.objects.filter(
+                profile__id__in=logist_ids,
+                profile__client=request.user.client,
+            )
+            truck.logist.set(logists)
 
     serializer = TruckSerializer(instance=truck, partial=True, context={'request': request})
     return Response(serializer.data)

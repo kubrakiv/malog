@@ -75,12 +75,12 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
   const [assignMode, setAssignMode] = useState(false);
   const [selectedTrailer, setSelectedTrailer] = useState(null);
   const [selectedDriver, setSelectedDriver] = useState(null);
-  const [selectedLogist, setSelectedLogist] = useState(null);
+  const [selectedLogists, setSelectedLogists] = useState([]);
   const [logists, setLogists] = useState([]);
   const [collapsedGroups, setCollapsedGroups] = useState({});
   const [bulkAssignMode, setBulkAssignMode] = useState(false);
   const [bulkUnit, setBulkUnit] = useState("");
-  const [bulkLogist, setBulkLogist] = useState("");
+  const [bulkLogists, setBulkLogists] = useState([]);
 
   useEffect(() => {
     const fetchLogists = async () => {
@@ -160,7 +160,7 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
     dispatch(setSelectedTruck(truck.id));
     setSelectedTrailer(truck.trailer || null);
     setSelectedDriver(truck.driver_details?.full_name || null);
-    setSelectedLogist(truck.logist_details ? truck.logist || null : null);
+    setSelectedLogists(Array.isArray(truck.logist) ? truck.logist.map(String) : []);
     setAssignMode(true);
   };
 
@@ -169,21 +169,21 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
       id: selectedTruck,
       trailer: selectedTrailer,
       driver: selectedDriver,
-      logist: selectedLogist,
+      logist: selectedLogists,
     };
     dispatch(updateTruckTrailerAndDriver(updatedData));
     setAssignMode(false);
     setSelectedTrucks([]);
     setSelectedTrailer(null);
     setSelectedDriver(null);
-    setSelectedLogist(null);
+    setSelectedLogists([]);
   };
 
   const handleCancelAssignment = () => {
     setAssignMode(false);
     setSelectedTrailer(null);
     setSelectedDriver(null);
-    setSelectedLogist(null);
+    setSelectedLogists([]);
   };
 
   const handleBulkApply = async () => {
@@ -193,23 +193,22 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
         const unit_id = bulkUnit === "__clear__" ? null : Number(bulkUnit);
         dispatches.push(dispatch(assignTruckUnit({ truck_id: truckId, unit_id })));
       }
-      if (bulkLogist !== "") {
-        const logist = bulkLogist === "__clear__" ? null : bulkLogist;
-        dispatches.push(dispatch(updateTruckTrailerAndDriver({ id: truckId, logist })));
+      if (bulkLogists.length > 0) {
+        dispatches.push(dispatch(updateTruckTrailerAndDriver({ id: truckId, logist: bulkLogists })));
       }
     }
     await Promise.all(dispatches);
     dispatch(listTrucks());
     setBulkAssignMode(false);
     setBulkUnit("");
-    setBulkLogist("");
+    setBulkLogists([]);
     setSelectedTrucks([]);
   };
 
   const handleBulkCancel = () => {
     setBulkAssignMode(false);
     setBulkUnit("");
-    setBulkLogist("");
+    setBulkLogists([]);
   };
 
   const handleAddTruckButton = () => {
@@ -246,8 +245,6 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
     }
   };
 
-
-  let globalIndex = 0;
 
   return (
     <>
@@ -378,16 +375,23 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
               </div>
               <div className="bulk-assign-bar__field">
                 <label className="bulk-assign-bar__label">Логіст</label>
-                <SelectComponent
-                  options={[
-                    { label: "Не змінювати", value: "" },
-                    { label: "Без логіста", value: "__clear__" },
-                    ...logistOptions,
-                  ]}
-                  value={bulkLogist}
-                  onChange={(e) => setBulkLogist(e.target.value)}
-                  placeholder="Не змінювати"
-                />
+                <div className="logist-multiselect">
+                  {logistOptions.map((o) => (
+                    <label key={o.value} className="logist-multiselect__item">
+                      <input
+                        type="checkbox"
+                        checked={bulkLogists.includes(String(o.value))}
+                        onChange={() => {
+                          const v = String(o.value);
+                          setBulkLogists((prev) =>
+                            prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]
+                          );
+                        }}
+                      />
+                      {o.label}
+                    </label>
+                  ))}
+                </div>
               </div>
             </div>
             <div className="bulk-assign-bar__actions">
@@ -395,7 +399,7 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                 className="fleet-toolbar__btn fleet-toolbar__btn--save"
                 title="Застосувати"
                 onClick={handleBulkApply}
-                disabled={bulkUnit === "" && bulkLogist === ""}
+                disabled={bulkUnit === "" && bulkLogists.length === 0}
                 type="button"
               >
                 <FaSave />
@@ -454,8 +458,8 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                       </td>
                     </tr>,
                     ...(!isCollapsed
-                      ? groupTrucks.map((truck) => {
-                          const rowNum = ++globalIndex;
+                      ? groupTrucks.map((truck, index) => {
+                          const rowNum = index + 1;
                           return (
                             <tr
                               key={truck.id}
@@ -504,23 +508,33 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                               </td>
                               <td className="trucks-table__body-td">
                                 {assignMode && truck.id === selectedTruck ? (
-                                  <SelectComponent
-                                    options={[
-                                      { label: "Без логіста", value: "" },
-                                      ...logistOptions,
-                                    ]}
-                                    placeholder="Виберіть логіста"
-                                    title="Виберіть логіста"
-                                    value={selectedLogist || ""}
-                                    onChange={(e) =>
-                                      setSelectedLogist(e.target.value || null)
-                                    }
-                                  />
-                                ) : truck.logist_details ? (
-                                  <span className="trucks-table__logist-badge">
-                                    {truck.logist_details.full_name ||
-                                      truck.logist_details.username}
-                                  </span>
+                                  <div className="logist-multiselect">
+                                    {logistOptions.map((o) => (
+                                      <label key={o.value} className="logist-multiselect__item">
+                                        <input
+                                          type="checkbox"
+                                          checked={selectedLogists.includes(String(o.value))}
+                                          onChange={() => {
+                                            const v = String(o.value);
+                                            setSelectedLogists((prev) =>
+                                              prev.includes(v)
+                                                ? prev.filter((x) => x !== v)
+                                                : [...prev, v]
+                                            );
+                                          }}
+                                        />
+                                        {o.label}
+                                      </label>
+                                    ))}
+                                  </div>
+                                ) : truck.logist_details?.length > 0 ? (
+                                  <div className="trucks-table__logist-list">
+                                    {truck.logist_details.map((l) => (
+                                      <span key={l.profile} className="trucks-table__logist-badge">
+                                        {l.full_name || l.username}
+                                      </span>
+                                    ))}
+                                  </div>
                                 ) : (
                                   <span className="trucks-table__unit-empty">—</span>
                                 )}

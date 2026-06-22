@@ -249,12 +249,10 @@ class Truck(BaseTenantModel):
         blank=True,
         null=True,
     )
-    logist = models.ForeignKey(
+    logist = models.ManyToManyField(
         LogistProfile,
         related_name="trucks",
-        on_delete=models.SET_NULL,
         blank=True,
-        null=True,
     )
     is_removed = models.BooleanField(default=False)
     is_removed_at = models.DateTimeField(null=True, blank=True)

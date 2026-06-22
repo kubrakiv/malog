@@ -76,6 +76,7 @@ ln -sfn "$APP_ROOT/shared/media" "$REL/media"
 
 # Ensure the images subdirectory exists inside shared/media
 mkdir -p "$APP_ROOT/shared/media/images"
+sudo chown -R www-data:www-data "$APP_ROOT/shared/media"
 
 # Run database migrations
 echo "Running database migrations..."

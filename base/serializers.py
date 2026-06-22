@@ -134,8 +134,13 @@ class TruckSerializer(serializers.ModelSerializer):
     )
     driver_details = DriverProfileSerializer(source="driver", many=False, read_only=True)
     trailer_details = TrailerSerializer(source="trailer", many=False, read_only=True)
-    logist_details = LogistProfileSerializer(source="logist", many=False, read_only=True)
+    logist_details = LogistProfileSerializer(source="logist", many=True, read_only=True)
+    # Returns Profile IDs (consistent with /api/users/logists/ endpoint)
+    logist = serializers.SerializerMethodField()
     current_unit = serializers.SerializerMethodField()
+
+    def get_logist(self, obj):
+        return list(obj.logist.values_list("profile_id", flat=True))
 
     def get_current_unit(self, obj):
         assignment = obj.unit_assignments.filter(is_active=True).first()

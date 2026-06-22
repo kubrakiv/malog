@@ -73,8 +73,8 @@ export const WeekPlanner = () => {
   const userInfo = useSelector((state) => state.userLogin.userInfo);
 
   const [filterUnit, setFilterUnit] = useState(null);
-  const [filterLogist, setFilterLogist] = useState(() =>
-    userInfo?.role === "logist" ? userInfo.id : null
+  const [filterLogists, setFilterLogists] = useState(
+    () => userInfo?.role === "logist" ? new Set([String(userInfo.id)]) : new Set()
   );
   const [logists, setLogists] = useState([]);
 
@@ -260,13 +260,13 @@ export const WeekPlanner = () => {
         (t) => t.current_unit && String(t.current_unit.id) === String(filterUnit)
       );
     }
-    if (filterLogist) {
+    if (filterLogists.size > 0) {
       result = result.filter(
-        (t) => t.logist && String(t.logist) === String(filterLogist)
+        (t) => Array.isArray(t.logist) && t.logist.some((id) => filterLogists.has(String(id)))
       );
     }
     return result;
-  }, [trucks, filterUnit, filterLogist]);
+  }, [trucks, filterUnit, filterLogists]);
 
   // Use real trucks if available, otherwise show placeholders (no trucks at all)
   const displayTrucks =
@@ -441,12 +441,13 @@ export const WeekPlanner = () => {
               />
               <PlannerFilterDropdown
                 label="Логіст"
-                value={filterLogist}
+                value={filterLogists}
                 options={logists.map((l) => ({
                   label: l.full_name || l.username,
                   value: l.id,
                 }))}
-                onChange={setFilterLogist}
+                onChange={setFilterLogists}
+                multi
               />
             </div>
           </div>

@@ -2,7 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { FaChevronDown, FaTimes } from "react-icons/fa";
 import "./style.scss";
 
-const PlannerFilterDropdown = ({ label, value, options, onChange }) => {
+// Single-select mode: value is a scalar, onChange(scalar|null)
+// Multi-select mode:  value is a Set,    onChange(Set)
+const PlannerFilterDropdown = ({ label, value, options, onChange, multi = false }) => {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
 
@@ -14,12 +16,34 @@ const PlannerFilterDropdown = ({ label, value, options, onChange }) => {
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const selected = options.find((o) => String(o.value) === String(value));
-  const isActive = value !== null && value !== undefined && value !== "";
+  // ── Single-select helpers ──────────────────────────────────
+  const selected = !multi
+    ? options.find((o) => String(o.value) === String(value))
+    : null;
+  const isActive = multi
+    ? value instanceof Set && value.size > 0
+    : value !== null && value !== undefined && value !== "";
 
-  const handleSelect = (val) => {
+  const handleSingleSelect = (val) => {
     onChange(val || null);
     setOpen(false);
+  };
+
+  // ── Multi-select helpers ───────────────────────────────────
+  const toggleOption = (val) => {
+    const next = new Set(value);
+    if (next.has(val)) next.delete(val);
+    else next.add(val);
+    onChange(next);
+  };
+
+  const multiLabel = () => {
+    if (!value || value.size === 0) return "Усі";
+    if (value.size === 1) {
+      const v = [...value][0];
+      return options.find((o) => String(o.value) === String(v))?.label ?? "1 обрано";
+    }
+    return `${value.size} обрано`;
   };
 
   return (
@@ -31,7 +55,7 @@ const PlannerFilterDropdown = ({ label, value, options, onChange }) => {
       >
         <span className="pf-drop__label">{label}</span>
         <span className="pf-drop__value">
-          {selected ? selected.label : "Усі"}
+          {multi ? multiLabel() : (selected ? selected.label : "Усі")}
         </span>
         <FaChevronDown
           className={`pf-drop__chevron${open ? " pf-drop__chevron--open" : ""}`}
@@ -41,7 +65,7 @@ const PlannerFilterDropdown = ({ label, value, options, onChange }) => {
       {isActive && (
         <button
           className="pf-drop__clear"
-          onClick={() => onChange(null)}
+          onClick={() => onChange(multi ? new Set() : null)}
           type="button"
           title="Скинути фільтр"
         >
@@ -51,25 +75,39 @@ const PlannerFilterDropdown = ({ label, value, options, onChange }) => {
 
       {open && (
         <div className="pf-drop__menu">
-          <button
-            className={`pf-drop__option${!isActive ? " pf-drop__option--selected" : ""}`}
-            onClick={() => handleSelect(null)}
-            type="button"
-          >
-            Усі
-          </button>
-          {options.map((o) => (
+          {!multi && (
             <button
-              key={o.value}
-              className={`pf-drop__option${
-                String(value) === String(o.value) ? " pf-drop__option--selected" : ""
-              }`}
-              onClick={() => handleSelect(o.value)}
+              className={`pf-drop__option${!isActive ? " pf-drop__option--selected" : ""}`}
+              onClick={() => handleSingleSelect(null)}
               type="button"
             >
-              {o.label}
+              Усі
             </button>
-          ))}
+          )}
+          {options.map((o) => {
+            const strVal = String(o.value);
+            const checked = multi ? (value instanceof Set && value.has(strVal)) : String(value) === strVal;
+            return multi ? (
+              <label key={o.value} className="pf-drop__option pf-drop__option--check">
+                <input
+                  type="checkbox"
+                  className="pf-drop__checkbox"
+                  checked={checked}
+                  onChange={() => toggleOption(strVal)}
+                />
+                {o.label}
+              </label>
+            ) : (
+              <button
+                key={o.value}
+                className={`pf-drop__option${checked ? " pf-drop__option--selected" : ""}`}
+                onClick={() => handleSingleSelect(o.value)}
+                type="button"
+              >
+                {o.label}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
