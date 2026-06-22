@@ -124,29 +124,17 @@ def createTask(request):
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 def editTask(request, pk):
-    task = Task.objects.get(id=pk, client=request.user.client)
-    print(task)
-    # Convert empty strings to None for 'end_date' and 'end_time'
+    task = get_object_or_404(Task, id=pk, client=request.user.client)
     data = request.data.copy()
-    if data.get('end_date') == '':
-        data['end_date'] = None
-    if data.get('end_time') == '':
-        data['end_time'] = None
-    if data.get('start_time') == '':
-        data['start_time'] = None
-    if data.get('start_date') == '':
-        data['start_date'] = None
-
-
+    for field in ('end_date', 'end_time', 'start_time', 'start_date'):
+        if data.get(field) == '':
+            data[field] = None
 
     serializer = TaskSerializer(instance=task, data=data, partial=True, context={'request': request})
     if serializer.is_valid():
         serializer.save()
-    else: 
-        print(serializer.errors)
-        
-    print(serializer.data)
-    return Response(serializer.data)
+        return Response(serializer.data)
+    return Response(serializer.errors, status=400)
 
 
 @api_view(["DELETE"])

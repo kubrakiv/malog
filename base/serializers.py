@@ -399,22 +399,25 @@ class TaskSerializer(serializers.ModelSerializer):
         point_data = validated_data.pop("point", None)
 
         # Creating or getting instances for foreign keys
-        driver_instance = (
-            DriverProfile.objects.get_or_create(
-                full_name=driver_data["full_name"],
-                defaults={'client': self._get_client()}
-            )[0]
-            if driver_data
-            else None
-        )
-        truck_instance = (
-            Truck.objects.get_or_create(
-                plates=truck_data["plates"],
-                defaults={'client': self._get_client()}
-            )[0]
-            if truck_data
-            else None
-        )
+        client = self._get_client()
+        if driver_data:
+            qs = DriverProfile.objects.filter(full_name=driver_data["full_name"])
+            if client:
+                qs = qs.filter(profile__client=client)
+            driver_instance = qs.first()
+        else:
+            driver_instance = None
+
+        if truck_data:
+            lookup = {'plates': truck_data["plates"]}
+            if client:
+                lookup['client'] = client
+            truck_instance, _ = Truck.objects.get_or_create(
+                **lookup,
+                defaults={'client': client} if client else {},
+            )
+        else:
+            truck_instance = None
         type_instance = (
             TaskType.objects.get_or_create(
                 name=type_data["name"],
@@ -457,16 +460,22 @@ class TaskSerializer(serializers.ModelSerializer):
         instance.end_time = validated_data.get("end_time", instance.end_time)
 
         if driver_data:
-            driver_instance, _ = DriverProfile.objects.get_or_create(
-                full_name=driver_data["full_name"],
-                defaults={'client': self._get_client()}
-            )
-            instance.driver = driver_instance
+            client = self._get_client()
+            qs = DriverProfile.objects.filter(full_name=driver_data["full_name"])
+            if client:
+                qs = qs.filter(profile__client=client)
+            driver_instance = qs.first()
+            if driver_instance:
+                instance.driver = driver_instance
 
         if truck_data:
+            client = self._get_client()
+            lookup = {'plates': truck_data["plates"]}
+            if client:
+                lookup['client'] = client
             truck_instance, _ = Truck.objects.get_or_create(
-                plates=truck_data["plates"],
-                defaults={'client': self._get_client()}
+                **lookup,
+                defaults={'client': client} if client else {},
             )
             instance.truck = truck_instance
 
@@ -781,22 +790,26 @@ class OrderSerializer(serializers.ModelSerializer):
         instance.route = validated_data.get("route", instance.route)
 
         if driver_data:
-            driver_instance, _ = DriverProfile.objects.get_or_create(
-                full_name=driver_data["full_name"],
-                defaults={'client': self._get_client()}
-            )
-            instance.driver = driver_instance
+            client = self._get_client()
+            qs = DriverProfile.objects.filter(full_name=driver_data["full_name"])
+            if client:
+                qs = qs.filter(profile__client=client)
+            driver_instance = qs.first()
+            if driver_instance:
+                instance.driver = driver_instance
 
         if truck_data is not None:
+            client = self._get_client()
             try:
+                lookup = {'plates': truck_data["plates"]}
+                if client:
+                    lookup['client'] = client
                 truck_instance, _ = Truck.objects.get_or_create(
-                    plates=truck_data["plates"],
-                    defaults={'client': self._get_client()}
+                    **lookup,
+                    defaults={'client': client} if client else {},
                 )
-                if truck_instance is not None:
-                    instance.truck = truck_instance
+                instance.truck = truck_instance
             except Exception as e:
-                # Handle the exception, log it, or return an error response
                 print(f"Error updating truck: {e}")
 
         if customer_data:

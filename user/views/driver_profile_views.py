@@ -1,6 +1,4 @@
-from django.shortcuts import render, get_object_or_404
-from django.views.decorators.csrf import csrf_protect
-from django.middleware.csrf import get_token
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.db import transaction
 
@@ -9,36 +7,41 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermiss
 from rest_framework.response import Response
 from rest_framework import status
 
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from user.models import DriverProfile
 from user.serializers import DriverProfileSerializer
 
 from django.contrib.auth.hashers import make_password
-from rest_framework import status
 
-# need to be careful with user vs profile instances. 
-# It started when I changed the user model to profile model
 
 @api_view(["GET"])
 def getDriverProfiles(request):
-    drivers = DriverProfile.objects.all()
-    serializer = DriverProfileSerializer(drivers, many=True)
+    client = getattr(request.user, 'client', None)
+    if client:
+        drivers = DriverProfile.objects.filter(profile__client=client)
+    else:
+        drivers = DriverProfile.objects.all()
+    serializer = DriverProfileSerializer(drivers, many=True, context={'request': request})
     return Response(serializer.data)
+
 
 @api_view(["GET"])
 def getDriverProfile(request, pk):
-    driver = DriverProfile.objects.get(profile=pk)
-    serializer = DriverProfileSerializer(driver, many=False)
+    driver = get_object_or_404(DriverProfile, profile=pk)
+    serializer = DriverProfileSerializer(driver, many=False, context={'request': request})
     return Response(serializer.data)
 
 
 @api_view(["PUT"])
 def updateDriverProfile(request, pk):
-    driver = DriverProfile.objects.get(profile__id=pk)
-    serializer = DriverProfileSerializer(instance=driver, data=request.data, partial=True, context={'request': request})
+    driver = get_object_or_404(DriverProfile, profile__id=pk)
+    serializer = DriverProfileSerializer(
+        instance=driver,
+        data=request.data,
+        partial=True,
+        context={'request': request},
+    )
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=200)

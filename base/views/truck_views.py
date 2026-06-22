@@ -133,11 +133,13 @@ def updateTruckTrailerAndDriver(request, pk):
     # Handle driver update
     driver_name = data.get("driver")
     if driver_name:
-        try:
-            driver = DriverProfile.objects.get(full_name=driver_name, client=request.user.client)
-            truck.driver = driver
-        except DriverProfile.DoesNotExist:
+        driver = DriverProfile.objects.filter(
+            full_name=driver_name,
+            profile__client=request.user.client,
+        ).first()
+        if not driver:
             return Response({"error": "Driver not found"}, status=404)
+        truck.driver = driver
     elif driver_name is None or driver_name == "":
         truck.driver = None
 

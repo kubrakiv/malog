@@ -15,9 +15,15 @@ class TruckField(serializers.RelatedField):
 class Base64ImageField(serializers.ImageField):
     def to_internal_value(self, data):
         if isinstance(data, str) and data.startswith('data:'):
+            if ';base64,' not in data:
+                raise serializers.ValidationError("Invalid image data: missing base64 marker.")
             header, imgstr = data.split(';base64,', 1)
             ext = header.split('/')[-1]
-            data = ContentFile(base64.b64decode(imgstr), name=f"{uuid.uuid4()}.{ext}")
+            try:
+                decoded = base64.b64decode(imgstr)
+            except Exception:
+                raise serializers.ValidationError("Invalid base64 image data.")
+            data = ContentFile(decoded, name=f"{uuid.uuid4()}.{ext}")
         return super().to_internal_value(data)
 
 
