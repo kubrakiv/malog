@@ -69,6 +69,14 @@ cd "$REL"
 echo "Creating symlink to .env.prod..."
 ln -sf "$APP_ROOT/shared/.env.prod" "$REL/.env.prod"
 
+# Make symlink for media folder (must be before migrate/collectstatic so
+# AppConfig.ready() finds MEDIA_ROOT already pointing to shared/media)
+echo "Creating symlink for media folder..."
+ln -sfn "$APP_ROOT/shared/media" "$REL/media"
+
+# Ensure the images subdirectory exists inside shared/media
+mkdir -p "$APP_ROOT/shared/media/images"
+
 # Run database migrations
 echo "Running database migrations..."
 "$APP_ROOT/shared/venv/bin/python" manage.py migrate --noinput --settings=backend.env.prod
@@ -76,10 +84,6 @@ echo "Running database migrations..."
 # Collect Django static files (admin CSS/JS and app static) for this release
 echo "Collecting static files..."
 "$APP_ROOT/shared/venv/bin/python" manage.py collectstatic --noinput --settings=backend.env.prod
-
-# Make symlink for media folder
-echo "Creating symlink for media folder..."
-ln -sfn "$APP_ROOT/shared/media" "$REL/media"
 
 # Switch current symlink only after successful preparation
 echo "Switching current symlink to new release..."

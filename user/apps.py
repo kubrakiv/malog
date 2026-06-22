@@ -16,7 +16,7 @@ class UserConfig(AppConfig):
         from django.conf import settings
 
         media_root = getattr(settings, "MEDIA_ROOT", None)
-        if media_root:
+        if media_root and os.path.exists(str(media_root)):
             images_dir = os.path.join(str(media_root), "images")
             try:
                 os.makedirs(images_dir, exist_ok=True)
