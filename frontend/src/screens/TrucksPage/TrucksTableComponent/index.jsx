@@ -18,6 +18,8 @@ import axios from "axios";
 
 import { transformSelectOptions } from "../../../utils/transformers";
 import SelectComponent from "../../../globalComponents/SelectComponent";
+import MultiSelectDropdown from "../../../globalComponents/MultiSelectDropdown";
+import SearchableSelect from "../../../globalComponents/SearchableSelect";
 import SearchComponent from "../../../globalComponents/SearchComponent";
 import TruckModalComponent from "../TruckModalComponent";
 import AddTruckModalComponent from "../AddTruckModalComponent";
@@ -375,23 +377,12 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
               </div>
               <div className="bulk-assign-bar__field">
                 <label className="bulk-assign-bar__label">Логіст</label>
-                <div className="logist-multiselect">
-                  {logistOptions.map((o) => (
-                    <label key={o.value} className="logist-multiselect__item">
-                      <input
-                        type="checkbox"
-                        checked={bulkLogists.includes(String(o.value))}
-                        onChange={() => {
-                          const v = String(o.value);
-                          setBulkLogists((prev) =>
-                            prev.includes(v) ? prev.filter((x) => x !== v) : [...prev, v]
-                          );
-                        }}
-                      />
-                      {o.label}
-                    </label>
-                  ))}
-                </div>
+                <MultiSelectDropdown
+                  options={logistOptions}
+                  value={bulkLogists}
+                  onChange={setBulkLogists}
+                  placeholder="Виберіть логістів"
+                />
               </div>
             </div>
             <div className="bulk-assign-bar__actions">
@@ -476,15 +467,12 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                               <td className="trucks-table__body-td">{truck.plates}</td>
                               <td className="trucks-table__body-td">
                                 {assignMode && truck.id === selectedTruck ? (
-                                  <SelectComponent
-                                    options={[
-                                      { label: "Без причіпу", value: "" },
-                                      ...trailerOptions,
-                                    ]}
-                                    placeholder="Виберіть причіп"
-                                    title="Виберіть причіп"
+                                  <SearchableSelect
+                                    options={trailerOptions}
                                     value={selectedTrailer || ""}
-                                    onChange={(e) => setSelectedTrailer(e.target.value)}
+                                    onChange={setSelectedTrailer}
+                                    placeholder="Виберіть причіп"
+                                    clearLabel="Без причіпу"
                                   />
                                 ) : (
                                   truck.trailer
@@ -492,15 +480,12 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                               </td>
                               <td className="trucks-table__body-td">
                                 {assignMode && truck.id === selectedTruck ? (
-                                  <SelectComponent
-                                    options={[
-                                      { label: "Без водія", value: "" },
-                                      ...driverOptions,
-                                    ]}
-                                    placeholder="Виберіть водія"
-                                    title="Виберіть водія"
+                                  <SearchableSelect
+                                    options={driverOptions}
                                     value={selectedDriver || ""}
-                                    onChange={(e) => setSelectedDriver(e.target.value)}
+                                    onChange={setSelectedDriver}
+                                    placeholder="Виберіть водія"
+                                    clearLabel="Без водія"
                                   />
                                 ) : (
                                   truck.driver_details?.full_name
@@ -508,25 +493,12 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                               </td>
                               <td className="trucks-table__body-td">
                                 {assignMode && truck.id === selectedTruck ? (
-                                  <div className="logist-multiselect">
-                                    {logistOptions.map((o) => (
-                                      <label key={o.value} className="logist-multiselect__item">
-                                        <input
-                                          type="checkbox"
-                                          checked={selectedLogists.includes(String(o.value))}
-                                          onChange={() => {
-                                            const v = String(o.value);
-                                            setSelectedLogists((prev) =>
-                                              prev.includes(v)
-                                                ? prev.filter((x) => x !== v)
-                                                : [...prev, v]
-                                            );
-                                          }}
-                                        />
-                                        {o.label}
-                                      </label>
-                                    ))}
-                                  </div>
+                                  <MultiSelectDropdown
+                                    options={logistOptions}
+                                    value={selectedLogists}
+                                    onChange={setSelectedLogists}
+                                    placeholder="Виберіть логіста"
+                                  />
                                 ) : truck.logist_details?.length > 0 ? (
                                   <div className="trucks-table__logist-list">
                                     {truck.logist_details.map((l) => (

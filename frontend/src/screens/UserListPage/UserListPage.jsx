@@ -70,13 +70,13 @@ const UserListPage = () => {
     const user = (users ?? []).find((u) => u.id === selectedUsers[0]);
     if (!user) return;
 
-    if (!window.confirm(`Reset password for ${user.email || user.username}?`)) return;
+    if (!window.confirm(`Скинути пароль для ${user.email || user.username}?`)) return;
 
     try {
       setResettingUserId(user.id);
       const config = { headers: { Authorization: `Bearer ${userInfo.token}` } };
       const { data } = await axios.post(`/api/users/${user.id}/reset-password/`, {}, config);
-      toast.success(`Password reset for ${data.username}`, { position: "top-right" });
+      toast.success(`Пароль скинуто для ${data.username}`);
       setPasswordModalData({ username: data.username, password: data.temporary_password });
       dispatch(listUsers());
     } catch (resetError) {
@@ -84,7 +84,7 @@ const UserListPage = () => {
         resetError.response?.data?.detail ||
         resetError.response?.data?.error ||
         resetError.message;
-      toast.error(detail, { position: "top-right" });
+      toast.error(detail || "Не вдалося скинути пароль");
     } finally {
       setResettingUserId(null);
     }

@@ -48,7 +48,35 @@ const Layout = () => {
         <SubscriptionAwareSidebar>
           <SubscriptionBanner showOnlyWarnings={true} />
           <Outlet />
-          <Toaster position="top-right" reverseOrder={false} />
+          <Toaster
+            position="top-right"
+            reverseOrder={false}
+            toastOptions={{
+              duration: 4000,
+              style: {
+                borderRadius: "12px",
+                fontSize: "0.875rem",
+                fontWeight: "500",
+                padding: "12px 18px",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.12)",
+                maxWidth: "360px",
+              },
+              success: {
+                style: {
+                  background: "#0b6976",
+                  color: "#fff",
+                },
+                iconTheme: { primary: "#fff", secondary: "#0b6976" },
+              },
+              error: {
+                style: {
+                  background: "#dc2626",
+                  color: "#fff",
+                },
+                iconTheme: { primary: "#fff", secondary: "#dc2626" },
+              },
+            }}
+          />
         </SubscriptionAwareSidebar>
       </Suspense>
     </div>

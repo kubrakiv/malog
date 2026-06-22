@@ -11,6 +11,7 @@ urlpatterns = [
     path('cancel/', views.cancel_subscription, name='cancel-subscription'),
     path('check-feature/<str:feature_name>/', views.check_feature_access, name='check-feature-access'),
     path('check-truck-limit/', views.check_truck_limit, name='check-truck-limit'),
+    path('check-driver-limit/', views.check_driver_limit, name='check-driver-limit'),
     
     # Plan change request management
     path('change-requests/', views.get_plan_change_requests, name='plan-change-requests'),

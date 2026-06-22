@@ -1,5 +1,9 @@
 @import "../../styles/utils/vars";
 
+.header {
+  width: 100%;
+}
+
 .top-section-header {
   display: flex;
   justify-content: center;
@@ -9,6 +13,7 @@
   height: 38px;
   width: 50px;
   align-items: center;
+
   &:hover {
     cursor: pointer;
     background-color: rgba(122, 140, 138, 0.48);
@@ -22,6 +27,7 @@
   flex-wrap: wrap;
   height: 45px;
   padding: 0 10px 0 0px;
+  position: relative;
 
   @media (max-width: 768px) {
     padding: 10px;
@@ -39,7 +45,7 @@
       margin-left: 10px;
       padding: 6px;
       font-size: 18px;
-      order: 1; // Keep on top row on mobile
+      order: 1;
     }
     a.logo-link {
       text-decoration: none;
@@ -243,13 +249,23 @@
   display: flex;
   align-items: center;
   z-index: 1;
-  width: 35%; // Set width for desktop
-  max-width: 500px; // Maximum width
-  min-width: 250px; // Minimum width
+  width: 35%;
+  max-width: 500px;
+  min-width: 250px;
 
-  // Mobile responsiveness
+  @media (max-width: 1200px) {
+    width: 32%;
+    max-width: 420px;
+  }
+
+  @media (max-width: 1024px) {
+    width: 30%;
+    max-width: 380px;
+  }
+
   @media (max-width: 992px) {
-    width: 45%;
+    width: 28%;
+    max-width: 350px;
   }
 
   @media (max-width: 768px) {
@@ -258,7 +274,7 @@
     left: auto;
     width: 100%;
     margin: 10px auto;
-    order: 3; // Move below other elements on mobile
+    order: 3;
   }
 }
 
@@ -269,8 +285,8 @@
   gap: 15px;
 
   @media (max-width: 768px) {
-    order: 2; // Keep on top row on mobile
-    flex-shrink: 0; // Prevent shrinking
+    order: 2;
+    flex-shrink: 0;
   }
 }
 
@@ -289,6 +305,18 @@
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
 
+    @media (max-width: 1200px) {
+      gap: 6px;
+      padding: 5px 10px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 1024px) {
+      gap: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
     &:hover {
       background: rgba(255, 255, 255, 0.15);
       border-color: rgba(255, 255, 255, 0.3);
@@ -297,11 +325,19 @@
     .crown-icon {
       color: #ffd700;
       font-size: 14px;
+
+      @media (max-width: 1024px) {
+        font-size: 12px;
+      }
     }
 
     .plan-name {
       font-size: 14px;
       font-weight: 500;
+
+      @media (max-width: 1200px) {
+        font-size: 12px;
+      }
     }
 
     .days-remaining {
@@ -314,6 +350,16 @@
       border: 1px solid rgba(255, 215, 0, 1);
       min-width: fit-content;
       white-space: nowrap;
+
+      @media (max-width: 1200px) {
+        font-size: 11px;
+        padding: 2px 6px;
+      }
+
+      @media (max-width: 1024px) {
+        font-size: 10px;
+        padding: 1px 4px;
+      }
     }
   }
 
@@ -328,17 +374,37 @@
     border: 1px solid rgba(220, 53, 69, 0.9);
     transition: all 0.3s ease;
 
+    @media (max-width: 1200px) {
+      gap: 6px;
+      padding: 5px 10px;
+      font-size: 13px;
+    }
+
+    @media (max-width: 1024px) {
+      gap: 4px;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+
     &:hover {
       background: rgba(220, 53, 69, 0.9);
     }
 
     .lock-icon {
       font-size: 14px;
+
+      @media (max-width: 1024px) {
+        font-size: 12px;
+      }
     }
 
     .no-plan-message {
       font-size: 14px;
       font-weight: 500;
+
+      @media (max-width: 1200px) {
+        font-size: 12px;
+      }
     }
   }
 

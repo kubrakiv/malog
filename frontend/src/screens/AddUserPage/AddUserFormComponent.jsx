@@ -45,9 +45,6 @@ const AddUserFormComponent = () => {
     Object.values(USER_CONSTANTS).reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
   );
 
-  const userRegister = useSelector((state) => state.userRegister);
-  const { success, error } = userRegister;
-
   const roles = useSelector(selectRoles);
   const roleTypesOptions = transformSelectOptions(roles, "name");
 
@@ -104,16 +101,6 @@ const AddUserFormComponent = () => {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    if (success) {
-      toast.success("Користувача успішно створено!", { position: "top-right", duration: 4000 });
-      navigate("/userlist");
-    } else if (error) {
-      setMessage("Помилка при реєстрації користувача");
-      toast.error("Не вдалося створити користувача. Спробуйте ще раз.", { position: "top-right" });
-    }
-  }, [success, error, navigate]);
 
   const personalFields = [
     { id: FIRST_NAME, placeholder: "Введіть ім'я",          type: "text",     label: "Ім'я" },

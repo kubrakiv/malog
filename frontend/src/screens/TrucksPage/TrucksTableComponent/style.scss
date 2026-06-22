@@ -378,30 +378,3 @@
   gap: 4px;
 }
 
-// Inline checkbox list used in assign-mode and bulk-assign for logist multiselect
-.logist-multiselect {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-height: 120px;
-  overflow-y: auto;
-  padding: 4px 2px;
-
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-size: 0.8rem;
-    color: #1f2d36;
-    cursor: pointer;
-    white-space: nowrap;
-
-    input[type="checkbox"] {
-      accent-color: #0b6976;
-      width: 13px;
-      height: 13px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-  }
-}

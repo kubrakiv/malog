@@ -80,7 +80,7 @@ class LogistProfile(models.Model):
     position = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
-        return self.profile.username + " " + self.position
+        return f"{self.profile.username} {self.position or ''}".strip()
 
 class DriverProfile(models.Model):
     profile = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete = models.CASCADE, primary_key = True)

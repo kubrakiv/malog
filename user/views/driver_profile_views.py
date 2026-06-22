@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.db import transaction
+import logging
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser, BasePermission
@@ -9,19 +10,54 @@ from rest_framework import status
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from user.models import DriverProfile
+from user.models import Profile, Role, DriverProfile
 from user.serializers import DriverProfileSerializer
 
 from django.contrib.auth.hashers import make_password
 
+logger = logging.getLogger(__name__)
+
+
+def _ensure_driver_profiles(queryset):
+    """Create missing DriverProfile records for a queryset of Profiles with driver role."""
+    for profile in queryset:
+        full_name = f"{profile.first_name or ''} {profile.last_name or ''}".strip()
+        DriverProfile.objects.get_or_create(
+            profile=profile,
+            defaults={
+                'phone_number': profile.phone_number,
+                'first_name': profile.first_name,
+                'last_name': profile.last_name,
+                'full_name': full_name or profile.username,
+                'email': profile.email,
+            },
+        )
+
 
 @api_view(["GET"])
+@permission_classes([IsAuthenticated])
 def getDriverProfiles(request):
-    client = getattr(request.user, 'client', None)
-    if client:
+    user = request.user
+    client = getattr(user, 'client', None)
+    is_superuser = getattr(user, 'is_superuser', False)
+
+    driver_role = Role.objects.filter(name='driver').first()
+    print(f"[getDriverProfiles] user={user.username} client={client} is_superuser={is_superuser} driver_role={driver_role}")
+
+    if driver_role:
+        if client and not is_superuser:
+            candidate_profiles = Profile.objects.filter(client=client, role=driver_role)
+        else:
+            candidate_profiles = Profile.objects.filter(role=driver_role)
+        print(f"[getDriverProfiles] candidate_profiles: {list(candidate_profiles.values('id', 'username', 'client_id'))}")
+        _ensure_driver_profiles(candidate_profiles)
+
+    if client and not is_superuser:
         drivers = DriverProfile.objects.filter(profile__client=client)
     else:
         drivers = DriverProfile.objects.all()
+
+    print(f"[getDriverProfiles] returning {drivers.count()} drivers: {list(drivers.values_list('profile_id', flat=True))}")
     serializer = DriverProfileSerializer(drivers, many=True, context={'request': request})
     return Response(serializer.data)
 

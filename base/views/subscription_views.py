@@ -14,6 +14,7 @@ from base.subscription_serializers import (
     SubscriptionPlanChangeRequestSerializer
 )
 from base.models import Truck, Client
+from user.models import DriverProfile
 
 
 @api_view(['GET'])
@@ -212,6 +213,26 @@ def check_truck_limit(request):
             'can_add_truck': False,
             'error': 'No active subscription'
         }, status=status.HTTP_403_FORBIDDEN)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_driver_limit(request):
+    """Check if client can add more drivers (drivers have no plan limit currently)"""
+    client = getattr(request.user, 'client', None)
+    current_driver_count = DriverProfile.objects.filter(profile__client=client).count() if client else 0
+    plan_name = ''
+    try:
+        subscription = ClientSubscription.objects.get(client=client, status__in=['active', 'trial'])
+        plan_name = subscription.plan.display_name
+    except ClientSubscription.DoesNotExist:
+        pass
+    return Response({
+        'current_driver_count': current_driver_count,
+        'driver_limit': -1,
+        'can_add_driver': True,
+        'plan': plan_name,
+    })
 
 
 @api_view(['POST'])
