@@ -21,7 +21,7 @@ from base.views.sovtes_fleet_views import (
 
 @api_view(["GET"])
 def getTrucks(request):
-    trucks = Truck.objects.filter(client=request.user.client, is_removed=False)
+    trucks = Truck.objects.filter(client=request.user.client, is_removed=False).order_by('id')
     serializer = TruckSerializer(trucks, many=True, context={'request': request})
     return Response(serializer.data)
 

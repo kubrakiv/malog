@@ -20,7 +20,7 @@ import {
   createTask,
   deleteTask,
 } from "../../features/tasks/tasksOperations";
-import { listDrivers } from "../../actions/driverActions";
+import { listDrivers } from "../../features/drivers/driversOperations";
 import { listTaskTypes } from "../../actions/taskTypeActions";
 
 import "./DragDropPlannerPage.scss";

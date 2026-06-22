@@ -28,7 +28,7 @@ import {
 
 import { selectSwitchers } from "../../features/planner/plannerSelectors";
 
-import { listDrivers } from "../../actions/driverActions";
+import { listDrivers } from "../../features/drivers/driversOperations";
 import { listTaskTypes } from "../../actions/taskTypeActions";
 import {
   deleteTask,
