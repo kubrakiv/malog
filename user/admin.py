@@ -9,6 +9,8 @@ from .models import (
     AdminProfile,
     LogistProfile,
     DriverProfile,
+    UserSession,
+    UserActivity,
     # CustomerProfile
 )
 from base.models import Company
@@ -230,8 +232,122 @@ class ProfileAdmin(UserAdmin):
     list_display = ('username', 'email', 'first_name', 'last_name', 'is_staff', 'role', 'client')
     list_filter = UserAdmin.list_filter + ('client', 'role')
     search_fields = UserAdmin.search_fields + ('client__name',)
+    inlines = []  # populated below after UserSessionInline is defined
 
 
 admin.site.register(Profile, ProfileAdmin)
+
+
+# ── UserSession ────────────────────────────────────────────────────────────────
+
+def _fmt_duration(obj):
+    total = int(obj.duration.total_seconds())
+    h, rem = divmod(total, 3600)
+    m, s = divmod(rem, 60)
+    if h:
+        return f"{h}г {m}хв"
+    if m:
+        return f"{m}хв {s}с"
+    return f"{s}с"
+
+
+class UserSessionInline(admin.TabularInline):
+    model = UserSession
+    extra = 0
+    can_delete = False
+    max_num = 0
+    ordering = ['-login_at']
+    fields = ['login_at', 'logout_at', 'duration_col', 'status_col', 'ip_address']
+    readonly_fields = ['login_at', 'logout_at', 'duration_col', 'status_col', 'ip_address']
+
+    def duration_col(self, obj):
+        return _fmt_duration(obj)
+    duration_col.short_description = 'Тривалість'
+
+    def status_col(self, obj):
+        if obj.is_active:
+            return format_html('<span style="color:#19a34a;font-weight:700;">● Активна</span>')
+        return format_html('<span style="color:#94a3b8;">○ Завершена</span>')
+    status_col.short_description = 'Статус'
+
+
+ProfileAdmin.inlines = [UserSessionInline]
+
+
+class UserActivityInline(admin.TabularInline):
+    model = UserActivity
+    extra = 0
+    can_delete = False
+    max_num = 0
+    ordering = ['-timestamp']
+    fields = ['timestamp', 'method_col', 'action_label', 'path', 'status_col']
+    readonly_fields = ['timestamp', 'method_col', 'action_label', 'path', 'status_col']
+
+    def method_col(self, obj):
+        colours = {'GET': '#64748b', 'POST': '#19a34a', 'PUT': '#d97706', 'PATCH': '#d97706', 'DELETE': '#dc2626'}
+        colour = colours.get(obj.method, '#172033')
+        return format_html('<span style="color:{};font-weight:700;font-family:monospace;">{}</span>', colour, obj.method)
+    method_col.short_description = 'Метод'
+
+    def status_col(self, obj):
+        colour = '#19a34a' if obj.status_code < 400 else ('#d97706' if obj.status_code < 500 else '#dc2626')
+        return format_html('<span style="color:{};font-weight:700;">{}</span>', colour, obj.status_code)
+    status_col.short_description = 'Статус'
+
+
+@admin.register(UserSession)
+class UserSessionAdmin(admin.ModelAdmin):
+    list_display = ['user', 'login_at', 'logout_at', 'duration_col', 'status_col', 'ip_address']
+    list_filter = ['user__client', 'user__role', 'login_at']
+    search_fields = ['user__username', 'user__email', 'ip_address']
+    readonly_fields = ['user', 'session_id', 'login_at', 'logout_at', 'ip_address', 'user_agent', 'duration_col', 'status_col']
+    ordering = ['-login_at']
+    date_hierarchy = 'login_at'
+    inlines = [UserActivityInline]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def duration_col(self, obj):
+        return _fmt_duration(obj)
+    duration_col.short_description = 'Тривалість'
+
+    def status_col(self, obj):
+        if obj.is_active:
+            return format_html('<span style="color:#19a34a;font-weight:700;">● Активна</span>')
+        return format_html('<span style="color:#94a3b8;">○ Завершена</span>')
+    status_col.short_description = 'Статус'
+
+
+# ── UserActivity ───────────────────────────────────────────────────────────────
+
+@admin.register(UserActivity)
+class UserActivityAdmin(admin.ModelAdmin):
+    list_display = ['timestamp', 'user', 'method_col', 'action_label', 'path', 'status_col']
+    list_filter = ['method', 'user__client', 'user__role', 'timestamp']
+    search_fields = ['user__username', 'user__email', 'action_label', 'path']
+    readonly_fields = ['session', 'user', 'method', 'path', 'action_label', 'status_code', 'timestamp', 'method_col', 'status_col']
+    ordering = ['-timestamp']
+    date_hierarchy = 'timestamp'
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def method_col(self, obj):
+        colours = {'GET': '#64748b', 'POST': '#19a34a', 'PUT': '#d97706', 'PATCH': '#d97706', 'DELETE': '#dc2626'}
+        colour = colours.get(obj.method, '#172033')
+        return format_html('<span style="color:{};font-weight:700;font-family:monospace;">{}</span>', colour, obj.method)
+    method_col.short_description = 'Метод'
+
+    def status_col(self, obj):
+        colour = '#19a34a' if obj.status_code < 400 else ('#d97706' if obj.status_code < 500 else '#dc2626')
+        return format_html('<span style="color:{};font-weight:700;">{}</span>', colour, obj.status_code)
+    status_col.short_description = 'HTTP'
 
 

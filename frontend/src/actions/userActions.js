@@ -85,7 +85,21 @@ export const login = (email, password) => async (dispatch) => {
   }
 };
 
-export const logout = () => (dispatch) => {
+export const logout = () => async (dispatch, getState) => {
+  const { userInfo } = getState().userLogin;
+
+  if (userInfo?.token && userInfo?.session_id) {
+    try {
+      await axios.post(
+        '/api/users/logout/',
+        { session_id: userInfo.session_id },
+        { headers: { Authorization: `Bearer ${userInfo.token}`, 'Content-Type': 'application/json' } },
+      );
+    } catch (_) {
+      // proceed with local logout regardless
+    }
+  }
+
   localStorage.removeItem("userInfo");
   dispatch({ type: USER_LOGOUT });
   dispatch({ type: USER_DETAILS_RESET });

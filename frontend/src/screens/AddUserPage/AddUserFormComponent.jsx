@@ -22,15 +22,16 @@ const USER_CONSTANTS = {
   CONFIRM_PASSWORD: "confirm_password",
 };
 
-const {
-  ROLE,
-  FIRST_NAME,
-  LAST_NAME,
-  EMAIL,
-  PHONE,
-  PASSWORD,
-  CONFIRM_PASSWORD,
-} = USER_CONSTANTS;
+const { ROLE, FIRST_NAME, LAST_NAME, EMAIL, PHONE, PASSWORD, CONFIRM_PASSWORD } = USER_CONSTANTS;
+
+const FIELD_LABELS = {
+  [FIRST_NAME]: "Ім'я",
+  [LAST_NAME]: "Прізвище",
+  [EMAIL]: "Email",
+  [PHONE]: "Телефон",
+  [PASSWORD]: "Пароль",
+  [CONFIRM_PASSWORD]: "Підтвердження паролю",
+};
 
 const AddUserFormComponent = () => {
   const navigate = useNavigate();
@@ -40,12 +41,8 @@ const AddUserFormComponent = () => {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  // Form data state using the same structure as RegisterFormComponent
   const [userFields, setUserFields] = useState(
-    Object.values(USER_CONSTANTS).reduce((acc, item) => {
-      acc[item] = "";
-      return acc;
-    }, {}),
+    Object.values(USER_CONSTANTS).reduce((acc, key) => ({ ...acc, [key]: "" }), {}),
   );
 
   const userRegister = useSelector((state) => state.userRegister);
@@ -54,81 +51,55 @@ const AddUserFormComponent = () => {
   const roles = useSelector(selectRoles);
   const roleTypesOptions = transformSelectOptions(roles, "name");
 
-  useEffect(() => {
-    dispatch(listRoles());
-  }, [dispatch]);
+  useEffect(() => { dispatch(listRoles()); }, [dispatch]);
 
   const handleUserDataChange = (e) => {
     const { name, value } = e.target;
     setUserFields((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleRoleChange = (e) => {
-    console.log("Selected Role:", e.target.value);
-    setSelectedRole(e.target.value);
-  };
+  const handleRoleChange = (e) => setSelectedRole(e.target.value);
 
   const validateForm = () => {
-    let isValid = true;
     setMessage("");
 
-    // Check if all necessary fields are filled
-    Object.keys(userFields).forEach((key) => {
+    for (const key of Object.keys(userFields)) {
       if (!userFields[key] && key !== CONFIRM_PASSWORD && key !== ROLE) {
-        isValid = false;
-        setMessage(`Field ${key} cannot be empty!`);
+        setMessage(`Поле «${FIELD_LABELS[key] || key}» не може бути порожнім`);
+        return false;
       }
-    });
+    }
 
-    // Check if password and confirmPassword match
     if (userFields[PASSWORD] !== userFields[CONFIRM_PASSWORD]) {
-      setMessage("Passwords do not match!");
-      isValid = false;
+      setMessage("Паролі не збігаються");
+      return false;
     }
 
-    // Check if selected role is not empty
     if (!selectedRole) {
-      setMessage("Please select a role!");
-      isValid = false;
+      setMessage("Оберіть роль користувача");
+      return false;
     }
 
-    return isValid;
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
 
     setIsLoading(true);
-
     try {
-      let userData = {};
-
-      // Build userData object like in RegisterFormComponent
+      const userData = {};
       Object.keys(userFields).forEach((key) => {
-        if (key !== CONFIRM_PASSWORD) {
-          userData[key] = userFields[key];
-        }
+        if (key !== CONFIRM_PASSWORD) userData[key] = userFields[key];
       });
       userData[ROLE] = selectedRole;
 
-      console.log("User data:", userData);
       await dispatch(adminCreateUser(userData));
-
-      // If we reach here, registration was successful
-      toast.success("User created successfully!", {
-        position: "top-right",
-        duration: 4000,
-      });
+      toast.success("Користувача успішно створено!", { position: "top-right", duration: 4000 });
       navigate("/userlist");
-    } catch (error) {
-      console.error("User creation error:", error);
-      toast.error("Failed to create user. Please try again.", {
-        position: "top-right",
-      });
+    } catch (err) {
+      toast.error("Не вдалося створити користувача. Спробуйте ще раз.", { position: "top-right" });
     } finally {
       setIsLoading(false);
     }
@@ -136,124 +107,101 @@ const AddUserFormComponent = () => {
 
   useEffect(() => {
     if (success) {
-      setMessage("User registered successfully!");
-      toast.success("User created successfully!", {
-        position: "top-right",
-        duration: 4000,
-      });
+      toast.success("Користувача успішно створено!", { position: "top-right", duration: 4000 });
       navigate("/userlist");
     } else if (error) {
-      setMessage("Error registering user!");
-      toast.error("Failed to create user. Please try again.", {
-        position: "top-right",
-      });
+      setMessage("Помилка при реєстрації користувача");
+      toast.error("Не вдалося створити користувача. Спробуйте ще раз.", { position: "top-right" });
     }
   }, [success, error, navigate]);
 
-  const formFields = [
-    {
-      id: FIRST_NAME,
-      placeholder: "Enter first name",
-      type: "text",
-      title: "First Name",
-      label: "First Name",
-    },
-    {
-      id: LAST_NAME,
-      placeholder: "Enter last name",
-      type: "text",
-      title: "Last Name",
-      label: "Last Name",
-    },
-    {
-      id: EMAIL,
-      placeholder: "Enter email",
-      type: "email",
-      title: "Email",
-      label: "Email",
-    },
-    {
-      id: PHONE,
-      placeholder: "Enter phone number",
-      type: "tel",
-      title: "Phone Number",
-      label: "Phone Number",
-    },
-    {
-      id: PASSWORD,
-      placeholder: "Enter password",
-      type: "password",
-      title: "Password",
-      label: "Password",
-    },
-    {
-      id: CONFIRM_PASSWORD,
-      placeholder: "Confirm password",
-      type: "password",
-      title: "Confirm Password",
-      label: "Confirm Password",
-    },
+  const personalFields = [
+    { id: FIRST_NAME, placeholder: "Введіть ім'я",          type: "text",     label: "Ім'я" },
+    { id: LAST_NAME,  placeholder: "Введіть прізвище",       type: "text",     label: "Прізвище" },
+    { id: EMAIL,      placeholder: "Введіть email",           type: "email",    label: "Email" },
+    { id: PHONE,      placeholder: "Введіть номер телефону",  type: "tel",      label: "Номер телефону" },
+  ];
+
+  const accessFields = [
+    { id: PASSWORD,         placeholder: "Введіть пароль",        type: "password", label: "Пароль" },
+    { id: CONFIRM_PASSWORD, placeholder: "Підтвердіть пароль",    type: "password", label: "Підтвердження паролю" },
   ];
 
   return (
     <div className="add-user-form">
       <div className="add-user-form__header">
-        <h2>Add New User</h2>
-        <p>Create a new user account for your organization</p>
+        <h2 className="add-user-form__title">Новий користувач</h2>
+        <p className="add-user-form__subtitle">Створіть обліковий запис для вашої організації</p>
       </div>
 
-      {message && <MessageComponent color={"red"}>{message}</MessageComponent>}
-
       <form onSubmit={handleSubmit} className="add-user-form__form">
-        <div className="form-row">
-          {formFields.map((item) => {
-            const { id, placeholder, type, title, label } = item;
-            return (
-              <div key={id} className="form-group">
+        {message && <MessageComponent color="red">{message}</MessageComponent>}
+
+        <div className="add-user-form__section">
+          <p className="add-user-form__section-label">Особисті дані</p>
+          <div className="add-user-form__grid">
+            {personalFields.map(({ id, placeholder, type, label }) => (
+              <div key={id} className="add-user-form__field">
                 <InputComponent
                   required
                   label={label}
                   id={id}
                   name={id}
                   type={type}
-                  title={title}
                   placeholder={placeholder}
                   value={userFields[id]}
-                  onChange={(e) => handleUserDataChange(e)}
+                  onChange={handleUserDataChange}
                 />
               </div>
-            );
-          })}
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <SelectComponent
-              title="User Role"
-              id="role"
-              name="role"
-              value={selectedRole}
-              onChange={handleRoleChange}
-              options={roleTypesOptions}
-            />
+            ))}
           </div>
         </div>
 
-        <div className="form-actions">
+        <div className="add-user-form__section">
+          <p className="add-user-form__section-label">Доступ та безпека</p>
+          <div className="add-user-form__grid">
+            {accessFields.map(({ id, placeholder, type, label }) => (
+              <div key={id} className="add-user-form__field">
+                <InputComponent
+                  required
+                  label={label}
+                  id={id}
+                  name={id}
+                  type={type}
+                  placeholder={placeholder}
+                  value={userFields[id]}
+                  onChange={handleUserDataChange}
+                />
+              </div>
+            ))}
+            <div className="add-user-form__field">
+              <SelectComponent
+                title="Роль користувача"
+                id="role"
+                name="role"
+                value={selectedRole}
+                onChange={handleRoleChange}
+                options={roleTypesOptions}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="add-user-form__actions">
           <button
             type="button"
-            className="btn btn-secondary"
+            className="add-user-form__btn add-user-form__btn--cancel"
             onClick={() => navigate("/userlist")}
             disabled={isLoading}
           >
-            Cancel
+            Скасувати
           </button>
           <button
             type="submit"
-            className="btn btn-primary"
+            className="add-user-form__btn add-user-form__btn--submit"
             disabled={isLoading}
           >
-            {isLoading ? "Creating User..." : "Create User"}
+            {isLoading ? "Створення…" : "Створити користувача"}
           </button>
         </div>
       </form>

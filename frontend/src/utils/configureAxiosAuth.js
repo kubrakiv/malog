@@ -2,18 +2,12 @@ import axios from "axios";
 
 let axiosAuthConfigured = false;
 
-const getStoredToken = () => {
-  const storedUserInfo = localStorage.getItem("userInfo");
-
-  if (!storedUserInfo) {
-    return null;
-  }
-
+const getStoredUserInfo = () => {
+  const raw = localStorage.getItem("userInfo");
+  if (!raw) return null;
   try {
-    const userInfo = JSON.parse(storedUserInfo);
-    return userInfo?.token || userInfo?.access || null;
-  } catch (error) {
-    console.error("Failed to parse userInfo from localStorage", error);
+    return JSON.parse(raw);
+  } catch {
     return null;
   }
 };
@@ -24,11 +18,19 @@ export const configureAxiosAuth = () => {
   }
 
   axios.interceptors.request.use((config) => {
-    const token = getStoredToken();
+    const userInfo = getStoredUserInfo();
 
-    if (token && !config.headers?.Authorization) {
-      config.headers = config.headers || {};
-      config.headers.Authorization = `Bearer ${token}`;
+    if (userInfo) {
+      const token = userInfo.token || userInfo.access;
+      if (token && !config.headers?.Authorization) {
+        config.headers = config.headers || {};
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+
+      if (userInfo.session_id && !config.headers?.["X-Session-Id"]) {
+        config.headers = config.headers || {};
+        config.headers["X-Session-Id"] = userInfo.session_id;
+      }
     }
 
     return config;

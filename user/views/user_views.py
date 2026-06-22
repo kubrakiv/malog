@@ -23,6 +23,7 @@ import string
 
 from base.mailer import actions as mailer_actions
 from base.models import Company
+from user.models import UserSession
 
 
 class AdminRolePermission(BasePermission):
@@ -172,13 +173,41 @@ class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
         
         serializer = UserSerializerWithToken(self.user).data
         for k, v in serializer.items():
-            data[k] = v 
+            data[k] = v
+
+        request = self.context.get('request')
+        ip_address = None
+        user_agent = None
+        if request:
+            x_forwarded = request.META.get('HTTP_X_FORWARDED_FOR')
+            ip_address = x_forwarded.split(',')[0].strip() if x_forwarded else request.META.get('REMOTE_ADDR')
+            user_agent = (request.META.get('HTTP_USER_AGENT') or '')[:500] or None
+        session = UserSession.objects.create(
+            user=self.user,
+            ip_address=ip_address,
+            user_agent=user_agent,
+        )
+        data['session_id'] = str(session.session_id)
 
         return data
 
 
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logoutUser(request):
+    from django.utils import timezone
+    session_id = request.data.get('session_id')
+    if session_id:
+        UserSession.objects.filter(
+            session_id=session_id,
+            user=request.user,
+            logout_at__isnull=True,
+        ).update(logout_at=timezone.now())
+    return Response({'detail': 'Logged out'})
 
 
 def _generate_temporary_password(length=16):

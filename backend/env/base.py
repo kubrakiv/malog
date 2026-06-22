@@ -123,7 +123,8 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
-    "base.middleware.TenantMiddleware",  # Add tenant middleware after authentication
+    "base.middleware.TenantMiddleware",       # sets request.client from JWT/session
+    "base.middleware.UserActivityMiddleware", # logs authenticated API requests
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]

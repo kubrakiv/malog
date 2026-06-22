@@ -1,6 +1,8 @@
+import uuid
 from django.db import models
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 # Create your models here.
 class Role(models.Model):
@@ -103,5 +105,64 @@ class DriverProfile(models.Model):
             return self.full_name
         else:
             return self.profile.username
+
+
+class UserSession(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='user_sessions',
+    )
+    session_id = models.UUIDField(default=uuid.uuid4, unique=True, db_index=True)
+    login_at = models.DateTimeField(auto_now_add=True)
+    logout_at = models.DateTimeField(null=True, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    user_agent = models.TextField(null=True, blank=True)
+
+    class Meta:
+        ordering = ['-login_at']
+        verbose_name = 'User Session'
+        verbose_name_plural = 'User Sessions'
+
+    def __str__(self):
+        return f"{self.user.username} — {self.login_at.strftime('%Y-%m-%d %H:%M')}"
+
+    @property
+    def duration(self):
+        end = self.logout_at or timezone.now()
+        return end - self.login_at
+
+    @property
+    def is_active(self):
+        return self.logout_at is None
+
+
+class UserActivity(models.Model):
+    session = models.ForeignKey(
+        UserSession,
+        on_delete=models.CASCADE,
+        related_name='activities',
+        null=True,
+        blank=True,
+    )
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='activities',
+    )
+    method = models.CharField(max_length=10)
+    path = models.CharField(max_length=500)
+    action_label = models.CharField(max_length=255, blank=True)
+    status_code = models.PositiveSmallIntegerField()
+    timestamp = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ['-timestamp']
+        verbose_name = 'User Activity'
+        verbose_name_plural = 'User Activities'
+
+    def __str__(self):
+        label = self.action_label or self.path
+        return f"{self.user.username} — {label} [{self.method}]"
 
 
