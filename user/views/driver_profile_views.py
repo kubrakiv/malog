@@ -43,7 +43,10 @@ def updateDriverProfile(request, pk):
         context={'request': request},
     )
     if serializer.is_valid():
-        serializer.save()
+        try:
+            serializer.save()
+        except OSError as e:
+            return Response({"error": f"Image could not be saved: {e}"}, status=500)
         return Response(serializer.data, status=200)
     return Response(serializer.errors, status=400)
 
