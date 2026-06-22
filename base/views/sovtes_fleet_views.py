@@ -9,6 +9,7 @@ from base.serializers import TruckSerializer, TrailerSerializer
 from base.subscription_models import ClientSubscription
 from user.models import DriverProfile, Profile, Role
 from user.serializers import DriverProfileSerializer
+from django.db import transaction
 import secrets
 import requests
 
@@ -677,26 +678,31 @@ def syncSovtesDriver(request):
 
         driver_role = Role.objects.filter(name="driver").first()
         username = f"sovtes_driver_{sovtes_id}_{client.id}"
-        random_password = secrets.token_urlsafe(16)
 
-        profile = Profile.objects.create_user(
-            username=username,
-            email=f"{username}@sovtes.import",
-            password=random_password,
-            client=client,
-            role=driver_role,
-            first_name=full_name.split()[0] if full_name else "",
-            last_name=" ".join(full_name.split()[1:]) if full_name and len(full_name.split()) > 1 else "",
-            phone_number=phone,
-        )
+        with transaction.atomic():
+            # get_or_create handles an orphaned Profile left by a previously failed sync
+            profile, created = Profile.objects.get_or_create(
+                username=username,
+                defaults={
+                    "email": f"{username}@sovtes.import",
+                    "client": client,
+                    "role": driver_role,
+                    "first_name": full_name.split()[0] if full_name else "",
+                    "last_name": " ".join(full_name.split()[1:]) if full_name and len(full_name.split()) > 1 else "",
+                    "phone_number": phone,
+                },
+            )
+            if created:
+                profile.set_password(secrets.token_urlsafe(16))
+                profile.save(update_fields=["password"])
 
-        driver = DriverProfile.objects.create(
-            profile=profile,
-            full_name=full_name,
-            phone_number=phone,
-            license_number=license_number,
-            sovtes_id=sovtes_id,
-        )
+            driver = DriverProfile.objects.create(
+                profile=profile,
+                full_name=full_name,
+                phone_number=phone,
+                license_number=license_number,
+                sovtes_id=sovtes_id,
+            )
 
         serializer = DriverProfileSerializer(driver, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)

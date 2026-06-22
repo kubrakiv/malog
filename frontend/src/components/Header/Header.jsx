@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaUser, FaCrown, FaLock, FaChevronDown } from "react-icons/fa";
 import { logout } from "../../actions/userActions";
 import { searchOrderByNumber } from "../../features/orders/ordersOperations";
-import axios from "axios";
+import { useSubscription } from "../../hooks/useSubscription";
 
 import SearchOrderComponent from "../../components/SearchOrderComponent";
 import OpenContext from "../OpenContext";
@@ -18,44 +18,12 @@ function Header() {
 
   const [orderNumber, setOrderNumber] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [subscription, setSubscription] = useState(null);
-  const [subscriptionLoading, setSubscriptionLoading] = useState(true);
   const dropdownRef = useRef(null);
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  // Fetch subscription data
-  useEffect(() => {
-    const fetchSubscription = async () => {
-      try {
-        const token = userInfo?.token;
-        if (token) {
-          const config = {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          };
-          const response = await axios.get(
-            "/api/subscriptions/current/",
-            config,
-          );
-          setSubscription(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching subscription:", error);
-        if (error.response?.status === 404) {
-          console.log("No active subscription found");
-        }
-      } finally {
-        setSubscriptionLoading(false);
-      }
-    };
-
-    if (userInfo) {
-      fetchSubscription();
-    }
-  }, [userInfo]);
+  const { subscription, loading: subscriptionLoading } = useSubscription();
 
   // Close dropdown when clicking outside
   useEffect(() => {

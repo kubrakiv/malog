@@ -12,6 +12,8 @@ import SovtesAuthHandler from "./components/SovtesAuthHandler/SovtesAuthHandler"
 import "./components/Sidebar/SubscriptionAwareSidebar.scss";
 
 import { logout } from "./actions/userActions";
+import { fetchSubscription } from "./features/subscription/subscriptionOperations";
+import { clearSubscription } from "./features/subscription/subscriptionSlice";
 
 const Layout = () => {
   const location = useLocation();
@@ -28,6 +30,15 @@ const Layout = () => {
       dispatch(logout());
     }
   }, [userInfo, isRootUrl, dispatch]);
+
+  // Fetch subscription once when user is present; clear on logout
+  useEffect(() => {
+    if (userInfo) {
+      dispatch(fetchSubscription());
+    } else {
+      dispatch(clearSubscription());
+    }
+  }, [userInfo, dispatch]);
 
   return userInfo ? (
     <div>
