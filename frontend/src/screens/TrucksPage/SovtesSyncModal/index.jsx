@@ -207,11 +207,29 @@ const SovtesSyncModal = () => {
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [addingAll, setAddingAll] = useState(false);
   const [linkingId, setLinkingId] = useState(null);
+  const [search, setSearch] = useState("");
 
   const isDriverTab = activeTab === "drivers";
   const items = activeTab === "trucks" ? trucks : activeTab === "trailers" ? trailers : drivers;
-  const unsyncedItems = items.filter((v) => !v.already_synced);
-  const syncedItems = items.filter((v) => v.already_synced);
+
+  const filteredItems = search.trim() === "" ? items : items.filter((v) => {
+    const q = search.toLowerCase();
+    if (isDriverTab) {
+      return (
+        getDriverName(v).toLowerCase().includes(q) ||
+        extractStr(v.maincellphone || v.phone || v.phoneNumber || v.phone_number).toLowerCase().includes(q)
+      );
+    }
+    return (
+      getPlates(v).toLowerCase().includes(q) ||
+      getBrand(v).toLowerCase().includes(q) ||
+      extractStr(v.model).toLowerCase().includes(q) ||
+      extractStr(v.vin || v.vin_code).toLowerCase().includes(q)
+    );
+  });
+
+  const unsyncedItems = filteredItems.filter((v) => !v.already_synced);
+  const syncedItems = filteredItems.filter((v) => v.already_synced);
 
   const unlinkedLocal = isDriverTab
     ? localDrivers.filter((d) => !d.sovtes_id)
@@ -223,6 +241,7 @@ const SovtesSyncModal = () => {
     setExpandedId(null);
     setSelectedIds(new Set());
     setLinkingId(null);
+    setSearch("");
     if (activeTab === "trucks") dispatch(fetchSovtesTrucks());
     else if (activeTab === "trailers") dispatch(fetchSovtesTrailers());
     else dispatch(fetchSovtesDrivers());
@@ -364,8 +383,22 @@ const SovtesSyncModal = () => {
           </button>
         </div>
 
-        {/* Toolbar */}
+        {/* Search */}
         {!loading && !error && items.length > 0 && (
+          <div className="sovtes-modal__search">
+            <FaSearch className="sovtes-modal__search-icon" />
+            <input
+              type="text"
+              className="sovtes-modal__search-input"
+              placeholder={isDriverTab ? "Пошук за ім'ям водія, телефоном…" : "Пошук за номером, маркою, моделлю, VIN…"}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+        )}
+
+        {/* Toolbar */}
+        {!loading && !error && filteredItems.length > 0 && (
           <div className="sovtes-modal__toolbar">
             {/* Select-all for unsynced */}
             {unsyncedItems.length > 0 ? (
@@ -443,9 +476,15 @@ const SovtesSyncModal = () => {
             </div>
           )}
 
-          {!loading && !error && items.length > 0 && (
+          {!loading && !error && items.length > 0 && filteredItems.length === 0 && (
+            <div className="sovtes-modal__state">
+              <p>Нічого не знайдено</p>
+            </div>
+          )}
+
+          {!loading && !error && filteredItems.length > 0 && (
             <div className="sovtes-modal__list">
-              {items.map((vehicle) => {
+              {filteredItems.map((vehicle) => {
                 const syncing = isSyncing(vehicle.id);
                 const synced = vehicle.already_synced;
                 const expanded = expandedId === vehicle.id;

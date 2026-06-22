@@ -11,6 +11,8 @@ from .models import (
     DriverProfile,
     # CustomerProfile
 )
+from base.models import Company
+from base.mailer import actions as mailer_actions
 
 
 class TenantUserAdmin(admin.ModelAdmin):
@@ -64,6 +66,11 @@ class ProfileAdmin(UserAdmin):
                 self.admin_site.admin_view(self.reset_password_view),
                 name='user_profile_reset_password',
             ),
+            path(
+                '<int:user_id>/send-welcome-email/',
+                self.admin_site.admin_view(self.send_welcome_email_view),
+                name='user_profile_send_welcome_email',
+            ),
         ]
         return custom_urls + urls
 
@@ -92,6 +99,52 @@ class ProfileAdmin(UserAdmin):
 
         redirect_to = request.META.get('HTTP_REFERER') or reverse('admin:user_profile_change', args=[profile.pk])
         return redirect(redirect_to)
+
+    def send_welcome_email_view(self, request, user_id):
+        if not self.has_password_reset_permission(request):
+            self.message_user(request, 'You do not have permission to send welcome emails.', level=messages.ERROR)
+            return redirect(reverse('admin:user_profile_changelist'))
+
+        profile = get_object_or_404(Profile, id=user_id)
+
+        if not profile.registration_password:
+            self.message_user(
+                request,
+                f'No stored password for {profile.username}. Reset the password first, then retry.',
+                level=messages.WARNING,
+            )
+            redirect_to = request.META.get('HTTP_REFERER') or reverse('admin:user_profile_change', args=[profile.pk])
+            return redirect(redirect_to)
+
+        company = Company.all_objects.filter(client=profile.client).first() if profile.client else None
+        sent = mailer_actions.send_new_user_welcome(profile, profile.registration_password, profile.client, company)
+
+        if sent:
+            self.message_user(
+                request,
+                f'Welcome email sent to {profile.email}.',
+                level=messages.SUCCESS,
+            )
+        else:
+            self.message_user(
+                request,
+                f'Failed to send welcome email to {profile.email}. Check server logs for details.',
+                level=messages.ERROR,
+            )
+
+        redirect_to = request.META.get('HTTP_REFERER') or reverse('admin:user_profile_change', args=[profile.pk])
+        return redirect(redirect_to)
+
+    def send_welcome_email_action(self, obj):
+        if not obj.pk:
+            return '-'
+        url = reverse('admin:user_profile_send_welcome_email', args=[obj.pk])
+        return format_html(
+            '<a class="button" href="{}">Send welcome email</a>',
+            url,
+        )
+
+    send_welcome_email_action.short_description = 'Welcome Email'
 
     def reset_password_action(self, obj):
         if not obj.pk:
@@ -131,6 +184,7 @@ class ProfileAdmin(UserAdmin):
         readonly_fields = list(super().get_readonly_fields(request, obj))
         if self.has_password_reset_permission(request):
             readonly_fields.append('reset_password_action')
+            readonly_fields.append('send_welcome_email_action')
         return readonly_fields
 
     def get_fieldsets(self, request, obj=None):
@@ -138,12 +192,14 @@ class ProfileAdmin(UserAdmin):
         personal_info_name, personal_info_options = fieldsets[1]
         personal_fields = list(personal_info_options['fields'])
 
-        for field_name in ('phone_number', 'role', 'client', 'registration_password', 'reset_password_action'):
+        for field_name in ('phone_number', 'role', 'client', 'registration_password', 'reset_password_action', 'send_welcome_email_action'):
             if field_name not in personal_fields:
                 personal_fields.append(field_name)
 
-        if not self.has_password_reset_permission(request) and 'reset_password_action' in personal_fields:
-            personal_fields.remove('reset_password_action')
+        if not self.has_password_reset_permission(request):
+            for field_name in ('reset_password_action', 'send_welcome_email_action'):
+                if field_name in personal_fields:
+                    personal_fields.remove(field_name)
 
         fieldsets[1] = (personal_info_name, {'fields': tuple(personal_fields)})
         return fieldsets
