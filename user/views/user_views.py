@@ -21,6 +21,9 @@ from rest_framework import status
 import secrets
 import string
 
+from base.mailer import actions as mailer_actions
+from base.models import Company
+
 
 class AdminRolePermission(BasePermission):
     
@@ -203,7 +206,8 @@ def registerUser(request):
 	try:
 		# Assign the same client as the requesting user
 		user_client = request.user.client
-		
+		plain_password = data['password']
+
 		profile = Profile.objects.create(
             role=role,
             client=user_client,  # Assign client
@@ -212,8 +216,13 @@ def registerUser(request):
 			username=data['email'],
 			email=data['email'],
             phone_number=data['phone_number'],
-			password=make_password(data['password'])
+			password=make_password(plain_password),
+            registration_password=plain_password,
 		)
+
+		company = Company.all_objects.filter(client=user_client).first()
+		mailer_actions.send_new_user_welcome(profile, plain_password, user_client, company)
+
 		serializer = UserSerializerWithToken(profile, many=False)
 		return Response(serializer.data)
 	except:

@@ -250,6 +250,56 @@ Email: {user.email}
     )
 
 
+def new_user_welcome(user, plain_password, client, company=None):
+    role_display = {
+        'logist': 'Логіст',
+        'client_admin': 'Адміністратор компанії',
+    }.get(user.role.name if user.role else '', user.role.name if user.role else 'Користувач')
+
+    login_url = f"{settings.FRONTEND_URL}/login"
+    rows = [
+        ("Компанія", client.name),
+        ("Роль", role_display),
+        ("Email / Логін", user.email),
+        ("Пароль", plain_password),
+    ]
+    if company:
+        if company.phone:
+            rows.append(("Телефон компанії", company.phone))
+        if company.post_address:
+            rows.append(("Адреса", company.post_address))
+        if company.website:
+            rows.append(("Веб-сайт", company.website))
+
+    subject = f"Ваш обліковий запис у TMS SOVTES - {client.name}"
+    body = f"""
+Вітаємо, {user.get_full_name() or user.username}!
+
+Для вас створено обліковий запис у системі TMS SOVTES.
+
+Компанія: {client.name}
+Роль: {role_display}
+Email / Логін: {user.email}
+Пароль: {plain_password}
+Сторінка входу: {login_url}
+
+Рекомендуємо змінити пароль після першого входу.
+"""
+    content = f"""
+      <p style="margin:0 0 14px;color:#475569;font-size:15px;line-height:1.7;">Вітаємо, {_safe(user.get_full_name() or user.username)}!</p>
+      <p style="margin:0;color:#475569;font-size:15px;line-height:1.7;">Для вас створено обліковий запис у системі <strong style="color:#172033;">TMS SOVTES</strong>. Нижче наведено ваші дані для входу.</p>
+      {_details(rows)}
+      {_notice('Рекомендуємо змінити пароль після першого входу до системи.', 'warning')}
+      {_button('Увійти до TMS SOVTES', login_url)}
+    """
+    return text_message(
+        subject,
+        body,
+        user.email,
+        html_body=_layout(subject, "Ваш обліковий запис готовий до використання.", content),
+    )
+
+
 def trial_reminder(trial, admin_user, days_before):
     subject = f"Пробний період завершується через {days_before} днів"
     truck_limit = trial.plan.truck_limit if trial.plan.truck_limit != -1 else "Без обмежень"

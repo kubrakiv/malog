@@ -41,6 +41,13 @@ def send_sovtes_welcome(user, temporary_password, client):
     )
 
 
+def send_new_user_welcome(user, plain_password, client, company=None):
+    return _deliver(
+        messages.new_user_welcome(user, plain_password, client, company),
+        "new user welcome",
+    )
+
+
 def send_trial_reminder(trial, admin_user, days_before):
     return _deliver(
         messages.trial_reminder(trial, admin_user, days_before), "trial reminder"
