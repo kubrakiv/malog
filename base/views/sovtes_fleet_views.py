@@ -681,7 +681,7 @@ def syncSovtesDriver(request):
 
         with transaction.atomic():
             # get_or_create handles an orphaned Profile left by a previously failed sync
-            profile, created = Profile.objects.get_or_create(
+            profile, profile_created = Profile.objects.get_or_create(
                 username=username,
                 defaults={
                     "email": f"{username}@sovtes.import",
@@ -692,17 +692,30 @@ def syncSovtesDriver(request):
                     "phone_number": phone,
                 },
             )
-            if created:
+            if profile_created:
                 profile.set_password(secrets.token_urlsafe(16))
                 profile.save(update_fields=["password"])
 
-            driver = DriverProfile.objects.create(
+            # get_or_create handles a DriverProfile that already exists for this
+            # profile but with a different/null sovtes_id (data inconsistency)
+            driver, driver_created = DriverProfile.objects.get_or_create(
                 profile=profile,
-                full_name=full_name,
-                phone_number=phone,
-                license_number=license_number,
-                sovtes_id=sovtes_id,
+                defaults={
+                    "full_name": full_name,
+                    "phone_number": phone,
+                    "license_number": license_number,
+                    "sovtes_id": sovtes_id,
+                },
             )
+            if not driver_created:
+                driver.sovtes_id = sovtes_id
+                if full_name:
+                    driver.full_name = full_name
+                if phone:
+                    driver.phone_number = phone
+                if license_number:
+                    driver.license_number = license_number
+                driver.save()
 
         serializer = DriverProfileSerializer(driver, context={"request": request})
         return Response(serializer.data, status=status.HTTP_201_CREATED)
