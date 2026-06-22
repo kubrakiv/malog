@@ -1,18 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { getCsrfToken } from "../../../utils/getCsrfToken";
-import AddDriverHeaderComponent from "../AddDriverHeaderComponent/AddDriverHeaderComponent";
 import AddDriverFooterComponent from "../AddDriverFooterComponent/AddDriverFooterComponent";
-import RegisterPage from "../../../screens/RegisterPage/RegisterPage";
-import axios from "axios";
-import { register } from "../../../actions/userActions";
 import "./EditDriverComponent.scss";
 import driverImagePlaceholder from "../../../img/driver_placeholder.jpg";
 import cn from "classnames";
 import { transformDateFormat } from "../../../utils/formatDate";
-import { updateDriver } from "../../../actions/driverActions";
-
-const { REACT_APP_PROXY: BASE_URL } = import.meta.env;
 
 const EditDriverComponent = ({
   showDriverModal,
@@ -25,6 +16,7 @@ const EditDriverComponent = ({
   handleDriverUpdate,
 }) => {
   const [driverImage, setDriverImage] = useState(driverImagePlaceholder);
+  const [pendingImageBase64, setPendingImageBase64] = useState(null);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [middleName, setMiddleName] = useState("");
@@ -37,11 +29,6 @@ const EditDriverComponent = ({
   const [workStart, setWorkStart] = useState("");
   const [workEnd, setWorkEnd] = useState("");
 
-  const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   getCsrfToken();
-  // }, []);
 
   useEffect(() => {
     setFirstName(selectedDriver.first_name);
@@ -65,12 +52,11 @@ const EditDriverComponent = ({
     e.preventDefault();
 
     if (editDriverProfileMode) {
-      const driver = {
+      const driverForApi = {
         profile: selectedDriver.profile,
         first_name: firstName,
         last_name: lastName,
         full_name: `${firstName} ${lastName}`,
-        image: driverImage.replace(BASE_URL, ""),
         middle_name: middleName,
         email: email,
         phone_number: phone,
@@ -81,17 +67,16 @@ const EditDriverComponent = ({
         started_work: workStart,
         finished_work: workEnd,
       };
-      // Create a copy of the driver object without the image field for the API request
-      const driverForApi = { ...driver };
-      delete driverForApi.image; // Remove the image field
-
-      console.log("Driver data for API", driverForApi);
+      if (pendingImageBase64) {
+        driverForApi.image = pendingImageBase64;
+      }
 
       try {
-        dispatch(updateDriver(driverForApi, selectedDriver.profile)); // Send driverForApi object without image
-
-        handleDriverUpdate(selectedDriver.profile, driver); // Pass the full driver object with image for state update
-        setSelectedDriver(driver);
+        await handleDriverUpdate(selectedDriver.profile, driverForApi);
+        const stateForLocal = { ...driverForApi };
+        delete stateForLocal.image; // avoid storing base64 in local selectedDriver state
+        setSelectedDriver(stateForLocal);
+        setPendingImageBase64(null);
         setEditDriverProfileMode(false);
         setShowDriverModal(false);
       } catch (error) {
@@ -100,43 +85,25 @@ const EditDriverComponent = ({
     }
   };
 
-  const handleDriverImageUpload = async (e) => {
-    e.preventDefault();
-
+  const handleDriverImageUpload = (e) => {
     const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append("image", file);
-    formData.append("driver_id", selectedDriver.profile);
-
-    console.log("Driver image uploaded", formData);
-
-    try {
-      const config = {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      };
-
-      const { data } = await axios.post(
-        "/api/driver-profiles/upload/",
-        formData,
-        config
-      );
-
-      setDriverImage(data.image_url);
-      console.log(data, "Uploaded driver photo");
-    } catch (error) {
-      console.log("Error", error);
-    }
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const base64 = ev.target.result;
+      setDriverImage(base64);
+      setPendingImageBase64(base64);
+    };
+    reader.readAsDataURL(file);
   };
 
   useEffect(() => {
-    if (selectedDriver && selectedDriver.image) {
-      setDriverImage(`${BASE_URL}${selectedDriver.image}`);
-      console.log("Driver image", driverImage);
+    if (selectedDriver?.image) {
+      setDriverImage(selectedDriver.image);
     } else {
       setDriverImage(driverImagePlaceholder);
     }
+    setPendingImageBase64(null);
   }, [selectedDriver]);
 
   const btnClassEdit = cn("input-div", {

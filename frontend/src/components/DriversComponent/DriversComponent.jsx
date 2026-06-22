@@ -26,7 +26,6 @@ import { setShowSovtesSyncModal } from "../../features/sovtesFleet/sovtesFleetSl
 import "./DriversComponent.scss";
 import { selectDrivers } from "../../features/drivers/driversSelectors";
 
-const { REACT_APP_API_BASE_URL: BASE_URL } = import.meta.env;
 
 const DriversComponent = ({ embedded = false }) => {
   const dispatch = useDispatch();
@@ -103,7 +102,7 @@ const DriversComponent = ({ embedded = false }) => {
   };
 
   const handleDriverUpdate = (driverId, driverData) => {
-    dispatch(updateDriver({ driverId, dataToUpdate: driverData })).then((result) => {
+    return dispatch(updateDriver({ driverId, dataToUpdate: driverData })).then((result) => {
       if (result.meta.requestStatus === "fulfilled") {
         dispatch(listDrivers());
       }
@@ -263,7 +262,7 @@ const DriversComponent = ({ embedded = false }) => {
                     <td className="drivers-table__body-td">{index + 1}</td>
                     <td className="drivers-table__body-td drivers-table__body-td_image">
                       <img
-                        src={driver.image ? `${BASE_URL}${driver.image}` : driverImagePlaceholder}
+                        src={driver.image || driverImagePlaceholder}
                         alt=""
                       />
                     </td>

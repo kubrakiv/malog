@@ -38,7 +38,7 @@ def getDriverProfile(request, pk):
 @api_view(["PUT"])
 def updateDriverProfile(request, pk):
     driver = DriverProfile.objects.get(profile__id=pk)
-    serializer = DriverProfileSerializer(instance=driver, data=request.data, partial=True)
+    serializer = DriverProfileSerializer(instance=driver, data=request.data, partial=True, context={'request': request})
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data, status=200)

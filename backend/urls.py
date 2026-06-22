@@ -1,9 +1,10 @@
 from django.contrib import admin
 from django.urls import path, re_path, include
-from django.conf import settings # it's access to variables in settings.py file
-from django.conf.urls.static import static # it's a specific function that connects urls
+from django.conf import settings
+from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.views.generic import TemplateView
+from django.views.static import serve
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 urlpatterns = [
@@ -61,9 +62,13 @@ urlpatterns = [
     path("api/route_calculator/", include("route_calculator.urls")),
 ]
 
+# Serve media files in all environments (static() is a no-op when DEBUG=False)
+urlpatterns += [
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+]
+
 # Development-only patterns
 if settings.DEBUG:
-    # Add debug toolbar if installed
     try:
         import debug_toolbar
         urlpatterns += [
@@ -71,9 +76,6 @@ if settings.DEBUG:
         ]
     except ImportError:
         pass
-    
-    # Serve media files in development
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += staticfiles_urlpatterns()
 
 # Production/Staging: serve React app for all non-API routes
@@ -81,4 +83,3 @@ if not settings.DEBUG:
     urlpatterns += [
         re_path(r'^(?!api/|admin/|static/|media/).*$', TemplateView.as_view(template_name="index.html")),
     ]
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

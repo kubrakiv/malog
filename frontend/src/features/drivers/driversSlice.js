@@ -67,9 +67,7 @@ export const driverSlice = createSlice({
     // Update driver cases
     builder.addCase(updateDriver.fulfilled, (state, action) => {
       const index = state.drivers.data.findIndex(
-        (driver) =>
-          driver.id === action.payload.id ||
-          driver.profile === action.payload.id
+        (driver) => driver.profile === action.payload.profile
       );
       if (index !== -1) {
         state.drivers.data[index] = action.payload;
