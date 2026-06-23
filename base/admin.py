@@ -33,6 +33,9 @@ from .models import (
     FuelPrice,
     ExternalAPIKey,
     ClientExternalIdentity,
+    TruckUnit,
+    TruckUnitAssignment,
+    DriverUnitAssignment,
 )
 from .subscription_models import (
     SubscriptionPlan,
@@ -166,6 +169,50 @@ class TruckAdmin(BaseTenantAdmin):
     list_display = ('plates', 'client', 'brand', 'model', 'driver')
     list_filter = ('client', 'brand')
     search_fields = ('plates', 'brand', 'model')
+
+
+class TruckUnitAssignmentInline(admin.TabularInline):
+    model = TruckUnitAssignment
+    extra = 0
+    fields = ('truck', 'start_date', 'end_date', 'is_active')
+    readonly_fields = ('start_date',)
+
+
+class DriverUnitAssignmentInline(admin.TabularInline):
+    model = DriverUnitAssignment
+    extra = 0
+    fields = ('driver', 'start_date', 'end_date', 'is_active')
+    readonly_fields = ('start_date',)
+
+
+@admin.register(TruckUnit)
+class TruckUnitAdmin(BaseTenantAdmin):
+    list_display = ('name', 'client', 'truck_count', 'driver_count')
+    list_filter = ('client',)
+    search_fields = ('name',)
+    inlines = [TruckUnitAssignmentInline, DriverUnitAssignmentInline]
+
+    def truck_count(self, obj):
+        return obj.assignments.filter(is_active=True).count()
+    truck_count.short_description = 'Trucks'
+
+    def driver_count(self, obj):
+        return obj.driver_assignments.filter(is_active=True).count()
+    driver_count.short_description = 'Drivers'
+
+
+@admin.register(TruckUnitAssignment)
+class TruckUnitAssignmentAdmin(BaseTenantAdmin):
+    list_display = ('truck', 'unit', 'client', 'start_date', 'end_date', 'is_active')
+    list_filter = ('client', 'is_active', 'unit')
+    search_fields = ('truck__plates', 'unit__name')
+
+
+@admin.register(DriverUnitAssignment)
+class DriverUnitAssignmentAdmin(BaseTenantAdmin):
+    list_display = ('driver', 'unit', 'client', 'start_date', 'end_date', 'is_active')
+    list_filter = ('client', 'is_active', 'unit')
+    search_fields = ('driver__full_name', 'unit__name')
 
 
 @admin.register(Trailer)
