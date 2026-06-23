@@ -52,20 +52,22 @@ const EditDriverComponent = ({
     e.preventDefault();
 
     if (editDriverProfileMode) {
+      const nullIfEmpty = (v) => (v === "" || v === undefined ? null : v);
+
       const driverForApi = {
         profile: selectedDriver.profile,
         first_name: firstName,
         last_name: lastName,
         full_name: `${firstName} ${lastName}`,
-        middle_name: middleName,
+        middle_name: nullIfEmpty(middleName),
         email: email,
         phone_number: phone,
-        position: position,
-        license_series: licenseSeries,
-        license_number: licenseNumber,
-        birth_date: birthday,
-        started_work: workStart,
-        finished_work: workEnd,
+        position: nullIfEmpty(position),
+        license_series: nullIfEmpty(licenseSeries),
+        license_number: nullIfEmpty(licenseNumber),
+        birth_date: nullIfEmpty(birthday),
+        started_work: nullIfEmpty(workStart),
+        finished_work: nullIfEmpty(workEnd),
       };
       if (pendingImageBase64) {
         driverForApi.image = pendingImageBase64;
