@@ -5,8 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from base.models import Truck, TruckUnit, TruckUnitAssignment
-from base.serializers import TruckUnitSerializer, TruckUnitAssignmentSerializer
+from base.models import Truck, TruckUnit, TruckUnitAssignment, DriverUnitAssignment
+from base.serializers import TruckUnitSerializer, TruckUnitAssignmentSerializer, DriverUnitAssignmentSerializer
+from user.models import DriverProfile
 
 DEFAULT_UNIT_NAMES = [
     "Міжнародна колона",
@@ -119,4 +120,61 @@ def truckUnitHistory(request, truck_id):
         truck__client=request.user.client,
     )
     serializer = TruckUnitAssignmentSerializer(assignments, many=True, context={'request': request})
+    return Response(serializer.data)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def assignDriverUnit(request):
+    """
+    Assign a driver to a unit (or remove with unit_id=null).
+    Closes the current active assignment and opens a new one.
+    """
+    driver_id = request.data.get("driver_id")
+    unit_id = request.data.get("unit_id")
+
+    if not driver_id:
+        return Response({"error": "driver_id is required"}, status=status.HTTP_400_BAD_REQUEST)
+
+    client = request.user.client
+    if not client:
+        return Response({"error": "User has no client assigned"}, status=status.HTTP_403_FORBIDDEN)
+
+    try:
+        driver = DriverProfile.objects.get(profile__id=driver_id, profile__client=client)
+    except DriverProfile.DoesNotExist:
+        return Response({"error": "Driver not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Close any currently active assignment
+    DriverUnitAssignment.all_objects.filter(driver=driver, is_active=True).update(
+        end_date=timezone.now(), is_active=False
+    )
+
+    if unit_id:
+        try:
+            unit = TruckUnit.all_objects.get(id=unit_id, client=client)
+        except TruckUnit.DoesNotExist:
+            return Response({"error": "Unit not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        assignment = DriverUnitAssignment.objects.create(
+            driver=driver,
+            unit=unit,
+            client=client,
+            start_date=timezone.now(),
+            is_active=True,
+        )
+        return Response(DriverUnitAssignmentSerializer(assignment, context={'request': request}).data, status=status.HTTP_201_CREATED)
+
+    return Response({"message": "Driver removed from unit"})
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def driverUnitHistory(request, driver_id):
+    """Return the full unit assignment history for a driver."""
+    assignments = DriverUnitAssignment.objects.filter(
+        driver__profile__id=driver_id,
+        driver__profile__client=request.user.client,
+    )
+    serializer = DriverUnitAssignmentSerializer(assignments, many=True, context={'request': request})
     return Response(serializer.data)

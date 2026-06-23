@@ -7,4 +7,6 @@ urlpatterns = [
     path("delete/<int:pk>/", views.deleteTruckUnit, name="truck-units-delete"),
     path("assign/", views.assignTruckUnit, name="truck-units-assign"),
     path("history/<int:truck_id>/", views.truckUnitHistory, name="truck-units-history"),
+    path("assign-driver/", views.assignDriverUnit, name="truck-units-assign-driver"),
+    path("driver-history/<int:driver_id>/", views.driverUnitHistory, name="truck-units-driver-history"),
 ]

@@ -26,6 +26,7 @@ from .models import (
     FuelPrice,
     TruckUnit,
     TruckUnitAssignment,
+    DriverUnitAssignment,
 )
 from user.models import (
     DriverProfile,
@@ -126,6 +127,14 @@ class TruckUnitAssignmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = TruckUnitAssignment
         fields = ["id", "truck", "unit", "unit_name", "start_date", "end_date", "is_active"]
+
+
+class DriverUnitAssignmentSerializer(serializers.ModelSerializer):
+    unit_name = serializers.CharField(source="unit.name", read_only=True)
+
+    class Meta:
+        model = DriverUnitAssignment
+        fields = ["id", "driver", "unit", "unit_name", "start_date", "end_date", "is_active"]
 
 
 class TruckSerializer(serializers.ModelSerializer):

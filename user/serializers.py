@@ -30,10 +30,18 @@ class Base64ImageField(serializers.ImageField):
 class DriverProfileSerializer(serializers.ModelSerializer):
     trucks = TruckField(many=True, read_only=True)
     image = Base64ImageField(required=False, allow_null=True)
+    current_unit = serializers.SerializerMethodField()
+
+    def get_current_unit(self, obj):
+        from base.models import DriverUnitAssignment
+        assignment = DriverUnitAssignment.objects.filter(driver=obj, is_active=True).first()
+        if assignment:
+            return {"id": assignment.unit.id, "name": assignment.unit.name}
+        return None
 
     class Meta:
         model = DriverProfile
-        fields = ["profile", "first_name", "last_name", "middle_name", "full_name", "email", "phone_number", "position", "license_series", "license_number", "birth_date", "started_work", "finished_work", "country", "image", "trucks", "sovtes_id"]
+        fields = ["profile", "first_name", "last_name", "middle_name", "full_name", "email", "phone_number", "position", "license_series", "license_number", "birth_date", "started_work", "finished_work", "country", "image", "trucks", "sovtes_id", "current_unit"]
 
 
 

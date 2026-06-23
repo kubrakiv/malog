@@ -318,6 +318,26 @@ class TruckUnitAssignment(BaseTenantModel):
         return f"{self.truck.plates} → {self.unit.name} ({self.start_date.strftime('%Y-%m-%d')} – {end})"
 
 
+class DriverUnitAssignment(BaseTenantModel):
+    """Tracks which TruckUnit a driver belongs to over time."""
+    driver = models.ForeignKey(
+        DriverProfile, on_delete=models.CASCADE, related_name="unit_assignments"
+    )
+    unit = models.ForeignKey(
+        TruckUnit, on_delete=models.CASCADE, related_name="driver_assignments"
+    )
+    start_date = models.DateTimeField(default=timezone.now)
+    end_date = models.DateTimeField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        ordering = ["-start_date"]
+
+    def __str__(self):
+        end = self.end_date.strftime("%Y-%m-%d") if self.end_date else "present"
+        return f"{self.driver} → {self.unit.name} ({self.start_date.strftime('%Y-%m-%d')} – {end})"
+
+
 class PaymentType(BaseTenantModel):
     name = models.CharField(max_length=25)
 
