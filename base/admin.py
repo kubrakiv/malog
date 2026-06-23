@@ -177,12 +177,18 @@ class TruckUnitAssignmentInline(admin.TabularInline):
     fields = ('truck', 'start_date', 'end_date', 'is_active')
     readonly_fields = ('start_date',)
 
+    def get_queryset(self, request):
+        return TruckUnitAssignment.all_objects.all()
+
 
 class DriverUnitAssignmentInline(admin.TabularInline):
     model = DriverUnitAssignment
     extra = 0
     fields = ('driver', 'start_date', 'end_date', 'is_active')
     readonly_fields = ('start_date',)
+
+    def get_queryset(self, request):
+        return DriverUnitAssignment.all_objects.all()
 
 
 @admin.register(TruckUnit)
@@ -193,11 +199,11 @@ class TruckUnitAdmin(BaseTenantAdmin):
     inlines = [TruckUnitAssignmentInline, DriverUnitAssignmentInline]
 
     def truck_count(self, obj):
-        return obj.assignments.filter(is_active=True).count()
+        return TruckUnitAssignment.all_objects.filter(unit=obj, is_active=True).count()
     truck_count.short_description = 'Trucks'
 
     def driver_count(self, obj):
-        return obj.driver_assignments.filter(is_active=True).count()
+        return DriverUnitAssignment.all_objects.filter(unit=obj, is_active=True).count()
     driver_count.short_description = 'Drivers'
 
 
@@ -207,12 +213,18 @@ class TruckUnitAssignmentAdmin(BaseTenantAdmin):
     list_filter = ('client', 'is_active', 'unit')
     search_fields = ('truck__plates', 'unit__name')
 
+    def get_queryset(self, request):
+        return TruckUnitAssignment.all_objects.all()
+
 
 @admin.register(DriverUnitAssignment)
 class DriverUnitAssignmentAdmin(BaseTenantAdmin):
     list_display = ('driver', 'unit', 'client', 'start_date', 'end_date', 'is_active')
     list_filter = ('client', 'is_active', 'unit')
     search_fields = ('driver__full_name', 'unit__name')
+
+    def get_queryset(self, request):
+        return DriverUnitAssignment.all_objects.all()
 
 
 @admin.register(Trailer)
