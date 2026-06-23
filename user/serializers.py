@@ -34,7 +34,7 @@ class DriverProfileSerializer(serializers.ModelSerializer):
 
     def get_current_unit(self, obj):
         from base.models import DriverUnitAssignment
-        assignment = DriverUnitAssignment.objects.filter(driver=obj, is_active=True).first()
+        assignment = DriverUnitAssignment.all_objects.filter(driver=obj, is_active=True).first()
         if assignment:
             return {"id": assignment.unit.id, "name": assignment.unit.name}
         return None

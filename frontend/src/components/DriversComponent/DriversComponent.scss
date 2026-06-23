@@ -366,3 +366,98 @@
 .drivers-header-block {
   display: none;
 }
+
+// ── Group rows ──────────────────────────────────────────────────
+.drivers-table {
+  &__group-row {
+    cursor: pointer;
+    background: rgba(15, 118, 128, 0.05);
+
+    &:hover { background: rgba(15, 118, 128, 0.09); }
+  }
+
+  &__group-cell {
+    padding: 0.55rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #0f7680;
+    border-radius: 10px;
+    user-select: none;
+  }
+
+  &__group-icon {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.5rem;
+    font-size: 0.72rem;
+    opacity: 0.7;
+  }
+
+  &__group-label {
+    margin-right: 0.5rem;
+  }
+
+  &__group-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(15, 118, 128, 0.14);
+    color: #0b5f68;
+    font-size: 0.72rem;
+    font-weight: 800;
+  }
+
+  &__unit-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgba(15, 118, 128, 0.12);
+    color: #0b5f68;
+    font-size: 0.78rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  &__unit-empty {
+    color: #b0bec5;
+  }
+}
+
+// ── Assign bar ──────────────────────────────────────────────────
+.drivers-assign-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 1rem;
+  margin-bottom: 8px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(15, 84, 92, 0.12);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(15, 84, 92, 0.06);
+
+  &__title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: #0f7680;
+    white-space: nowrap;
+  }
+
+  &__select {
+    flex: 1;
+    max-width: 320px;
+  }
+}
+
+// ── Extra toolbar button colours ────────────────────────────────
+.fleet-toolbar__btn {
+  &--assign:hover:not(:disabled) { background: rgba(15, 118, 128, 0.12); color: #0f7680; }
+  &--save:hover:not(:disabled)   { background: rgba(25, 163, 74, 0.12);  color: #19a34a; }
+  &--cancel:hover:not(:disabled) { background: rgba(220, 38, 38, 0.10);  color: #dc2626; }
+  &--sovtes:hover:not(:disabled) { background: rgba(43, 84, 233, 0.10);  color: #2b54e9; }
+}

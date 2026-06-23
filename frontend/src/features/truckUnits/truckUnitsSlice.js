@@ -4,6 +4,7 @@ import {
   createTruckUnit,
   deleteTruckUnit,
   assignTruckUnit,
+  assignDriverUnit,
   getTruckUnitHistory,
 } from "./truckUnitsOperations";
 
@@ -56,6 +57,15 @@ const truckUnitsSlice = createSlice({
       .addCase(assignTruckUnit.rejected, (state, action) => {
         state.assigning = false;
         state.error = action.payload?.error || "Failed to assign unit";
+      });
+
+    // assign driver
+    builder
+      .addCase(assignDriverUnit.pending, (state) => { state.assigning = true; state.error = null; })
+      .addCase(assignDriverUnit.fulfilled, (state) => { state.assigning = false; })
+      .addCase(assignDriverUnit.rejected, (state, action) => {
+        state.assigning = false;
+        state.error = action.payload?.error || "Failed to assign driver unit";
       });
 
     // history

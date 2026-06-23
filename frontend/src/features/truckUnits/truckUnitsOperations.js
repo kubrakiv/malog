@@ -86,6 +86,31 @@ export const assignTruckUnit = createAsyncThunk(
   }
 );
 
+// { driver_id, unit_id } — unit_id=null removes the driver from its current unit
+export const assignDriverUnit = createAsyncThunk(
+  "truckUnits/assignDriver",
+  async ({ driver_id, unit_id }, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState();
+      const token = state.userLogin?.userInfo?.token;
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      const { data } = await axios.post(
+        "/api/truck-units/assign-driver/",
+        { driver_id, unit_id },
+        config
+      );
+      return { driver_id, unit_id, assignment: data };
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  }
+);
+
 export const getTruckUnitHistory = createAsyncThunk(
   "truckUnits/history",
   async (truckId, thunkAPI) => {
