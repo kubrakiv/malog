@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { listUsers, deleteUser } from "../../actions/userActions";
@@ -7,6 +7,8 @@ import PasswordResetModal from "../../components/PasswordResetModal/PasswordRese
 import SearchComponent from "../../globalComponents/SearchComponent";
 import {
   FaCheck,
+  FaChevronDown,
+  FaChevronRight,
   FaPencilAlt,
   FaRegTrashAlt,
   FaPlus,
@@ -15,6 +17,13 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 
+const DRIVER_ROLES = new Set(["driver"]);
+
+const GROUPS = [
+  { key: "staff", label: "Адміністративний персонал" },
+  { key: "driver", label: "Водії" },
+];
+
 const UserListPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -22,6 +31,7 @@ const UserListPage = () => {
   const [passwordModalData, setPasswordModalData] = useState(null);
   const [search, setSearch] = useState("");
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [collapsedGroups, setCollapsedGroups] = useState({});
 
   const userList = useSelector((state) => state.userList);
   const { users } = userList;
@@ -90,16 +100,25 @@ const UserListPage = () => {
     }
   };
 
-  const filteredUsers = (users ?? []).filter((u) => {
+  const filteredUsers = useMemo(() => {
     const q = search.toLowerCase();
-    return (
-      q === "" ||
-      u.first_name?.toLowerCase().includes(q) ||
-      u.last_name?.toLowerCase().includes(q) ||
-      u.email?.toLowerCase().includes(q) ||
-      u.phone_number?.toLowerCase().includes(q)
+    return (users ?? []).filter(
+      (u) =>
+        q === "" ||
+        u.first_name?.toLowerCase().includes(q) ||
+        u.last_name?.toLowerCase().includes(q) ||
+        u.email?.toLowerCase().includes(q) ||
+        u.phone_number?.toLowerCase().includes(q)
     );
-  });
+  }, [users, search]);
+
+  const groupedUsers = useMemo(() => ({
+    staff:  filteredUsers.filter((u) => !DRIVER_ROLES.has(u.role)),
+    driver: filteredUsers.filter((u) => DRIVER_ROLES.has(u.role)),
+  }), [filteredUsers]);
+
+  const toggleGroup = (key) =>
+    setCollapsedGroups((prev) => ({ ...prev, [key]: !prev[key] }));
 
   return (
     <>
@@ -198,40 +217,59 @@ const UserListPage = () => {
                   <th className="users-table__head-th"></th>
                 </tr>
               </thead>
-              <tbody className="users-table__body">
-                {filteredUsers.map((user, index) => (
-                  <tr
-                    key={user.id}
-                    className={`users-table__body-row${selectedUsers.includes(user.id) ? " users-table__body-row--active" : ""}`}
-                    onClick={() => handleCheckboxChange(user.id)}
-                  >
-                    <td className="users-table__body-td">{index + 1}</td>
-                    <td className="users-table__body-td">{user.first_name}</td>
-                    <td className="users-table__body-td">{user.last_name}</td>
-                    <td className="users-table__body-td">{user.phone_number}</td>
-                    <td className="users-table__body-td">{user.email}</td>
-                    <td className="users-table__body-td">
-                      <span className="users-table__role-badge">{user.role}</span>
-                    </td>
-                    <td className="users-table__body-td">
-                      {user.is_admin ? (
-                        <FaCheck className="users-table__admin-icon--yes" />
-                      ) : (
-                        <span className="users-table__admin-icon--no">—</span>
-                      )}
-                    </td>
-                    <td className="users-table__body-td">
-                      <input
-                        type="checkbox"
-                        className="users-table__checkbox"
-                        checked={selectedUsers.includes(user.id)}
-                        onChange={() => handleCheckboxChange(user.id)}
-                        onClick={(e) => e.stopPropagation()}
-                      />
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+              {GROUPS.map(({ key, label }) => {
+                const groupUsers = groupedUsers[key];
+                if (groupUsers.length === 0) return null;
+                const collapsed = collapsedGroups[key];
+                return (
+                  <tbody key={key}>
+                    <tr
+                      className="users-table__group-row"
+                      onClick={() => toggleGroup(key)}
+                    >
+                      <td className="users-table__group-cell" colSpan={8}>
+                        <span className="users-table__group-icon">
+                          {collapsed ? <FaChevronRight /> : <FaChevronDown />}
+                        </span>
+                        <span className="users-table__group-label">{label}</span>
+                        <span className="users-table__group-count">{groupUsers.length}</span>
+                      </td>
+                    </tr>
+                    {!collapsed && groupUsers.map((user, index) => (
+                      <tr
+                        key={user.id}
+                        className={`users-table__body-row${selectedUsers.includes(user.id) ? " users-table__body-row--active" : ""}`}
+                        onClick={() => handleCheckboxChange(user.id)}
+                      >
+                        <td className="users-table__body-td">{index + 1}</td>
+                        <td className="users-table__body-td">{user.first_name}</td>
+                        <td className="users-table__body-td">{user.last_name}</td>
+                        <td className="users-table__body-td">{user.phone_number}</td>
+                        <td className="users-table__body-td">{user.email}</td>
+                        <td className="users-table__body-td">
+                          <span className="users-table__role-badge">{user.role}</span>
+                        </td>
+                        <td className="users-table__body-td">
+                          {user.is_admin ? (
+                            <FaCheck className="users-table__admin-icon--yes" />
+                          ) : (
+                            <span className="users-table__admin-icon--no">—</span>
+                          )}
+                        </td>
+                        <td className="users-table__body-td">
+                          <input
+                            type="checkbox"
+                            className="users-table__checkbox"
+                            checked={selectedUsers.includes(user.id)}
+                            onChange={() => handleCheckboxChange(user.id)}
+                            onClick={(e) => e.stopPropagation()}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                );
+              })}
             </table>
           </div>
         </div>

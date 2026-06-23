@@ -37,27 +37,16 @@ def _ensure_driver_profiles(queryset):
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
 def getDriverProfiles(request):
-    user = request.user
-    client = getattr(user, 'client', None)
-    is_superuser = getattr(user, 'is_superuser', False)
+    client = getattr(request.user, 'client', None)
+    if not client:
+        return Response([], status=status.HTTP_200_OK)
 
     driver_role = Role.objects.filter(name='driver').first()
-    print(f"[getDriverProfiles] user={user.username} client={client} is_superuser={is_superuser} driver_role={driver_role}")
-
     if driver_role:
-        if client and not is_superuser:
-            candidate_profiles = Profile.objects.filter(client=client, role=driver_role)
-        else:
-            candidate_profiles = Profile.objects.filter(role=driver_role)
-        print(f"[getDriverProfiles] candidate_profiles: {list(candidate_profiles.values('id', 'username', 'client_id'))}")
+        candidate_profiles = Profile.objects.filter(client=client, role=driver_role)
         _ensure_driver_profiles(candidate_profiles)
 
-    if client and not is_superuser:
-        drivers = DriverProfile.objects.filter(profile__client=client)
-    else:
-        drivers = DriverProfile.objects.all()
-
-    print(f"[getDriverProfiles] returning {drivers.count()} drivers: {list(drivers.values_list('profile_id', flat=True))}")
+    drivers = DriverProfile.objects.filter(profile__client=client)
     serializer = DriverProfileSerializer(drivers, many=True, context={'request': request})
     return Response(serializer.data)
 

@@ -136,22 +136,14 @@ def assignDriverUnit(request):
     if not driver_id:
         return Response({"error": "driver_id is required"}, status=status.HTTP_400_BAD_REQUEST)
 
-    is_superuser = getattr(request.user, 'is_superuser', False)
     client = getattr(request.user, 'client', None)
-
-    if not is_superuser and not client:
+    if not client:
         return Response({"error": "User has no client assigned"}, status=status.HTTP_403_FORBIDDEN)
 
     try:
-        if is_superuser:
-            driver = DriverProfile.objects.get(profile__id=driver_id)
-        else:
-            driver = DriverProfile.objects.get(profile__id=driver_id, profile__client=client)
+        driver = DriverProfile.objects.get(profile__id=driver_id, profile__client=client)
     except DriverProfile.DoesNotExist:
         return Response({"error": "Driver not found"}, status=status.HTTP_404_NOT_FOUND)
-
-    # Use the driver's own client so the assignment belongs to the right tenant
-    assignment_client = driver.profile.client
 
     # Close any currently active assignment
     DriverUnitAssignment.all_objects.filter(driver=driver, is_active=True).update(
@@ -160,18 +152,14 @@ def assignDriverUnit(request):
 
     if unit_id:
         try:
-            # Superusers may assign units from any tenant; regular users are scoped to their client.
-            if is_superuser:
-                unit = TruckUnit.all_objects.get(id=unit_id)
-            else:
-                unit = TruckUnit.all_objects.get(id=unit_id, client=assignment_client)
+            unit = TruckUnit.all_objects.get(id=unit_id, client=client)
         except TruckUnit.DoesNotExist:
             return Response({"error": "Unit not found"}, status=status.HTTP_404_NOT_FOUND)
 
         assignment = DriverUnitAssignment.objects.create(
             driver=driver,
             unit=unit,
-            client=assignment_client,
+            client=client,
             start_date=timezone.now(),
             is_active=True,
         )

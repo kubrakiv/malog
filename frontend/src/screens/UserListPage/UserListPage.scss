@@ -339,4 +339,51 @@
     transform: scale(1.25);
     accent-color: #0f7680;
   }
+
+  &__group-row {
+    cursor: pointer;
+    background: rgba(15, 118, 128, 0.05);
+
+    &:hover { background: rgba(15, 118, 128, 0.09); }
+  }
+
+  &__group-cell {
+    padding: 0.55rem 0.75rem;
+    font-weight: 700;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #0f7680;
+    border-radius: 10px;
+    user-select: none;
+  }
+
+  &__group-icon {
+    display: inline-flex;
+    align-items: center;
+    margin-right: 0.5rem;
+    font-size: 0.72rem;
+    opacity: 0.7;
+    vertical-align: middle;
+  }
+
+  &__group-label {
+    margin-right: 0.5rem;
+    vertical-align: middle;
+  }
+
+  &__group-count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(15, 118, 128, 0.14);
+    color: #0b5f68;
+    font-size: 0.72rem;
+    font-weight: 800;
+    vertical-align: middle;
+  }
 }
