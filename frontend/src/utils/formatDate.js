@@ -39,3 +39,27 @@ export const calculateDueDate = (unloadingEndDate, paymentPeriod) => {
 export const formatDateForInput = (value) => {
   return value?.split("T")[0];
 };
+
+export const calcAge = (birthDate) => {
+  if (!birthDate) return null;
+  const today = new Date();
+  const dob = new Date(birthDate);
+  let age = today.getFullYear() - dob.getFullYear();
+  const m = today.getMonth() - dob.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
+  return age;
+};
+
+export const calcTenure = (startedWork) => {
+  if (!startedWork) return null;
+  const today = new Date();
+  const start = new Date(startedWork);
+  let years = today.getFullYear() - start.getFullYear();
+  let months = today.getMonth() - start.getMonth();
+  if (months < 0) { years--; months += 12; }
+  if (years === 0 && months === 0) return "< 1 міс.";
+  const parts = [];
+  if (years > 0) parts.push(`${years} р.`);
+  if (months > 0) parts.push(`${months} міс.`);
+  return parts.join(" ");
+};

@@ -16,6 +16,7 @@ import {
   listTruckUnits,
   assignDriverUnit,
 } from "../../features/truckUnits/truckUnitsOperations";
+import { calcAge, calcTenure } from "../../utils/formatDate";
 
 import GenericModalComponent from "../../globalComponents/GenericModalComponent";
 import SearchableSelect from "../../globalComponents/SearchableSelect";
@@ -362,6 +363,8 @@ const DriversComponent = ({ embedded = false }) => {
                   <th className="drivers-table__head-th">Повне ім'я</th>
                   <th className="drivers-table__head-th">Номер телефону</th>
                   <th className="drivers-table__head-th">Посада</th>
+                  <th className="drivers-table__head-th">Вік</th>
+                  <th className="drivers-table__head-th">Стаж</th>
                   <th className="drivers-table__head-th">Автомобіль</th>
                   <th className="drivers-table__head-th">Колона</th>
                   <th className="drivers-table__head-th"></th>
@@ -373,7 +376,7 @@ const DriversComponent = ({ embedded = false }) => {
                     className="drivers-table__group-row"
                     onClick={() => toggleGroup(groupKey)}
                   >
-                    <td className="drivers-table__group-cell" colSpan={8}>
+                    <td className="drivers-table__group-cell" colSpan={10}>
                       <span className="drivers-table__group-icon">
                         {collapsedGroups[groupKey] ? <FaChevronRight /> : <FaChevronDown />}
                       </span>
@@ -401,6 +404,16 @@ const DriversComponent = ({ embedded = false }) => {
                         <td className="drivers-table__body-td">{driver.full_name}</td>
                         <td className="drivers-table__body-td">{driver.phone_number}</td>
                         <td className="drivers-table__body-td">{driver.position}</td>
+                        <td className="drivers-table__body-td drivers-table__body-td--meta">
+                          {calcAge(driver.birth_date) != null
+                            ? <span className="drivers-table__meta-chip">{calcAge(driver.birth_date)} р.</span>
+                            : <span className="drivers-table__unit-empty">—</span>}
+                        </td>
+                        <td className="drivers-table__body-td drivers-table__body-td--meta">
+                          {calcTenure(driver.started_work) != null
+                            ? <span className="drivers-table__meta-chip">{calcTenure(driver.started_work)}</span>
+                            : <span className="drivers-table__unit-empty">—</span>}
+                        </td>
                         <td className="drivers-table__body-td">{driver.trucks?.[0]?.plates}</td>
                         <td className="drivers-table__body-td">
                           {isAssigning ? (

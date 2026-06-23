@@ -40,8 +40,8 @@ const EditDriverComponent = ({
     setLicenseSeries(selectedDriver.license_series);
     setLicenseNumber(selectedDriver.license_number);
     setBirthday(selectedDriver.birth_date);
-    setWorkStart(selectedDriver.work_start);
-    setWorkEnd(selectedDriver.work_end);
+    setWorkStart(selectedDriver.started_work);
+    setWorkEnd(selectedDriver.finished_work);
   }, [selectedDriver]);
 
   const submitDriverProfile = async (
@@ -355,8 +355,8 @@ const EditDriverComponent = ({
                           />
                         ) : (
                           <span>
-                            {selectedDriver.work_start &&
-                              transformDateFormat(selectedDriver.work_start)}
+                            {selectedDriver.started_work &&
+                              transformDateFormat(selectedDriver.started_work)}
                           </span>
                         )}
                       </div>
@@ -381,8 +381,8 @@ const EditDriverComponent = ({
                           />
                         ) : (
                           <span>
-                            {selectedDriver.work_end &&
-                              transformDateFormat(selectedDriver.work_end)}
+                            {selectedDriver.finished_work &&
+                              transformDateFormat(selectedDriver.finished_work)}
                           </span>
                         )}
                       </div>

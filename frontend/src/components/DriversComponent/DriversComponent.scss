@@ -427,6 +427,21 @@
   &__unit-empty {
     color: #b0bec5;
   }
+
+  &__body-td--meta {
+    white-space: nowrap;
+  }
+
+  &__meta-chip {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: rgba(15, 84, 92, 0.07);
+    color: #1f2d36;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+  }
 }
 
 // ── Assign bar ──────────────────────────────────────────────────
