@@ -262,15 +262,3 @@ def sovtes_sse_stream(request):
     response["Cache-Control"] = "no-cache"
     response["X-Accel-Buffering"] = "no"
     return response
-
-
-@api_view(["POST"])
-def registerWebhookView(request):
-    """Register our webhook URL with the Sovtes API."""
-    webhook_url = request.data.get("url")
-    if not webhook_url:
-        return Response({"error": "url is required"}, status=400)
-    data = _sovtes("post", "registerWebhook", json={"url": webhook_url})
-    if not _ok(data):
-        return Response({"error": data.get("message", "Failed to register webhook")}, status=400)
-    return Response(data.get("data", {}))

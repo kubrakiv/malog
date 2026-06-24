@@ -10,6 +10,24 @@
   background: #f5f6f8;
 }
 
+.tenders-new-banner {
+  width: 100%;
+  padding: 10px 16px;
+  background: #1a6fc4;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  flex-shrink: 0;
+
+  &:hover {
+    background: #155aa0;
+  }
+}
+
 .tenders-header {
   display: flex;
   align-items: center;

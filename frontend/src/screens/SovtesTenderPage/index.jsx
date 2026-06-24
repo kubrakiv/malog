@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import TenderCard from "./TenderCard";
 import {
   fetchTenderGroups,
@@ -8,6 +8,7 @@ import {
   fetchNotInterested,
   fetchCompleteRoutes,
 } from "./tendersService";
+import { useSovtesEvents } from "../../contexts/SovtesRealtimeContext.jsx";
 import "./style.scss";
 
 const PAGE_SIZE = 10;
@@ -61,6 +62,7 @@ export default function SovtesTenderPage() {
   const [loadingInit, setLoadingInit] = useState(true);
   const [loadingCards, setLoadingCards] = useState(false);
   const [loadingArchive, setLoadingArchive] = useState(false);
+  const [hasNewTenders, setHasNewTenders] = useState(false);
 
   // ── Tabs definition ───────────────────────────────────────────────────────────
   const tabs = useMemo(
@@ -245,66 +247,56 @@ export default function SovtesTenderPage() {
     });
   };
 
-  // ── SSE: keep a mutable ref so the EventSource callback always has latest fns ─
-  const sseHandlerRef = useRef(null);
-  sseHandlerRef.current = (periodic, routeId) => {
-    // Refresh lightweight list so tab counts stay accurate
+  // ── Real-time event handler (attached/detached via app-level SSE context) ─────
+  // cardsRef lets the stable useCallback see the latest cards without recreating it
+  const cardsRef = useRef([]);
+  useEffect(() => { cardsRef.current = cards; }, [cards]);
+
+  const handleSovtesEvent = useCallback(({ type, periodic, route_id }) => {
+    if (type === "tenderCreated") {
+      // Don't auto-insert — just signal that new tenders exist (spec §7)
+      setHasNewTenders(true);
+      return;
+    }
+
+    // For state events (bid / ended / winnerChoosen / deleted / revived):
+    // find the visible card by route_id (secure tender id), then re-fetch it (spec §5, §8-12)
+    // For content events (updated): find by periodic (spec §5, §13)
+    const STATE_EVENTS = new Set(["bid", "ended", "winnerChoosen", "deleted", "revived"]);
+    let targetPeriodic = null;
+
+    if (STATE_EVENTS.has(type) && route_id) {
+      const card = cardsRef.current.find((c) => String(c.id) === String(route_id));
+      targetPeriodic = card?.periodic ?? null;
+    } else if (periodic) {
+      targetPeriodic = periodic;
+    }
+
+    // Also refresh the lightweight list so tab counts stay current
     const fetchList = onlyMyCustomers ? fetchMyTenders : fetchCurrentTenders;
     fetchList()
       .then((d) => setAllTenders(Array.isArray(d) ? d : []))
       .catch(() => {});
 
-    // If the updated tender is on the current page, patch that card in-place
-    const currentIds = pagedPeriodicIdsRef.current.map(String);
-    if (periodic && currentIds.includes(String(periodic))) {
-      fetchBasicDetails([periodic])
-        .then((data) => {
-          const list = Array.isArray(data) ? data : data?.routes || data?.data || [];
-          if (list.length > 0) {
-            setCards((prev) =>
-              prev.map((c) =>
-                String(c.periodic ?? c.id) === String(periodic) ? list[0] : c
-              )
-            );
-          }
-        })
-        .catch(() => {});
-    }
-  };
+    if (!targetPeriodic) return;
 
-  // ── Open SSE connection on mount, auto-reconnect is handled by the browser ───
-  useEffect(() => {
-    let es = null;
+    // Patch the specific visible card in-place
+    fetchBasicDetails([targetPeriodic])
+      .then((data) => {
+        const list = Array.isArray(data) ? data : data?.routes || data?.data || [];
+        if (list.length > 0) {
+          setCards((prev) =>
+            prev.map((c) =>
+              String(c.periodic ?? c.id) === String(targetPeriodic) ? list[0] : c
+            )
+          );
+        }
+      })
+      .catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onlyMyCustomers]);
 
-    const connect = () => {
-      try {
-        const raw = localStorage.getItem("userInfo");
-        const userInfo = raw ? JSON.parse(raw) : {};
-        const token = userInfo.token || userInfo.access || "";
-        if (!token) return;
-
-        es = new EventSource(`/api/sovtes/events/?token=${encodeURIComponent(token)}`);
-
-        es.onmessage = (e) => {
-          try {
-            const event = JSON.parse(e.data);
-            sseHandlerRef.current?.(event.periodic, event.route_id);
-          } catch {
-            // ignore malformed events
-          }
-        };
-
-        es.onerror = () => {
-          // browser auto-reconnects; nothing to do
-        };
-      } catch {
-        // ignore if localStorage/JSON fails
-      }
-    };
-
-    connect();
-    return () => es?.close();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  useSovtesEvents(handleSovtesEvent);
 
   // ── Quick filter toggle helper ────────────────────────────────────────────────
   const toggleQuick = (key) =>
@@ -339,6 +331,19 @@ export default function SovtesTenderPage() {
           Тільки мої клієнти
         </label>
       </div>
+
+      {/* New-tenders banner */}
+      {hasNewTenders && (
+        <button
+          className="tenders-new-banner"
+          onClick={() => {
+            setHasNewTenders(false);
+            handleRefresh();
+          }}
+        >
+          Нові тендери доступні — натисніть для оновлення
+        </button>
+      )}
 
       {/* Tabs */}
       <div className="tenders-tabs">

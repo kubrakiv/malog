@@ -17,5 +17,4 @@ urlpatterns = [
     # Real-time updates
     path("webhook/", views.sovtes_webhook_receiver, name="sovtes-webhook"),
     path("events/", views.sovtes_sse_stream, name="sovtes-sse"),
-    path("register-webhook/", views.registerWebhookView, name="register-webhook"),
 ]

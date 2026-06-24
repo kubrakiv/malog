@@ -272,18 +272,39 @@ def updateUserProfile(request):
     print("updateUserProfile", profile)
     data = request.data
 
-    role_name = data.get("role")
-    role = Role.objects.filter(name=role_name).first()
-    
-    profile.role = role
-    profile.first_name = data['first_name']
-    profile.last_name = data['last_name']
-    profile.username = data['email']
-    profile.email = data['email']
-    profile.phone_number = data['phone_number']
-    
-    if data['password'] != '':
-        profile.password = make_password(data['password'])
+    current_role_name = profile.role.name.lower() if profile.role else None
+    requested_role_name = data.get("role")
+
+    # Do not allow logist users to change their role in self profile updates.
+    if (
+        requested_role_name
+        and current_role_name == "logist"
+        and requested_role_name.lower() != current_role_name
+    ):
+        return Response(
+            {'detail': 'Role change is not allowed for logist users while updating profile.'},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    # Keep existing role unless a valid explicit change is requested.
+    if requested_role_name and requested_role_name.lower() != (current_role_name or ""):
+        role = Role.objects.filter(name=requested_role_name).first()
+        if not role:
+            return Response(
+                {'detail': 'Invalid role provided.'},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+        profile.role = role
+
+    profile.first_name = data.get('first_name', profile.first_name)
+    profile.last_name = data.get('last_name', profile.last_name)
+    profile.username = data.get('email', profile.username)
+    profile.email = data.get('email', profile.email)
+    profile.phone_number = data.get('phone_number', profile.phone_number)
+
+    password = data.get('password', '')
+    if password != '':
+        profile.password = make_password(password)
 
     profile.save()
 
