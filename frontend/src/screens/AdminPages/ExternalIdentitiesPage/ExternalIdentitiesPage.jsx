@@ -1,11 +1,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { FaCopy, FaLink, FaSyncAlt } from "react-icons/fa";
 import "./ExternalIdentitiesPage.scss";
 
 const ExternalIdentitiesPage = () => {
+  const confirm = useConfirm();
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -105,7 +107,7 @@ const ExternalIdentitiesPage = () => {
   };
 
   const handleResetIdentity = async (identity) => {
-    if (!window.confirm(`Reset external identity for ${identity.client.name}?`)) {
+    if (!await confirm(`Reset external identity for ${identity.client.name}?`)) {
       return;
     }
 

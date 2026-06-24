@@ -1,55 +1,133 @@
 @import "../../../styles/utils/vars";
 
+.customer-card-container {
+  display: flex;
+  flex-direction: column;
+}
+
 .customer-card-details {
-  width: 100%;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  // ── Two-column grid ───────────────────────────────────────────
   &__content {
-    display: flex;
-    justify-content: space-between;
-    height: max-content;
-    gap: 5px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    padding: 0.75rem 0.85rem 0;
   }
-  &__title {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 5px;
-  }
+
   &__content-block {
     display: flex;
-    flex: 1;
     flex-direction: column;
-    background-color: $tableHeaderColor;
-    border-radius: 4px;
-    width: calc(100% - 20px);
+    background: #f8fbfc;
+    border: 1px solid rgba(15, 84, 92, 0.1);
+    border-radius: 14px;
+    padding: 0.75rem 0.9rem 0.65rem;
   }
-  &__content-row {
-    display: flex;
-    flex-direction: row;
-    background-color: $tableHeaderColor;
-    border-radius: 4px;
+
+  // ── Section heading ───────────────────────────────────────────
+  &__title {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #0f7680;
+    margin: 0 0 0.8rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1.5px solid rgba(15, 118, 128, 0.15);
   }
+
+  // ── Detail rows ───────────────────────────────────────────────
+  &__content-row { display: flex; flex-direction: column; }
+
   &__content-row-block {
-    flex: 1;
-    border-radius: 4px;
-    background-color: $backgroundcolor;
-    margin: 5px;
-    padding: 5px;
+    padding: 0.22rem 0;
+    border-bottom: none;
+    &:last-child { border-bottom: none; }
   }
+
   &__content-row-block-title {
-    font-weight: bold;
-    font-size: 14px;
-    margin: 0px 0px 4px 0px;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #9bb5ba;
+    margin-bottom: 0.15rem;
   }
+
   &__content-row-block-value {
-    font-size: 14px;
-    padding-left: 20px;
-    &_position {
-      padding-left: 20px;
-      font-size: 14px;
+    display: block;
+    width: 100%;
+    font-size: 0.82rem;
+    color: #1f2d36;
+    font-weight: 400;
+    padding: 0.28rem 0.6rem;
+    background: #fff;
+    border: 1px solid rgba(15, 84, 92, 0.15);
+    border-radius: 7px;
+    line-height: 1.4;
+    min-height: 1.9rem;
+
+    a { color: #0f7680; text-decoration: none; &:hover { text-decoration: underline; } }
+  }
+}
+
+// ── Footer ────────────────────────────────────────────────────────
+.customer-card-details {
+  .end-time__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding: 0.6rem 0.85rem 0.65rem;
+    border-top: 1px solid rgba(15, 84, 92, 0.09);
+    margin-top: 0.6rem;
+    position: relative;
+  }
+
+  // "Редагувати замовника" — left-anchored outline button
+  .order-details__footer-btn {
+    position: static !important;
+    margin-right: auto;
+    padding: 0.48rem 1rem;
+    border-radius: 10px;
+    border: 1.5px solid rgba(15, 84, 92, 0.28);
+    background: transparent;
+    color: #0f7680;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.13s, border-color 0.13s;
+    &:hover { background: rgba(15, 118, 128, 0.07); border-color: #0f7680; }
+  }
+
+  // Right-side action buttons
+  .end-time__footer-btn {
+    padding: 0.48rem 1.05rem;
+    border-radius: 10px;
+    border: none;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.13s, transform 0.12s;
+    &:hover { transform: translateY(-1px); }
+
+    &_save {
+      background: linear-gradient(135deg, #0f7680 0%, #11a3b1 100%);
+      color: #fff;
+      box-shadow: 0 4px 14px rgba(15, 118, 128, 0.22);
+      &:hover { opacity: 0.9; }
     }
-    &_full-name {
-      font-weight: bold;
-      font-size: 14px;
+    &_edit {
+      background: rgba(43, 84, 233, 0.09);
+      color: #2b54e9;
+      &:hover { background: rgba(43, 84, 233, 0.16); }
+    }
+    &_close {
+      background: rgba(15, 84, 92, 0.07);
+      color: #4a6872;
+      &:hover { background: rgba(15, 84, 92, 0.13); }
     }
   }
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 import { selectCustomers } from "../../../features/customers/customersSelectors";
 import { listCustomers } from "../../../features/customers/customersOperations";
 
@@ -16,6 +17,7 @@ import "./style.scss";
 const CustomersComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const confirm = useConfirm();
   const customers = useSelector(selectCustomers);
 
   useEffect(() => {
@@ -76,13 +78,13 @@ const CustomersComponent = () => {
     setShowAddCustomerModal(true);
   };
 
-  const handleDeleteSelectedCustomers = () => {
+  const handleDeleteSelectedCustomers = async () => {
     console.log("Delete selected customers", selectedCustomers);
     if (selectedCustomers.length === 0) {
       window.alert("Виберіть замовника для видалення");
       return;
     }
-    const confirmDelete = window.confirm(
+    const confirmDelete = await confirm(
       "Are you sure you want to delete this customer?"
     );
     if (!confirmDelete) {

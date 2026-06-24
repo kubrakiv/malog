@@ -125,7 +125,7 @@ const OnboardingWizard = () => {
     },
     {
       id: "complete",
-      title: "Все готово! 🎉",
+      title: "Все готово!",
       description:
         "Чудово! Ваша транспортна компанія налаштована. Тепер ви можете створювати замовлення, планувати маршрути та ефективно керувати автопарком.",
       icon: <FaCheckCircle />,
@@ -287,8 +287,7 @@ const OnboardingWizard = () => {
                 }}
               >
                 <div className="step-number">
-                  {/* Always show step number, never show check mark */}
-                  {index + 1}
+                  {step.icon}
                 </div>
                 <div className="step-label">{step.title}</div>
               </div>
@@ -296,18 +295,18 @@ const OnboardingWizard = () => {
           </div>
         )}
 
+        <div className="step-hero-icon">
+          {currentStepData.icon}
+        </div>
+
         {currentStep === 0 ? (
           <h1 className="welcome-title">
             <span className="welcome-prefix">Вас вітає</span>
             <span className="welcome-brand">TMS SOVTES</span>
           </h1>
         ) : (
-          <h1>
-            {currentStepData.title}
-            {/* <span className="step-icon">{currentStepData.icon}</span> */}
-          </h1>
+          <h1>{currentStepData.title}</h1>
         )}
-        <div></div>
         <p className="step-description">{currentStepData.description}</p>
 
         {/* Progress Steps - shown after description only for step 1 (welcome) */}
@@ -341,8 +340,7 @@ const OnboardingWizard = () => {
                 }}
               >
                 <div className="step-number">
-                  {/* Always show step number, never show check mark */}
-                  {index + 1}
+                  {step.icon}
                 </div>
                 <div className="step-label">{step.title}</div>
               </div>

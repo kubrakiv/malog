@@ -3,9 +3,11 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { listDocuments } from "../../../actions/documentActions";
 import { FaFolderOpen, FaTrash } from "react-icons/fa";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 
 const DocumentsTableComponent = () => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const order = useSelector((state) => state.ordersInfo.orderDetails.data);
   const documents = useSelector(
     (state) => state.documentsInfo.documents.data.documents
@@ -31,7 +33,7 @@ const DocumentsTableComponent = () => {
   };
 
   const deleteDocument = async (documentId) => {
-    const isConfirmed = window.confirm(
+    const isConfirmed = await confirm(
       "Ви впевнені, що хочете видалити документ?"
     );
 

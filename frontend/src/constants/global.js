@@ -87,6 +87,7 @@ export const CUSTOMER_CONSTANTS = {
   EMAIL: "email",
   WEBSITE: "website",
   POST_ADDRESS: "post_address",
+  LEGAL_ADDRESS: "legal_address",
 };
 
 export const TRUCK_CONSTANTS = {

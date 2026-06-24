@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./style.scss";
 import { FaPlus } from "react-icons/fa";
+import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 
 const RouteCalculationsTable = ({
   routes,
@@ -9,6 +10,7 @@ const RouteCalculationsTable = ({
   onSelectRoute,
   selectedRouteId,
 }) => {
+  const confirm = useConfirm();
   const [editingRoute, setEditingRoute] = useState(null);
   const [editPrice, setEditPrice] = useState("");
   const [isDeleting, setIsDeleting] = useState(null);
@@ -222,7 +224,7 @@ const RouteCalculationsTable = ({
   };
 
   const handleDeleteRoute = async (routeId) => {
-    if (!window.confirm("Are you sure you want to delete this route?")) {
+    if (!await confirm("Are you sure you want to delete this route?")) {
       return;
     }
 

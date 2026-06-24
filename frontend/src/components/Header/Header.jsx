@@ -5,6 +5,7 @@ import { FaBars, FaUser, FaCrown, FaLock, FaChevronDown } from "react-icons/fa";
 import { logout } from "../../actions/userActions";
 import { searchOrderByNumber } from "../../features/orders/ordersOperations";
 import { useSubscription } from "../../hooks/useSubscription";
+import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 
 import SearchOrderComponent from "../../components/SearchOrderComponent";
 import OpenContext from "../OpenContext";
@@ -13,6 +14,7 @@ import "./Header.scss";
 
 function Header() {
   const { toggleSidebar } = useContext(OpenContext);
+  const confirm = useConfirm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -39,8 +41,8 @@ function Header() {
     };
   }, []);
 
-  const logoutHandler = () => {
-    const confirmExit = window.confirm("Ви впевнені, що хочете вийти?");
+  const logoutHandler = async () => {
+    const confirmExit = await confirm("Ви впевнені, що хочете вийти?");
     if (!confirmExit) {
       return;
     }

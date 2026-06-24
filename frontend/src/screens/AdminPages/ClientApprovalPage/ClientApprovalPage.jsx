@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 import toast from "react-hot-toast";
 import {
   listPendingClients,
@@ -10,6 +11,7 @@ import "./ClientApprovalPage.scss";
 
 const ClientApprovalPage = () => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const [selectedClient, setSelectedClient] = useState(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
@@ -22,7 +24,7 @@ const ClientApprovalPage = () => {
   }, [dispatch]);
 
   const handleApprove = async (client) => {
-    if (window.confirm(`Are you sure you want to approve ${client.name}?`)) {
+    if (await confirm(`Are you sure you want to approve ${client.name}?`)) {
       setIsProcessing(true);
       try {
         await dispatch(approveClient(client.id));

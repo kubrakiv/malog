@@ -1,94 +1,123 @@
 @import "../../../styles/utils/vars";
 
 .customer-manager-card {
-  width: 100%;
-  margin: 0 auto;
-  &__content {
-    display: flex;
-    justify-content: space-between;
-    height: max-content;
-    gap: 5px;
-  }
-  &__title {
-    font-size: 20px;
-    font-weight: bold;
-    margin: 5px;
-  }
-  &__content-block {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    background-color: $tableHeaderColor;
-    border-radius: 4px;
-    width: calc(100% - 20px);
-  }
   &__content-row {
-    display: flex;
-    flex-direction: row;
-    background-color: $tableHeaderColor;
-    border-radius: 4px;
+    margin-bottom: 0.55rem;
+    &:last-of-type { margin-bottom: 0; }
   }
+
   &__content-row-block {
     flex: 1;
     position: relative;
-    border-radius: 4px;
-    background-color: $backgroundcolor;
-    margin: 5px;
-    padding: 5px;
-  }
-  &__content-row-block-title {
-    font-weight: bold;
-    font-size: 14px;
-    margin: 0px 0px 4px 0px;
-  }
-  &__content-row-block-value {
-    font-size: 14px;
-    padding-left: 20px;
-    &_position {
-      padding-left: 20px;
-      font-size: 14px;
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    grid-template-rows: auto;
+    align-items: start;
+    gap: 0 0.75rem;
+    padding: 0.75rem 0.85rem;
+    background: #fff;
+    border: 1px solid rgba(15, 84, 92, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(15, 84, 92, 0.05);
+    transition: box-shadow 0.14s;
+
+    &:hover {
+      box-shadow: 0 4px 16px rgba(15, 84, 92, 0.12);
     }
+
+    // Avatar initials circle — generated via ::before on a data attr;
+    // since we can't do that from CSS alone, we hide the grid col when empty.
+    // The avatar is rendered as a pseudo-element on the first value_full-name.
+  }
+
+  // Two-row info block (right of avatar)
+  &__content-row-block-value {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.82rem;
+    color: #4a6872;
+    grid-column: 2;
+    min-width: 0;
+
     &_full-name {
-      font-weight: bold;
-      font-size: 14px;
+      grid-column: 2;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #0d2230;
+      // Avatar sits in col 1 row 1 via the sibling approach — see avatar div
+    }
+
+    &_position {
+      grid-column: 2;
+      font-size: 0.78rem;
+      color: #9bb5ba;
+      font-style: italic;
+      margin-top: -2px;
+      margin-bottom: 4px;
+    }
+  }
+
+  // ── Hover action buttons ──────────────────────────────────────
+  &__actions {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.14s;
+  }
+
+  &__content-row-block:hover &__actions {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  &__btn {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 11px;
+    transition: background 0.13s, transform 0.12s;
+    &:hover { transform: translateY(-1px); }
+
+    &_edit {
+      background: rgba(43, 84, 233, 0.09);
+      color: #2b54e9;
+      &:hover { background: rgba(43, 84, 233, 0.2); }
+    }
+    &_delete {
+      background: rgba(220, 38, 38, 0.07);
+      color: #dc2626;
+      &:hover { background: rgba(220, 38, 38, 0.17); }
     }
   }
 }
 
-.customer-manager-card {
-  &__actions {
-    position: absolute;
-    top: 0;
-    right: 0;
-    display: flex;
-    margin: 2px 2px;
-    gap: 2px;
-  }
-  &__btn {
-    padding: 2.5px 5px;
-    color: #fff;
-    border-radius: 4px;
-    border: none;
-    width: 30px;
-    height: 30px;
-
-    &_edit {
-      background-color: rgba(43, 84, 233, 0.8);
-      &:hover {
-        background: rgba(43, 84, 233, 1);
-        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
-        transition: all 0.5s;
-        cursor: pointer;
-      }
-    }
-    &_delete {
-      background: rgba(233, 43, 43, 0.8);
-      &:hover {
-        background: rgba(233, 43, 43, 1);
-        box-shadow: 0 8px 10px rgba(0, 0, 0, 0.45);
-        transition: all 0.5s;
-        cursor: pointer;
-      }
-    }
-  }
+// ── Manager avatar circle ─────────────────────────────────────────
+// Wraps col-1 of the grid. Applied via a shared utility class.
+.manager-avatar {
+  grid-column: 1;
+  grid-row: 1 / 4;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0f7680 0%, #11a3b1 100%);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  align-self: center;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }

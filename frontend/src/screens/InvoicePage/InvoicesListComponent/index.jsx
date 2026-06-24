@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 
 import * as XLSX from "xlsx"; // Import xlsx library
 import { FaSave, FaTimes } from "react-icons/fa";
@@ -26,6 +27,7 @@ import { setInvoiceUpdateNeeded } from "../../../features/invoices/invoicesSlice
 const InvoicesListComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const confirm = useConfirm();
 
   const invoicesList = useSelector(selectInvoices);
   console.log("Invoices List", invoicesList);
@@ -54,14 +56,14 @@ const InvoicesListComponent = () => {
   });
 
   // Function to handle Excel export
-  const exportToExcel = () => {
+  const exportToExcel = async () => {
     // Check if dates are selected
     if (!startDate || !endDate) {
       alert("Ви повинні спочатку обрати дати.");
       return;
     }
 
-    const confirmExcelExport = window.confirm(
+    const confirmExcelExport = await confirm(
       "Ви впевнені, що хочете вивантажити таблицю в Excel?"
     );
     if (!confirmExcelExport) {

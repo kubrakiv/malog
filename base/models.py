@@ -359,6 +359,7 @@ class Customer(BaseTenantModel):
     email = models.EmailField("Email Billing", max_length=255, null=True, blank=True)
     website = models.CharField(max_length=255, null=True, blank=True)
     post_address = models.CharField(max_length=255, null=True, blank=True)
+    legal_address = models.CharField(max_length=255, null=True, blank=True)
 
     def __str__(self):
         return self.name

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 
 import {
   deleteOrder,
@@ -38,6 +39,7 @@ import ProfitComponent from "../ProfitComponent";
 function OrdersTableComponent() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const confirm = useConfirm();
 
   const {
     data: ordersData,
@@ -147,13 +149,13 @@ function OrdersTableComponent() {
     );
   };
 
-  const handleDeleteSelectedOrders = () => {
+  const handleDeleteSelectedOrders = async () => {
     if (selectedOrders.length === 0) {
       window.alert("Виберіть замовлення для видалення"); // Alert if no orders are selected
       return;
     }
 
-    const confirmDelete = window.confirm(
+    const confirmDelete = await confirm(
       "Are you sure you want to delete the selected orders?"
     );
     if (!confirmDelete) {

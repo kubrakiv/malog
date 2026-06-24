@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 import driverImagePlaceholder from "../../img/driver_placeholder.jpg";
 import cn from "classnames";
 
@@ -45,6 +46,7 @@ const UNGROUPED_KEY = "__ungrouped__";
 
 const DriversComponent = ({ embedded = false }) => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const drivers = useSelector(selectDrivers);
   const units = useSelector((state) => state.truckUnitsInfo.units);
   const navigate = useNavigate();
@@ -144,9 +146,9 @@ const DriversComponent = ({ embedded = false }) => {
     dispatch(setShowAddDriverModal(true));
   };
 
-  const handleDeleteSelectedDrivers = () => {
+  const handleDeleteSelectedDrivers = async () => {
     if (selectedDrivers.length === 0) return;
-    if (!window.confirm("Видалити вибраних водіїв?")) return;
+    if (!await confirm("Видалити вибраних водіїв?")) return;
     for (const driverId of selectedDrivers) dispatch(deleteDriver(driverId));
     setSelectedDrivers([]);
   };

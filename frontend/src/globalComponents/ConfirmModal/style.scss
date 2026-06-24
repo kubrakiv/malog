@@ -1,0 +1,96 @@
+.confirm-modal {
+  &__overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(6, 24, 29, 0.52);
+    z-index: 13000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: confirmFadeIn 0.15s ease;
+  }
+
+  &__box {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid rgba(15, 84, 92, 0.1);
+    box-shadow: 0 24px 56px rgba(15, 84, 92, 0.18), 0 4px 16px rgba(0, 0, 0, 0.06);
+    padding: 1.5rem 1.75rem 1.25rem;
+    width: 360px;
+    max-width: calc(100vw - 2rem);
+    animation: confirmSlideUp 0.18s ease;
+  }
+
+  &__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background: rgba(220, 38, 38, 0.08);
+    color: #dc2626;
+    font-size: 1.2rem;
+    margin-bottom: 0.85rem;
+  }
+
+  &__title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #0d2230;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.35rem;
+  }
+
+  &__message {
+    font-size: 0.875rem;
+    color: #4a6872;
+    line-height: 1.5;
+    margin-bottom: 1.25rem;
+  }
+
+  &__footer {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    margin-top: 1.1rem;
+  }
+
+  &__btn-cancel {
+    padding: 0.46rem 1rem;
+    border: 1.5px solid rgba(15, 84, 92, 0.2);
+    border-radius: 8px;
+    background: transparent;
+    color: #4a6872;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.13s, border-color 0.13s;
+    &:hover { background: rgba(15, 84, 92, 0.05); border-color: rgba(15, 84, 92, 0.35); }
+  }
+
+  &__btn-confirm {
+    padding: 0.46rem 1.1rem;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+    color: #fff;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 3px 10px rgba(220, 38, 38, 0.22);
+    transition: opacity 0.13s, transform 0.12s;
+    &:hover { opacity: 0.88; transform: translateY(-1px); }
+    &:focus-visible { outline: 2px solid #dc2626; outline-offset: 2px; }
+  }
+}
+
+@keyframes confirmFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes confirmSlideUp {
+  from { opacity: 0; transform: translateY(12px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}

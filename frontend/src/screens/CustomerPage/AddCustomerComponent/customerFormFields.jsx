@@ -1,6 +1,6 @@
 import { CUSTOMER_CONSTANTS } from "../../../constants/global";
 
-const { COMPANY_NAME, NIP_NUMBER, VAT_NUMBER, EMAIL, WEBSITE, POST_ADDRESS } =
+const { COMPANY_NAME, NIP_NUMBER, VAT_NUMBER, EMAIL, WEBSITE, POST_ADDRESS, LEGAL_ADDRESS } =
   CUSTOMER_CONSTANTS;
 
 export const formFields = [
@@ -41,6 +41,12 @@ export const formFields = [
       title: "Поштова адреса",
       type: "text",
       placeholder: "Поштова адреса",
+    },
+    {
+      id: LEGAL_ADDRESS,
+      title: "Юридична адреса",
+      type: "text",
+      placeholder: "Юридична адреса",
     },
   ],
 ];

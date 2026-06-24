@@ -3,91 +3,177 @@
 .add-customer {
   width: 100%;
   margin: 0 auto;
+
   &__title {
-    font-size: 24px;
-    font-weight: bold;
-    margin: 5px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #0f7680;
+    margin: 0 0 0.8rem;
+    padding-bottom: 0.55rem;
+    border-bottom: 1.5px solid rgba(15, 118, 128, 0.15);
   }
+
   &__form {
     display: flex;
     width: 100%;
     flex-direction: column;
   }
-  &__input {
-    width: 100%;
-    border-radius: 4px;
-  }
-  &__select {
-    width: 100%;
-    border-radius: 4px;
-    option {
-      width: 100%;
-      border-radius: 4px;
-    }
-  }
+
   &__content {
     display: flex;
     justify-content: space-between;
-    height: max-content;
     gap: 5px;
   }
+
   &__content-block {
     display: flex;
     flex: 1;
     flex-direction: column;
-    background-color: $tableHeaderColor;
-    border-radius: 4px;
     width: 100%;
+    background: none;
   }
+
   &__content-row {
     display: flex;
-    background-color: $tableHeaderColor;
-    border-radius: 4px;
-    &:last-child {
-      margin-bottom: 5px;
-    }
-    &__search {
-      margin-bottom: 5px;
-    }
-    &__formatted-address {
-      margin-bottom: 5px;
-    }
+    flex-direction: column;
+    background: none;
+
+    &:last-child { margin-bottom: 0; }
   }
+
   &__content-row-block {
     display: flex;
-    justify-content: space-between;
     flex-direction: column;
     flex-basis: 100%;
-    border-radius: 4px;
-    background-color: $backgroundcolor;
-    margin: 5px 5px 0px 5px;
-    padding: 5px;
-    width: 70%;
-    // gap: 10px;
-    // align-items: center;
+    background: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+
     &_edit-mode {
-      margin: 0px;
-    }
-    select {
-      display: block;
-      width: 100%;
-    }
-    input {
-      display: block;
-      width: 100%;
-      padding: 2px;
+      margin: 0;
+      padding: 0;
     }
 
-    &-map {
-      height: 410px;
+    select { display: block; width: 100%; }
+    input  { display: block; width: 100%; }
+  }
+
+  &__content-row-block-title {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #9bb5ba;
+    margin-bottom: 0.18rem;
+  }
+
+  &__content-row-block-value {
+    font-size: 0.9rem;
+    color: #1f2d36;
+  }
+}
+
+// Submit button strip shown in edit mode
+.edit-customer-manager__footer {
+  display: flex;
+  justify-content: flex-start;
+  padding: 0.5rem 0 0.1rem;
+  margin-top: 0.1rem;
+
+  .end-time__footer-btn_save {
+    padding: 0.38rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: linear-gradient(135deg, #0f7680 0%, #11a3b1 100%);
+    color: #fff;
+    box-shadow: 0 3px 10px rgba(15, 118, 128, 0.2);
+    transition: opacity 0.13s, transform 0.12s;
+
+    &:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
     }
   }
-  &__content-row-block-title {
-    font-weight: bold;
-    font-size: 14px;
+}
+
+// Scoped input/select look for the edit form — compact density
+.add-customer__content-row-block {
+  .select-component {
+    margin: 0;
+    padding: 0.22rem 0;
+    border-bottom: 1px solid rgba(15, 84, 92, 0.06);
+    &:last-child { border-bottom: none; }
   }
-  &__content-row-block-value {
-    font-size: 14px;
-    padding-left: 20px;
+
+  .select-component__form-title {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #9bb5ba;
+    margin-bottom: 0.15rem;
+  }
+
+  .form-field__select {
+    border: 1px solid rgba(15, 84, 92, 0.15);
+    border-radius: 7px;
+    font-size: 0.82rem;
+    color: #1f2d36;
+    background-color: #fff;
+    padding: 0.28rem 2rem 0.28rem 0.6rem;
+
+    &:focus {
+      border-color: #0f7680;
+      box-shadow: 0 0 0 3px rgba(15, 118, 128, 0.12);
+      outline: none;
+    }
+
+    &:disabled {
+      background: rgba(15, 84, 92, 0.04);
+      color: #9bb5ba;
+      cursor: not-allowed;
+    }
+  }
+
+  .input-component {
+    margin-bottom: 0;
+    padding: 0.22rem 0;
+    border-bottom: 1px solid rgba(15, 84, 92, 0.06);
+    gap: 0;
+    &:last-child { border-bottom: none; }
+  }
+
+  .input-wrapper { margin-bottom: 0; }
+
+  .input-component__form-title {
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: #9bb5ba;
+    margin-bottom: 0.15rem;
+    width: 100%;
+  }
+
+  .form-field__input {
+    border: 1px solid rgba(15, 84, 92, 0.15);
+    border-radius: 7px;
+    font-size: 0.82rem;
+    color: #1f2d36;
+    background: #fff;
+    padding: 0.28rem 0.6rem;
+    line-height: 1.4;
+
+    &:focus {
+      border-color: #0f7680;
+      box-shadow: 0 0 0 3px rgba(15, 118, 128, 0.12);
+      outline: none;
+    }
   }
 }

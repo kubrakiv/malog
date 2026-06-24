@@ -38,6 +38,9 @@ const CustomerManagerCardComponent = ({
         onMouseLeave={handleMouseLeave}
       >
         <div className="customer-manager-card__content-row-block">
+          <div className="manager-avatar">
+            {manager?.full_name?.charAt(0) ?? "?"}
+          </div>
           <div className="customer-manager-card__content-row-block-value_full-name">
             {manager?.full_name}
           </div>

@@ -349,6 +349,7 @@ class CustomerSerializer(serializers.ModelSerializer):
             "email",
             "website",
             "post_address",
+            "legal_address",
             "created_at",
             "managers",
         ]

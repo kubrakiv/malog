@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 import toast from "react-hot-toast";
 
 import { sendEmail } from "../../features/emails/emailsOperations";
@@ -22,6 +23,7 @@ const { OFFICE_EMAIL, OFFICE_MANAGER_EMAIL, OFFICE_DIRECTOR_EMAIL } =
 
 const EmailSenderComponent = () => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const order = useSelector((state) => state.ordersInfo.orderDetails.data);
   const documents = useSelector(
     (state) => state.documentsInfo.documents.data.documents
@@ -48,7 +50,7 @@ const EmailSenderComponent = () => {
 
   const handleSendEmail = async () => {
     console.log("Sending email...");
-    const confirmSending = window.confirm(
+    const confirmSending = await confirm(
       "Ви впевнені що хочете відправити Email?"
     );
     if (!confirmSending) {

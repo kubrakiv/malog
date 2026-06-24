@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 import { FaPencilAlt, FaPlus, FaRegTrashAlt, FaSync } from "react-icons/fa";
 import cn from "classnames";
 import SearchComponent from "../../../globalComponents/SearchComponent";
@@ -39,6 +40,7 @@ const SyncBadge = ({ sovtesId }) => {
 
 const TrailersTableComponent = ({ trailers }) => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const [selectedTrailers, setSelectedTrailers] = useState([]);
   const [search, setSearch] = useState("");
 
@@ -75,7 +77,7 @@ const TrailersTableComponent = ({ trailers }) => {
       window.alert("Виберіть причіп для видалення");
       return;
     }
-    if (!window.confirm("Are you sure you want to delete selected trailers?")) return;
+    if (!await confirm("Are you sure you want to delete selected trailers?")) return;
 
     try {
       for (let trailerID of selectedTrailers) {

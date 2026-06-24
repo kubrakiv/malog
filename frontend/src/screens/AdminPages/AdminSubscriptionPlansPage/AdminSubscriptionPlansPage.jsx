@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 import axios from "axios";
 import {
   FaCrown,
@@ -17,6 +18,7 @@ import {
 import "./AdminSubscriptionPlansPage.scss";
 
 function AdminSubscriptionPlansPage() {
+  const confirm = useConfirm();
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
@@ -208,7 +210,7 @@ function AdminSubscriptionPlansPage() {
 
   const handleDeletePlan = async (planId) => {
     if (
-      !window.confirm(
+      !await confirm(
         "Are you sure you want to delete this plan? This action cannot be undone."
       )
     ) {

@@ -33,9 +33,8 @@ const CustomerFooterComponent = ({ onCloseModal }) => {
       <div className="end-time__footer">
         <button
           title="Редагувати замовника"
-          className="order-details__footer-btn order-details__footer-btn_edit"
+          className="order-details__footer-btn"
           onClick={toggleEditMode}
-          style={{ position: "absolute", left: "5px" }}
         >
           {!editModeCustomer ? "Редагувати замовника" : "Завершити редагування"}
         </button>

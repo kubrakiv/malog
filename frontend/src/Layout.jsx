@@ -5,6 +5,7 @@ import { useEffect, Suspense } from "react";
 
 import SubscriptionAwareSidebar from "./components/Sidebar/SubscriptionAwareSidebar";
 import Header from "./components/Header/Header";
+import { ConfirmModalProvider } from "./globalComponents/ConfirmModal/useConfirm";
 import SubscriptionBanner from "./components/SubscriptionBanner/SubscriptionBanner";
 import SovtesAuthHandler from "./components/SovtesAuthHandler/SovtesAuthHandler";
 
@@ -41,6 +42,7 @@ const Layout = () => {
   }, [userInfo, dispatch]);
 
   return userInfo ? (
+    <ConfirmModalProvider>
     <div>
       <Suspense fallback={<div>Loading...</div>}>
         <SovtesAuthHandler />
@@ -80,6 +82,7 @@ const Layout = () => {
         </SubscriptionAwareSidebar>
       </Suspense>
     </div>
+    </ConfirmModalProvider>
   ) : (
     <div>
       <Suspense fallback={<div>Loading...</div>}>

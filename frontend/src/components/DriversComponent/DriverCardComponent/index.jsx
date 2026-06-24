@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 import cn from "classnames";
 import {
   FaPen,
@@ -28,6 +29,7 @@ import "./style.scss";
 
 const DriverCardComponent = ({ driver = {}, inModal = false }) => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const [editMode, setEditMode] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -36,8 +38,8 @@ const DriverCardComponent = ({ driver = {}, inModal = false }) => {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
-  const handleDeleteDriver = () => {
-    if (window.confirm("Are you sure you want to delete this driver?")) {
+  const handleDeleteDriver = async () => {
+    if (await confirm("Are you sure you want to delete this driver?")) {
       setIsDeleting(true);
       dispatch(deleteDriver(driver.id))
         .unwrap()

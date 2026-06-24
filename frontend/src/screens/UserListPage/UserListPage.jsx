@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { listUsers, deleteUser } from "../../actions/userActions";
+import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 import "./UserListPage.scss";
 import PasswordResetModal from "../../components/PasswordResetModal/PasswordResetModal";
 import SearchComponent from "../../globalComponents/SearchComponent";
@@ -27,6 +28,7 @@ const GROUPS = [
 const UserListPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const confirm = useConfirm();
   const [resettingUserId, setResettingUserId] = useState(null);
   const [passwordModalData, setPasswordModalData] = useState(null);
   const [search, setSearch] = useState("");
@@ -64,7 +66,7 @@ const UserListPage = () => {
 
   const handleDeleteSelected = async () => {
     if (selectedUsers.length === 0) return;
-    if (!window.confirm("Ви впевнені, що хочете видалити вибраних користувачів?")) return;
+    if (!await confirm("Ви впевнені, що хочете видалити вибраних користувачів?")) return;
     for (const userId of selectedUsers) {
       await dispatch(deleteUser(userId));
     }
@@ -80,7 +82,7 @@ const UserListPage = () => {
     const user = (users ?? []).find((u) => u.id === selectedUsers[0]);
     if (!user) return;
 
-    if (!window.confirm(`Скинути пароль для ${user.email || user.username}?`)) return;
+    if (!await confirm(`Скинути пароль для ${user.email || user.username}?`)) return;
 
     try {
       setResettingUserId(user.id);

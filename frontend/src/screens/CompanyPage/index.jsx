@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 import {
   FaBuilding, FaEdit, FaSave, FaTimes, FaSync,
   FaPlus, FaTrash, FaUniversity,
@@ -106,6 +107,7 @@ const FieldRow = ({ field, editMode, value, onChange }) => (
 
 const BankCard = ({ bank, onSaved, onDeleted }) => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const [editing, setEditing] = useState(!bank.id); // new banks open in edit mode
   const [form, setForm] = useState(bank.id ? bankToForm(bank) : emptyBank());
   const [saving, setSaving] = useState(false);
@@ -140,7 +142,7 @@ const BankCard = ({ bank, onSaved, onDeleted }) => {
 
   const handleDelete = async () => {
     if (!bank.id) { onDeleted?.(); return; }
-    if (!window.confirm(`Видалити "${bank.name}"?`)) return;
+    if (!await confirm(`Видалити "${bank.name}"?`)) return;
     setDeleting(true);
     const result = await dispatch(deleteBank(bank.id));
     if (deleteBank.fulfilled.match(result)) {

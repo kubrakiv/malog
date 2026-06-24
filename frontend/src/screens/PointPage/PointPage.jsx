@@ -43,45 +43,31 @@ const PointPage = ({ selectedPoint }) => {
   );
 
   return (
-    <>
-      <div className="point-container">
-        <div className="point-details">
-          <div className="point-details__content">
-            <div className="point-details__content-block">
-              <div className="point-details__content-row">
-                <PointCustomerComponent customer={selectedPoint.customer} />
-              </div>
-              <div className="point-details__content-row">
-                <PointCompanyComponent company={selectedPoint.company_name} />
-              </div>
-              <div className="point-details__content-row">
-                <PointCountryComponent country={selectedPoint.country} />
-              </div>
-              <div className="point-details__content-row">
-                <PointAddressComponent full_address={fullAddress} />
-              </div>
-              <div className="point-details__content-row">
-                <PointGpsComponent
-                  lat={selectedPoint.gps_latitude}
-                  lng={selectedPoint.gps_longitude}
-                />
-              </div>
-            </div>
-            <div className="point-details__content-block">
-              <div className="point-details__content-row">
-                <div className="point-details__content-row-block point-details__content-row-block-map">
-                  {isLoaded ? (
-                    <Map center={currentLocation} />
-                  ) : (
-                    <h2>Loading...</h2>
-                  )}
-                </div>
-              </div>
-            </div>
+    <div className="point-container">
+      <div className="point-details">
+        <div className="point-details__content">
+          {/* Left: info fields */}
+          <div className="point-details__content-block">
+            <PointCustomerComponent customer={selectedPoint.customer} />
+            <PointCompanyComponent company={selectedPoint.company_name} />
+            <PointCountryComponent country={selectedPoint.country} />
+            <PointAddressComponent full_address={fullAddress} />
+            <PointGpsComponent
+              lat={selectedPoint.gps_latitude}
+              lng={selectedPoint.gps_longitude}
+            />
+          </div>
+          {/* Right: map */}
+          <div className="point-details__content-block" style={{ padding: 0, overflow: "hidden" }}>
+            {isLoaded ? (
+              <Map center={currentLocation} />
+            ) : (
+              <div style={{ padding: "1rem", color: "#9bb5ba" }}>Завантаження карти...</div>
+            )}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 
 import { listCurrentTenders } from "../../../features/sovtesTenders/sovtesTendersOperations";
 
@@ -9,6 +10,7 @@ import "./style.scss";
 
 const TenderDetailsCompnent = ({ tender, expandedTender }) => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
 
   const [selectedPrice, setSelectedPrice] = useState(tender.price || "");
   const [quantity, setQuantity] = useState(1);
@@ -26,7 +28,7 @@ const TenderDetailsCompnent = ({ tender, expandedTender }) => {
   };
 
   const handleSubmitOffer = async () => {
-    if (!window.confirm("Ви впевнені, що хочете відправити пропозицію?")) {
+    if (!await confirm("Ви впевнені, що хочете відправити пропозицію?")) {
       return;
     }
 

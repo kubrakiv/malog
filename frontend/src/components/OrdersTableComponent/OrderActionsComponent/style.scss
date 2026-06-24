@@ -172,6 +172,25 @@
     }
   }
 
+  &__sovtes-routes-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background-color: rgba(15, 118, 128, 0.85);
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 5px 10px;
+    margin: 5px;
+    color: white;
+    border: none;
+    white-space: nowrap;
+    &:hover {
+      background-color: rgba(15, 118, 128, 1);
+      cursor: pointer;
+    }
+  }
+
   &__delete-order-btn {
     position: absolute;
     right: 10px;

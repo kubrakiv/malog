@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 import {
   getUserDetails,
   updateUser,
@@ -14,6 +15,7 @@ import toast, { Toaster } from "react-hot-toast";
 
 const UserEditPage = () => {
   const { id } = useParams();
+  const confirm = useConfirm();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -97,7 +99,7 @@ const UserEditPage = () => {
       return;
     }
 
-    if (!window.confirm(`Reset password for ${user.email}?`)) {
+    if (!await confirm(`Reset password for ${user.email}?`)) {
       return;
     }
 

@@ -314,7 +314,7 @@ const OrderActionsComponent = ({
           </div>
         )}
         <button
-          className="order-details__action-open-invoice-btn"
+          className="order-actions__sovtes-routes-btn"
           onClick={handleGetAllSovtesRoutes}
           title="Отримати всі маршрути з SOVTES"
         >

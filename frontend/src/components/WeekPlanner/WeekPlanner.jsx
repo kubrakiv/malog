@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 
 import { getISOWeek, parseISO, getYear } from "date-fns";
 import { generateDatesArray } from "./dateFunctions";
@@ -56,6 +57,7 @@ export const WeekPlanner = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  const confirm = useConfirm();
 
   const searchParams = new URLSearchParams(location.search);
   const currentYear = parseInt(searchParams.get("year")) || getYear(new Date());
@@ -381,7 +383,7 @@ export const WeekPlanner = () => {
   const handleDeleteTask = async (e, taskId) => {
     e.stopPropagation();
 
-    const isConfirmed = window.confirm(
+    const isConfirmed = await confirm(
       "Ви впевнені, що хочете видалити задачу?"
     );
 

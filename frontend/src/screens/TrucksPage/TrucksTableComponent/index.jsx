@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 import {
   FaCheck,
   FaChevronDown,
@@ -64,6 +65,7 @@ const UNGROUPED_KEY = "__ungrouped__";
 
 const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const selectedTruck = useSelector(selectSelectedTruck);
   const userInfo = useSelector((state) => state.userLogin.userInfo);
 
@@ -226,12 +228,12 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
     dispatch(setSelectedTruck(truck));
   };
 
-  const handleDeleteSelectedTrucks = () => {
+  const handleDeleteSelectedTrucks = async () => {
     if (selectedTrucks.length === 0) {
       window.alert("Виберіть автомобіль для видалення");
       return;
     }
-    const confirmDelete = window.confirm(
+    const confirmDelete = await confirm(
       "Are you sure you want to delete this truck?"
     );
     if (!confirmDelete) return;

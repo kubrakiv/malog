@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 
 import {
   setEditModeTask,
@@ -15,6 +16,7 @@ import TaskOrder from "../../../components/Task/TaskOrder";
 
 function TaskComponent() {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const order = useSelector((state) => state.ordersInfo.orderDetails.data);
 
   useEffect(() => {
@@ -44,7 +46,7 @@ function TaskComponent() {
   const handleDeleteTask = async (e, taskId) => {
     e.preventDefault();
 
-    const isConfirmed = window.confirm(
+    const isConfirmed = await confirm(
       "Ви впевнені, що хочете видалити задачу?"
     );
 

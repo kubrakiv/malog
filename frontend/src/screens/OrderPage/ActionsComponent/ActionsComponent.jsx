@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 import { setEditModeDocument } from "../../../reducers/documentReducers";
 import {
   setAddTaskMode,
@@ -24,6 +25,7 @@ import {
 const ActionsComponent = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const confirm = useConfirm();
   const editModeDocument = useSelector((state) => state.documentsInfo.editMode);
   const order = useSelector((state) => state.ordersInfo.orderDetails.data);
 
@@ -63,7 +65,7 @@ const ActionsComponent = () => {
   };
 
   const handleSendDataToSOVTES = async () => {
-    if (!window.confirm("Ви впевнені, що хочете відправити дані по авто?")) {
+    if (!await confirm("Ви впевнені, що хочете відправити дані по авто?")) {
       return;
     }
     // const data = {

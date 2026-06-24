@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 
 import {
   selectCustomerManager,
@@ -31,6 +32,7 @@ import "./style.scss";
 
 const CustomerCardComponent = ({ customer, onCloseModal }) => {
   const dispatch = useDispatch();
+  const confirm = useConfirm();
   const showCustomerManagerForm = useSelector(selectShowCustomerManagerForm);
   const customerManagers = useSelector(selectCustomerManagers);
   const isEditMode = useSelector(selectIsEditModeCustomerManager);
@@ -69,9 +71,9 @@ const CustomerCardComponent = ({ customer, onCloseModal }) => {
     dispatch(setCustomerManager({}));
   };
 
-  const handleDeleteSelectedCustomerManager = (e, manager) => {
+  const handleDeleteSelectedCustomerManager = async (e, manager) => {
     e.preventDefault();
-    const confirmDelete = window.confirm(
+    const confirmDelete = await confirm(
       "Are you sure you want to delete this manager?"
     );
     if (!confirmDelete) {
