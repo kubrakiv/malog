@@ -1197,3 +1197,14 @@ class ClientExternalIdentity(models.Model):
 
     def __str__(self):
         return f"{self.client} — {self.provider} ({self.link_status})"
+
+
+class SovtesWebhookEvent(models.Model):
+    event_type = models.CharField(max_length=100, db_index=True)
+    periodic = models.CharField(max_length=100, blank=True, db_index=True)
+    route_id = models.IntegerField(null=True, blank=True, db_index=True)
+    payload = models.JSONField()
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    class Meta:
+        ordering = ["id"]

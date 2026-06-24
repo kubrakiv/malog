@@ -1,228 +1,493 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useMemo, useRef, useState } from "react";
+import TenderCard from "./TenderCard";
+import {
+  fetchTenderGroups,
+  fetchCurrentTenders,
+  fetchMyTenders,
+  fetchBasicDetails,
+  fetchNotInterested,
+  fetchCompleteRoutes,
+} from "./tendersService";
 import "./style.scss";
 
-import TenderDetailsComponent from "./TenderDetailsComponent";
+const PAGE_SIZE = 10;
+const HIDDEN_TAB_ID = "hidden";
+const ARCHIVE_TAB_ID = "archive";
 
-import { listCurrentTenders } from "../../features/sovtesTenders/sovtesTendersOperations";
-import { parseTenders } from "../../utils/getTenderDetails";
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-const SovtesTenderPage = () => {
-  const [parsedTenders, setParsedTenders] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [expandedTender, setExpandedTender] = useState(null);
+function uniqueValues(arr, key) {
+  return [...new Set(arr.map((t) => t[key]).filter(Boolean))];
+}
 
-  const dispatch = useDispatch();
+function flatUniqueValues(arr, key) {
+  return [
+    ...new Set(
+      arr.flatMap((t) => (Array.isArray(t[key]) ? t[key] : t[key] ? [t[key]] : []))
+    ),
+  ];
+}
 
-  useEffect(() => {
-    dispatch(listCurrentTenders());
-  }, [dispatch]);
+// ─── Component ────────────────────────────────────────────────────────────────
 
-  const tendersData = useSelector(
-    (state) => state.sovtesTendersInfo.currentTenders
+export default function SovtesTenderPage() {
+  // ── Data state ────────────────────────────────────────────────────────────────
+  const [groups, setGroups] = useState([]);
+  const [allTenders, setAllTenders] = useState([]);
+  const [hiddenTenders, setHiddenTenders] = useState([]);
+  const [archiveData, setArchiveData] = useState({ data: [], total: 0 });
+  const [cards, setCards] = useState([]);
+
+  // ── UI state ──────────────────────────────────────────────────────────────────
+  const [activeTabId, setActiveTabId] = useState(null);
+  const [page, setPage] = useState(1);
+  const [archivePage, setArchivePage] = useState(1);
+  const [onlyMyCustomers, setOnlyMyCustomers] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [quickFilters, setQuickFilters] = useState({
+    freeforall: false,
+    blindtender: false,
+  });
+
+  const [detailedFilters, setDetailedFilters] = useState({
+    clientCompany: "",
+    loading_point: "",
+    unloading_point: "",
+    cartype: "",
+    chargetype: "",
+  });
+
+  const [loadingInit, setLoadingInit] = useState(true);
+  const [loadingCards, setLoadingCards] = useState(false);
+  const [loadingArchive, setLoadingArchive] = useState(false);
+
+  // ── Tabs definition ───────────────────────────────────────────────────────────
+  const tabs = useMemo(
+    () => [
+      ...groups,
+      { id: HIDDEN_TAB_ID, title: "Приховані", multistati: null },
+      { id: ARCHIVE_TAB_ID, title: "Архів", multistati: null },
+    ],
+    [groups]
   );
 
-  useEffect(() => {
-    if (tendersData?.data?.length > 0) {
-      setParsedTenders(parseTenders(tendersData.data));
-      setLoading(false);
+  // ── Fetch init data ───────────────────────────────────────────────────────────
+  const loadTenders = async () => {
+    try {
+      const [fetchedGroups, fetchedTenders] = await Promise.all([
+        fetchTenderGroups(),
+        onlyMyCustomers ? fetchMyTenders() : fetchCurrentTenders(),
+      ]);
+
+      const groupList = Array.isArray(fetchedGroups) ? fetchedGroups : [];
+      setGroups(groupList);
+      setAllTenders(Array.isArray(fetchedTenders) ? fetchedTenders : []);
+
+      // Set default active tab to first group if not already set
+      setActiveTabId((prev) => prev ?? groupList[0]?.id ?? null);
+    } catch (e) {
+      console.error("Failed to load tender data", e);
+    } finally {
+      setLoadingInit(false);
     }
-  }, [tendersData]);
-
-  const toggleTenderDetails = (tenderId) => {
-    setExpandedTender(expandedTender === tenderId ? null : tenderId);
   };
 
-  const getMyOffer = (tender) => {
-    if (!tender.response) return null;
+  useEffect(() => {
+    setLoadingInit(true);
+    loadTenders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [onlyMyCustomers]);
 
-    // Convert object values to an array
-    const responses = Object.values(tender.response);
+  // ── Fetch hidden tenders when hidden tab is active ────────────────────────────
+  useEffect(() => {
+    if (activeTabId !== HIDDEN_TAB_ID) return;
+    fetchNotInterested()
+      .then((d) => setHiddenTenders(Array.isArray(d) ? d : d?.data || []))
+      .catch(() => setHiddenTenders([]));
+  }, [activeTabId]);
 
-    // Filter responses where isMine is true
-    const myOffers = responses.filter((response) => response.isMine);
+  // ── Fetch archive when archive tab is active / page changes ──────────────────
+  useEffect(() => {
+    if (activeTabId !== ARCHIVE_TAB_ID) return;
+    setLoadingArchive(true);
+    fetchCompleteRoutes(archivePage, PAGE_SIZE)
+      .then((d) => {
+        const rows = Array.isArray(d) ? d : d?.data || d?.routes || [];
+        const total = d?.total ?? rows.length;
+        setArchiveData({ data: rows, total });
+      })
+      .catch(() => setArchiveData({ data: [], total: 0 }))
+      .finally(() => setLoadingArchive(false));
+  }, [activeTabId, archivePage]);
 
-    if (myOffers.length === 0) return null;
+  // ── Reset page when tab or filters change ─────────────────────────────────────
+  useEffect(() => {
+    setPage(1);
+  }, [activeTabId, quickFilters, detailedFilters]);
 
-    // Sort responses by moment (assuming it is a datetime string)
-    myOffers.sort((a, b) => new Date(a.moment) - new Date(b.moment));
+  // ── Tab tenders (lightweight source) ─────────────────────────────────────────
+  const tabTenders = useMemo(() => {
+    if (activeTabId === HIDDEN_TAB_ID) return hiddenTenders;
+    if (activeTabId === ARCHIVE_TAB_ID) return archiveData.data;
+    const group = groups.find((g) => g.id === activeTabId);
+    if (!group) return [];
+    return allTenders.filter((t) =>
+      Array.isArray(group.multistati)
+        ? group.multistati.includes(t.contextstatus)
+        : false
+    );
+  }, [activeTabId, groups, allTenders, hiddenTenders, archiveData.data]);
 
-    // Get the last object
-    const lastOffer = myOffers[myOffers.length - 1];
+  // ── Tab counts ────────────────────────────────────────────────────────────────
+  const tabCounts = useMemo(() => {
+    const counts = {};
+    groups.forEach((g) => {
+      counts[g.id] = allTenders.filter((t) =>
+        Array.isArray(g.multistati) ? g.multistati.includes(t.contextstatus) : false
+      ).length;
+    });
+    counts[HIDDEN_TAB_ID] = hiddenTenders.length;
+    counts[ARCHIVE_TAB_ID] = archiveData.total;
+    return counts;
+  }, [groups, allTenders, hiddenTenders, archiveData.total]);
 
-    return Math.round(lastOffer?.pricequotewithcommission) || null;
+  // ── Filter options built from active tab list ─────────────────────────────────
+  const filterOptions = useMemo(
+    () => ({
+      companies: uniqueValues(tabTenders, "clientCompany"),
+      loadingPoints: flatUniqueValues(tabTenders, "loading_points"),
+      unloadingPoints: flatUniqueValues(tabTenders, "unloading_points"),
+      cartypes: flatUniqueValues(tabTenders, "cartype"),
+      chargetypes: uniqueValues(tabTenders, "chargetype"),
+    }),
+    [tabTenders]
+  );
+
+  // ── Apply filters ──────────────────────────────────────────────────────────────
+  const filteredTenders = useMemo(() => {
+    return tabTenders.filter((t) => {
+      if (quickFilters.freeforall && !t.freeforall) return false;
+      if (quickFilters.blindtender && !t.blindtender) return false;
+      if (detailedFilters.clientCompany && t.clientCompany !== detailedFilters.clientCompany)
+        return false;
+      if (detailedFilters.cartype) {
+        const ct = Array.isArray(t.cartype) ? t.cartype : t.cartype ? [t.cartype] : [];
+        if (!ct.includes(detailedFilters.cartype)) return false;
+      }
+      if (detailedFilters.chargetype && t.chargetype !== detailedFilters.chargetype)
+        return false;
+      return true;
+    });
+  }, [tabTenders, quickFilters, detailedFilters]);
+
+  // ── Pagination ────────────────────────────────────────────────────────────────
+  const totalItems =
+    activeTabId === ARCHIVE_TAB_ID ? archiveData.total : filteredTenders.length;
+  const totalPages = Math.max(1, Math.ceil(totalItems / PAGE_SIZE));
+
+  const pagedPeriodicIds = useMemo(() => {
+    if (activeTabId === ARCHIVE_TAB_ID) {
+      return archiveData.data.map((t) => t.periodic).filter(Boolean);
+    }
+    return filteredTenders
+      .slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
+      .map((t) => t.periodic)
+      .filter(Boolean);
+  }, [filteredTenders, page, activeTabId, archiveData.data]);
+
+  // ── Stable refs so SSE handler never captures stale closures ─────────────────
+  const pagedPeriodicIdsRef = useRef([]);
+  useEffect(() => { pagedPeriodicIdsRef.current = pagedPeriodicIds; }, [pagedPeriodicIds]);
+
+  // ── Fetch basic details for visible ids ───────────────────────────────────────
+  const lastFetchedIds = useRef("");
+  useEffect(() => {
+    const idsKey = pagedPeriodicIds.join(",");
+    if (!pagedPeriodicIds.length) {
+      setCards([]);
+      return;
+    }
+    if (idsKey === lastFetchedIds.current) return;
+    lastFetchedIds.current = idsKey;
+
+    setLoadingCards(true);
+    fetchBasicDetails(pagedPeriodicIds)
+      .then((data) => {
+        const list = Array.isArray(data) ? data : data?.routes || data?.data || [];
+        // Sort to match requested periodic order
+        const byPeriodic = Object.fromEntries(
+          list.map((c) => [String(c.periodic ?? c.id), c])
+        );
+        const ordered = pagedPeriodicIds
+          .map((id) => byPeriodic[String(id)])
+          .filter(Boolean);
+        setCards(ordered);
+      })
+      .catch(() => setCards([]))
+      .finally(() => setLoadingCards(false));
+  }, [pagedPeriodicIds]);
+
+  // ── Refresh handler (called after any card action) ────────────────────────────
+  const handleRefresh = () => {
+    lastFetchedIds.current = "";
+    loadTenders().then(() => {
+      if (pagedPeriodicIds.length) {
+        setLoadingCards(true);
+        fetchBasicDetails(pagedPeriodicIds)
+          .then((data) => {
+            const list = Array.isArray(data) ? data : data?.routes || data?.data || [];
+            setCards(list);
+          })
+          .catch(() => setCards([]))
+          .finally(() => setLoadingCards(false));
+      }
+    });
   };
 
-  const getMinimPriceOffer = (tender) => {
-    if (!tender.response) return null;
+  // ── SSE: keep a mutable ref so the EventSource callback always has latest fns ─
+  const sseHandlerRef = useRef(null);
+  sseHandlerRef.current = (periodic, routeId) => {
+    // Refresh lightweight list so tab counts stay accurate
+    const fetchList = onlyMyCustomers ? fetchMyTenders : fetchCurrentTenders;
+    fetchList()
+      .then((d) => setAllTenders(Array.isArray(d) ? d : []))
+      .catch(() => {});
 
-    // Convert object values to an array
-    const responses = Object.values(tender.response);
-
-    // Filter responses where isMine is true
-    const myOffers = responses.filter((response) => response);
-
-    if (myOffers.length === 0) return null;
-
-    // Sort responses by moment (assuming it is a datetime string)
-    myOffers.sort((a, b) => new Date(a.moment) - new Date(b.moment));
-
-    // Get the last object
-    const lastOffer = myOffers[myOffers.length - 1];
-
-    return Math.round(lastOffer?.pricequotewithcommission) || null;
+    // If the updated tender is on the current page, patch that card in-place
+    const currentIds = pagedPeriodicIdsRef.current.map(String);
+    if (periodic && currentIds.includes(String(periodic))) {
+      fetchBasicDetails([periodic])
+        .then((data) => {
+          const list = Array.isArray(data) ? data : data?.routes || data?.data || [];
+          if (list.length > 0) {
+            setCards((prev) =>
+              prev.map((c) =>
+                String(c.periodic ?? c.id) === String(periodic) ? list[0] : c
+              )
+            );
+          }
+        })
+        .catch(() => {});
+    }
   };
 
-  const getPricePerKm = (tender, price) => {
-    if (!tender.distance || !price) return null;
+  // ── Open SSE connection on mount, auto-reconnect is handled by the browser ───
+  useEffect(() => {
+    let es = null;
 
-    const pricePerKm = parseFloat(price) / parseFloat(tender.distance);
+    const connect = () => {
+      try {
+        const raw = localStorage.getItem("userInfo");
+        const userInfo = raw ? JSON.parse(raw) : {};
+        const token = userInfo.token || userInfo.access || "";
+        if (!token) return;
 
-    // return `${pricePerKm.toFixed(2)} ${tender.currency.toUpperCase()}/км`;
-    return `(${pricePerKm.toFixed(2)})`;
+        es = new EventSource(`/api/sovtes/events/?token=${encodeURIComponent(token)}`);
+
+        es.onmessage = (e) => {
+          try {
+            const event = JSON.parse(e.data);
+            sseHandlerRef.current?.(event.periodic, event.route_id);
+          } catch {
+            // ignore malformed events
+          }
+        };
+
+        es.onerror = () => {
+          // browser auto-reconnects; nothing to do
+        };
+      } catch {
+        // ignore if localStorage/JSON fails
+      }
+    };
+
+    connect();
+    return () => es?.close();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Quick filter toggle helper ────────────────────────────────────────────────
+  const toggleQuick = (key) =>
+    setQuickFilters((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  const clearFilters = () => {
+    setQuickFilters({ freeforall: false, blindtender: false });
+    setDetailedFilters({ clientCompany: "", loading_point: "", unloading_point: "", cartype: "", chargetype: "" });
   };
+
+  // ── Render ────────────────────────────────────────────────────────────────────
+
+  if (loadingInit) {
+    return (
+      <div className="tenders-container">
+        <p className="tenders-loading">Завантаження тендерів...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="tenders-container">
-      <div className="orders-header-block">
-        <h2 className="table__name">
-          Поточні тендери ({parsedTenders.length})
-        </h2>
+      {/* Header */}
+      <div className="tenders-header">
+        <h2 className="tenders-title">Тендери</h2>
+        <label className="tenders-toggle">
+          <input
+            type="checkbox"
+            checked={onlyMyCustomers}
+            onChange={(e) => setOnlyMyCustomers(e.target.checked)}
+          />
+          Тільки мої клієнти
+        </label>
       </div>
 
-      {/* Show loading spinner until tenders are fetched */}
-      {loading ? (
-        <div className="loading-container">
-          <p>Завантаження тендерів...</p>
+      {/* Tabs */}
+      <div className="tenders-tabs">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            className={`tenders-tab ${activeTabId === tab.id ? "tenders-tab--active" : ""}`}
+            onClick={() => setActiveTabId(tab.id)}
+          >
+            {tab.title}
+            {tabCounts[tab.id] > 0 && (
+              <span className="tenders-tab__count">{tabCounts[tab.id]}</span>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Quick filters */}
+      <div className="tenders-quick-filters">
+        <button
+          className={`filter-chip ${quickFilters.freeforall ? "filter-chip--active" : ""}`}
+          onClick={() => toggleQuick("freeforall")}
+        >
+          Відкриті
+        </button>
+        <button
+          className={`filter-chip ${quickFilters.blindtender ? "filter-chip--active" : ""}`}
+          onClick={() => toggleQuick("blindtender")}
+        >
+          Закриті
+        </button>
+        <button
+          className="filter-chip filter-chip--toggle"
+          onClick={() => setShowFilters((v) => !v)}
+        >
+          Фільтри {showFilters ? "▲" : "▼"}
+        </button>
+        {(quickFilters.freeforall ||
+          quickFilters.blindtender ||
+          Object.values(detailedFilters).some(Boolean)) && (
+          <button className="filter-chip filter-chip--clear" onClick={clearFilters}>
+            Скинути
+          </button>
+        )}
+      </div>
+
+      {/* Detailed filters */}
+      {showFilters && (
+        <div className="tenders-detailed-filters">
+          <label>
+            Клієнт
+            <select
+              value={detailedFilters.clientCompany}
+              onChange={(e) =>
+                setDetailedFilters((f) => ({ ...f, clientCompany: e.target.value }))
+              }
+            >
+              <option value="">Всі</option>
+              {filterOptions.companies.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Тип транспорту
+            <select
+              value={detailedFilters.cartype}
+              onChange={(e) =>
+                setDetailedFilters((f) => ({ ...f, cartype: e.target.value }))
+              }
+            >
+              <option value="">Всі</option>
+              {filterOptions.cartypes.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </label>
+
+          <label>
+            Тип вантажу
+            <select
+              value={detailedFilters.chargetype}
+              onChange={(e) =>
+                setDetailedFilters((f) => ({ ...f, chargetype: e.target.value }))
+              }
+            >
+              <option value="">Всі</option>
+              {filterOptions.chargetypes.map((c) => (
+                <option key={c} value={c}>{c}</option>
+              ))}
+            </select>
+          </label>
         </div>
-      ) : (
-        <div className="tenders-list">
-          {parsedTenders.length > 0 ? (
-            parsedTenders.map((tender) => (
-              <>
-                <div
-                  key={tender.id}
-                  className={`offer-item ${
-                    expandedTender === tender.id ? "expanded" : ""
-                  }`}
-                  onClick={() => toggleTenderDetails(tender.id)}
-                >
-                  {/* First Row: Customer */}
-                  <div className="tender-customer">
-                    <span>{tender.payor}</span>
-                    {Object.values(tender.response).length === 0 ? (
-                      <span></span> /* Empty span to maintain alignment */
-                    ) : (
-                      <span>
-                        Пропозиції: {Object.values(tender.response).length}
-                      </span>
-                    )}
-                    <span>{tender.periodic}</span>
-                  </div>
-                  {/* Second Row: All Other Blocks */}
-                  <div className="offer-details">
-                    {/* Block 1: Origin */}
-                    <div className="offer-block origin">
-                      <span
-                        className={`fi fi-${tender.origin.country.toLowerCase()}`}
-                      ></span>
-                      <strong className="place-code">
-                        {`${tender.origin.country} ${tender.origin.city}`}
-                      </strong>
-                      <div className="time">{`${tender.pickup}`}</div>
-                    </div>
+      )}
 
-                    {/* Block 2: Arrow */}
-                    <div className="offer-block arrow">→</div>
+      {/* Card list */}
+      <div className="tenders-list">
+        {loadingCards || (activeTabId === ARCHIVE_TAB_ID && loadingArchive) ? (
+          <p className="tenders-loading">Завантаження...</p>
+        ) : cards.length === 0 ? (
+          <p className="tenders-empty">
+            {filteredTenders.length === 0 && totalItems > 0
+              ? "Немає тендерів для цих фільтрів"
+              : "Немає доступних тендерів"}
+          </p>
+        ) : (
+          cards.map((card) => (
+            <TenderCard key={card.id ?? card.periodic} card={card} onRefresh={handleRefresh} />
+          ))
+        )}
+      </div>
 
-                    {/* Block 3: Destination */}
-                    <div className="offer-block destination">
-                      <span
-                        className={`fi fi-${tender.destination.country.toLowerCase()}`}
-                      ></span>
-                      <strong className="place-code">
-                        {`${tender.destination.country} ${tender.destination.city}`}
-                      </strong>
-                      <div className="time">{`${tender.returnPickup} – ${tender.returnDelivery}`}</div>
-                    </div>
-
-                    {/* Block 4: Distance */}
-                    <div className="offer-block distance">
-                      <span className="icon-wg-street"></span>
-                      <strong>{tender.distance} km</strong>
-                    </div>
-
-                    {/* Block 5: Type */}
-                    <div className="offer-block type">
-                      <span className="icon-wg-trailer-height"></span>
-                      <strong>{tender.type}</strong>
-                    </div>
-
-                    {/* Block 6: Weight */}
-                    <div className="offer-block weight">
-                      <span className="icon-wg-weight"></span>
-                      <strong>
-                        {Math.round(parseFloat(tender.weight), 2)}
-                      </strong>
-                    </div>
-
-                    {/* Block 7: Price */}
-
-                    <div className="price">
-                      <table className="price-table">
-                        <tbody>
-                          <tr className="price-row">
-                            <td className="label start-price">Стартова:</td>
-                            <td className="value start-price">
-                              {tender.price} {tender.currency.toUpperCase()}{" "}
-                              {getPricePerKm(tender, tender.price)}
-                            </td>
-                          </tr>
-                          {getMyOffer(tender) && (
-                            <tr className="price-row">
-                              <td className="label my-price">Моя:</td>
-                              <td className="value my-price">
-                                {getMyOffer(tender)}{" "}
-                                {tender.currency.toUpperCase()}{" "}
-                                {getPricePerKm(tender, getMyOffer(tender))}
-                              </td>
-                            </tr>
-                          )}
-                          {getMinimPriceOffer(tender) && (
-                            <tr className="price-row">
-                              <td className="label min-price">Мінімальна:</td>
-                              <td className="value min-price">
-                                {getMinimPriceOffer(tender)}{" "}
-                                {tender.currency.toUpperCase()}{" "}
-                                {getPricePerKm(
-                                  tender,
-                                  getMinimPriceOffer(tender)
-                                )}
-                              </td>
-                            </tr>
-                          )}
-                        </tbody>
-                      </table>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Show Tender Details Only If This Tender is Clicked */}
-                {expandedTender === tender.id && (
-                  <TenderDetailsComponent
-                    tender={tender}
-                    expandedTender={expandedTender}
-                  />
-                )}
-              </>
-            ))
-          ) : (
-            <p className="no-tenders">Немає доступних тендерів</p>
-          )}
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="tenders-pagination">
+          <button
+            className="pagination-btn"
+            onClick={() =>
+              activeTabId === ARCHIVE_TAB_ID
+                ? setArchivePage((p) => Math.max(1, p - 1))
+                : setPage((p) => Math.max(1, p - 1))
+            }
+            disabled={
+              activeTabId === ARCHIVE_TAB_ID ? archivePage <= 1 : page <= 1
+            }
+          >
+            ←
+          </button>
+          <span className="pagination-info">
+            {activeTabId === ARCHIVE_TAB_ID ? archivePage : page} / {totalPages}
+          </span>
+          <button
+            className="pagination-btn"
+            onClick={() =>
+              activeTabId === ARCHIVE_TAB_ID
+                ? setArchivePage((p) => Math.min(totalPages, p + 1))
+                : setPage((p) => Math.min(totalPages, p + 1))
+            }
+            disabled={
+              activeTabId === ARCHIVE_TAB_ID
+                ? archivePage >= totalPages
+                : page >= totalPages
+            }
+          >
+            →
+          </button>
         </div>
       )}
     </div>
   );
-};
-
-export default SovtesTenderPage;
+}

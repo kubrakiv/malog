@@ -8,9 +8,31 @@ from base.parsers.lkw_parser import parse_route_json as parse_lkw
 import requests
 import asyncio
 import aiohttp
-from base.views.sovtes_tenders_views import fetch_all_tender_details
 
 BASE_URL = "https://sovtes.ua"
+
+
+async def _fetch_single_tender(session, periodic, token):
+    headers = {"Authorization": token, "Language": "en"}
+    url = f"{BASE_URL}/a/v2/rest/public/singleRoute?route={periodic}"
+    async with session.get(url, headers=headers) as resp:
+        data = await resp.json()
+    if data.get("status") == "error" and data.get("message") == "Token is required":
+        from base.utils.api_utils import get_api_token
+        new_token = get_api_token(force_refresh=True)
+        headers["Authorization"] = new_token
+        async with session.get(url, headers=headers) as retry:
+            return await retry.json()
+    return data
+
+
+async def fetch_all_tender_details(tenders, token):
+    async with aiohttp.ClientSession() as session:
+        tasks = [_fetch_single_tender(session, t["periodic"], token) for t in tenders]
+        details = await asyncio.gather(*tasks)
+    for tender, detail in zip(tenders, details):
+        tender["details"] = detail
+    return tenders
 
 @api_view(["POST"])
 def fetch_and_create_orders(request):
