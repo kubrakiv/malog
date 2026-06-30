@@ -80,7 +80,13 @@ def fetch_and_create_orders(request):
             return Response({"error": "Unsupported platform"}, status=400)
 
         # Step 4: Create Objects
-        order = create_objects_from_parsed_data(parsed_data, user=request.user)
+        order_data = parsed_data.get("order_data") or {}
+        order = create_objects_from_parsed_data(
+            parsed_data,
+            user=request.user,
+            truck_plates=order_data.get("truck_plates"),
+            driver_name=order_data.get("driver_name"),
+        )
 
         return Response(
             {"message": f"Order {order.order_number} created successfully."},

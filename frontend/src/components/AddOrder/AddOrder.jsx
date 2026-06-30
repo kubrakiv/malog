@@ -3,6 +3,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa";
+import Select from "react-select";
 import { DirectionsService, useJsApiLoader } from "@react-google-maps/api";
 import { getCsrfToken } from "../../utils/getCsrfToken";
 import { getUserDetails } from "../../actions/userActions";
@@ -15,17 +16,17 @@ import {
 } from "../../features/orders/ordersSlicers";
 
 import { selectCurrencies } from "../../features/currencies/currenciesSelectors";
+import { selectRouteCategories } from "../../features/routeCategories/routeCategoriesSelectors";
 
 import { listCurrencies } from "../../features/currencies/currenciesOperations";
 import { listCustomers } from "../../features/customers/customersOperations";
-import { listDrivers } from "../../actions/driverActions";
 import { listPaymentTypes } from "../../actions/paymentTypeActions";
 import { listPlatforms } from "../../actions/platformActions";
 import { listTrucks } from "../../features/trucks/trucksOperations";
+import { listRouteCategories } from "../../features/routeCategories/routeCategoriesOperations";
 
 import AddOrderCustomerManagerComponent from "./AddOrderCustomerManagerComponent/AddOrderCustomerManagerComponent";
 import AddTaskModalComponent from "../AddTask/AddTaskModalComponent/AddTaskModalComponent";
-import CarrierComponent from "../../screens/OrderPage/CarrierComponent/CarrierComponent";
 import Map from "../Map";
 import AddOrderTaskComponent from "./AddOrderTaskComponent";
 
@@ -46,13 +47,13 @@ function AddOrder() {
   console.log("Task list no order", taskListNoOrder);
 
   const trucks = useSelector((state) => state.trucksInfo.trucks.data);
-  const drivers = useSelector((state) => state.driversInfo.drivers.data);
   const customers = useSelector((state) => state.customersInfo.customers.data);
   const platforms = useSelector((state) => state.platformsInfo.platforms.data);
   const paymentTypes = useSelector(
     (state) => state.paymentTypesInfo.paymentTypes.data
   );
   const currencies = useSelector(selectCurrencies);
+  const categories = useSelector(selectRouteCategories);
 
   const [center, setCenter] = useState(defaultCenter);
   const [editModeOrder, setEditModeOrder] = useState(true);
@@ -81,6 +82,7 @@ function AddOrder() {
   const [selectedCustomerManager, setSelectedCustomerManager] = useState(null);
   const [selectedPaymentType, setSelectedPaymentType] = useState(null);
   const [selectedCurrency, setSelectedCurrency] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedPoint, setSelectedPoint] = useState({});
 
   const [customerManagersList, setCustomerManagersList] = useState([]);
@@ -102,11 +104,11 @@ function AddOrder() {
 
   useEffect(() => {
     dispatch(listTrucks());
-    dispatch(listDrivers());
     dispatch(listCustomers());
     dispatch(listPlatforms());
     dispatch(listPaymentTypes());
     dispatch(listCurrencies());
+    dispatch(listRouteCategories());
   }, []);
 
   useEffect(() => {
@@ -198,6 +200,7 @@ function AddOrder() {
       trailer_type: trailerType,
       order_number: orderNumber,
       platform: selectedPlatform,
+      category: selectedCategory || null,
     };
     console.log("Created order data", dataOrder);
 
@@ -345,7 +348,7 @@ function AddOrder() {
 
   return (
     <>
-      <AddTaskModalComponent />
+      <AddTaskModalComponent defaultTruck={selectedTruck} defaultDriver={selectedDriver} />
       <div className="order-container">
         <div className="add-order-details">
           <form onSubmit={(e) => handleFormSubmit(e)}>
@@ -392,75 +395,75 @@ function AddOrder() {
             <div className="add-order-details__content">
               <div className="add-order-details__content-block">
                 <div className="add-order-details__content-row">
-                  {/* <div className="add-order-details__content-row-block">
+                  <div className="add-order-details__content-row-block">
                     <div className="add-order-details__content-row-block-title">
-                      Перевізник
+                      Категорія
                     </div>
-                    <div className="add-order-details__content-row-block-value">
-                      Delta Logistics SRO
-                    </div>
-                  </div> */}
-                  <CarrierComponent />
+                    <select
+                      className="form-field__select form-select-mb10"
+                      id="category"
+                      name="category"
+                      value={selectedCategory || ""}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                    >
+                      <option value={""}>Виберіть категорію</option>
+                      {categories.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.ukr}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
                 <div className="add-order-details__content-row">
                   <div className="add-order-details__content-row-block">
                     <div className="add-order-details__content-row-block-title">
                       Автомобіль
                     </div>
-
-                    {editModeOrder && (
-                      <select
-                        className="form-field__select form-select-mb10"
-                        id="truck"
-                        name="truck"
-                        value={selectedTruck || ""}
-                        onChange={(e) => setSelectedTruck(e.target.value)}
-                      >
-                        <option value={""}>Select truck</option>
-                        {trucks.map((truck) => (
-                          <option key={truck.id}>{truck.plates}</option>
-                        ))}
-                      </select>
-                    )}
-                  </div>
-
-                  <div className="add-order-details__content-row-block">
-                    <div className="add-order-details__content-row-block-title">
-                      Водій
-                    </div>
-                    {editModeOrder && (
-                      <select
-                        className="form-field__select form-select-mb10"
-                        id="driver"
-                        name="driver"
-                        value={selectedDriver || ""}
-                        onChange={(e) => setSelectedDriver(e.target.value)}
-                      >
-                        <option value={""}>Select driver</option>
-                        {drivers &&
-                          drivers.map((driver) => (
-                            <option
-                              key={driver.profile}
-                              value={driver.full_name}
-                            >
-                              {driver.full_name}
-                            </option>
-                          ))}
-                      </select>
-                    )}
+                    <Select
+                      placeholder="Виберіть автомобіль"
+                      value={selectedTruck ? { label: selectedTruck, value: selectedTruck } : null}
+                      onChange={(selected) => {
+                        const plates = selected?.value || "";
+                        const truck = trucks.find((t) => t.plates === plates);
+                        setSelectedTruck(plates);
+                        setSelectedDriver(truck?.driver_details?.full_name || "");
+                      }}
+                      options={trucks.map((t) => ({ label: t.plates, value: t.plates }))}
+                      isClearable
+                    />
+                    {selectedTruck && (() => {
+                      const truck = trucks.find((t) => t.plates === selectedTruck);
+                      return (
+                        <div className="add-order-details__truck-info">
+                          {truck?.trailer_details?.plates && (
+                            <div className="add-order-details__truck-info-row">
+                              <span className="add-order-details__truck-info-label">Причеп:</span>
+                              <span>{truck.trailer_details.plates}</span>
+                            </div>
+                          )}
+                          {truck?.driver_details?.full_name && (
+                            <div className="add-order-details__truck-info-row">
+                              <span className="add-order-details__truck-info-label">Водій:</span>
+                              <span>{truck.driver_details.full_name}</span>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })()}
                   </div>
                 </div>
-                {taskListNoOrder.length > 0 && (
-                  <div className="add-order-details__content-row">
-                    <div className="add-order-details__content-row-block">
+                <div className="add-order-details__content-row add-order-details__content-row_tasks">
+                  <div className="add-order-details__content-row-block">
+                    {taskListNoOrder.length > 0 && (
                       <AddOrderTaskComponent
                         handleShowPointOnMap={handleShowPointOnMap}
                         handleEditModeTask={handleEditModeTask}
                         handleDeleteTask={handleDeleteTask}
                       />
-                    </div>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
               <div className="add-order-details__content-block">
                 <div className="add-order-details__content-row">
@@ -553,20 +556,13 @@ function AddOrder() {
                     <div className="add-order-details__content-row-block-title">
                       Замовник
                     </div>
-                    <select
-                      className="form-field__select form-select-mb10"
-                      id="customer"
-                      name="customer"
-                      value={selectedCustomer || ""}
-                      onChange={(e) => setSelectedCustomer(e.target.value)}
-                    >
-                      <option value={""}>Select customer</option>
-
-                      {customers &&
-                        customers.map((customer) => (
-                          <option key={customer.id}>{customer.name}</option>
-                        ))}
-                    </select>
+                    <Select
+                      placeholder="Виберіть замовника"
+                      value={selectedCustomer ? { label: selectedCustomer, value: selectedCustomer } : null}
+                      onChange={(selected) => setSelectedCustomer(selected?.value || null)}
+                      options={customers.map((c) => ({ label: c.name, value: c.name }))}
+                      isClearable
+                    />
                     <div className="add-order-details__content-row-block-title">
                       Платформа
                     </div>
@@ -579,7 +575,7 @@ function AddOrder() {
                         value={selectedPlatform || ""}
                         onChange={(e) => setSelectedPlatform(e.target.value)}
                       >
-                        <option value={""}>Select platform</option>
+                        <option value={""}>Виберіть платформу</option>
                         {platforms.map((platform) => (
                           <option key={platform.id}>{platform.name}</option>
                         ))}

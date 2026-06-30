@@ -23,7 +23,7 @@ import {
 } from "../../../actions/mapActions";
 import { selectSelectedPoint } from "../../../features/points/pointsSelectors";
 
-const AddTaskModalComponent = () => {
+const AddTaskModalComponent = ({ defaultTruck, defaultDriver }) => {
   const dispatch = useDispatch();
   const task = useSelector((state) => state.ordersInfo.task.data);
   const editModeTask = useSelector(
@@ -65,7 +65,7 @@ const AddTaskModalComponent = () => {
       show={showTaskModal}
       onClose={handleModalClose}
       content={
-        <>
+        <div className="add-task-modal-body">
           <TabSwitcher
             activeTab={tabToggleMode}
             handleToggleMode={handleToggleMode}
@@ -74,7 +74,11 @@ const AddTaskModalComponent = () => {
           {tabToggleMode ? (
             <>
               {addTaskNoOrderMode && (
-                <AddTaskNoOrderComponent onCloseModal={handleModalClose} />
+                <AddTaskNoOrderComponent
+                  onCloseModal={handleModalClose}
+                  defaultTruck={defaultTruck}
+                  defaultDriver={defaultDriver}
+                />
               )}
               {addTaskMode && (
                 <AddTaskComponent onCloseModal={handleModalClose} />
@@ -89,7 +93,7 @@ const AddTaskModalComponent = () => {
           ) : (
             <AddPoint onAddTask={true} onCloseModal={handleModalClose} />
           )}
-        </>
+        </div>
       }
     />
   );

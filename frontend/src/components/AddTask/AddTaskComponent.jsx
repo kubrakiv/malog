@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from "uuid";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { listPoints } from "../../features/points/pointsOperations";
 import { listTaskTypes } from "../../actions/taskTypeActions";
+import { listTrucks } from "../../features/trucks/trucksOperations";
+import { listDrivers } from "../../features/drivers/driversOperations";
 import { setMapCurrentLocation } from "../../actions/mapActions";
 import {
   setAddTaskMode,
@@ -15,7 +17,6 @@ import { listOrderDetails } from "../../features/orders/ordersOperations";
 import { setMapOption } from "../../utils/setMapOption";
 import { transformSelectOptions } from "../../utils/transformers";
 
-import SelectComponent from "../../globalComponents/SelectComponent";
 import Map from "../Map";
 import Select from "react-select";
 import AddTaskFooterComponent from "./AddTaskFooterComponent/AddTaskFooterComponent";
@@ -138,10 +139,12 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
     }
   }, [selectedPoint, defaultCenter, dispatch]);
 
-  // Fetch points and task types
+  // Fetch points, task types, trucks, drivers
   useEffect(() => {
     dispatch(listPoints());
     dispatch(listTaskTypes());
+    dispatch(listTrucks());
+    dispatch(listDrivers());
   }, [dispatch]);
 
   console.log("Task Types", taskTypes);
@@ -283,29 +286,31 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
                 </div>
                 <div className="add-task-details__row">
                   <div className="add-task-details__content-row-block">
-                    <SelectComponent
-                      label={"Автомобіль"}
-                      title={"Виберіть авто"}
-                      key="truck"
-                      id="truck"
-                      name="truck"
-                      value={truck || ""}
-                      placeholder="Виберіть авто"
-                      onChange={(e) => setTruck(e.target.value)}
+                    <label className="add-task-details__form-title">Автомобіль</label>
+                    <Select
+                      value={trucksOptions.find((o) => o.value === truck) || null}
+                      onChange={(selected) => setTruck(selected?.value || "")}
                       options={trucksOptions}
+                      isSearchable
+                      isClearable
+                      placeholder="Виберіть авто"
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 13000 }) }}
                     />
                   </div>
                   <div className="add-task-details__content-row-block">
-                    <SelectComponent
-                      label={"Водій"}
-                      title={"Виберіть водія"}
-                      key="driver"
-                      id="driver"
-                      name="driver"
-                      value={driver || ""}
-                      placeholder="Виберіть водія"
-                      onChange={(e) => setDriver(e.target.value)}
+                    <label className="add-task-details__form-title">Водій</label>
+                    <Select
+                      value={driversOptions.find((o) => o.value === driver) || null}
+                      onChange={(selected) => setDriver(selected?.value || "")}
                       options={driversOptions}
+                      isSearchable
+                      isClearable
+                      placeholder="Виберіть водія"
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 13000 }) }}
                     />
                   </div>
                 </div>

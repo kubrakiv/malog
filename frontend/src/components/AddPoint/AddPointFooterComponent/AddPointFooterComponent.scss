@@ -3,36 +3,29 @@
 .add-point-details {
   &__footer {
     display: flex;
-    align-items: center;
     justify-content: flex-end;
-    gap: 0.5rem;
-    padding: 0.6rem 0.85rem 0.75rem;
-    margin-top: 0.5rem;
-    border-top: 1px solid rgba(15, 84, 92, 0.09);
+    background-color: $tableHeaderColor;
+    border-radius: 4px;
+    margin: 5px 0 0;
+    padding: 5px;
+    gap: 10px;
   }
 
   &__footer-btn {
-    padding: 0.42rem 1.1rem;
-    border-radius: 9px;
+    padding: 5px 12px;
+    color: #fff;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
     font-size: 0.84rem;
     font-weight: 600;
-    cursor: pointer;
-    transition: opacity 0.13s, transform 0.12s;
-    &:hover { transform: translateY(-1px); }
 
     &_save {
-      border: none;
-      background: linear-gradient(135deg, #0f7680 0%, #11a3b1 100%);
-      color: #fff;
-      box-shadow: 0 3px 10px rgba(15, 118, 128, 0.22);
-      &:hover { opacity: 0.9; }
+      background-color: rgba(53, 186, 60, 1);
     }
 
     &_close {
-      border: 1.5px solid rgba(15, 84, 92, 0.22);
-      background: transparent;
-      color: #4a6872;
-      &:hover { background: rgba(15, 84, 92, 0.06); border-color: rgba(15, 84, 92, 0.38); }
+      background: rgba(233, 43, 43, 1);
     }
   }
 }

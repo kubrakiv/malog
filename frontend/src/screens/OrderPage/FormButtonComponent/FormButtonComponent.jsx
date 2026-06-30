@@ -24,11 +24,14 @@ function FormButtonComponent({ onSave, onClose }) {
     dispatch(setEditModeOrder(false));
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     e.stopPropagation();
 
-    onSave();
+    // Wait for async submit handlers (e.g. ones that PUT to the API) to finish
+    // before closing the form — closing first hid save failures, since errors
+    // thrown after that point had nothing left listening for them.
+    await onSave();
     handleEditModeClose();
   };
 

@@ -1,5 +1,5 @@
 import { getPricePerKm } from "../../../utils/pricePerKm";
-import { toEUR } from "../../../utils/formatCurrency";
+import { toEUR, currencySymbol } from "../../../utils/formatCurrency";
 
 import "./PricePerKmComponent.scss";
 
@@ -53,7 +53,9 @@ const PricePerKmComponent = ({ type, price, distance, currency }) => {
       >
         <span className="order-details__priceperkm_text">
           {pricePerKm}
-          {type === "price" || type === "market-price" ? " Eur/km" : null}
+          {type === "price" || type === "market-price"
+            ? ` ${currencySymbol(currency)}/км`
+            : null}
         </span>
       </div>
     </>

@@ -1,16 +1,16 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
-import { FaTruckMoving, FaUserCog } from "react-icons/fa";
+import { FaTruckMoving, FaUserCog, FaTrailer } from "react-icons/fa";
 
 import { listTrucks } from "../../../features/trucks/trucksOperations";
-import { listDrivers } from "../../../actions/driverActions";
+import { listDrivers } from "../../../features/drivers/driversOperations";
 import { listOrderDetails } from "../../../features/orders/ordersOperations";
 import { transformSelectOptions } from "../../../utils/transformers";
 
 import SelectComponent from "../../../globalComponents/SelectComponent";
 import FormWrapper from "../../../components/FormWrapper";
-import { updateTask } from "../../../features/tasks/tasksOperations";
 import { updateOrder } from "../../../features/orders/ordersOperations";
 
 const AssignTruckAndDriverCompoonent = () => {
@@ -24,24 +24,36 @@ const AssignTruckAndDriverCompoonent = () => {
   const driverOptions = transformSelectOptions(drivers, "full_name");
   const truckOptions = transformSelectOptions(trucks, "plates");
 
+  // A truck's trailer is tracked on the Truck itself (Truck.trailer), not on
+  // the Order — so picking a truck here already carries its currently linked
+  // trailer along; this just surfaces that for visibility.
+  const linkedTrailerPlates = trucks.find((t) => t.plates === selectedTruck)
+    ?.trailer_details?.plates;
+
   useEffect(() => {
     dispatch(listTrucks());
     dispatch(listDrivers());
   }, []);
 
+  // Pre-fill the selects with the truck/driver already assigned to this order
+  // (e.g. carried over from a Sovtes tender) once the order details load.
+  useEffect(() => {
+    setSelectedTruck(order?.truck || "");
+    setSelectedDriver(order?.driver || "");
+  }, [order?.truck, order?.driver]);
+
   const handleFormSubmit = async () => {
-    console.log("Form submitted");
-    console.log("ORDER ID", order.id);
-    let dataToUpdate = {};
-    dataToUpdate = { driver: selectedDriver, truck: selectedTruck };
-    await dispatch(updateOrder({ dataToUpdate, orderId: order.id })).unwrap();
-    console.log("Order updated");
-    for (let task of order.tasks) {
-      const updatedTask = { ...task, ...dataToUpdate, order: order.number };
-      await dispatch(updateTask(updatedTask)).unwrap();
+    const dataToUpdate = { driver: selectedDriver, truck: selectedTruck };
+    try {
+      // Saving the order alone is enough — the backend propagates truck/driver
+      // down to all of the order's tasks (OrderSerializer.update()).
+      await dispatch(updateOrder({ dataToUpdate, orderId: order.id })).unwrap();
+      await dispatch(listOrderDetails(order.id));
+      toast.success("Автомобіль та водія призначено");
+    } catch (err) {
+      toast.error(err?.error || "Не вдалося призначити автомобіль та водія");
+      throw err;
     }
-    dispatch(listOrderDetails(order.id));
-    console.log("Tasks updated");
   };
 
   return (
@@ -51,10 +63,15 @@ const AssignTruckAndDriverCompoonent = () => {
         content={
           <>
             <div className="order-details__content-row-block-value">
-              <FaTruckMoving /> {"selectedTruck"}
+              <FaTruckMoving /> {selectedTruck}
             </div>
+            {linkedTrailerPlates && (
+              <div className="order-details__content-row-block-value">
+                <FaTrailer /> {linkedTrailerPlates}
+              </div>
+            )}
             <div className="order-details__content-row-block-value">
-              <FaUserCog /> {"selectedDriver"}
+              <FaUserCog /> {selectedDriver}
             </div>
           </>
         }
@@ -69,6 +86,11 @@ const AssignTruckAndDriverCompoonent = () => {
             onChange={(e) => setSelectedTruck(e.target.value)}
             options={truckOptions}
           />
+          {linkedTrailerPlates && (
+            <div className="order-details__content-row-block-value">
+              <FaTrailer /> Причеп: {linkedTrailerPlates}
+            </div>
+          )}
           <SelectComponent
             title="Select Driver"
             id="driver"

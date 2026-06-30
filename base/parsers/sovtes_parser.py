@@ -83,6 +83,35 @@ def _split_town_title(title_ru):
     return "", title_ru.strip()
 
 
+def _extract_assignment(route_data):
+    """
+    Pull the assigned truck plates + driver full name off a Sovtes singleRoute
+    payload. The accepted carrier response lives at route["response"][<id>],
+    keyed by route["routeresponse"]; fall back to the first response present
+    if that key is missing (e.g. response dict has a single entry).
+    """
+    responses = route_data.get("response")
+    if not isinstance(responses, dict) or not responses:
+        return None, None
+
+    key = route_data.get("routeresponse")
+    resp = responses.get(str(key)) if key is not None else None
+    if resp is None:
+        resp = next(iter(responses.values()), None)
+    if not isinstance(resp, dict):
+        return None, None
+
+    car = resp.get("car") or {}
+    driver = resp.get("driver") or {}
+
+    truck_plates = car.get("number") or None
+    driver_name = " ".join(
+        part for part in (driver.get("firstname"), driver.get("lastname")) if part
+    ).strip() or None
+
+    return truck_plates, driver_name
+
+
 def parse_route_json(route_data):
     """
     Parses Sovtes route JSON and returns standardized data for object creation.
@@ -107,6 +136,7 @@ def parse_route_json(route_data):
         # Extract order data
         payment_type = route_data.get("paymenttype") or {}
         cartype = route_data.get("cartype")
+        truck_plates, driver_name = _extract_assignment(route_data)
         order_data = {
             "order_number": route_data.get("periodic", "Unknown Order"),
             "price": route_data.get("budget", 0.0),
@@ -118,6 +148,9 @@ def parse_route_json(route_data):
             # defaultcurrency can be null in the API response
             "currency": (route_data.get("defaultcurrency") or "EUR").upper(),
             "vat": route_data.get("nds", False),
+            # Already-assigned vehicle on the tender, if any — see _extract_assignment
+            "truck_plates": truck_plates,
+            "driver_name": driver_name,
         }
 
         # Extract points and tasks

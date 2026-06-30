@@ -33,7 +33,7 @@ import {
 import Map from "../Map";
 import AddPointFooterComponent from "./AddPointFooterComponent/AddPointFooterComponent";
 import AddPointAutocomplete from "./AddPointAutocomplete/AddPointAutocomplete";
-import SelectComponent from "../../globalComponents/SelectComponent";
+import Select from "react-select";
 import InputComponent from "../../globalComponents/InputComponent";
 
 import "./AddPoint.scss";
@@ -184,45 +184,30 @@ const AddPoint = ({
         className="add-point-details__form"
         onSubmit={(e) => handleFormSubmit(e, editModePoint, selectedPoint)}
       >
-        <div className="point-container">
-          <div className="point-details">
-            {!editModePoint && (
-              <div className="add-point-details__content-row add-point-details__content-row__search">
-                <AddPointAutocomplete
-                  isLoaded={isLoaded}
-                  onSelect={onPlaceSelect}
-                />
-              </div>
-            )}
-
-            {googleAddress && (
-              <div className="add-point-details__content-row add-point-details__content-row__formatted-address">
-                <div className="point-details__content-row-block">
-                  {googleAddress}
-                </div>
-              </div>
-            )}
-
-            <div className="add-point-details__content">
-              <div className="add-point-details__content-block">
-                {formFields.map((item) => {
-                  const { component, id, placeholder, type, title, label } =
-                    item;
-
+        <div className="add-point-details__content">
+          {/* Left column — form fields */}
+          <div className="add-point-details__content-block">
+                {/* Single-width fields: Замовник, Назва компанії, Країна */}
+                {formFields.slice(0, 3).map((item) => {
+                  const { component, id, placeholder, type, title, label } = item;
                   return (
                     <div key={id} className="add-point-details__content-row">
                       <div className="add-point-details__content-row-block">
                         {component === "select" && (
-                          <SelectComponent
-                            id={id}
-                            name={id}
-                            title={title}
-                            label={label}
-                            options={customerOptions}
-                            value={pointFields[id]}
-                            onChange={(e) => handlePointChange(e)}
-                            widthStyle={"full-width"}
-                          />
+                          <>
+                            {label && (
+                              <label className="add-point-details__field-label">{label}</label>
+                            )}
+                            <Select
+                              value={customerOptions.find((o) => o.value === pointFields[id]) || null}
+                              onChange={(selected) =>
+                                handlePointChange({ target: { name: id, value: selected?.value || "" } })
+                              }
+                              options={customerOptions}
+                              placeholder={title}
+                              isClearable
+                            />
+                          </>
                         )}
                         {component === "input" && (
                           <InputComponent
@@ -240,9 +225,50 @@ const AddPoint = ({
                     </div>
                   );
                 })}
+
+                {/* Paired rows: [Поштовий індекс + Місто], [Вулиця + Номер будинку], [GPS широта + GPS довгота] */}
+                {[
+                  [formFields[3], formFields[4]],
+                  [formFields[5], formFields[6]],
+                  [formFields[7], formFields[8]],
+                ].map((pair, pairIdx) => (
+                  <div key={pairIdx} className="add-point-details__content-row add-point-details__content-row_pair">
+                    {pair.map((item) => (
+                      <div key={item.id} className="add-point-details__content-row-block">
+                        <InputComponent
+                          id={item.id}
+                          name={item.id}
+                          title={item.title}
+                          label={item.label}
+                          type={item.type}
+                          placeholder={item.placeholder}
+                          value={pointFields[item.id]}
+                          onChange={(e) => handlePointChange(e)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                ))}
               </div>
+
+              {/* Right column — search + map */}
               <div className="add-point-details__content-block">
-                <div className="add-point-details__content-row">
+                {!editModePoint && (
+                  <div className="add-point-details__content-row">
+                    <div className="add-point-details__content-row-block">
+                      <label className="add-point-details__field-label">Пошук адреси</label>
+                      <AddPointAutocomplete isLoaded={isLoaded} onSelect={onPlaceSelect} />
+                    </div>
+                  </div>
+                )}
+                {googleAddress && (
+                  <div className="add-point-details__content-row">
+                    <div className="add-point-details__content-row-block add-point-details__content-row-block_address">
+                      {googleAddress}
+                    </div>
+                  </div>
+                )}
+                <div className="add-point-details__content-row add-point-details__content-row_map">
                   <div className="add-point-details__content-row-block add-point-details__content-row-block-map">
                     {isLoaded ? (
                       <Map center={currentLocation || defaultCenter} />
@@ -252,13 +278,11 @@ const AddPoint = ({
                   </div>
                 </div>
               </div>
-            </div>
-            <AddPointFooterComponent
-              setShowAddPointModal={setShowAddPointModal}
-              onCloseModal={onCloseModal}
-            />
-          </div>
         </div>
+        <AddPointFooterComponent
+          setShowAddPointModal={setShowAddPointModal}
+          onCloseModal={onCloseModal}
+        />
       </form>
     </>
   );

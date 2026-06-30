@@ -24,23 +24,23 @@ import { setMapCurrentLocation } from "../../../actions/mapActions";
 import { useJsApiLoader } from "@react-google-maps/api";
 import { setMapOption } from "../../../utils/setMapOption";
 import { listTrucks } from "../../../features/trucks/trucksOperations";
-import { listDrivers } from "../../../actions/driverActions";
+import { listDrivers } from "../../../features/drivers/driversOperations";
 
 import Map from "../../Map";
 import AddTaskFooterComponent from "../AddTaskFooterComponent/AddTaskFooterComponent";
-import SelectComponent from "../../../globalComponents/SelectComponent";
+import InputComponent from "../../../globalComponents/InputComponent";
 
 import "../AddTaskComponent.scss";
 
 const { REACT_APP_API_KEY: API_KEY } = import.meta.env;
 
-function AddTaskNoOrderComponent({ onCloseModal }) {
+function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDriver = "" }) {
   const dispatch = useDispatch();
 
   const map = useSelector((state) => state.map);
   const currentLocation = useSelector((state) => state.map.currentLocation);
   const defaultCenter = useSelector((state) => state.map.defaultCenter);
-  const order = useSelector((state) => state.ordersInfo.order.data);
+  const order = useSelector((state) => state.ordersInfo.orderDetails.data);
   const task = useSelector((state) => state.ordersInfo.task.data);
   const editModeTask = useSelector(
     (state) => state.ordersInfo.task.editModeTask
@@ -57,7 +57,7 @@ function AddTaskNoOrderComponent({ onCloseModal }) {
 
   const trucksOptions = transformSelectOptions(trucks, "plates");
   const driversOptions = transformSelectOptions(drivers, "full_name");
-  const taskTypesOptions = transformSelectOptions(taskTypes, "name");
+  const taskTypesOptions = taskTypes.map((t) => ({ label: t.name_uk || t.name, value: t.name }));
 
   const [tasks, setTasks] = useState(order.tasks || []);
   const [selectedTask, setSelectedTask] = useState(task);
@@ -124,12 +124,12 @@ function AddTaskNoOrderComponent({ onCloseModal }) {
       setStartTime("");
       setEndDate("");
       setEndTime("");
-      setTruck("");
-      setDriver("");
+      setTruck(defaultTruck);
+      setDriver(defaultDriver);
       setTaskType("");
       setSelectedPoint("");
     }
-  }, [addTaskNoOrderMode]);
+  }, [addTaskNoOrderMode, defaultTruck, defaultDriver]);
 
   // Set selected point
   useEffect(() => {
@@ -247,105 +247,88 @@ function AddTaskNoOrderComponent({ onCloseModal }) {
                       onChange={(selected) => setTaskType(selected)}
                       options={taskTypesOptions}
                       placeholder="Виберіть тип завдання"
+                      isClearable
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 13000 }) }}
                     />
                   </div>
                 </div>
                 <div className="add-task-details__row">
                   <div className="add-task-details__content-row-block">
-                    <label className="add-task-details__form-title">
-                      Назва завдання
-                    </label>
-                    <input
-                      type="text"
+                    <InputComponent
+                      label="Назва завдання"
                       placeholder="Введіть назву завдання"
+                      type="text"
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
-                      className="form-field__input form-select-mb5"
                     />
                   </div>
                 </div>
 
                 <div className="add-task-details__row">
                   <div className="add-task-details__content-row-block">
-                    <label className="add-task-details__form-title">
-                      Дата початку
-                    </label>
-                    <input
-                      required
+                    <InputComponent
+                      label="Дата початку"
                       type="date"
-                      placeholder="Enter task start date"
                       value={startDate}
-                      className="form-field__input form-select-mb5"
                       onChange={(e) => setStartDate(e.target.value)}
-                    ></input>
-                  </div>
-                  <div className="add-task-details__content-row-block">
-                    <label className="add-task-details__form-title">
-                      Час початку
-                    </label>
-                    <input
                       required
+                    />
+                  </div>
+                  <div className="add-task-details__content-row-block">
+                    <InputComponent
+                      label="Час початку"
                       type="time"
-                      placeholder="Enter task start time"
                       value={startTime}
-                      className="form-field__input form-select-mb5"
                       onChange={(e) => setStartTime(e.target.value)}
-                    ></input>
+                      required
+                    />
                   </div>
                 </div>
                 <div className="add-task-details__row">
                   <div className="add-task-details__content-row-block">
-                    <label className="add-task-details__form-title">
-                      Дата завершення
-                    </label>
-                    <input
+                    <InputComponent
+                      label="Дата завершення"
                       type="date"
-                      placeholder="Enter task start date"
                       value={endDate}
-                      className="form-field__input form-select-mb5"
                       onChange={(e) => setEndDate(e.target.value)}
-                    ></input>
+                    />
                   </div>
                   <div className="add-task-details__content-row-block">
-                    <label className="add-task-details__form-title">
-                      Час завершення
-                    </label>
-                    <input
+                    <InputComponent
+                      label="Час завершення"
                       type="time"
-                      placeholder="Enter task start time"
                       value={endTime}
-                      className="form-field__input form-select-mb5"
                       onChange={(e) => setEndTime(e.target.value)}
-                    ></input>
+                    />
                   </div>
                 </div>
                 <div className="add-task-details__row">
                   <div className="add-task-details__content-row-block">
-                    <div className="add-task-details__row-block">
-                      <SelectComponent
-                        label={"Автомобіль"}
-                        title={"Виберіть авто"}
-                        key="truck"
-                        id="truck"
-                        name="truck"
-                        value={truck || ""}
-                        placeholder="Виберіть авто"
-                        onChange={(e) => setTruck(e.target.value)}
-                        options={trucksOptions}
-                      />
-                    </div>
+                    <label className="add-task-details__form-title">Автомобіль</label>
+                    <Select
+                      value={trucksOptions.find((o) => o.value === truck) || null}
+                      onChange={(selected) => setTruck(selected?.value || "")}
+                      options={trucksOptions}
+                      placeholder="Виберіть авто"
+                      isClearable
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 13000 }) }}
+                    />
                   </div>
                   <div className="add-task-details__content-row-block">
-                    <SelectComponent
-                      label={"Водій"}
-                      title={"Виберіть водія"}
-                      key="driver"
-                      id="driver"
-                      name="driver"
-                      value={driver || ""}
-                      placeholder="Виберіть водія"
-                      onChange={(e) => setDriver(e.target.value)}
+                    <label className="add-task-details__form-title">Водій</label>
+                    <Select
+                      value={driversOptions.find((o) => o.value === driver) || null}
+                      onChange={(selected) => setDriver(selected?.value || "")}
                       options={driversOptions}
+                      placeholder="Виберіть водія"
+                      isClearable
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 13000 }) }}
                     />
                   </div>
                 </div>
@@ -370,11 +353,9 @@ function AddTaskNoOrderComponent({ onCloseModal }) {
                     />
                   </div>
                 </div>
-                <div className="add-task-details__row">
-                  <div className="add-task-details__row-block">
-                    <div className="add-task-details__content-row-block add-task-details__content-row-block-map">
-                      {isLoaded ? <Map center={center} /> : <h2>Loading...</h2>}
-                    </div>
+                <div className="add-task-details__content-row add-task-details__content-row_map">
+                  <div className="add-task-details__content-row-block add-task-details__content-row-block-map">
+                    {isLoaded ? <Map center={center} /> : <h2>Loading...</h2>}
                   </div>
                 </div>
               </div>
