@@ -1,10 +1,8 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { FaUserCog } from "react-icons/fa";
-import {
-  listDrivers,
-  setDriverDetailsData,
-} from "../../../actions/driverActions";
+import { listDrivers } from "../../../features/drivers/driversOperations";
+import { setSelectedDriver } from "../../../features/drivers/driversSlice";
 import { updateOrder } from "../../../features/orders/ordersOperations";
 import { transformSelectOptions } from "../../../utils/transformers";
 
@@ -17,22 +15,20 @@ function DriverComponent() {
   const dispatch = useDispatch();
   const drivers = useSelector((state) => state.driversInfo.drivers.data);
   const order = useSelector((state) => state.ordersInfo.orderDetails.data);
-  const driverData = useSelector((state) => state.driversInfo.driver.data);
+  const driverData = useSelector((state) => state.driversInfo.selectedDriver.data);
 
-  const [selectedDriver, setSelectedDriver] = useState("");
+  const [selectedDriverName, setSelectedDriverName] = useState("");
   const driverOptions = transformSelectOptions(drivers, "full_name");
 
   useEffect(() => {
     const driver = drivers.find((driver) => driver.full_name === order.driver);
-    setSelectedDriver(driver?.full_name);
-    dispatch(setDriverDetailsData(driver));
+    setSelectedDriverName(driver?.full_name ?? "");
+    dispatch(setSelectedDriver(driver));
     dispatch(listDrivers());
   }, [order]);
 
   const handleFormSubmit = () => {
-    let dataToUpdate = {};
-    dataToUpdate = { driver: selectedDriver };
-    dispatch(updateOrder({ dataToUpdate, orderId: order.id }));
+    dispatch(updateOrder({ dataToUpdate: { driver: selectedDriverName }, orderId: order.id }));
   };
 
   return (
@@ -42,10 +38,10 @@ function DriverComponent() {
         content={
           <>
             <div className="order-details__content-row-block-value">
-              <FaUserCog /> {driverData?.full_name || selectedDriver}
+              <FaUserCog /> {order.driver_info?.full_name || driverData?.full_name || selectedDriverName}
             </div>
             <div className="order-details__content-row-block-value">
-              &#9990; {driverData?.phone_number}
+              &#9990; {order.driver_info?.phone_number || driverData?.phone_number}
             </div>
           </>
         }
@@ -56,8 +52,8 @@ function DriverComponent() {
             title="Виберіть водія"
             id="driver"
             name="driver"
-            value={selectedDriver || ""}
-            onChange={(e) => setSelectedDriver(e.target.value)}
+            value={selectedDriverName}
+            onChange={(e) => setSelectedDriverName(e.target.value)}
             autoFocus
             options={driverOptions}
           />

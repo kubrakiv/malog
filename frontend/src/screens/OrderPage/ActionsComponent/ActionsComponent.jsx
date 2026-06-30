@@ -7,7 +7,7 @@ import {
   setShowTaskModal,
 } from "../../../features/orders/ordersSlicers";
 import { listOrderDetails } from "../../../features/orders/ordersOperations";
-import { FaFileInvoiceDollar, FaTruck, FaUserAlt } from "react-icons/fa";
+import { FaFileInvoiceDollar, FaTruck, FaUserAlt, FaPlus, FaFolder } from "react-icons/fa";
 import EmailSenderComponent from "../../../components/EmailSenderComponent";
 import cn from "classnames";
 
@@ -15,7 +15,7 @@ import "./ActionsComponent.scss";
 import { transformDate } from "../../../utils/formatDate";
 import { listInvoiceDetails } from "../../../features/invoices/invoicesOperations";
 import { assignTruckAndDriver } from "../../../features/assignTruckAndDriver/assignOperations";
-import { getAllRoutes } from "../../../features/orderImport/orderImportOperations";
+import { getBookedTenderRoutes } from "../../../features/orderImport/orderImportOperations";
 import {
   DRIVER_SOVTES_CONSTANTS,
   TRAILER_SOVTES_CONSTANTS,
@@ -110,20 +110,22 @@ const ActionsComponent = () => {
         <button
           className="order-details__action-add-task-btn"
           onClick={handleAddTaskButtonClick}
+          data-tooltip="Додати завдання"
         >
-          Додати завдання
+          <FaPlus />
         </button>
         <button
           className="order-details__action-add-documents-btn"
           onClick={handleDocumentModalOpen}
+          data-tooltip="Документи"
         >
-          Документи
+          <FaFolder />
         </button>
         {!order.invoice && (
           <button
             className="order-details__action-create-invoice-btn"
             onClick={handleCreateInvoiceButtonClick}
-            title="Створити інвойс"
+            data-tooltip="Створити інвойс"
           >
             <FaFileInvoiceDollar />
           </button>

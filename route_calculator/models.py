@@ -11,6 +11,13 @@ User = get_user_model()
 
 class FuelPrices(BaseTenantModel):
     """Current fuel prices for cost calculations"""
+    # Override client to be optional — fuel prices are company-wide settings
+    client = models.ForeignKey(
+        'base.Client', null=True, blank=True,
+        on_delete=models.CASCADE,
+        help_text="Client that owns this record (optional for global settings)"
+    )
+
     diesel_price_per_liter = models.DecimalField(
         max_digits=6, 
         decimal_places=3,
@@ -69,6 +76,13 @@ class FuelPrices(BaseTenantModel):
 
 class TruckParameters(BaseTenantModel):
     """Default cost parameters for different truck types"""
+    # Override client to be optional — truck parameters are company-wide settings
+    client = models.ForeignKey(
+        'base.Client', null=True, blank=True,
+        on_delete=models.CASCADE,
+        help_text="Client that owns this record (optional for global settings)"
+    )
+
     name = models.CharField(
         max_length=100,
         verbose_name="Truck Type Name",
@@ -100,16 +114,37 @@ class TruckParameters(BaseTenantModel):
     
     # Other cost parameters per km
     tire_cost_per_km = models.DecimalField(
-        max_digits=8, 
+        max_digits=8,
         decimal_places=4,
         verbose_name="Tire Cost per km",
         help_text="Tire wear cost per kilometer in EUR"
     )
     fixed_cost_per_km = models.DecimalField(
-        max_digits=8, 
+        max_digits=8,
         decimal_places=4,
         verbose_name="Fixed Cost per km",
-        help_text="Fixed costs (insurance, maintenance, etc.) per kilometer in EUR"
+        help_text="Total fixed costs per kilometer in EUR (sum of admin + leasing + insurance)"
+    )
+    admin_cost_per_km = models.DecimalField(
+        max_digits=8,
+        decimal_places=4,
+        default=0,
+        verbose_name="Admin Cost per km",
+        help_text="Administrative costs per kilometer in EUR"
+    )
+    leasing_cost_per_km = models.DecimalField(
+        max_digits=8,
+        decimal_places=4,
+        default=0,
+        verbose_name="Leasing Cost per km",
+        help_text="Leasing/depreciation costs per kilometer in EUR"
+    )
+    insurance_cost_per_km = models.DecimalField(
+        max_digits=8,
+        decimal_places=4,
+        default=0,
+        verbose_name="Insurance Cost per km",
+        help_text="Insurance costs per kilometer in EUR"
     )
     
     is_default = models.BooleanField(

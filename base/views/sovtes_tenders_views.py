@@ -1,4 +1,6 @@
+import hashlib
 import json
+import os
 import time
 
 from django.http import HttpResponse, StreamingHttpResponse
@@ -10,7 +12,7 @@ from rest_framework_simplejwt.tokens import AccessToken
 from base.utils.api_utils import get_api_token
 import requests
 
-BASE_URL = "https://sovtes.ua/a/v2/rest/public"
+BASE_URL = os.getenv("SOVTES_BASE_URL", "https://sovtes.ua") + "/a/v2/rest/public"
 
 
 def _sovtes(method, endpoint, params=None, json=None):
@@ -25,6 +27,8 @@ def _sovtes(method, endpoint, params=None, json=None):
     if data.get("status") == "error" and data.get("message") in (
         "Token is invalid",
         "Token is required",
+        "Ваша сесія не є дійсна",
+        "Операція недоступна, для продовження роботи оновіть сторінку та авторизуйтесь",
     ):
         token = get_api_token(force_refresh=True)
         headers["Authorization"] = token
@@ -35,6 +39,8 @@ def _sovtes(method, endpoint, params=None, json=None):
 
 
 def _ok(data):
+    if data.get("status") != "success":
+        print(f"[sovtes] error response: {data}")
     return data.get("status") == "success"
 
 
@@ -70,7 +76,18 @@ def getBasicDetailsOfRoutes(request):
     data = _sovtes("get", "getBasicDetailsOfRoutes", params={"routes": routes})
     if not _ok(data):
         return Response({"error": data.get("message", "Failed to fetch route details")}, status=400)
-    return Response(data.get("data", []))
+    raw = data.get("data", [])
+    # API returns {"periodic": [card, ...], ...} — flatten to a single list of card dicts
+    if isinstance(raw, dict):
+        items = []
+        for v in raw.values():
+            if isinstance(v, list):
+                items.extend(v)
+            elif isinstance(v, dict):
+                items.append(v)
+    else:
+        items = raw if isinstance(raw, list) else []
+    return Response(items)
 
 
 @api_view(["GET", "POST"])
@@ -94,6 +111,39 @@ def getCompleteRoutes(request):
     data = _sovtes("get", "getCompleteRoutes", params={"page": page, "perPage": per_page})
     if not _ok(data):
         return Response({"error": data.get("message", "Failed to fetch completed routes")}, status=400)
+    return Response(data.get("data", {}))
+
+
+@api_view(["GET"])
+def singleRouteView(request):
+    route = request.query_params.get("route", "")
+    if not route:
+        return Response({"error": "route parameter is required"}, status=400)
+    data = _sovtes("get", "singleRoute", params={"route": route})
+    if not _ok(data):
+        return Response({"error": data.get("message", "Failed to fetch route")}, status=400)
+    return Response(data.get("data", {}).get("route", {}))
+
+
+@api_view(["GET"])
+def getTenderChildrenView(request):
+    tender_periodic = request.query_params.get("tenderPeriodic", "")
+    if not tender_periodic:
+        return Response({"error": "tenderPeriodic parameter is required"}, status=400)
+    data = _sovtes("get", "getTenderChildren", params={"tenderPeriodic": tender_periodic})
+    if not _ok(data):
+        return Response({"error": data.get("message", "Failed to fetch tender children")}, status=400)
+    return Response(data.get("data", []))
+
+
+@api_view(["GET"])
+def getRouteActionsView(request):
+    routes = request.query_params.get("routes", "")
+    if not routes:
+        return Response({"error": "routes parameter is required"}, status=400)
+    data = _sovtes("get", "getRouteActions", params={"routes": routes})
+    if not _ok(data):
+        return Response({"error": data.get("message", "Failed to fetch route actions")}, status=400)
     return Response(data.get("data", {}))
 
 
@@ -141,6 +191,58 @@ def getPricequotesView(request):
     if not _ok(data):
         return Response({"error": data.get("message", "Failed to fetch pricequotes")}, status=400)
     return Response(data.get("data", []))
+
+
+@api_view(["GET"])
+def getMyDriversView(request):
+    data = _sovtes("get", "getMyDrivers", params={"compact": 1})
+    if not _ok(data):
+        return Response({"error": data.get("message", "Failed to fetch drivers")}, status=400)
+    return Response(data.get("data", []))
+
+
+@api_view(["GET"])
+def getMyCarsView(request):
+    data = _sovtes("get", "getMyCars", params={"compact": 1})
+    if not _ok(data):
+        return Response({"error": data.get("message", "Failed to fetch cars")}, status=400)
+    return Response(data.get("data", []))
+
+
+@api_view(["GET"])
+def getMyTrailersView(request):
+    data = _sovtes("get", "getMyTrailers", params={"compact": 1})
+    if not _ok(data):
+        return Response({"error": data.get("message", "Failed to fetch trailers")}, status=400)
+    return Response(data.get("data", []))
+
+
+@api_view(["POST"])
+def offerAutoView(request):
+    data = _sovtes("post", "offerAuto", json=request.data)
+    if not _ok(data):
+        return Response({"error": data.get("message", "Failed to assign vehicle")}, status=400)
+    return Response(data.get("data", {}))
+
+
+@api_view(["POST"])
+def subscribeRouteView(request):
+    route = request.data.get("route")
+    routeparts_dates = request.data.get("routepartsDates", {})
+    routeparts_times = request.data.get("routepartsTimes", {})
+    if not route:
+        return Response({"error": "route is required"}, status=400)
+    payload = {
+        "route": route,
+        "routepartsDates": routeparts_dates,
+        "routepartsTimes": routeparts_times,
+    }
+    print(f"[confirm-route] payload={payload}")
+    data = _sovtes("post", "confirmWorkOnRoute", json=payload)
+    print(f"[confirm-route] sovtes response={data}")
+    if not _ok(data):
+        return Response({"error": data.get("message", "Failed to confirm work on route")}, status=400)
+    return Response(data.get("data", {}))
 
 
 @api_view(["POST"])
@@ -262,3 +364,66 @@ def sovtes_sse_stream(request):
     response["Cache-Control"] = "no-cache"
     response["X-Accel-Buffering"] = "no"
     return response
+
+
+# ─── Pusher ───────────────────────────────────────────────────────────────────
+
+_PUSHER_AUTH_URL = os.getenv(
+    "PUSHER_CHANNEL_AUTH_ENDPOINT",
+    "https://test.sovtes.ua/a/v2/live/auth",
+)
+
+
+@api_view(["GET"])
+def pusherConfigView(request):
+    """Return Pusher connection parameters for the frontend.
+
+    The channel is per-user (not a fixed env value): private-user-events-<sha256(user.id)>,
+    matching the naming scheme the Sovtes side expects for the logged-in user's JWT id.
+    """
+    if not request.user or not request.user.is_authenticated:
+        return Response({"error": "Authentication required"}, status=401)
+
+    user_id_hash = hashlib.sha256(str(request.user.id).encode()).hexdigest()
+    channel = f"private-user-events-{user_id_hash}"
+
+    return Response({
+        "key": os.getenv("PUSHER_KEY", ""),
+        "cluster": os.getenv("PUSHER_CLUSTER", "eu"),
+        "channel": channel,
+    })
+
+
+@csrf_exempt
+def pusherAuthView(request):
+    """Proxy Pusher private-channel auth to Sovtes' auth endpoint."""
+    if request.method != "POST":
+        return HttpResponse(status=405)
+
+    if not _validate_sse_token(request):
+        return HttpResponse("Unauthorized", status=401)
+
+    socket_id = request.POST.get("socket_id")
+    channel_name = request.POST.get("channel_name")
+
+    if not socket_id or not channel_name:
+        return HttpResponse(status=400)
+
+    token = get_api_token()
+    headers = {"Authorization": token, "Language": "en"}
+
+    resp = requests.post(
+        _PUSHER_AUTH_URL,
+        data={"socket_id": socket_id, "channel_name": channel_name},
+        headers=headers,
+    )
+
+    if resp.status_code != 200:
+        print(f"[pusher-auth] Sovtes auth failed {resp.status_code}: {resp.text!r} "
+              f"(url={_PUSHER_AUTH_URL}, channel={channel_name})")
+
+    return HttpResponse(
+        resp.content,
+        content_type=resp.headers.get("Content-Type", "application/json"),
+        status=resp.status_code,
+    )

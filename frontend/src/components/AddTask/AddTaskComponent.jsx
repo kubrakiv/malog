@@ -53,12 +53,10 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
 
   const trucksOptions = transformSelectOptions(trucks, "plates");
   const driversOptions = transformSelectOptions(drivers, "full_name");
-  // const taskTypesOptions = transformSelectOptions(taskTypes, "name");
   const taskTypesOptions = useMemo(
-    () => transformSelectOptions(taskTypes, "name"),
+    () => taskTypes.map((t) => ({ value: t.name, label: t.name_uk || t.name })),
     [taskTypes]
   );
-  console.log("Task Types Options", taskTypesOptions);
 
   const [center, setCenter] = useState({ lat: 0, lng: 0 });
 
@@ -99,7 +97,7 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
       const taskTypeOption = taskTypes.find((type) => type.name === data?.type);
       setTaskType(
         taskTypeOption
-          ? { value: taskTypeOption.name, label: taskTypeOption.name }
+          ? { value: taskTypeOption.name, label: taskTypeOption.name_uk || taskTypeOption.name }
           : {}
       );
       dispatch(setSelectedPoint(selectedOptions));

@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { FaTruck } from "react-icons/fa";
 import { getTruckLocation } from "../../../services/truckLocationService";
 import { generatePointsFromTasks } from "../../../utils/generatePointsFromTasks";
 import { buildPeriodFromOrderPoints } from "../../../services/buildPeriodFromOrderPoints";
@@ -32,6 +33,18 @@ const OrderHereMapComponent = ({ enableFactual, readOnly = false }) => {
   const showTruckOnMapModal = useSelector(selectShowTruckOnMapModal);
 
   const [ruptelaTrips, setRuptelaTrips] = useState([]);
+  const [showTruckInfo, setShowTruckInfo] = useState(false);
+
+  const remainingDistance = useSelector((state) => state.map.truckToNextTask?.distance);
+  const remainingDuration = useSelector((state) => state.map.truckToNextTask?.duration);
+
+  const pendingTask = useMemo(
+    () => tasks?.find(
+      (t) =>
+        ((t.type === LOADING || t.type === UNLOADING) && !(t.end_date && t.end_time))
+    ),
+    [JSON.stringify(tasks)]
+  );
 
   const TZ_BY_CC = useMemo(
     () => ({
@@ -429,8 +442,41 @@ const OrderHereMapComponent = ({ enableFactual, readOnly = false }) => {
     JSON.stringify(tasks),
   ]);
 
+  const distanceText =
+    Number.isFinite(Number(remainingDistance)) && pendingTask?.title
+      ? `${remainingDistance} км до «${pendingTask.title}»`
+      : remainingDistance != null ? `${remainingDistance} км` : "N/A";
+
+  const durationText = Number.isFinite(Number(remainingDuration))
+    ? `${(Number(remainingDuration) / 60).toFixed(1)} год`
+    : "N/A";
+
+  const truckOverlay = isOrderActualNow && !isOrderFinished ? (
+    <>
+      <button
+        className="map-truck-btn"
+        title="Місцезнаходження авто"
+        onClick={() => setShowTruckInfo((p) => !p)}
+      >
+        <FaTruck />
+      </button>
+      {showTruckInfo && (
+        <div className="map-truck-info">
+          <div className="map-truck-info__title">Місцезнаходження авто</div>
+          <div className="map-truck-info__row">
+            <span>Відстань:</span>
+            <span>{distanceText}</span>
+          </div>
+          <div className="map-truck-info__row">
+            <span>Час в дорозі:</span>
+            <span>{durationText}</span>
+          </div>
+        </div>
+      )}
+    </>
+  ) : null;
+
   return (
-    // <div className="order-details__content-row">
     <div
       className={cn(
         "order-details__content-row-block",
@@ -448,9 +494,9 @@ const OrderHereMapComponent = ({ enableFactual, readOnly = false }) => {
         isOrderFinished={isOrderFinished}
         isOrderActualNow={isOrderActualNow}
         ruptelaTrips={ruptelaTrips}
+        truckOverlay={truckOverlay}
       />
     </div>
-    // </div>
   );
 };
 

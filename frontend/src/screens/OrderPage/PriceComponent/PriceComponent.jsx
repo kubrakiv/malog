@@ -17,6 +17,7 @@ import ProfitComponent from "../../../components/ProfitComponent";
 import { PRICE_CONSTANTS } from "../../../constants/global";
 import { formFields } from "./priceFormFields";
 import { totalDistance } from "../../../utils/getTotalDistance";
+import { formatPrice } from "../../../utils/formatCurrency";
 
 import "./PriceComponent.scss";
 
@@ -112,10 +113,10 @@ function PriceComponent() {
               }}
               className="order-details__content-row-block-value"
             >
-              {order.price} {order.currency}{" "}
+              {formatPrice(order.price, order.currency)}
               {order.currency === "CZK" &&
-                `(${parseFloat(order.price / 25.185).toFixed(0)} EUR)`}{" "}
-              {order.vat ? "з ПДВ" : ""}
+                ` (${parseFloat(order.price / 25.185).toFixed(0)} EUR)`}
+              {order.vat ? " з ПДВ" : ""}
             </div>
             <div className="order-details__content-row-block-value">
               {order.payment_period} днів {getPaymentType(order.payment_type)}

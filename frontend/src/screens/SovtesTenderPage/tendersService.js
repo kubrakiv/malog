@@ -24,6 +24,22 @@ export const fetchCompleteRoutes = (page, perPage = 10) =>
     .get(`${BASE}/complete-routes/`, { params: { page, perPage } })
     .then((r) => r.data);
 
+export const postOfferAuto = (payload) =>
+  axios.post(`${BASE}/offer-auto/`, payload).then((r) => r.data);
+
+export const postSubscribeRoute = (payload) =>
+  axios.post(`${BASE}/subscribe-route/`, payload).then((r) => r.data);
+
+export const fetchTenderChildren = (tenderPeriodic) =>
+  axios
+    .get(`${BASE}/tender-children/`, { params: { tenderPeriodic } })
+    .then((r) => r.data);
+
+export const fetchRouteActions = (routes) =>
+  axios
+    .get(`${BASE}/route-actions/`, { params: { routes: routes.join(",") } })
+    .then((r) => r.data);
+
 export const fetchTenderSteps = (route) =>
   axios
     .get(`${BASE}/tender-steps/`, { params: { route } })

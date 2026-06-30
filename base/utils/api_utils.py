@@ -1,8 +1,9 @@
+import os
 import requests
 from base.models import APIToken
 from base.entry_data import sovtes_auth_data, sovtes_static_token
 
-BASE_URL = "https://sovtes.ua"
+BASE_URL = os.getenv("SOVTES_BASE_URL", "https://sovtes.ua")
 
 def get_api_token(force_refresh=False):
     """

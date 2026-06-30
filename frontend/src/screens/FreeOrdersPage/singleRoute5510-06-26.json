@@ -1,0 +1,687 @@
+{
+  "status": "success",
+  "data": {
+    "route": {
+      "context": {
+        "title": null,
+        "iconTitle": null
+      },
+      "periodic": "5510-06-26",
+      "id": 1304485,
+      "tenderparent": "4984-06-26",
+      "distance": 402.3,
+      "budget": 14800,
+      "budgetcomment": "14800 грн Безготівковій розрахунок з ПДВ740 грн за тонну36.79 грн за км",
+      "kmprice": 36.79,
+      "step1tenderparent": "",
+      "step2": [],
+      "tonnprice": 740,
+      "mcubeprice": 0,
+      "paymenttype": {
+        "id": 2,
+        "title": "Безготівковій розрахунок"
+      },
+      "pricefor": "ride",
+      "payorcompany": {
+        "id": 678706,
+        "title": "ПТК ТОВ АГРОМАТ",
+        "natcomid": "21509937"
+      },
+      "cartype": ["Тент"],
+      "ferryproperty": [],
+      "chargetype": ["Верхня"],
+      "defaultcurrency": null,
+      "totalweight": 20,
+      "routestatus": 6,
+      "companydata": {
+        "title_ru": "ПТК ТОВ АГРОМАТ",
+        "natcomid": "21509937",
+        "payment_terms": null
+      },
+      "clientdata": {
+        "hash": "b0e411e6032a93bee5acfaff26173699"
+      },
+      "userclientdata": {
+        "name": "Іван Кубрак",
+        "email": "kubrak.i@agromat.ua",
+        "cellnum": "+380674434316"
+      },
+      "useroperatordata": {
+        "name": "Іван Кубрак",
+        "email": "kubrak.i@agromat.ua",
+        "cellnum": "+380674434316"
+      },
+      "routeresponse": 1591097,
+      "response": {
+        "1591097": {
+          "id": 1591097,
+          "route": 1304485,
+          "operator": 6774,
+          "user": 10228,
+          "driver": {
+            "id": 134582,
+            "lastname": "Bereziuk",
+            "firstname": "Serhii",
+            "patronymic": "",
+            "maincellphone": "+380632064241",
+            "passportserial": "",
+            "driverlicenseserial": "EM",
+            "driverlicenseissued": "2018-07-13",
+            "inblacklist": null,
+            "driverlicensenumber": "393970",
+            "driverlicenseissuedby": "831106/1946",
+            "car": 152847,
+            "taxid": "",
+            "demographicid": null,
+            "remark": "",
+            "complaints": []
+          },
+          "driver2": null,
+          "car": {
+            "id": 71221,
+            "number": "3SR1953",
+            "make": {
+              "id": 45,
+              "title_ru": "Scania"
+            },
+            "cartype": 35,
+            "loadcapacity": "0.000",
+            "length": 0,
+            "volume": 0,
+            "remark": "",
+            "carstyle": "forcesplitcarstyle",
+            "cellnum": "+380672156225",
+            "vin": "YS2R4X20005474396",
+            "width": 0,
+            "height": 0,
+            "insuredTil": "0000-00-00",
+            "weight": 0,
+            "total_weight": "0.000",
+            "axes": 0,
+            "model": "R450",
+            "vehicleclass": {
+              "id": 8,
+              "client": 6774,
+              "title_ru": "Delta",
+              "operator": 8873
+            },
+            "trailer": "68029",
+            "actual_provider_natcomid": null,
+            "actual_provider_title": null,
+            "body_type": null,
+            "body_type_unique_id": null,
+            "year_of_manufact": 0,
+            "latit": "45.275973300000000",
+            "longit": "10.945538300000000",
+            "chargetype": [],
+            "connectionState": {
+              "isAvailable": false,
+              "isGps": false,
+              "lastGpsMomentAsked": "2024-10-21 12:26:42",
+              "lastGpsMoment": null,
+              "isAndroid": false,
+              "isTelegram": false
+            }
+          },
+          "trailer": {
+            "id": "68029",
+            "number": "4SA5875",
+            "loadcapacity": "22.000",
+            "length": "13.310",
+            "volume": "87.000",
+            "width": "2.470",
+            "axes": "0",
+            "model": "PROFLINER",
+            "make": "KRONE",
+            "total_weight": "0.000",
+            "weight": "0.000",
+            "height": "2.650",
+            "body_type": null,
+            "body_type_unique_id": null,
+            "year_of_manufact": 2017,
+            "insuredTil": "0000-00-00",
+            "cartype": "1",
+            "chargetype": [
+              {
+                "id": 2,
+                "title": "Бічна"
+              },
+              {
+                "id": 1,
+                "title": "Верхня"
+              },
+              {
+                "id": 3,
+                "title": "Задня"
+              }
+            ]
+          },
+          "pricequote": 0,
+          "loadquote": null,
+          "pricequoteavailableuntil": "",
+          "status": "",
+          "remark": "",
+          "selected": "0",
+          "paymenttype": null,
+          "checkedtender": "0",
+          "moment": "2026-06-26 17:45:50",
+          "pricequoteavailableuntilmoment": "0000-00-00 00:00:00",
+          "pricequotewing": null,
+          "companytitle": null,
+          "companytitlewing": null,
+          "pricequotewithcommission": null,
+          "orderlist": null,
+          "cancelled": "0",
+          "operatorsupervisorid": null,
+          "operatorispartnerwithclient": "0",
+          "vat": "0.00",
+          "nullified": "0",
+          "classic_price_strategy": "0",
+          "routepartsdates": {
+            "115724352": {
+              "date": "2026-06-25",
+              "time": "00:00:00",
+              "dateUserTimezone": "2026-06-25",
+              "timeUserTimezone": "00:00:00"
+            },
+            "115724353": {
+              "date": "2026-06-29",
+              "time": "00:00:00",
+              "dateUserTimezone": "2026-06-29",
+              "timeUserTimezone": "00:00:00"
+            }
+          },
+          "isMine": true
+        }
+      },
+      "unitPrices": [
+        {
+          "value": "740.00",
+          "title": "грн/тонна"
+        },
+        {
+          "value": "0.00",
+          "title": "грн/мкуб"
+        },
+        {
+          "value": "36.790000",
+          "title": "грн/км"
+        },
+        {
+          "value": 59.207766,
+          "title": "грн/мілю"
+        },
+        {
+          "value": "0.00",
+          "title": "грн/декалітри"
+        },
+        {
+          "value": "0.00",
+          "title": "грн/палети"
+        }
+      ],
+      "booktime": 10,
+      "bookedsince": "0000-00-00 00:00:00",
+      "bookedtill": "0000-00-00 00:00:00",
+      "bookedbyme": false,
+      "istender": false,
+      "maxquotewithcommission": 0,
+      "maxquote": 0,
+      "currentMinQuote": 0,
+      "newMessages": 0,
+      "allMessages": 0,
+      "remark": "",
+      "nds": true,
+      "autosubscribe": false,
+      "blindtender": false,
+      "freeforall": false,
+      "complete": false,
+      "deleted": false,
+      "datedelete": "0000-00-00 00:00:00",
+      "deleter": "",
+      "deleterid": null,
+      "operatordata": {
+        "title_ru": "ПТК ТОВ АГРОМАТ",
+        "natcomid": "21509937",
+        "hash": "b8271f32fb2755eac0113d84b3c7e77b",
+        "contract_number": "-",
+        "contract_date": "2019-06-01"
+      },
+      "clientSettings": {
+        "allowunchargeoperatorconfirm": "1",
+        "forcestepquotes": "1",
+        "forcemaxquote": "1",
+        "twoStepTenders": "0",
+        "allowOperatorIndicateRoutepartOrder": "0",
+        "showLoadSummary": "0",
+        "detailedLoadInfo": "0",
+        "warehouserForceLoadingArrival": "0",
+        "forceOperatorUnloadConfirm": "0",
+        "forceBorderInput": "0",
+        "routeresponseLimitHours": "0",
+        "allowRemarkPricequote": "1"
+      },
+      "hasPendingChangesFromOtherSide": false,
+      "hasPendingChangesFromMe": false,
+      "adjustment": [],
+      "usermark": {
+        "userLevel": null,
+        "clientLevel": null
+      },
+      "routeparts": [
+        {
+          "id": 115724352,
+          "workaction": 1,
+          "workaction_data": {
+            "id": "1",
+            "title_ru": "Загрузка",
+            "title_ru_rod_case": "загрузки",
+            "title_ua": "Завантаження",
+            "title_ua_rod_case": "завантаження",
+            "doer_ru": "Грузоотправитель",
+            "title_ru_accus_case": "загрузку",
+            "instance_accus_case": "пункт загрузки",
+            "classic": "1",
+            "title": "charge"
+          },
+          "checkpoint": {
+            "id": "46831",
+            "company": {
+              "id": "836388",
+              "title_ru": "Керамхол",
+              "title_full_ru": "",
+              "title_technical": null,
+              "othercontactinfo": "",
+              "country": "215",
+              "ownership": "",
+              "legaladdress": "",
+              "factaddress": "",
+              "bankaccount": "",
+              "ifoid": "",
+              "natcomid": "Агромат",
+              "taxid": "",
+              "vatid": "",
+              "telnum": "",
+              "faxnum": "",
+              "email": "",
+              "website": "",
+              "bankname": "",
+              "korraccount": "",
+              "signer": "",
+              "director": "",
+              "actsonbaseof": "",
+              "directorfirstname": "",
+              "directorpatronymic": "",
+              "cardnum": "",
+              "cardholdername": "",
+              "cardholdercode": "",
+              "signer_case": "",
+              "director_case": "",
+              "apikeyNP": "",
+              "logisticsratified": "0",
+              "logisticsratifiedbyuser": "0",
+              "logisticsratifiedmoment": "0000-00-00 00:00:00",
+              "swift": null,
+              "registryvalidated": null,
+              "gln": "",
+              "zip": null,
+              "region": "",
+              "region2": null,
+              "town": null,
+              "town2": null,
+              "street": null,
+              "street2": null,
+              "directortaxid": null,
+              "actsonbaseofdate": null,
+              "title_technical_short": null,
+              "zip2": null,
+              "foundedyear": null,
+              "state_register": "0",
+              "state_register_response_raw": null,
+              "state_register_updated": null,
+              "payment_terms": null
+            },
+            "address": "Полярна, 12",
+            "remark": "",
+            "town": {
+              "id": "2414272",
+              "title_ru": "04107 Київ",
+              "region": {
+                "id": "9",
+                "title_ru": "Київська область",
+                "country": "215",
+                "timezone": "",
+                "title_ua": "Київська область"
+              },
+              "country": {
+                "id": "215",
+                "title_ru": "Україна",
+                "title_full_ru": "№",
+                "title_en": "Ukraine",
+                "domainname": "UA",
+                "iso_code": "UKR",
+                "iso_num": "804",
+                "continent": "Европа",
+                "subcontinent": "Восточная Европа",
+                "currency": "грн",
+                "currencycode": "uah",
+                "webdomain": "sovtes.ua",
+                "timezone": "+3",
+                "title_alphabeta": "Україна",
+                "vat": "20",
+                "title_ua": "Україна"
+              },
+              "district": "м. Київ",
+              "latit": "50.4490980000",
+              "longit": "30.4998392000",
+              "borderswith": null,
+              "googleplaceid": "ChIJhaoODdvN1EARQutyC0PHRY8",
+              "title_ua": "",
+              "nationalid": null,
+              "nationaltitle": null,
+              "nationalid2": null
+            },
+            "start-workinghours": "",
+            "end-workinghours": "",
+            "customs": "0",
+            "zip": null,
+            "apicode": "",
+            "json": "0",
+            "latit": "50.516774600000000",
+            "longit": "30.476224300000000",
+            "googleplaceid": "ChIJhaoODdvN1EARQutyC0PHRY8",
+            "townstring": "",
+            "duration": "120",
+            "badcoords": "0",
+            "radius_km": "0.5",
+            "service": "0",
+            "classic": "1",
+            "client": "6719",
+            "harbor": null,
+            "technote": null,
+            "gln": null,
+            "warehouse_company": null
+          },
+          "slot": 4,
+          "slot_text": "notindicated",
+          "date1": "2026-06-25",
+          "date2": "0000-00-00",
+          "time1": "00:00:00",
+          "time2": "00:00:00",
+          "origdate1": "2026-06-25",
+          "cargo": "тнп",
+          "chargeparams": null,
+          "dimensions": [
+            {
+              "value": 20,
+              "dimension": "Вага",
+              "measureunit": "т",
+              "title": "т Вага"
+            },
+            {
+              "value": 0,
+              "dimension": "об'єм",
+              "measureunit": "м<sup>3</sup>",
+              "title": "м<sup>3</sup> об'єм"
+            },
+            {
+              "value": 0,
+              "dimension": "довжина",
+              "measureunit": "м",
+              "title": "м довжина"
+            },
+            {
+              "value": 0,
+              "dimension": "ширина",
+              "measureunit": "м",
+              "title": "м ширина"
+            },
+            {
+              "value": 0,
+              "dimension": "висота",
+              "measureunit": "м",
+              "title": "м висота"
+            },
+            {
+              "value": 0,
+              "dimension": "декалітри",
+              "measureunit": "",
+              "title": " декалітри"
+            },
+            {
+              "value": 0,
+              "dimension": "палетомісця",
+              "measureunit": "",
+              "title": " палетомісця"
+            }
+          ],
+          "complete": false,
+          "triggered": false,
+          "bordercrossforoperator": false,
+          "checkpointcontacts": {
+            "id": 47376,
+            "contactperson": "0978081833",
+            "cellnum": "",
+            "email": "",
+            "remark": ""
+          },
+          "plannedarrivaldate": "2026-06-25",
+          "plannedarrivaltime": "00:00:00",
+          "factarrivaldate": "0000-00-00",
+          "factarrivaltime": "00:00:00",
+          "workstartdate": "0000-00-00",
+          "workstarttime": "00:00:00",
+          "workcompletedate": "0000-00-00",
+          "workcompletetime": "00:00:00",
+          "suggestedOrder": null
+        },
+        {
+          "id": 115724353,
+          "workaction": 2,
+          "workaction_data": {
+            "id": "2",
+            "title_ru": "Разгрузка",
+            "title_ru_rod_case": "разгрузки",
+            "title_ua": "Розвантаження",
+            "title_ua_rod_case": "розвантаження",
+            "doer_ru": "Грузополучатель",
+            "title_ru_accus_case": "разгрузку",
+            "instance_accus_case": "пункт разгрузки",
+            "classic": "1",
+            "title": "uncharge"
+          },
+          "checkpoint": {
+            "id": "44459",
+            "company": {
+              "id": "828933",
+              "title_ru": "Давлекс",
+              "title_full_ru": "",
+              "title_technical": null,
+              "othercontactinfo": "",
+              "country": "215",
+              "ownership": "",
+              "legaladdress": "",
+              "factaddress": "",
+              "bankaccount": "",
+              "ifoid": "",
+              "natcomid": "",
+              "taxid": "",
+              "vatid": "",
+              "telnum": "",
+              "faxnum": "",
+              "email": "",
+              "website": "",
+              "bankname": "",
+              "korraccount": "",
+              "signer": "",
+              "director": "",
+              "actsonbaseof": "",
+              "directorfirstname": "",
+              "directorpatronymic": "",
+              "cardnum": "",
+              "cardholdername": "",
+              "cardholdercode": "",
+              "signer_case": "",
+              "director_case": "",
+              "apikeyNP": "",
+              "logisticsratified": "0",
+              "logisticsratifiedbyuser": "0",
+              "logisticsratifiedmoment": "0000-00-00 00:00:00",
+              "swift": null,
+              "registryvalidated": null,
+              "gln": "",
+              "zip": null,
+              "region": "",
+              "region2": null,
+              "town": null,
+              "town2": null,
+              "street": null,
+              "street2": null,
+              "directortaxid": null,
+              "actsonbaseofdate": null,
+              "title_technical_short": null,
+              "zip2": null,
+              "foundedyear": null,
+              "state_register": "0",
+              "state_register_response_raw": null,
+              "state_register_updated": null,
+              "payment_terms": null
+            },
+            "address": "Струмовка,",
+            "remark": "",
+            "town": {
+              "id": "2413491",
+              "title_ru": "45603 Струмівка",
+              "region": {
+                "id": "2",
+                "title_ru": "Волинська область",
+                "country": "215",
+                "timezone": "",
+                "title_ua": "Волинська область"
+              },
+              "country": {
+                "id": "215",
+                "title_ru": "Україна",
+                "title_full_ru": "№",
+                "title_en": "Ukraine",
+                "domainname": "UA",
+                "iso_code": "UKR",
+                "iso_num": "804",
+                "continent": "Европа",
+                "subcontinent": "Восточная Европа",
+                "currency": "грн",
+                "currencycode": "uah",
+                "webdomain": "sovtes.ua",
+                "timezone": "+3",
+                "title_alphabeta": "Україна",
+                "vat": "20",
+                "title_ua": "Україна"
+              },
+              "district": "Луцький район",
+              "latit": "50.7425703000",
+              "longit": "25.4307075000",
+              "borderswith": null,
+              "googleplaceid": "ChIJZawJjWSQJUcRCcbQI8Dudj4",
+              "title_ua": "",
+              "nationalid": null,
+              "nationaltitle": null,
+              "nationalid2": null
+            },
+            "start-workinghours": "",
+            "end-workinghours": "",
+            "customs": "0",
+            "zip": null,
+            "apicode": "",
+            "json": "0",
+            "latit": "50.742570300000000",
+            "longit": "25.430707500000000",
+            "googleplaceid": "ChIJZawJjWSQJUcRCcbQI8Dudj4",
+            "townstring": "",
+            "duration": "120",
+            "badcoords": "0",
+            "radius_km": "0.5",
+            "service": "0",
+            "classic": "1",
+            "client": "6719",
+            "harbor": null,
+            "technote": null,
+            "gln": null,
+            "warehouse_company": null
+          },
+          "slot": 4,
+          "slot_text": "notindicated",
+          "date1": "2026-06-29",
+          "date2": "0000-00-00",
+          "time1": "00:00:00",
+          "time2": "00:00:00",
+          "origdate1": "2026-06-29",
+          "cargo": null,
+          "chargeparams": null,
+          "dimensions": [
+            {
+              "value": 20,
+              "dimension": "Вага",
+              "measureunit": "т",
+              "title": "т Вага"
+            },
+            {
+              "value": 0,
+              "dimension": "об'єм",
+              "measureunit": "м<sup>3</sup>",
+              "title": "м<sup>3</sup> об'єм"
+            },
+            {
+              "value": 0,
+              "dimension": "довжина",
+              "measureunit": "м",
+              "title": "м довжина"
+            },
+            {
+              "value": 0,
+              "dimension": "ширина",
+              "measureunit": "м",
+              "title": "м ширина"
+            },
+            {
+              "value": 0,
+              "dimension": "висота",
+              "measureunit": "м",
+              "title": "м висота"
+            },
+            {
+              "value": 0,
+              "dimension": "декалітри",
+              "measureunit": "",
+              "title": " декалітри"
+            },
+            {
+              "value": 0,
+              "dimension": "палетомісця",
+              "measureunit": "",
+              "title": " палетомісця"
+            }
+          ],
+          "complete": false,
+          "triggered": false,
+          "bordercrossforoperator": false,
+          "checkpointcontacts": {
+            "id": 44721,
+            "contactperson": "Алена",
+            "cellnum": "",
+            "email": "",
+            "remark": ""
+          },
+          "plannedarrivaldate": "0000-00-00",
+          "plannedarrivaltime": "00:00:00",
+          "factarrivaldate": "0000-00-00",
+          "factarrivaltime": "00:00:00",
+          "workstartdate": "0000-00-00",
+          "workstarttime": "00:00:00",
+          "workcompletedate": "0000-00-00",
+          "workcompletetime": "00:00:00",
+          "suggestedOrder": null
+        }
+      ]
+    }
+  }
+}

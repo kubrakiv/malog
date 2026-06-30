@@ -27,6 +27,8 @@ from .models import (
     TruckUnit,
     TruckUnitAssignment,
     DriverUnitAssignment,
+    CostCenter,
+    RouteCategory,
 )
 from user.models import (
     DriverProfile,
@@ -367,6 +369,7 @@ class TaskSerializer(serializers.ModelSerializer):
     )
     driver = serializers.CharField(source="driver.full_name", required=False, allow_null=True)
     type = serializers.CharField(source="type.name", required=False, allow_null=True)
+    type_uk = serializers.CharField(source="type.name_uk", required=False, allow_null=True)
     order = serializers.CharField(
         source="order.number", allow_null=True, required=False
     )
@@ -388,6 +391,7 @@ class TaskSerializer(serializers.ModelSerializer):
             "driver",
             "truck",
             "type",
+            "type_uk",
             "order",
             "order_number",
             "customer",
@@ -575,6 +579,12 @@ class OrderStatusHistorySerializer(serializers.ModelSerializer):
         fields = ['status', 'started_at', 'ended_at', 'is_active']
 
 
+class RouteCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RouteCategory
+        fields = ["id", "ukr", "eng", "is_active", "created_at"]
+
+
 class OrderSerializer(serializers.ModelSerializer):
     # vat = serializers.CharField(allow_blank=True, required=False)
     vat = serializers.BooleanField()  # Ensure it accepts boolean values
@@ -599,6 +609,13 @@ class OrderSerializer(serializers.ModelSerializer):
     customer_manager = serializers.CharField(
         source="customer_manager.full_name", required=False, allow_null=True
     )
+    # `all_objects` (unfiltered) is used here because the tenant-scoped manager's
+    # queryset would otherwise be pinned to whatever client (or none) was active
+    # at module import time. Tenant ownership is enforced in validate_category().
+    category = serializers.PrimaryKeyRelatedField(
+        queryset=RouteCategory.all_objects.all(), required=False, allow_null=True
+    )
+    category_info = RouteCategorySerializer(source="category", many=False, read_only=True)
 
 
     loading_address = serializers.SerializerMethodField()
@@ -664,7 +681,11 @@ class OrderSerializer(serializers.ModelSerializer):
             "tasks",
             "current_status",
             "status_history",
+            "category",
+            "category_info",
             "notice",
+            "cost_snapshot",
+            "cost_snapshot_at",
             "created_at",
         ]
 
@@ -674,6 +695,14 @@ class OrderSerializer(serializers.ModelSerializer):
             return self.context['request'].user.client
         except (KeyError, AttributeError):
             return None
+
+    def validate_category(self, value):
+        if value is None:
+            return value
+        client = self._get_client()
+        if client and value.client_id != client.id:
+            raise serializers.ValidationError("Invalid category.")
+        return value
 
     def get_current_status(self, obj):
         # Filter for the active status
@@ -803,6 +832,7 @@ class OrderSerializer(serializers.ModelSerializer):
         )
         instance.notice = validated_data.get("notice", instance.notice)
         instance.route = validated_data.get("route", instance.route)
+        instance.category = validated_data.get("category", instance.category)
 
         if driver_data:
             client = self._get_client()
@@ -844,25 +874,26 @@ class OrderSerializer(serializers.ModelSerializer):
         if platform_data:
             platform_instance, _ = Platform.objects.get_or_create(
                 name=platform_data["name"],
-                defaults={'client': self._get_client()}
             )
             instance.platform = platform_instance
 
-        if payment_type_data:
+        if payment_type_data and payment_type_data.get("name"):
             payment_type_instance, _ = PaymentType.objects.get_or_create(
                 name=payment_type_data["name"],
-                defaults={'client': self._get_client()}
             )
             instance.payment_type = payment_type_instance
 
-        if currency_data:
+        if currency_data and currency_data.get("short_name"):
             currency_instance, _ = Currency.objects.get_or_create(
                 short_name=currency_data["short_name"],
-                defaults={'client': self._get_client()}
             )
             instance.currency = currency_instance
 
         instance.save()
+
+        # Propagate truck and driver down to all tasks of this order
+        instance.tasks.update(truck=instance.truck, driver=instance.driver)
+
         return instance
 
 
@@ -871,3 +902,12 @@ class CurrencySerializer(serializers.ModelSerializer):
     class Meta:
         model = Currency
         fields = "__all__"
+
+
+class CostCenterSerializer(serializers.ModelSerializer):
+    truck_unit_name = serializers.CharField(source="truck_unit.name", read_only=True, allow_null=True)
+
+    class Meta:
+        model = CostCenter
+        fields = ["id", "name", "truck_unit", "truck_unit_name", "monthly_amount", "currency", "is_active", "created_at"]
+

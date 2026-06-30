@@ -29,13 +29,28 @@ function StartScreen() {
 
   const { subscription, loading, hasFeatureAccess } = useSubscription();
 
+  const moduleFeatureMap = {
+    "Управління автопарком": "Fleet Management",
+    "Панель керування": "Dashboard",
+    "Управління замовленнями": "Orders Management",
+    "Управління завданнями": "Tasks Management",
+    "Планувальник маршрутів": "Route Planner",
+    "Інтерактивна карта": "Live Map",
+    "Управління водіями": "Driver Management",
+    "Управління клієнтами": "Customer Management",
+    "Виставлення рахунків": "Invoicing",
+    "Управління точками": "Points Management",
+    "Калькулятор маршрутів": "Route Calculator",
+    "Системне адміністрування": "System Administration",
+  };
+
   const systemModules = [
     {
       icon: <FaTruck />,
       title: "Управління автопарком",
       description:
         "Управління вантажівками, причепами та технічним обслуговуванням",
-      path: "/vehicles",
+      path: "/fleet",
       roles: ["client_admin", "logist"],
       color: "#6f42c1",
     },
@@ -150,22 +165,7 @@ function StartScreen() {
       if (!subscription) return false;
 
       // Map module titles to subscription feature names
-      const featureMap = {
-        "Управління автопарком": "Fleet Management",
-        "Панель керування": "Dashboard",
-        "Управління замовленнями": "Orders Management",
-        "Управління завданнями": "Tasks Management",
-        "Планувальник маршрутів": "Route Planner",
-        "Інтерактивна карта": "Live Map",
-        "Управління водіями": "Driver Management",
-        "Управління клієнтами": "Customer Management",
-        "Виставлення рахунків": "Invoicing",
-        "Управління точками": "Points Management",
-        "Калькулятор маршрутів": "Route Calculator",
-        "Системне адміністрування": "System Administration",
-      };
-
-      const featureName = featureMap[module.title];
+      const featureName = moduleFeatureMap[module.title];
       const hasModuleFeatureAccess = hasFeatureAccess(featureName);
 
       return hasRoleAccess && hasModuleFeatureAccess;
@@ -173,23 +173,8 @@ function StartScreen() {
   };
 
   const handleModuleClick = (path, module) => {
-    // Check if module is available in subscription
-    const featureMap = {
-      "Fleet Management": "Fleet Management",
-      Dashboard: "Dashboard",
-      "Orders Management": "Orders Management",
-      "Tasks Management": "Tasks Management",
-      "Route Planner": "Route Planner",
-      "Live Map": "Live Map",
-      "Driver Management": "Driver Management",
-      "Customer Management": "Customer Management",
-      Invoicing: "Invoicing",
-      "Points Management": "Points Management",
-      "Route Calculator": "Route Calculator",
-      "System Administration": "System Administration",
-    };
-
-    const featureName = featureMap[module.title];
+    // Check if module is available in subscription.
+    const featureName = moduleFeatureMap[module.title];
     const hasModuleAccess = hasFeatureAccess(featureName);
 
     if (!hasModuleAccess) {
@@ -202,7 +187,7 @@ function StartScreen() {
 
   const availableModules = getAvailableModules();
   const allModules = systemModules.filter((module) =>
-    module.roles.includes(userInfo?.role || "")
+    module.roles.includes(userInfo?.role || ""),
   );
 
   if (loading) {
@@ -220,22 +205,7 @@ function StartScreen() {
     <div className="start-screen-container">
       <div className="modules-grid">
         {allModules.map((module, index) => {
-          const featureMap = {
-            "Управління автопарком": "Fleet Management",
-            "Панель керування": "Dashboard",
-            "Управління замовленнями": "Orders Management",
-            "Управління завданнями": "Tasks Management",
-            "Планувальник маршрутів": "Route Planner",
-            "Інтерактивна карта": "Live Map",
-            "Управління водіями": "Driver Management",
-            "Управління клієнтами": "Customer Management",
-            "Виставлення рахунків": "Invoicing",
-            "Управління точками": "Points Management",
-            "Калькулятор маршрутів": "Route Calculator",
-            "Системне адміністрування": "System Administration",
-          };
-
-          const featureName = featureMap[module.title];
+          const featureName = moduleFeatureMap[module.title];
           const hasModuleAccess = hasFeatureAccess(featureName);
           const isLocked = !hasModuleAccess;
 

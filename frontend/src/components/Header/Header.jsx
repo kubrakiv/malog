@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaUser, FaCrown, FaLock, FaChevronDown } from "react-icons/fa";
 import { logout } from "../../actions/userActions";
 import { searchOrderByNumber } from "../../features/orders/ordersOperations";
+import { fetchCompany } from "../../features/company/companyOperations";
 import { useSubscription } from "../../hooks/useSubscription";
 import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 
@@ -25,7 +26,15 @@ function Header() {
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
 
+  const company = useSelector((state) => state.companyInfo.company);
+
   const { subscription, loading: subscriptionLoading } = useSubscription();
+
+  useEffect(() => {
+    if (userInfo) {
+      dispatch(fetchCompany());
+    }
+  }, [dispatch, userInfo]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -62,7 +71,7 @@ function Header() {
       ).unwrap();
       console.log("Result", resultAction);
       const order = resultAction;
-      navigate(`/orders/${order.id}`);
+      navigate(`/orders/${order.number || order.id}`);
       setOrderNumber("");
     } catch {
       alert("Something went wrong");
@@ -77,7 +86,7 @@ function Header() {
         </div>
         <div className="header-navbar__title">
           <Link to="/planner" className="logo-link">
-            <span className="logo-text">TMS SOVTES</span>
+            <span className="logo-text">TMS {company?.name || "SOVTES"}</span>
             <span className="logo-hover-effect"></span>
           </Link>
         </div>

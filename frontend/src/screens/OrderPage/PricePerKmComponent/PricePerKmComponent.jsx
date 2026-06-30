@@ -1,8 +1,10 @@
 import { getPricePerKm } from "../../../utils/pricePerKm";
+import { toEUR } from "../../../utils/formatCurrency";
 
 import "./PricePerKmComponent.scss";
 
-const { REACT_APP_COMPANY_CURRENCY: COMPANY_CURRENCY } = import.meta.env;
+// Color thresholds are calibrated in EUR/km
+const EUR_THRESHOLDS = { red: 1, blue: 1.2, yellow: 1.3 };
 
 const PricePerKmComponent = ({ type, price, distance, currency }) => {
   let pricePerKm = 0;
@@ -10,48 +12,34 @@ const PricePerKmComponent = ({ type, price, distance, currency }) => {
   switch (type) {
     case "price":
     case "table":
-      pricePerKm = getPricePerKm(
-        parseInt(price),
-        distance,
-        currency,
-        COMPANY_CURRENCY
-      );
-
-      break;
     case "market-price":
-      pricePerKm = getPricePerKm(
-        parseInt(price),
-        distance,
-        currency,
-        COMPANY_CURRENCY
-      );
+      pricePerKm = getPricePerKm(parseFloat(price), distance);
       break;
     default:
       break;
   }
 
+  // Convert to EUR only for color grading
+  const pricePerKmEUR = currency === "EUR"
+    ? parseFloat(pricePerKm)
+    : toEUR(parseFloat(price) || 0, currency) / (distance || 1);
+
+  const isEurComparable = !!currency; // always grade if we have a currency
+
   const getBackgroundColor = () => {
-    if (pricePerKm < 1) {
-      return "#FF0000"; // red
-    } else if (pricePerKm >= 1 && pricePerKm < 1.1999) {
-      return "blue"; // blue
-    } else if (pricePerKm >= 1.2 && pricePerKm < 1.2999) {
-      return "rgb(234, 230, 15)"; // yellow
-    } else if (pricePerKm >= 1.3) {
-      return "green"; // green
-    }
+    const v = pricePerKmEUR;
+    if (v < EUR_THRESHOLDS.red) return "#FF0000";
+    if (v < EUR_THRESHOLDS.blue) return "blue";
+    if (v < EUR_THRESHOLDS.yellow) return "rgb(234, 230, 15)";
+    return "green";
   };
 
   const getTextColor = () => {
-    if (pricePerKm < 1) {
-      return "white"; // red
-    } else if (pricePerKm >= 1 && pricePerKm < 1.1999) {
-      return "white"; // orange
-    } else if (pricePerKm >= 1.2 && pricePerKm < 1.2999) {
-      return "black"; // yellow
-    } else if (pricePerKm >= 1.3) {
-      return "white"; // green
-    }
+    const v = pricePerKmEUR;
+    if (v < EUR_THRESHOLDS.red) return "white";
+    if (v < EUR_THRESHOLDS.blue) return "white";
+    if (v < EUR_THRESHOLDS.yellow) return "black";
+    return "white";
   };
 
   return (
@@ -65,11 +53,7 @@ const PricePerKmComponent = ({ type, price, distance, currency }) => {
       >
         <span className="order-details__priceperkm_text">
           {pricePerKm}
-          {type === "price" || type === "market-price"
-            ? " Eur/km"
-            : type === "table"
-            ? ""
-            : null}
+          {type === "price" || type === "market-price" ? " Eur/km" : null}
         </span>
       </div>
     </>

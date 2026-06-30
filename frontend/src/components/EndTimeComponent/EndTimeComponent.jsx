@@ -23,6 +23,21 @@ const EndTimeComponent = () => {
     setEndTime(selectedTask?.end_time);
   }, [selectedTask]);
 
+  const getTaskTypeLabel = (task) => {
+    if (task?.type_uk) {
+      return task.type_uk.toLowerCase();
+    }
+
+    const typeMap = {
+      Loading: "завантаження",
+      Unloading: "розвантаження",
+    };
+
+    return (typeMap[task?.type] || "завдання").toLowerCase();
+  };
+
+  const taskTypeLabel = getTaskTypeLabel(selectedTask);
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -53,10 +68,10 @@ const EndTimeComponent = () => {
                   <div className="end-time__content-row-block">
                     <div className="end-time__row-block">
                       <InputComponent
-                        label={"Дата завершення"}
+                        label={`Дата завершення ${taskTypeLabel}`}
                         required
                         type="date"
-                        placeholder="Enter end date"
+                        placeholder="Оберіть дату"
                         value={endDate}
                         className="add-task-form__input"
                         onChange={(e) => setEndDate(e.target.value)}
@@ -66,10 +81,10 @@ const EndTimeComponent = () => {
                   <div className="end-time__content-row-block">
                     <div className="end-time__row-block">
                       <InputComponent
-                        label={"Час завершення"}
+                        label={`Час завершення ${taskTypeLabel}`}
                         required
                         type="time"
-                        placeholder="Enter end time"
+                        placeholder="Оберіть час"
                         value={endTime}
                         className="add-task-form__input"
                         onChange={(e) => setEndTime(e.target.value)}

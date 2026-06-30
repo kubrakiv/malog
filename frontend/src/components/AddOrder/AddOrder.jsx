@@ -225,7 +225,7 @@ function AddOrder() {
         }
       }
 
-      navigate(`/orders/${responseOrder.data.id}/`);
+      navigate(`/orders/${responseOrder.data.number || responseOrder.data.id}/`);
     } catch (error) {
       console.error("Error creating order:", error.message);
     }

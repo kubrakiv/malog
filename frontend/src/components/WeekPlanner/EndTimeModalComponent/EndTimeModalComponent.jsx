@@ -20,6 +20,7 @@ const EndTimeModalComponent = () => {
       <GenericModalComponent
         show={showEndTimeModal}
         onClose={handleCloseModal}
+        modalClassName="planner-task-time-modal"
         content={<EndTimeComponent />}
       />
     </>

@@ -5,7 +5,7 @@ export const extractRoute = (data) => {
 
   // Extract country codes and ensure they are unique
   const routeArray = data.tasks
-    .map((task) => task?.point_details?.country_short)
+    .map((task) => task?.point_details?.country_short?.toUpperCase())
     .filter((value, index, self) => self.indexOf(value) === index);
 
   // If all tasks are in the same country, return 'COUNTRY-CODE-COUNTRY-CODE'

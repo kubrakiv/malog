@@ -58,6 +58,9 @@ urlpatterns = [
     path("api/driver-profiles/", include("user.urls.driver_profile_urls")),
     path("api/admin/", include("user.urls.admin_urls")),
     
+    path("api/cost-centers/", include("base.urls.cost_center_urls")),
+    path("api/route-categories/", include("base.urls.route_category_urls")),
+
     # Route calculator
     path("api/route_calculator/", include("route_calculator.urls")),
 ]

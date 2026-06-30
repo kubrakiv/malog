@@ -1,3 +1,10 @@
+const UA_DAYS = ["НД", "ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"];
+
+export const dayOfWeek = (dateString) => {
+  if (!dateString) return "";
+  return UA_DAYS[new Date(dateString).getDay()];
+};
+
 export const transformDateFormat = (dateString) => {
   if (!dateString) {
     return null;

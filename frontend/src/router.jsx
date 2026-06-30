@@ -36,6 +36,9 @@ const CustomerPage = lazy(() => import("./screens/CustomerPage"));
 const InvoicePage = lazy(() => import("./screens/InvoicePage"));
 const InvoiceComponent = lazy(() => import("./components/InvoiceComponent"));
 const SovtesTenderPage = lazy(() => import("../src/screens/SovtesTenderPage"));
+const SovtesTenderDetailPage = lazy(
+  () => import("../src/screens/SovtesTenderDetailPage"),
+);
 const FreeOrdersPage = lazy(() => import("../src/screens/FreeOrdersPage"));
 const CalculatorPage = lazy(() => import("../src/screens/CalculatorPage"));
 const RegistrationPendingPage = lazy(
@@ -74,6 +77,12 @@ const OnboardingWizard = lazy(
   () => import("./components/OnboardingWizard/OnboardingWizard"),
 );
 const CompanyPage = lazy(() => import("./screens/CompanyPage"));
+const CostCentersPage = lazy(
+  () => import("./screens/CostCentersPage/CostCentersPage"),
+);
+const RouteCategoriesPage = lazy(
+  () => import("./screens/RouteCategoriesPage/RouteCategoriesPage"),
+);
 
 import { RestrictedRoute } from "./RestrictedRoute";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
@@ -93,6 +102,16 @@ const routes = [
   {
     path: "/company",
     element: <CompanyPage />,
+    roles: ["system_admin", "client_admin"],
+  },
+  {
+    path: "/settings/cost-centers",
+    element: <CostCentersPage />,
+    roles: ["system_admin", "client_admin"],
+  },
+  {
+    path: "/settings/route-categories",
+    element: <RouteCategoriesPage />,
     roles: ["system_admin", "client_admin"],
   },
   {
@@ -217,7 +236,7 @@ const routes = [
     requiredFeature: "Driver Management",
   },
   {
-    path: "/trucks",
+    path: "/fleet",
     element: <TrucksPage />,
     roles: ["system_admin", "client_admin", "logist"],
     requiredFeature: "Fleet Management",
@@ -255,6 +274,12 @@ const routes = [
   {
     path: "/platforms/sovtes",
     element: <SovtesTenderPage />,
+    roles: ["system_admin", "client_admin", "logist"],
+    requiredFeature: "External Platforms",
+  },
+  {
+    path: "/platforms/sovtes/:periodic",
+    element: <SovtesTenderDetailPage />,
     roles: ["system_admin", "client_admin", "logist"],
     requiredFeature: "External Platforms",
   },

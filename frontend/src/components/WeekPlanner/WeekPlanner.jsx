@@ -36,7 +36,10 @@ import {
   listTasks,
   listTasksByWeek,
 } from "../../features/tasks/tasksOperations";
-import { selectTrucks } from "../../features/trucks/trucksSelectors";
+import {
+  selectTrucks,
+  selectTrucksLoading,
+} from "../../features/trucks/trucksSelectors";
 import { listTrucks } from "../../features/trucks/trucksOperations";
 import { selectTasksByWeek } from "../../features/tasks/tasksSelectors";
 import { listTruckUnits } from "../../features/truckUnits/truckUnitsOperations";
@@ -71,12 +74,13 @@ export const WeekPlanner = () => {
     useSelector(selectSwitchers);
 
   const trucks = useSelector(selectTrucks);
+  const trucksLoading = useSelector(selectTrucksLoading);
   const units = useSelector((state) => state.truckUnitsInfo.units);
   const userInfo = useSelector((state) => state.userLogin.userInfo);
 
   const [filterUnit, setFilterUnit] = useState(null);
-  const [filterLogists, setFilterLogists] = useState(
-    () => userInfo?.role === "logist" ? new Set([String(userInfo.id)]) : new Set()
+  const [filterLogists, setFilterLogists] = useState(() =>
+    userInfo?.role === "logist" ? new Set([String(userInfo.id)]) : new Set(),
   );
   const [logists, setLogists] = useState([]);
 
@@ -252,32 +256,37 @@ export const WeekPlanner = () => {
   };
 
   const [datesArray, setDatesArray] = useState(
-    generateDatesArray(date, week, year)
+    generateDatesArray(date, week, year),
   );
 
   const visibleTrucks = useMemo(() => {
     let result = trucks;
     if (filterUnit) {
       result = result.filter(
-        (t) => t.current_unit && String(t.current_unit.id) === String(filterUnit)
+        (t) =>
+          t.current_unit && String(t.current_unit.id) === String(filterUnit),
       );
     }
     if (filterLogists.size > 0) {
       result = result.filter(
-        (t) => Array.isArray(t.logist) && t.logist.some((id) => filterLogists.has(String(id)))
+        (t) =>
+          Array.isArray(t.logist) &&
+          t.logist.some((id) => filterLogists.has(String(id))),
       );
     }
     return result;
   }, [trucks, filterUnit, filterLogists]);
 
-  // Use real trucks if available, otherwise show placeholders (no trucks at all)
-  const displayTrucks =
-    trucks.length === 0
-      ? createPlaceholderTrucks()
-      : visibleTrucks;
-  const placeholderTasks =
-    trucks.length === 0 ? createPlaceholderTasks(datesArray) : [];
-
+  // Use real trucks if available, otherwise show placeholders once we know
+  // for sure there are none (avoid flashing the placeholder onboarding
+  // template while the initial trucks request is still in flight).
+  const showPlaceholders = !trucksLoading && trucks.length === 0;
+  const displayTrucks = showPlaceholders
+    ? createPlaceholderTrucks()
+    : visibleTrucks;
+  const placeholderTasks = showPlaceholders
+    ? createPlaceholderTasks(datesArray)
+    : [];
 
   console.log("tasks", tasks);
   console.log("tasksByWeek", tasksByWeek);
@@ -326,7 +335,7 @@ export const WeekPlanner = () => {
 
   const handlePlaceholderTruckClick = (e) => {
     e.stopPropagation();
-    navigate("/vehicles");
+    navigate("/fleet");
   };
 
   const handlePlaceholderDriverClick = (e) => {
@@ -351,7 +360,7 @@ export const WeekPlanner = () => {
     // Don't allow task creation for placeholder trucks
     if (truck?.isPlaceholder) {
       alert(
-        "Please add real trucks to the system before creating tasks. Click on the truck placeholder to add vehicles or on the driver placeholder to add drivers."
+        "Please add real trucks to the system before creating tasks. Click on the truck placeholder to add vehicles or on the driver placeholder to add drivers.",
       );
       return;
     }
@@ -384,7 +393,7 @@ export const WeekPlanner = () => {
     e.stopPropagation();
 
     const isConfirmed = await confirm(
-      "Ви впевнені, що хочете видалити задачу?"
+      "Ви впевнені, що хочете видалити задачу?",
     );
 
     if (!isConfirmed) {
@@ -396,7 +405,7 @@ export const WeekPlanner = () => {
 
   const toggleDetails = (truckId) => {
     setExpandedTruckId((prevTruckId) =>
-      prevTruckId === truckId ? null : truckId
+      prevTruckId === truckId ? null : truckId,
     );
   };
 
@@ -506,133 +515,179 @@ export const WeekPlanner = () => {
                 })}
               </div>
 
-              {(() => {
-                const filteredTrucks = displayTrucks.filter(
-                  (t) => t.end_date === null
-                );
-
-                // Group trucks by current_unit, preserving truck order
-                const groupMap = new Map();
-                filteredTrucks.forEach((truck) => {
-                  const unitId = truck.current_unit?.id ?? "unassigned";
-                  const unitName = truck.current_unit?.name ?? "Без колони";
-                  if (!groupMap.has(unitId)) {
-                    groupMap.set(unitId, { id: unitId, name: unitName, trucks: [] });
-                  }
-                  groupMap.get(unitId).trucks.push(truck);
-                });
-                const groups = Array.from(groupMap.values());
-
-                const renderTruckRow = (truck) => {
-                  const weeklyTasks = truck.isPlaceholder
-                    ? truck.id === "placeholder-1"
-                      ? datesArray.map((date) =>
-                          placeholderTasks.filter((task) =>
-                            isSameDate(task.start_date, date[1])
-                          )
-                        )
-                      : datesArray.map(() => [])
-                    : datesArray.map((date) =>
-                        tasks
-                          .filter(
-                            (task) =>
-                              isSameDate(task.start_date, date[1]) &&
-                              task.truck === truck.plates &&
-                              task.type !== "Start"
-                          )
-                          .sort((a, b) => {
-                            const startDateComparison =
-                              new Date(a.start_date + " " + a.start_time) -
-                              new Date(b.start_date + " " + b.start_time);
-                            if (startDateComparison !== 0) return startDateComparison;
-                            return (
-                              new Date(a.end_date + " " + a.end_time) -
-                              new Date(b.end_date + " " + b.end_time)
-                            );
-                          })
-                      );
-
-                  return (
-                    <div
-                      className={`week-truck__row ${truck.isPlaceholder ? "week-truck__row--placeholder" : ""}`}
-                      key={truck.id}
-                    >
-                      <div className="week-truck__day-container">
-                        <div className="week-truck__first-col">
-                          <div
-                            className={`week-truck__truck-plates ${truck.isPlaceholder ? "week-truck__truck-plates--clickable" : ""}`}
-                            onClick={truck.isPlaceholder ? handlePlaceholderTruckClick : undefined}
-                            title={truck.isPlaceholder ? "Click to add trucks" : undefined}
-                          >
-                            <span className="week-truck__truck-plates_icon"><FaTruck /></span>
-                            <span>{truck.plates}</span>
-                          </div>
-                          {truck.trailer && (
-                            <div className="week-truck__trailer-plates">
-                              <span className="week-truck__trailer-plates_icon"><FaTrailer /></span>
-                              <span>{truck.trailer}</span>
-                            </div>
-                          )}
-                          {truck?.driver_details && (
-                            <div
-                              className={`week-truck__driver-details ${truck.isPlaceholder ? "week-truck__driver-details--clickable" : ""}`}
-                              onClick={truck.isPlaceholder ? handlePlaceholderDriverClick : () => toggleDetails(truck.id)}
-                              title={truck.isPlaceholder ? "Click to add drivers" : undefined}
-                            >
-                              <div className="week-truck__driver-details_title">
-                                <span className="week-truck__driver-details_name">
-                                  {truck?.driver_details?.full_name}
-                                </span>
-                                <span className="week-truck__driver-details_arrow">
-                                  {expandedTruckId === truck.id ? <FaAngleUp /> : <FaAngleDown />}
-                                </span>
-                              </div>
-                            </div>
-                          )}
-                          {expandedTruckId === truck.id && (
-                            <span className="week-truck__driver-details_phone-number">
-                              {truck?.driver && truck?.driver_details?.phone_number}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                      {weeklyTasks.map((dayTasks, dayNumber) => (
-                        <div className="week-truck__day-container" key={dayNumber}>
-                          <DayTasks
-                            tasks={dayTasks}
-                            truckId={truck.id}
-                            dayNumber={dayNumber}
-                            onTruckDateSelect={handleTruckDateSelect}
-                            handleEndTime={handleEndTime}
-                            handleStartTime={handleStartTime}
-                            handleDeleteTask={handleDeleteTask}
-                            handleEditModeTask={handleEditModeTask}
-                            showTaskType={showTaskType}
-                          />
-                        </div>
-                      ))}
-                    </div>
+              {trucksLoading && trucks.length === 0 ? (
+                <div className="week-planner-loading">Завантаження...</div>
+              ) : (
+                (() => {
+                  const filteredTrucks = displayTrucks.filter(
+                    (t) => t.end_date === null,
                   );
-                };
 
-                return groups.map((group) => (
-                  <Fragment key={group.id}>
-                    <div
-                      className="week-unit-group__header"
-                      onClick={() => toggleUnit(group.id)}
-                    >
-                      <div className="week-unit-group__title-cell">
-                        <span className="week-unit-group__arrow">
-                          {collapsedUnits.has(group.id) ? <FaAngleRight /> : <FaAngleDown />}
-                        </span>
-                        <span className="week-unit-group__name">{group.name}</span>
-                        <span className="week-unit-group__count">{group.trucks.length}</span>
+                  // Group trucks by current_unit, preserving truck order
+                  const groupMap = new Map();
+                  filteredTrucks.forEach((truck) => {
+                    const unitId = truck.current_unit?.id ?? "unassigned";
+                    const unitName = truck.current_unit?.name ?? "Без колони";
+                    if (!groupMap.has(unitId)) {
+                      groupMap.set(unitId, {
+                        id: unitId,
+                        name: unitName,
+                        trucks: [],
+                      });
+                    }
+                    groupMap.get(unitId).trucks.push(truck);
+                  });
+                  const groups = Array.from(groupMap.values());
+
+                  const renderTruckRow = (truck) => {
+                    const weeklyTasks = truck.isPlaceholder
+                      ? truck.id === "placeholder-1"
+                        ? datesArray.map((date) =>
+                            placeholderTasks.filter((task) =>
+                              isSameDate(task.start_date, date[1]),
+                            ),
+                          )
+                        : datesArray.map(() => [])
+                      : datesArray.map((date) =>
+                          tasks
+                            .filter(
+                              (task) =>
+                                isSameDate(task.start_date, date[1]) &&
+                                task.truck === truck.plates &&
+                                task.type !== "Start",
+                            )
+                            .sort((a, b) => {
+                              const startDateComparison =
+                                new Date(a.start_date + " " + a.start_time) -
+                                new Date(b.start_date + " " + b.start_time);
+                              if (startDateComparison !== 0)
+                                return startDateComparison;
+                              return (
+                                new Date(a.end_date + " " + a.end_time) -
+                                new Date(b.end_date + " " + b.end_time)
+                              );
+                            }),
+                        );
+
+                    return (
+                      <div
+                        className={`week-truck__row ${truck.isPlaceholder ? "week-truck__row--placeholder" : ""}`}
+                        key={truck.id}
+                      >
+                        <div className="week-truck__day-container">
+                          <div className="week-truck__first-col">
+                            <div
+                              className={`week-truck__truck-plates ${truck.isPlaceholder ? "week-truck__truck-plates--clickable" : ""}`}
+                              onClick={
+                                truck.isPlaceholder
+                                  ? handlePlaceholderTruckClick
+                                  : undefined
+                              }
+                              title={
+                                truck.isPlaceholder
+                                  ? "Click to add trucks"
+                                  : undefined
+                              }
+                            >
+                              <span className="week-truck__truck-plates_icon">
+                                <FaTruck />
+                              </span>
+                              <span>{truck.plates}</span>
+                            </div>
+                            {truck.trailer && (
+                              <div className="week-truck__trailer-plates">
+                                <span className="week-truck__trailer-plates_icon">
+                                  <FaTrailer />
+                                </span>
+                                <span>{truck.trailer}</span>
+                              </div>
+                            )}
+                            {truck?.driver_details && (
+                              <div
+                                className={`week-truck__driver-details ${truck.isPlaceholder ? "week-truck__driver-details--clickable" : ""}`}
+                                onClick={
+                                  truck.isPlaceholder
+                                    ? handlePlaceholderDriverClick
+                                    : () => toggleDetails(truck.id)
+                                }
+                                title={
+                                  truck.isPlaceholder
+                                    ? "Click to add drivers"
+                                    : undefined
+                                }
+                              >
+                                <div className="week-truck__driver-details_title">
+                                  <span className="week-truck__driver-details_name">
+                                    {truck?.driver_details?.full_name}
+                                  </span>
+                                  <span className="week-truck__driver-details_arrow">
+                                    {expandedTruckId === truck.id ? (
+                                      <FaAngleUp />
+                                    ) : (
+                                      <FaAngleDown />
+                                    )}
+                                  </span>
+                                </div>
+                              </div>
+                            )}
+                            {expandedTruckId === truck.id && (
+                              <span className="week-truck__driver-details_phone-number">
+                                {truck?.driver &&
+                                  truck?.driver_details?.phone_number}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        {weeklyTasks.map((dayTasks, dayNumber) => (
+                          <div
+                            className="week-truck__day-container"
+                            key={dayNumber}
+                          >
+                            <DayTasks
+                              tasks={dayTasks}
+                              truckId={truck.id}
+                              dayNumber={dayNumber}
+                              onTruckDateSelect={handleTruckDateSelect}
+                              handleEndTime={handleEndTime}
+                              handleStartTime={handleStartTime}
+                              handleDeleteTask={handleDeleteTask}
+                              handleEditModeTask={handleEditModeTask}
+                              showTaskType={showTaskType}
+                            />
+                          </div>
+                        ))}
                       </div>
-                    </div>
-                    {!collapsedUnits.has(group.id) && group.trucks.map(renderTruckRow)}
-                  </Fragment>
-                ));
-              })()}
+                    );
+                  };
+
+                  return groups.map((group) => (
+                    <Fragment key={group.id}>
+                      <div
+                        className="week-unit-group__header"
+                        onClick={() => toggleUnit(group.id)}
+                      >
+                        <div className="week-unit-group__title-cell">
+                          <span className="week-unit-group__arrow">
+                            {collapsedUnits.has(group.id) ? (
+                              <FaAngleRight />
+                            ) : (
+                              <FaAngleDown />
+                            )}
+                          </span>
+                          <span className="week-unit-group__name">
+                            {group.name}
+                          </span>
+                          <span className="week-unit-group__count">
+                            {group.trucks.length}
+                          </span>
+                        </div>
+                      </div>
+                      {!collapsedUnits.has(group.id) &&
+                        group.trucks.map(renderTruckRow)}
+                    </Fragment>
+                  ));
+                })()
+              )}
             </div>
           </div>
         </div>

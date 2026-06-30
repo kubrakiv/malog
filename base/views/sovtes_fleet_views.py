@@ -1,3 +1,5 @@
+import os
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -33,7 +35,7 @@ def _int_year(val):
     except (ValueError, TypeError):
         return None
 
-BASE_URL = "https://sovtes.ua"
+BASE_URL = os.getenv("SOVTES_BASE_URL", "https://sovtes.ua")
 
 # All known Sovtes messages that mean the session token expired
 _SESSION_EXPIRED_MESSAGES = frozenset({
@@ -506,6 +508,7 @@ def resyncSovtesTrailer(request):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        print(f"[resync-trailer] raw Sovtes data for id={sovtes_id}: {sovtes_trailer}")
         _apply_sovtes_trailer_fields(trailer, sovtes_trailer)
         trailer.save()
 

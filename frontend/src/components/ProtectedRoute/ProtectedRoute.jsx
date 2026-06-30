@@ -28,16 +28,11 @@ const ProtectedRoute = ({
     return children;
   }
 
-  // Show loading while checking subscription
+  // Checking subscription access happens silently in the background;
+  // render nothing rather than a visible "Checking..." screen so refreshes
+  // don't flash an extra loading state in front of the user.
   if (loading) {
-    return (
-      <div className="protected-route-loading">
-        <div className="loading-container">
-          <div className="loading-spinner"></div>
-          <p>Checking subscription access...</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   // If no subscription found
@@ -157,7 +152,7 @@ export const useRouteProtection = () => {
     "/planner": "Route Planner",
     "/planner/drag-drop": "Route Planner",
     "/drivers": "Driver Management",
-    "/vehicles": "Fleet Management",
+    "/fleet": "Fleet Management",
     "/customers": "Customer Management",
     "/invoices": "Invoicing",
     "/tasks": "Tasks Management",

@@ -1,0 +1,314 @@
+.cc-page {
+  padding: 24px;
+
+  &__title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 20px;
+  }
+
+  &__loading { color: #888; }
+}
+
+// ── Unit sections ─────────────────────────────────────────────────────────────
+.cc-unit-section {
+  background: #fff;
+  border: 1px solid #e0e4ea;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: stretch;
+    padding: 0;
+    background: #f4f6fb;
+    border-bottom: 1px solid #e0e4ea;
+    width: 100%;
+  }
+
+  &__title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a2e;
+    min-width: 200px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid #e0e4ea;
+    white-space: nowrap;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: stretch;
+    flex: 1;
+  }
+
+  &__meta-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 12px 20px;
+    border-right: 1px solid #e0e4ea;
+    min-width: 120px;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    padding: 12px 20px;
+    border-right: 1px solid #e0e4ea;
+
+    &:last-child { border-right: none; }
+  }
+
+  &__stat-label {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  &__stat-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #1a1a2e;
+
+    small { font-weight: 400; color: #666; font-size: 12px; }
+
+    &--km { color: #15803d; }
+  }
+
+  &__stat-sub {
+    font-size: 12px;
+    color: #888;
+    font-weight: 500;
+
+    &--km { color: #15803d; opacity: 0.85; }
+  }
+}
+
+.cc-unit-meta-input {
+  width: 100%;
+  max-width: 110px;
+  padding: 5px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a2e;
+  margin-top: 4px;
+
+  &:focus { outline: none; border-color: #1a56db; }
+}
+
+// ── Add row ───────────────────────────────────────────────────────────────────
+.cc-add-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 10px 16px;
+  background: #fafbfc;
+  border-top: 1px dashed #e0e4ea;
+
+  &__name { flex: 1; min-width: 200px; }
+}
+
+// ── Form inputs ───────────────────────────────────────────────────────────────
+.cc-form {
+  &__input {
+    padding: 7px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    flex: 1;
+    min-width: 140px;
+    &:focus { outline: none; border-color: #1a56db; }
+
+    &--amount { flex: 0 0 130px; }
+  }
+
+  &__select {
+    padding: 7px 10px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    background: #fff;
+    &:focus { outline: none; border-color: #1a56db; }
+  }
+
+  &__error {
+    color: #dc2626;
+    font-size: 12px;
+    padding: 4px 16px 8px;
+    margin: 0;
+  }
+
+  &__btn {
+    padding: 7px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &--save {
+      background: #1a56db;
+      color: #fff;
+      &:hover:not(:disabled) { background: #1648c0; }
+      &:disabled { opacity: 0.6; cursor: default; }
+    }
+
+    &--cancel {
+      background: #f3f4f6;
+      color: #555;
+      &:hover { background: #e5e7eb; }
+    }
+
+    &--sm { padding: 4px 10px; font-size: 12px; }
+  }
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+.cc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    text-align: left;
+    padding: 8px 16px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    color: #888;
+    border-bottom: 1px solid #e0e4ea;
+  }
+
+  td {
+    padding: 9px 16px;
+    border-bottom: 1px solid #f0f2f5;
+    color: #1a1a2e;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: #f8f9fb; }
+
+  &__row--inactive td { color: #bbb; }
+
+  &__uah { color: #555; font-size: 12px; }
+  &__km  { color: #15803d; font-size: 12px; font-weight: 600; }
+
+  &__actions {
+    display: flex;
+    gap: 4px;
+    white-space: nowrap;
+  }
+
+  &__empty {
+    text-align: center;
+    color: #aaa;
+    padding: 20px;
+  }
+}
+
+.cc-inline-input {
+  padding: 4px 8px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 13px;
+  width: 100%;
+  &:focus { outline: none; border-color: #1a56db; }
+
+  &--amount { width: 120px; }
+}
+
+// ── Toggle ────────────────────────────────────────────────────────────────────
+.cc-toggle {
+  padding: 2px 10px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #f3f4f6;
+  color: #888;
+
+  &--on {
+    background: #dcfce7;
+    border-color: #86efac;
+    color: #15803d;
+  }
+}
+
+.cc-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  &:hover { background: #f3f4f6; }
+}
+
+// ── Grand total summary ───────────────────────────────────────────────────────
+.cc-summary {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: #f8f9fb;
+  border: 1px solid #e0e4ea;
+  border-radius: 8px;
+  padding: 14px 20px;
+  margin-top: 8px;
+  align-items: center;
+
+  &--grand { margin-top: 4px; }
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-right: 16px;
+    border-right: 1px solid #e0e4ea;
+
+    &:last-child { border-right: none; }
+    &--result { margin-left: auto; align-items: flex-end; }
+  }
+
+  &__label {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  &__value {
+    font-size: 16px;
+    font-weight: 700;
+    color: #1a1a2e;
+
+    &--total { color: #1a56db; }
+    &--km { font-size: 14px; color: #15803d; }
+  }
+
+  &__sub {
+    font-size: 13px;
+    color: #666;
+
+    &--km { color: #15803d; opacity: 0.85; }
+  }
+}

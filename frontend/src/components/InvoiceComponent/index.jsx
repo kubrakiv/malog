@@ -214,7 +214,7 @@ const InvoiceComponent = () => {
 
   const handleGoBack = () => {
     if (location.state?.fromOrder) {
-      navigate(`/orders/${order.id}`); // Replace `/orders/${order.id}` with your order page URL
+      navigate(`/orders/${order.number || order.id}`);
     } else {
       navigate(-1); // Default behavior
     }

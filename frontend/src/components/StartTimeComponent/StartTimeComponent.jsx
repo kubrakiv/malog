@@ -23,6 +23,21 @@ const StartTimeComponent = () => {
     setStartTime(selectedTask?.start_time);
   }, [selectedTask]);
 
+  const getTaskTypeLabel = (task) => {
+    if (task?.type_uk) {
+      return task.type_uk.toLowerCase();
+    }
+
+    const typeMap = {
+      Loading: "завантаження",
+      Unloading: "розвантаження",
+    };
+
+    return (typeMap[task?.type] || "завдання").toLowerCase();
+  };
+
+  const taskTypeLabel = getTaskTypeLabel(selectedTask);
+
   const handleFormSubmit = async (e) => {
     e.preventDefault();
 
@@ -53,10 +68,10 @@ const StartTimeComponent = () => {
                   <div className="start-time__content-row-block">
                     <div className="start-time__row-block">
                       <InputComponent
-                        label={"Дата початку"}
+                        label={`Дата початку ${taskTypeLabel}`}
                         required
                         type="date"
-                        placeholder="Enter task start date"
+                        placeholder="Оберіть дату"
                         value={startDate}
                         className="add-task-form__input"
                         onChange={(e) => setStartDate(e.target.value)}
@@ -66,10 +81,10 @@ const StartTimeComponent = () => {
                   <div className="start-time__content-row-block">
                     <div className="start-time__row-block">
                       <InputComponent
-                        label={"Час початку"}
+                        label={`Час початку ${taskTypeLabel}`}
                         required
                         type="time"
-                        placeholder="Enter task start time"
+                        placeholder="Оберіть час"
                         value={startTime}
                         className="add-task-form__input"
                         onChange={(e) => setStartTime(e.target.value)}

@@ -5,7 +5,11 @@ const subscriptionSlice = createSlice({
   name: "subscription",
   initialState: {
     data: null,
-    loading: false,
+    // Start in a loading state: ProtectedRoute checks `loading` before
+    // `data`, and Layout only dispatches fetchSubscription from a
+    // useEffect (after first paint). Defaulting to false here caused a
+    // one-frame flash of "No Active Subscription" on every refresh.
+    loading: true,
     error: null,
   },
   reducers: {

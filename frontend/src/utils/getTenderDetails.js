@@ -82,6 +82,24 @@ export const parseTenders = (tenders) => {
 
       const price = details.budget || details.maxquotewithcommission || 0;
 
+      const loadPart = routeParts.find((p) => p.workaction === 1) || routeParts[0] || {};
+      const cargo =
+        loadPart.cargo ||
+        loadPart.cargoname ||
+        details.cargo ||
+        details.cargoname ||
+        "";
+      const loadType =
+        loadPart.loadingtypeRelation?.title_ru ||
+        loadPart.loadingtypeRelation?.title ||
+        loadPart.loadingtype_relation?.title_ru ||
+        loadPart.loadingtype_relation?.title ||
+        "";
+      const rawWeight =
+        loadPart.weight ?? loadPart.cargoweight ?? details.totalweight ?? null;
+      const weightNum = rawWeight != null ? parseFloat(rawWeight) || null : null;
+      const weightStr = weightNum != null ? `${weightNum} т` : `${details.totalweight || 0} т`;
+
       // Extracting other relevant fields
       return {
         id: tender.id,
@@ -94,7 +112,11 @@ export const parseTenders = (tenders) => {
         returnDelivery,
         distance: details.distance || "N/A",
         type: details.cartype?.join(", ") || "N/A",
-        weight: `${details.totalweight || 0} т`,
+        weight: weightStr,
+        cargo,
+        loadType,
+        tenderParent: details.tenderparent || "",
+        kmprice: details.kmprice ? parseFloat(details.kmprice) : null,
         price,
         payor: payor.title_ru || "",
         terms: terms || "",

@@ -1,14 +1,13 @@
+import { toEUR } from "./formatCurrency";
+
 export const calculateOrderValue = (order, column) => {
   const distance = parseFloat(order.distance);
   const tolls = parseFloat(order.tolls);
-  // const price = parseFloat(order.price);
   const orderPrice = parseFloat(order.market_price || order.price || 0);
   const distanceCost = distance * 0.435;
 
   const currency = order.currency || "EUR";
-  const exchangeRate = 25.185;
-
-  const price = currency === "CZK" ? orderPrice / exchangeRate : orderPrice;
+  const price = toEUR(orderPrice, currency);
 
   const isValid = (value) =>
     !isNaN(value) && value !== null && value !== undefined;

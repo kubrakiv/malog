@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { transformSelectOptions } from "../../utils/transformers";
 import cn from "classnames";
@@ -39,7 +39,32 @@ const AddServiceTaskComponent = ({ onCloseModal, initialTaskData = null }) => {
 
   const trucksOptions = transformSelectOptions(trucks, "plates");
   const driversOptions = transformSelectOptions(drivers, "full_name");
-  const taskTypesOptions = transformSelectOptions(taskTypes, "name");
+  const taskTypeUkFallbackMap = {
+    Loading: "Завантаження",
+    Unloading: "Розвантаження",
+    Service: "Сервіс",
+    Driving: "Дорога",
+    Reserve: "Резерв",
+    Weekend: "Вихідні",
+    Start: "Старт",
+    Waiting: "Очікування",
+    "Extra Task": "Додаткове завдання",
+    Penalty: "Штраф",
+    "Sick Leave": "Лікарняний",
+    Vacation: "Відпустка",
+    "No driver": "Без водія",
+  };
+  const taskTypesOptions = useMemo(
+    () =>
+      taskTypes.map((taskType) => ({
+        value: taskType.name,
+        label:
+          taskType.name_uk ||
+          taskTypeUkFallbackMap[taskType.name] ||
+          taskType.name,
+      })),
+    [taskTypes],
+  );
 
   // Function to initialize task fields
   const initializeTaskFields = () => {

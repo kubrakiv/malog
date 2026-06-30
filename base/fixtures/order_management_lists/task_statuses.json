@@ -1,0 +1,106 @@
+﻿[
+{
+  "model": "base.taskstatus",
+  "pk": 7,
+  "fields": {
+    "name": "pending",
+    "created_at": "2025-10-12T19:08:36.455Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 8,
+  "fields": {
+    "name": "assigned",
+    "created_at": "2025-10-12T19:08:36.480Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 9,
+  "fields": {
+    "name": "en_route",
+    "created_at": "2025-10-12T19:08:36.482Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 10,
+  "fields": {
+    "name": "arrived",
+    "created_at": "2025-10-12T19:08:36.482Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 11,
+  "fields": {
+    "name": "in_progress",
+    "created_at": "2025-10-12T19:08:36.486Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 12,
+  "fields": {
+    "name": "loading_in_progress",
+    "created_at": "2025-10-12T19:08:36.489Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 13,
+  "fields": {
+    "name": "loading_completed",
+    "created_at": "2025-10-12T19:08:36.491Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 14,
+  "fields": {
+    "name": "unloading_in_progress",
+    "created_at": "2025-10-12T19:08:36.493Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 15,
+  "fields": {
+    "name": "unloading_completed",
+    "created_at": "2025-10-12T19:08:36.494Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 16,
+  "fields": {
+    "name": "completed",
+    "created_at": "2025-10-12T19:08:36.496Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 17,
+  "fields": {
+    "name": "cancelled",
+    "created_at": "2025-10-12T19:08:36.497Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 18,
+  "fields": {
+    "name": "delayed",
+    "created_at": "2025-10-12T19:08:36.499Z"
+  }
+},
+{
+  "model": "base.taskstatus",
+  "pk": 19,
+  "fields": {
+    "name": "failed",
+    "created_at": "2025-10-12T19:08:36.500Z"
+  }
+}
+]

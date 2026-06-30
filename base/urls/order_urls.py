@@ -6,6 +6,7 @@ from base.views import order_views as views
 urlpatterns = [
     path("", views.getOrders, name="orders"),
     path("create/", views.createOrder, name="order-create"),
+    path("stats/", views.orderStats, name="order-stats"),
     path('search/', views.searchOrderByNumber, name='search-order'),
     path("<str:pk>/", views.getOrder, name="order"),
     path("edit/<str:pk>/", views.editOrder, name="order-edit"),

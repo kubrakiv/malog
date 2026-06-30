@@ -22,7 +22,7 @@ export const EmptyTruckCard = ({ fromPlanner = false }) => {
       </p>
       <button
         className="btn-add-primary"
-        onClick={() => navigate("/trucks", { state: { fromPlanner } })}
+        onClick={() => navigate("/fleet", { state: { fromPlanner } })}
       >
         <FaPlus /> Add Your First Truck
       </button>

@@ -12,6 +12,6 @@ from base.serializers import CurrencySerializer
 
 @api_view(["GET"])
 def getCurrencies(request):
-    currency = Currency.objects.filter(client=request.user.client)
+    currency = Currency.objects.all()
     serializer = CurrencySerializer(currency, many=True, context={'request': request})
     return Response(serializer.data)

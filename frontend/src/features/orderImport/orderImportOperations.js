@@ -22,11 +22,11 @@ export const getRoute = createAsyncThunk(
   }
 );
 
-export const getAllRoutes = createAsyncThunk(
-  "route/getAllRoutes",
+export const getBookedTenderRoutes = createAsyncThunk(
+  "route/getBookedTenderRoutes",
   async (thunkAPI) => {
     try {
-      const { data } = await axios.get(`/api/import/all-routes/`);
+      const { data } = await axios.get(`/api/import/booked-tender-routes/`);
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
@@ -56,7 +56,7 @@ export const getFreeOrders = createAsyncThunk(
   "route/getFreeOrders",
   async (thunkAPI) => {
     try {
-      const { data } = await axios.get(`/api/import/all-routes/`);
+      const { data } = await axios.get(`/api/import/booked-tender-routes/`);
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });

@@ -238,7 +238,7 @@ function Task({
             <div className="task-actions">
               {task.type === LOADING || task.type === UNLOADING ? (
                 <>
-                  <Link to={`/orders/${task.order_id}`}>
+                  <Link to={`/orders/${task.order || task.order_id}`}>
                     <button
                       type="button"
                       title="Перейти в маршрут"
@@ -314,7 +314,7 @@ function Task({
                       fontStyle: "italic",
                     }}
                   >
-                    {task.type}
+                    {task.type_uk || task.type}
                   </div>
                 )}
                 <span style={{ color: "white", fontSize: "12px" }}>
@@ -338,6 +338,11 @@ function Task({
             ) : (
               // Regular task display
               <>
+                {showTaskType && (
+                  <div className="task-details__type" style={{ fontSize: "11px", fontStyle: "italic" }}>
+                    {task.type_uk || task.type}
+                  </div>
+                )}
                 {showOrderNumber && (
                   <div className="task-details__order">{task.order_number}</div>
                 )}

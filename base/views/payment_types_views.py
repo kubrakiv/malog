@@ -20,13 +20,13 @@ from base.serializers import (
 
 @api_view(["GET"])
 def getPaymentTypes(request):
-    payment_types = PaymentType.objects.filter(client=request.user.client)
+    payment_types = PaymentType.objects.all()
     serializer = PaymentTypeSerializer(payment_types, many=True, context={'request': request})
     return Response(serializer.data)
 
 
 @api_view(["GET"])
 def getPaymentType(request, pk):
-    payment_type = PaymentType.objects.get(id=pk, client=request.user.client)
+    payment_type = PaymentType.objects.get(id=pk)
     serializer = PaymentTypeSerializer(payment_type, many=False, context={'request': request})
     return Response(serializer.data)

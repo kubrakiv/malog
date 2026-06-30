@@ -13,7 +13,7 @@ import TaskComponent from "./TaskComponent/TaskComponent";
 import RouteComponent from "./RouteComponent/RouteComponent";
 import HeaderComponent from "./HeaderComponent/HeaderComponent";
 import ActionsComponent from "./ActionsComponent/ActionsComponent";
-import CarrierComponent from "./CarrierComponent/CarrierComponent";
+import CategoryComponent from "./CategoryComponent/CategoryComponent";
 import CarrierManagerComponent from "./CarrierManagerComponent/CarrierManagerComponent";
 import FooterComponent from "./FooterComponent/FooterComponent";
 import AddTaskModalComponent from "../../components/AddTask/AddTaskModalComponent/AddTaskModalComponent";
@@ -47,8 +47,12 @@ const OrderPage = () => {
 
   useEffect(() => {
     if (id) {
-      dispatch(listOrderDetails(id));
-      dispatch(listDocuments(id));
+      dispatch(listOrderDetails(id)).then((action) => {
+        const orderId = action.payload?.id;
+        if (orderId) {
+          dispatch(listDocuments(orderId));
+        }
+      });
     }
   }, [id]);
 
@@ -79,7 +83,7 @@ const OrderPage = () => {
           <div className="order-details__content">
             <div className="order-details__content-block">
               <div className="order-details__content-row">
-                <CarrierComponent />
+                <CategoryComponent />
                 <CarrierManagerComponent />
               </div>
               <div className="order-details__content-row">
@@ -112,9 +116,6 @@ const OrderPage = () => {
               </div>
               <div className="order-details__content-row">
                 <OrderNoticeComponent />
-              </div>
-              <div className="order-details__content-row">
-                <TruckLocationComponent />
               </div>
               {/* <OrderMapComponent /> */}
               <div className="order-details__content-row">

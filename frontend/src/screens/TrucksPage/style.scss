@@ -196,7 +196,7 @@
   }
 
   &__content {
-    min-height: 420px;
+    min-height: calc(100vh - 220px);
   }
 
   @media (max-width: 900px) {

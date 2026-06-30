@@ -516,7 +516,7 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                               <td className="trucks-table__body-td">
                                 {truck.current_unit ? (
                                   <span className="trucks-table__unit-badge">
-                                    {truck.current_unit.name}
+                                    {truck.current_unit.name.replace(/\s*колона\s*/i, "").trim()}
                                   </span>
                                 ) : (
                                   <span className="trucks-table__unit-empty">—</span>

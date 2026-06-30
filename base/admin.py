@@ -36,6 +36,8 @@ from .models import (
     TruckUnit,
     TruckUnitAssignment,
     DriverUnitAssignment,
+    CostCenter,
+    RouteCategory,
 )
 from .subscription_models import (
     SubscriptionPlan,
@@ -266,9 +268,9 @@ admin.site.register(OrderStatusHistory)
 
 
 class OrderStatusAdmin(admin.ModelAdmin):
-    list_display = ["id", "name", "description"]
+    list_display = ["id", "name", "is_terminal", "description"]
     readonly_fields = ["id"]
-    fields = ["id", "name", "description"]
+    fields = ["id", "name", "is_terminal", "description"]
 
 admin.site.register(OrderStatus, OrderStatusAdmin)
 
@@ -429,3 +431,24 @@ class ExternalAPIKeyAdmin(admin.ModelAdmin):
         updated = queryset.update(is_active=True)
         self.message_user(request, f"Activated {updated} API key(s)")
     activate_keys.short_description = "Activate selected API keys"
+
+@admin.register(CostCenter)
+class CostCenterAdmin(BaseTenantAdmin):
+    list_display = ["name", "truck_unit", "client", "monthly_amount", "currency", "is_active"]
+    list_filter = ["client", "truck_unit", "currency", "is_active"]
+    search_fields = ["name"]
+    fieldsets = (
+        ("Tenant", {"fields": ("client",)}),
+        ("Cost Center", {"fields": ("name", "truck_unit", "monthly_amount", "currency", "is_active")}),
+    )
+
+
+@admin.register(RouteCategory)
+class RouteCategoryAdmin(BaseTenantAdmin):
+    list_display = ["ukr", "eng", "client", "is_active"]
+    list_filter = ["client", "is_active"]
+    search_fields = ["ukr", "eng"]
+    fieldsets = (
+        ("Tenant", {"fields": ("client",)}),
+        ("Route Category", {"fields": ("ukr", "eng", "is_active")}),
+    )

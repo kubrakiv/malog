@@ -16,7 +16,7 @@ const SubscriptionAwareSidebar = ({ children }) => {
     // Company section (only for admin)
     "/userlist": "Employee Management",
     "/drivers": "Driver Management",
-    "/vehicles": "Fleet Management",
+    "/fleet": "Fleet Management",
 
     // Dashboard
     "/dashboard": "Dashboard",
@@ -120,20 +120,20 @@ const SubscriptionAwareSidebar = ({ children }) => {
 
   const filteredMenuItems = filterMenuItems(sidebarMenuItems);
 
-  // Show loading state
+  // Subscription access is still being checked; render the sidebar shell
+  // silently (no "Loading menu..." text) rather than surface that this is
+  // happening behind the scenes.
   if (loading) {
     return (
       <div className="container-sidebar">
         <div
           style={{ width: isSidebarOpen ? "250px" : "50px" }}
           className="sidebar sidebar-loading"
-        >
-          <div className="sidebar-loading-message">
-            <div className="loading-spinner"></div>
-            {isSidebarOpen && <span>Loading menu...</span>}
-          </div>
-        </div>
-        <main className="page__main">{children}<Footer /></main>
+        />
+        <main className="page__main">
+          {children}
+          <Footer />
+        </main>
       </div>
     );
   }
@@ -154,7 +154,10 @@ const SubscriptionAwareSidebar = ({ children }) => {
             </div>
           )}
         </div>
-        <main className="page__main">{children}<Footer /></main>
+        <main className="page__main">
+          {children}
+          <Footer />
+        </main>
       </div>
     );
   }
@@ -177,7 +180,10 @@ const SubscriptionAwareSidebar = ({ children }) => {
           </div>
         )}
       </div>
-      <main className="page__main">{children}<Footer /></main>
+      <main className="page__main">
+        {children}
+        <Footer />
+      </main>
     </div>
   );
 };

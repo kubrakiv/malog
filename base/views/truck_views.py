@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 from base.models import Truck, Trailer, DriverProfile
-from user.models import LogistProfile
+from user.models import LogistProfile, Profile
 from base.serializers import TruckSerializer
 from base.subscription_models import ClientSubscription
 from base.views.sovtes_fleet_views import (
@@ -147,17 +147,25 @@ def updateTruckTrailerAndDriver(request, pk):
 
     # Handle logist update (ManyToMany — must come after save())
     if "logist" in data:
-        logist_ids = data.get("logist")
+        logist_ids = data.get("logist") or []
+        if not isinstance(logist_ids, list):
+            logist_ids = [logist_ids]
         if not logist_ids:
             truck.logist.clear()
         else:
-            if not isinstance(logist_ids, list):
-                logist_ids = [logist_ids]
-            logists = LogistProfile.objects.filter(
-                profile__id__in=logist_ids,
-                profile__client=request.user.client,
-            )
-            truck.logist.set(logists)
+            resolved = []
+            for lid in logist_ids:
+                try:
+                    profile = Profile.objects.get(
+                        id=int(lid),
+                        client=request.user.client,
+                        role__name="logist",
+                    )
+                    logist, _ = LogistProfile.objects.get_or_create(profile=profile)
+                    resolved.append(logist)
+                except (Profile.DoesNotExist, ValueError, TypeError):
+                    pass
+            truck.logist.set(resolved)
 
     serializer = TruckSerializer(instance=truck, partial=True, context={'request': request})
     return Response(serializer.data)

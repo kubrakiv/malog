@@ -61,13 +61,8 @@ $radius: 0.375rem;
     }
   }
 
-  // ── Dropdown menu ─────────────────────────────────────────
+  // ── Dropdown menu — position/top/left/width/z-index via inline style (fixed) ──
   &__menu {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    z-index: 300;
-    min-width: 100%;
     max-height: 200px;
     overflow-y: auto;
     background: #fff;

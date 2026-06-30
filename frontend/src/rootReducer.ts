@@ -35,6 +35,7 @@ import sovtesTendersReducer from "./features/sovtesTenders/sovtesTendersSlices";
 import sovtesFleetReducer from "./features/sovtesFleet/sovtesFleetSlice";
 import truckUnitsReducer from "./features/truckUnits/truckUnitsSlice";
 import companyReducer from "./features/company/companySlice";
+import routeCategoriesReducer from "./features/routeCategories/routeCategoriesSlice";
 import subscriptionReducer from "./features/subscription/subscriptionSlice";
 import {
   pendingClientsReducer,
@@ -75,6 +76,7 @@ const rootReducer = combineReducers({
   sovtesFleetInfo: sovtesFleetReducer,
   truckUnitsInfo: truckUnitsReducer,
   companyInfo: companyReducer,
+  routeCategoriesInfo: routeCategoriesReducer,
   subscriptionInfo: subscriptionReducer,
   pendingClients: pendingClientsReducer,
   approveClient: approveClientReducer,

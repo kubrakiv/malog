@@ -338,14 +338,14 @@ class DriverUnitAssignment(BaseTenantModel):
         return f"{self.driver} → {self.unit.name} ({self.start_date.strftime('%Y-%m-%d')} – {end})"
 
 
-class PaymentType(BaseTenantModel):
+class PaymentType(models.Model):
     name = models.CharField(max_length=25)
 
     def __str__(self):
         return self.name
 
 
-class Platform(BaseTenantModel):
+class Platform(models.Model):
     name = models.CharField(max_length=50)
 
     def __str__(self):
@@ -421,9 +421,13 @@ class Point(BaseTenantModel):
             return f"{self.id} {self.created_at}"
 
 
-class OrderStatus(BaseTenantModel):
+class OrderStatus(models.Model):
     name = models.CharField(max_length=50)
     description = models.TextField(null=True, blank=True)
+    is_terminal = models.BooleanField(
+        default=False,
+        help_text="When an order reaches a terminal status, its costs are frozen as a snapshot."
+    )
 
     class Meta:
         verbose_name_plural = "Order Statuses"
@@ -504,7 +508,16 @@ class Order(BaseTenantModel):
         DriverProfile, related_name="orders", on_delete=models.SET_NULL, null=True, blank=True
     )
     current_status = models.ForeignKey(OrderStatus, on_delete=models.SET_NULL, null=True, related_name="current_orders")
+    category = models.ForeignKey(
+        'RouteCategory',
+        related_name="orders",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+    )
     notice = models.TextField(blank=True, null=True, help_text="Order notice/comment")
+    cost_snapshot = models.JSONField(null=True, blank=True)
+    cost_snapshot_at = models.DateTimeField(null=True, blank=True)
 
     def set_status(self, new_status):
         """
@@ -660,7 +673,7 @@ class OrderStatusHistory(BaseTenantModel):
         return f"{self.order.number} with status {self.status} from {started_at_str} to {ended_at_str}"
 
 
-class FileType(BaseTenantModel):
+class FileType(models.Model):
     name = models.CharField(max_length=25)
 
     def __str__(self):
@@ -687,14 +700,15 @@ class OrderFile(BaseTenantModel):
         return f"{self.file_type.name} - File Name: {self.file.name[12:]}, Uploaded at: {str(self.uploaded_at)[0:19]}"
 
 
-class TaskType(BaseTenantModel):
+class TaskType(models.Model):
     name = models.CharField(max_length=50)
+    name_uk = models.CharField(max_length=50, null=True, blank=True)
 
     def __str__(self):
         return self.name
 
 
-class TaskStatus(BaseTenantModel):
+class TaskStatus(models.Model):
     name = models.CharField(max_length=50)
 
     class Meta:
@@ -1197,6 +1211,48 @@ class ClientExternalIdentity(models.Model):
 
     def __str__(self):
         return f"{self.client} — {self.provider} ({self.link_status})"
+
+
+class CostCenter(BaseTenantModel):
+    """Company-level fixed cost category (leasing, admin, salary, insurance, etc.)"""
+    CURRENCY_CHOICES = [('UAH', 'UAH'), ('EUR', 'EUR'), ('USD', 'USD')]
+
+    name = models.CharField(max_length=100, verbose_name="Назва")
+    truck_unit = models.ForeignKey(
+        'TruckUnit', null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='cost_centers', verbose_name="Підрозділ",
+    )
+    monthly_amount = models.DecimalField(
+        max_digits=12, decimal_places=2,
+        verbose_name="Сума на місяць",
+        help_text="Загальна місячна сума витрат по цьому центру"
+    )
+    currency = models.CharField(max_length=3, choices=CURRENCY_CHOICES, default='UAH', verbose_name="Валюта")
+    is_active = models.BooleanField(default=True, verbose_name="Активний")
+
+    class Meta:
+        ordering = ['truck_unit__name', 'name']
+        verbose_name = "Cost Center"
+        verbose_name_plural = "Cost Centers"
+
+    def __str__(self):
+        unit = f" [{self.truck_unit.name}]" if self.truck_unit_id else ""
+        return f"{self.name}{unit} ({self.monthly_amount} {self.currency}/міс)"
+
+
+class RouteCategory(BaseTenantModel):
+    """Route/order category (Імпорт, Експорт, Контейнери, etc.), scoped per tenant."""
+    ukr = models.CharField(max_length=100, verbose_name="Назва (укр)")
+    eng = models.CharField(max_length=100, verbose_name="Назва (англ)", null=True, blank=True)
+    is_active = models.BooleanField(default=True, verbose_name="Активна")
+
+    class Meta:
+        ordering = ['ukr']
+        verbose_name = "Route Category"
+        verbose_name_plural = "Route Categories"
+
+    def __str__(self):
+        return self.ukr
 
 
 class SovtesWebhookEvent(models.Model):

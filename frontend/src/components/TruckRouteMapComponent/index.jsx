@@ -24,6 +24,7 @@ const TruckRouteMapComponent = ({
   isOrderFinished,
   isOrderActualNow,
   ruptelaTrips = [],
+  truckOverlay = null,
 }) => {
   console.log("RUPTELA TRIPS", ruptelaTrips);
   // Track if HERE Maps is loaded
@@ -133,10 +134,11 @@ const TruckRouteMapComponent = ({
         import.meta.env.VITE_HERE_API_KEY ||
         import.meta.env.REACT_APP_HERE_API_KEY;
 
+      let map;
       try {
         const platform = new window.H.service.Platform({ apikey: apiKey });
         const layers = platform.createDefaultLayers();
-        const map = new window.H.Map(el, layers.vector.normal.map, {
+        map = new window.H.Map(el, layers.vector.normal.map, {
           pixelRatio: window.devicePixelRatio || 1,
         });
         mapRef.current = map;
@@ -548,6 +550,7 @@ const TruckRouteMapComponent = ({
 
   return (
     <div ref={wrapperRef} className="here-map-wrap">
+      {truckOverlay}
       {hereMapsReady && (
         <button
           onClick={toggleFullscreen}

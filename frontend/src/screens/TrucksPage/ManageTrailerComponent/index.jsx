@@ -312,16 +312,14 @@ const ManageTrailerComponent = ({
 
   return (
     <>
-      <form className="add-trailer__form" onSubmit={handleFormSubmit}>
+      <form className="add-truck__form" onSubmit={handleFormSubmit}>
         <div className="truck-card-container">
           <div className="truck-card-details">
-            <div className="add-trailer__content">
-              <div className="add-trailer__content-block">
-                {!onEditMode && (
-                  <h3 className="add-trailer__title">
-                    {initialTrailerData ? "Редагувати причіп" : "Додати причіп"}
-                  </h3>
-                )}
+            <div className="add-truck__content">
+              <div className="add-truck__content-block">
+                <h3 className="add-truck__title">
+                  {initialTrailerData ? "Редагувати причіп" : "Додати причіп"}
+                </h3>
 
                 {/* Sovtes link / resync */}
                 {initialTrailerData && (
@@ -333,13 +331,13 @@ const ManageTrailerComponent = ({
                   />
                 )}
 
-                <div className="add-trailer__content-row">
+                <div className="add-truck__content-row">
                   {formFields.map((fields) => (
                     <div
                       className={cn(
-                        "add-trailer__content-row-block",
+                        "add-truck__content-row-block",
                         initialTrailerData !== null &&
-                          "add-trailer__content-row-block_edit-mode"
+                          "add-truck__content-row-block_edit-mode"
                       )}
                       key={`fields-row-${fields[0].id}`}
                     >
@@ -368,19 +366,10 @@ const ManageTrailerComponent = ({
               </div>
             </div>
 
-            {!initialTrailerData && (
-              <ManageTrailerFooterComponent onCloseModal={onCloseModal} />
-            )}
-            {initialTrailerData && (
-              <div className="edit-trailer__footer">
-                <button
-                  className="end-time__footer-btn end-time__footer-btn_save"
-                  type="submit"
-                >
-                  Оновити причіп
-                </button>
-              </div>
-            )}
+            <ManageTrailerFooterComponent
+              onCloseModal={onCloseModal}
+              saveLabel={initialTrailerData ? "Оновити причіп" : "Записати"}
+            />
           </div>
         </div>
       </form>

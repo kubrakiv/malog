@@ -10,7 +10,9 @@ import "./style.scss";
  */
 const MultiSelectDropdown = ({ value = [], onChange, options = [], placeholder = "Виберіть…" }) => {
   const [open, setOpen] = useState(false);
+  const [menuStyle, setMenuStyle] = useState({});
   const ref = useRef(null);
+  const triggerRef = useRef(null);
 
   useEffect(() => {
     const handler = (e) => {
@@ -19,6 +21,31 @@ const MultiSelectDropdown = ({ value = [], onChange, options = [], placeholder =
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  useEffect(() => {
+    if (!open) return;
+    const close = () => setOpen(false);
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
+    return () => {
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
+    };
+  }, [open]);
+
+  const openMenu = () => {
+    if (triggerRef.current) {
+      const r = triggerRef.current.getBoundingClientRect();
+      setMenuStyle({
+        position: "fixed",
+        top: r.bottom + 4,
+        left: r.left,
+        width: r.width,
+        zIndex: 9999,
+      });
+    }
+    setOpen(true);
+  };
 
   const toggle = (val) => {
     const v = String(val);
@@ -36,16 +63,17 @@ const MultiSelectDropdown = ({ value = [], onChange, options = [], placeholder =
   return (
     <div className={`msd${open ? " msd--open" : ""}${value.length > 0 ? " msd--active" : ""}`} ref={ref}>
       <button
+        ref={triggerRef}
         type="button"
         className="msd__trigger"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => { if (open) { setOpen(false); } else { openMenu(); } }}
       >
         <span className="msd__label">{label()}</span>
         <FaChevronDown className={`msd__chevron${open ? " msd__chevron--open" : ""}`} />
       </button>
 
       {open && (
-        <div className="msd__menu">
+        <div className="msd__menu" style={menuStyle}>
           {options.length === 0 && (
             <span className="msd__empty">Немає варіантів</span>
           )}

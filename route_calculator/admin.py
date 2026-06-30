@@ -1,4 +1,5 @@
 from django.contrib import admin
+from base.admin import BaseTenantAdmin
 from .models import RouteCalculation, RouteToll, RoutePoint, TruckParameters, FuelPrices
 
 
@@ -68,13 +69,16 @@ class RoutePointAdmin(admin.ModelAdmin):
 
 
 @admin.register(TruckParameters)
-class TruckParametersAdmin(admin.ModelAdmin):
-    list_display = ['name', 'weight_capacity', 'truck_type', 'is_default', 'diesel_consumption_per_100km', 'adblue_consumption_per_100km', 'tire_cost_per_km', 'fixed_cost_per_km']
-    list_filter = ['weight_capacity', 'truck_type', 'is_default']
+class TruckParametersAdmin(BaseTenantAdmin):
+    list_display = ['name', 'client', 'weight_capacity', 'truck_type', 'is_default', 'diesel_consumption_per_100km', 'adblue_consumption_per_100km', 'tire_cost_per_km', 'fixed_cost_per_km']
+    list_filter = ['client', 'weight_capacity', 'truck_type', 'is_default']
     search_fields = ['name', 'truck_type']
     ordering = ['weight_capacity', 'truck_type']
-    
+
     fieldsets = (
+        ('Tenant', {
+            'fields': ('client',),
+        }),
         ('Basic Information', {
             'fields': ('name', 'weight_capacity', 'truck_type', 'is_default')
         }),
@@ -83,20 +87,23 @@ class TruckParametersAdmin(admin.ModelAdmin):
             'description': 'Fuel consumption rates in liters per 100 kilometers'
         }),
         ('Other Cost Parameters (per km)', {
-            'fields': ('tire_cost_per_km', 'fixed_cost_per_km'),
-            'description': 'Other cost parameters per kilometer in EUR'
+            'fields': ('tire_cost_per_km', 'fixed_cost_per_km', 'admin_cost_per_km', 'leasing_cost_per_km', 'insurance_cost_per_km'),
+            'description': 'Cost parameters per kilometer in EUR'
         }),
     )
 
 
 @admin.register(FuelPrices)
-class FuelPricesAdmin(admin.ModelAdmin):
-    list_display = ['effective_date', 'diesel_price_per_liter', 'adblue_price_per_liter', 'currency', 'is_current', 'created_at']
-    list_filter = ['currency', 'is_current', 'effective_date']
+class FuelPricesAdmin(BaseTenantAdmin):
+    list_display = ['effective_date', 'client', 'diesel_price_per_liter', 'adblue_price_per_liter', 'currency', 'is_current', 'created_at']
+    list_filter = ['client', 'currency', 'is_current', 'effective_date']
     search_fields = ['currency']
     ordering = ['-effective_date', '-created_at']
-    
+
     fieldsets = (
+        ('Tenant', {
+            'fields': ('client',),
+        }),
         ('Price Information', {
             'fields': ('diesel_price_per_liter', 'adblue_price_per_liter', 'currency')
         }),
@@ -105,9 +112,8 @@ class FuelPricesAdmin(admin.ModelAdmin):
             'description': 'Mark as current prices and set effective date'
         }),
     )
-    
+
     def get_readonly_fields(self, request, obj=None):
-        # Make created_at and updated_at readonly
         readonly_fields = list(super().get_readonly_fields(request, obj))
         readonly_fields.extend(['created_at', 'updated_at'])
         return readonly_fields

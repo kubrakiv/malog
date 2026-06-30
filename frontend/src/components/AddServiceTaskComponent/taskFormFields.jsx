@@ -16,14 +16,14 @@ export const formFields = [
   [
     {
       id: TASK_TYPE,
-      title: "Type",
+      title: "Тип завдання",
       type: "text",
       placeholder: "Виберіть тип завдання",
       component: "select",
     },
     {
       id: TASK_TITLE,
-      title: "Title",
+      title: "Назва завдання",
       type: "text",
       placeholder: "Введіть назву завдання",
       component: "input",
@@ -34,16 +34,16 @@ export const formFields = [
   [
     {
       id: TASK_START_DATE,
-      title: "Start Date",
+      title: "Дата початку",
       type: "date",
-      placeholder: "Start Date",
+      placeholder: "Оберіть дату початку",
       component: "input",
     },
     {
       id: TASK_START_TIME,
-      title: "Start Time",
+      title: "Час початку",
       type: "time",
-      placeholder: "Start Time",
+      placeholder: "Оберіть час початку",
       component: "input",
     },
   ],
@@ -51,18 +51,18 @@ export const formFields = [
   [
     {
       id: TASK_END_DATE,
-      title: "End Date",
+      title: "Дата завершення",
       type: "date",
-      placeholder: "End Date",
+      placeholder: "Оберіть дату завершення",
       component: "input",
       condition: (taskFields) =>
         ["loading", "unloading"].includes(taskFields[TASK_TYPE]?.toLowerCase()),
     },
     {
       id: TASK_END_TIME,
-      title: "End Time",
+      title: "Час завершення",
       type: "time",
-      placeholder: "End Time",
+      placeholder: "Оберіть час завершення",
       component: "input",
       condition: (taskFields) =>
         ["loading", "unloading"].includes(taskFields[TASK_TYPE]?.toLowerCase()),
@@ -72,14 +72,14 @@ export const formFields = [
   [
     {
       id: TASK_TRUCK,
-      title: "Truck",
+      title: "Автомобіль",
       type: "text",
       placeholder: "Виберіть тягач",
       component: "select",
     },
     {
       id: TASK_DRIVER,
-      title: "Driver",
+      title: "Водій",
       type: "text",
       placeholder: "Виберіть водія",
       component: "select",

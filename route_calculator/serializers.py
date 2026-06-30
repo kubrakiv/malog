@@ -1,6 +1,12 @@
 from rest_framework import serializers
 from django.db import transaction
-from .models import RouteCalculation, RouteToll, RoutePoint, TruckParameters
+from .models import RouteCalculation, RouteToll, RoutePoint, TruckParameters, FuelPrices
+
+
+class FuelPricesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FuelPrices
+        fields = ['diesel_price_per_liter', 'adblue_price_per_liter', 'currency', 'effective_date']
 
 
 class RoutePointSerializer(serializers.ModelSerializer):
@@ -22,7 +28,13 @@ class RouteTollSerializer(serializers.ModelSerializer):
 class TruckParametersSerializer(serializers.ModelSerializer):
     class Meta:
         model = TruckParameters
-        fields = ['id', 'name', 'weight_capacity', 'truck_type', 'diesel_consumption_per_100km', 'adblue_consumption_per_100km', 'tire_cost_per_km', 'fixed_cost_per_km', 'is_default']
+        fields = [
+            'id', 'name', 'weight_capacity', 'truck_type',
+            'diesel_consumption_per_100km', 'adblue_consumption_per_100km',
+            'tire_cost_per_km', 'fixed_cost_per_km',
+            'admin_cost_per_km', 'leasing_cost_per_km', 'insurance_cost_per_km',
+            'is_default',
+        ]
 
 
 class RouteCalculationSerializer(serializers.ModelSerializer):

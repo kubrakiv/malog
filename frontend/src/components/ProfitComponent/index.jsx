@@ -1,6 +1,6 @@
-import { useSelector } from "react-redux";
 import { totalDistance } from "../../utils/getTotalDistance";
 import { getTotalCostData } from "../../utils/calculateOrderValues";
+import { toEUR, fromEUR, currencySymbol, formatAmount } from "../../utils/formatCurrency";
 
 import "./style.scss";
 
@@ -10,18 +10,17 @@ const ProfitComponent = ({ order, type = null }) => {
   const distance = totalDistance(order);
   const price = parseFloat(order.market_price || order.price || 0);
   const currency = order.currency || "EUR";
-  const exchangeRate = 25.185;
 
-  // Convert price to EUR if needed
-  const priceInEUR = currency === "CZK" ? price / exchangeRate : price;
+  const priceInEUR = toEUR(price, currency);
+  const totalCostEUR = order.cost_snapshot
+    ? order.cost_snapshot.total_cost_eur
+    : getTotalCostData(order).totalCost;
 
-  const { totalCost } = getTotalCostData(order);
-
-  // Profit calculation
-  const profitValue = parseFloat((priceInEUR - totalCost).toFixed(0));
-  const profitPercent = parseFloat(
-    ((profitValue / totalCost) * 100).toFixed(0)
-  );
+  const profitEUR = priceInEUR - totalCostEUR;
+  const profitValue = parseFloat(fromEUR(profitEUR, currency).toFixed(0));
+  const profitPercent = priceInEUR
+    ? parseFloat(((profitEUR / priceInEUR) * 100).toFixed(0))
+    : 0;
 
   const getBackgroundColor = () => {
     if (profitValue < 0) return "#FF0000"; // red
@@ -70,7 +69,7 @@ const ProfitComponent = ({ order, type = null }) => {
             }}
           >
             {profitValue < 0 ? "" : "+"}
-            {profitValue} EUR
+            {formatAmount(profitValue)} {currencySymbol(currency)}
           </span>
           <span>|</span>
           <span

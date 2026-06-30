@@ -44,16 +44,16 @@ const InvoiceActionsComponent = ({
 
   return (
     <>
-      <div className="order-actions order-details">
+      <div className="invoices-actions">
         <button
-          className="order-actions__calendar-btn"
+          className="invoices-actions__calendar-btn"
           onClick={handleCalendarSelect}
           title="Вибрати період"
         >
           <FaCalendarAlt />
         </button>
         {isCalendarShow && (
-          <div className="order-actions__date-filter">
+          <div className="invoices-actions__date-filter">
             <DatePicker
               selected={startDate}
               onChange={onStartDateChange}

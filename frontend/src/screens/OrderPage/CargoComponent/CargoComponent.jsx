@@ -87,20 +87,21 @@ const CargoComponent = () => {
         title="Вантаж"
         handleFormSubmit={handleFormSubmit}
         content={
-          <div className="order-details__content-row-block-value-cargo">
-            {formFields.flatMap((item) =>
-              item.map((field) => (
-                <div
-                  key={field.id}
-                  className="order-details__content-row-block-value-cargo-blocks"
-                >
-                  <span>{field.placeholder}:</span>
-                  <span className="order-details__content-row-block-value-cargo-blocks_right-span">
-                    {cargoFields[field.id]}
-                  </span>
-                </div>
-              ))
-            )}
+          <div className="cargo-info">
+            {formFields.map((row, i) => (
+              <div key={i} className="cargo-info__row">
+                {row.map((field) => (
+                  <div key={field.id} className="cargo-info__cell">
+                    <span className="cargo-info__label">{field.placeholder}:</span>
+                    <span className="cargo-info__value">
+                      {!cargoFields[field.id] || cargoFields[field.id] === "Unknown"
+                        ? "—"
+                        : cargoFields[field.id]}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
         }
       >

@@ -20,9 +20,29 @@ const SearchableSelect = ({
 }) => {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [menuStyle, setMenuStyle] = useState({});
   const ref = useRef(null);
+  const triggerRef = useRef(null);
   const inputRef = useRef(null);
 
+  const calcMenuStyle = () => {
+    if (!triggerRef.current) return;
+    const r = triggerRef.current.getBoundingClientRect();
+    setMenuStyle({
+      position: "fixed",
+      top: r.bottom + 4,
+      left: r.left,
+      width: r.width,
+      zIndex: 9999,
+    });
+  };
+
+  const openMenu = () => {
+    calcMenuStyle();
+    setOpen(true);
+  };
+
+  // Close on outside click
   useEffect(() => {
     const handler = (e) => {
       if (ref.current && !ref.current.contains(e.target)) {
@@ -33,6 +53,18 @@ const SearchableSelect = ({
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  // Close on scroll so fixed menu doesn't drift from trigger
+  useEffect(() => {
+    if (!open) return;
+    const close = () => { setOpen(false); setSearch(""); };
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
+    return () => {
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
+    };
+  }, [open]);
 
   useEffect(() => {
     if (open && inputRef.current) inputRef.current.focus();
@@ -55,9 +87,10 @@ const SearchableSelect = ({
   return (
     <div className={`ss${open ? " ss--open" : ""}${isActive ? " ss--active" : ""}`} ref={ref}>
       <button
+        ref={triggerRef}
         type="button"
         className="ss__trigger"
-        onClick={() => setOpen((v) => !v)}
+        onClick={() => { if (open) { setOpen(false); setSearch(""); } else { openMenu(); } }}
       >
         <span className="ss__label">{selectedLabel || placeholder}</span>
         {isActive ? (
@@ -72,7 +105,7 @@ const SearchableSelect = ({
       </button>
 
       {open && (
-        <div className="ss__menu">
+        <div className="ss__menu" style={menuStyle}>
           <div className="ss__search-wrap">
             <input
               ref={inputRef}

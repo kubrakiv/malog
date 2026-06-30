@@ -5,6 +5,15 @@ hr.divide-block {
   margin-left: 0;
 }
 
+.week-planner-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 0;
+  color: #888;
+  font-size: 14px;
+}
+
 .planner-filters {
   display: flex;
   align-items: center;

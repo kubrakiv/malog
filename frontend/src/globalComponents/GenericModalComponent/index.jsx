@@ -12,6 +12,7 @@ const GenericModalComponent = ({
   content,
   footer,
   header,
+  modalClassName = "",
 }) => {
   const modalRef = useRef(null);
 
@@ -21,7 +22,7 @@ const GenericModalComponent = ({
         onClose();
       }
     },
-    [onClose]
+    [onClose],
   );
 
   useEffect(() => {
@@ -43,7 +44,7 @@ const GenericModalComponent = ({
         <div className="modal-background" onClick={onClose} />
         <div
           ref={modalRef}
-          className={`generic-modal${show ? "" : " hidden"}`}
+          className={`generic-modal ${modalClassName}${show ? "" : " hidden"}`}
           style={{ display: show ? "block" : "none" }}
         >
           {header && <GenericHeaderComponent title={title} onClose={onClose} />}

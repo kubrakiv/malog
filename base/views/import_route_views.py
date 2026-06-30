@@ -9,7 +9,8 @@ import requests
 import asyncio
 import aiohttp
 
-BASE_URL = "https://sovtes.ua"
+import os
+BASE_URL = os.getenv("SOVTES_BASE_URL", "https://sovtes.ua")
 
 
 async def _fetch_single_tender(session, periodic, token):
@@ -17,7 +18,7 @@ async def _fetch_single_tender(session, periodic, token):
     url = f"{BASE_URL}/a/v2/rest/public/singleRoute?route={periodic}"
     async with session.get(url, headers=headers) as resp:
         data = await resp.json()
-    if data.get("status") == "error" and data.get("message") == "Token is required":
+    if data.get("status") == "error" and data.get("message") in ("Token is required", "Token is invalid", "Ваша сесія не є дійсна"):
         from base.utils.api_utils import get_api_token
         new_token = get_api_token(force_refresh=True)
         headers["Authorization"] = new_token
@@ -79,7 +80,7 @@ def fetch_and_create_orders(request):
             return Response({"error": "Unsupported platform"}, status=400)
 
         # Step 4: Create Objects
-        order = create_objects_from_parsed_data(parsed_data)
+        order = create_objects_from_parsed_data(parsed_data, user=request.user)
 
         return Response(
             {"message": f"Order {order.order_number} created successfully."},
@@ -93,14 +94,14 @@ def fetch_and_create_orders(request):
 @api_view(["POST"])
 def create_route(request):
     try:
-        # Step 1: Extract `order` and `platform` from the request body
         order = request.data.get("order")
         platform = request.data.get("platform")
+        truck_plates = request.data.get("truck_plates")
+        driver_name = request.data.get("driver_name")
 
         if not order or not platform:
             return Response({"error": "order and platform are required."}, status=400)
 
-        # Step 3: Parse JSON based on platform
         if platform == "sovtes":
             parsed_data = parse_sovtes(order["data"]["route"])
         elif platform == "lkw":
@@ -108,8 +109,12 @@ def create_route(request):
         else:
             return Response({"error": "Unsupported platform"}, status=400)
 
-        # Step 4: Create Objects
-        order = create_objects_from_parsed_data(parsed_data)
+        order = create_objects_from_parsed_data(
+            parsed_data,
+            user=request.user,
+            truck_plates=truck_plates,
+            driver_name=driver_name,
+        )
 
         return Response(
             {"message": f"Order {order.order_number} created successfully."},
@@ -120,7 +125,7 @@ def create_route(request):
         return Response({"error": str(e)}, status=500)
 
 @api_view(["GET"])
-def get_all_routes(request):
+def get_booked_tender_routes(request):
     try:
         # Step 1: Authenticate and fetch active routes
         token = get_api_token()

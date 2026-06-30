@@ -142,16 +142,14 @@ const EmailSenderComponent = () => {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
-      <button
-        onClick={handleSendEmail}
-        disabled={isSending}
-        className="order-details__action-send-documents-btn"
-        title="Відправити Email"
-      >
-        {isSending ? <FaEnvelopeOpenText /> : <FaEnvelope />}
-      </button>
-    </div>
+    <button
+      onClick={handleSendEmail}
+      disabled={isSending}
+      className="order-details__action-send-documents-btn"
+      data-tooltip="Відправити Email"
+    >
+      {isSending ? <FaEnvelopeOpenText /> : <FaEnvelope />}
+    </button>
   );
 };
 

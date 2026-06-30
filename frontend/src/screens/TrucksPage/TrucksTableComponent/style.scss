@@ -95,7 +95,8 @@
     border-radius: 20px;
     background: rgba(255, 255, 255, 0.9);
     box-shadow: 0 16px 36px rgba(16, 118, 128, 0.08);
-    overflow: hidden;
+    overflow: visible;
+    min-height: calc(100vh - 220px);
   }
 
   &__table-wrap {

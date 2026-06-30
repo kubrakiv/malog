@@ -1,6 +1,4 @@
-export const getPricePerKm = (amount, distance, currency, currency_rate) => {
-  const pricePerKm =
-    currency === "EUR" ? amount / distance : amount / distance / currency_rate;
-
-  return pricePerKm.toFixed(2);
+export const getPricePerKm = (amount, distance) => {
+  if (!distance || distance === 0) return "0.00";
+  return ((parseFloat(amount) || 0) / distance).toFixed(2);
 };

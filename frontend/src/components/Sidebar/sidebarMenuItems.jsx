@@ -44,8 +44,16 @@ const menuItems = [
         title: "Співробітники",
       },
       {
-        path: "/trucks",
+        path: "/fleet",
         title: "Автопарк",
+      },
+      {
+        path: "/settings/cost-centers",
+        title: "Центри витрат",
+      },
+      {
+        path: "/settings/route-categories",
+        title: "Категорії маршрутів",
       },
     ],
   },

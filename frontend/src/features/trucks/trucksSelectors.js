@@ -1,5 +1,7 @@
 export const selectTrucks = (state) => state.trucksInfo.trucks.data;
 
+export const selectTrucksLoading = (state) => state.trucksInfo.loading;
+
 export const selectEditModeTruck = (state) => state.trucksInfo.editModeTruck;
 
 export const selectShowTruckModal = (state) => state.trucksInfo.showTruckModal;

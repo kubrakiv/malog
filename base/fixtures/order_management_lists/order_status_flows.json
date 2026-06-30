@@ -1,0 +1,657 @@
+﻿[
+{
+  "model": "base.orderstatusflow",
+  "pk": 1,
+  "fields": {
+    "name": "created",
+    "display_name": "Order Created",
+    "display_name_driver": null,
+    "description": "The order has been created in the system",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin"
+    ],
+    "actionable_by_roles": [
+      "admin",
+      "system"
+    ],
+    "order_in_flow": 1,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.189Z",
+    "updated_at": "2025-10-12T13:43:41.189Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 2,
+  "fields": {
+    "name": "planned",
+    "display_name": "Order Planned",
+    "display_name_driver": null,
+    "description": "Route, truck, and driver have been assigned",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "logist",
+      "admin"
+    ],
+    "order_in_flow": 2,
+    "is_active": false,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "created"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.198Z",
+    "updated_at": "2025-10-12T13:43:41.198Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 3,
+  "fields": {
+    "name": "assigned_to_driver",
+    "display_name": "Assigned to Driver",
+    "display_name_driver": "New Order Available",
+    "description": "Order has been assigned to a driver and awaiting acceptance",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "logist",
+      "admin"
+    ],
+    "order_in_flow": 3,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "created"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.200Z",
+    "updated_at": "2025-10-12T21:15:56.224Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 4,
+  "fields": {
+    "name": "driver_accepted",
+    "display_name": "Accepted by Driver",
+    "display_name_driver": "Accept Order",
+    "description": "Driver has accepted the order assignment",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver"
+    ],
+    "order_in_flow": 4,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "assigned_to_driver"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.202Z",
+    "updated_at": "2025-10-12T21:15:56.233Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 5,
+  "fields": {
+    "name": "driver_rejected",
+    "display_name": "Rejected by Driver",
+    "display_name_driver": "Reject Order",
+    "description": "Driver has rejected the order assignment",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin"
+    ],
+    "actionable_by_roles": [
+      "driver"
+    ],
+    "order_in_flow": 4,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "assigned_to_driver"
+    ],
+    "auto_transition_to": "planned",
+    "created_at": "2025-10-12T13:43:41.204Z",
+    "updated_at": "2025-10-12T21:15:56.235Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 6,
+  "fields": {
+    "name": "en_route_to_loading",
+    "display_name": "Heading to Loading",
+    "display_name_driver": "Start Journey to Loading",
+    "description": "Driver is traveling to the loading location",
+    "category": "task",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver"
+    ],
+    "order_in_flow": 5,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": "Loading",
+    "can_transition_from": [
+      "driver_accepted"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.205Z",
+    "updated_at": "2025-10-12T21:15:56.236Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 7,
+  "fields": {
+    "name": "arrived_for_loading",
+    "display_name": "Arrived for Loading",
+    "display_name_driver": "Arrived for Loading",
+    "description": "Driver has arrived at the loading location",
+    "category": "task",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver"
+    ],
+    "order_in_flow": 6,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": "Loading",
+    "can_transition_from": [
+      "en_route_to_loading"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.206Z",
+    "updated_at": "2025-10-12T21:15:56.237Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 8,
+  "fields": {
+    "name": "loading_in_progress",
+    "display_name": "Loading Started",
+    "display_name_driver": "Start Loading",
+    "description": "Cargo is currently being loaded",
+    "category": "task",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver"
+    ],
+    "order_in_flow": 7,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": "Loading",
+    "can_transition_from": [
+      "arrived_for_loading"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.208Z",
+    "updated_at": "2025-10-12T21:15:56.239Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 9,
+  "fields": {
+    "name": "loading_completed",
+    "display_name": "Loading Completed",
+    "display_name_driver": "Finish Loading",
+    "description": "Cargo loading has been completed",
+    "category": "task",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver"
+    ],
+    "order_in_flow": 8,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": "Loading",
+    "can_transition_from": [
+      "loading_in_progress"
+    ],
+    "auto_transition_to": "in_transit",
+    "created_at": "2025-10-12T13:43:41.210Z",
+    "updated_at": "2025-10-12T21:15:56.240Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 10,
+  "fields": {
+    "name": "in_transit",
+    "display_name": "In Transit",
+    "display_name_driver": "In Transit",
+    "description": "Truck is traveling to delivery location",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "system"
+    ],
+    "order_in_flow": 9,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "loading_completed"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.212Z",
+    "updated_at": "2025-10-12T21:15:56.243Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 11,
+  "fields": {
+    "name": "arrived_for_unloading",
+    "display_name": "Arrived for Unloading",
+    "display_name_driver": "Arrived for Unloading",
+    "description": "Driver has arrived at the unloading location",
+    "category": "task",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver"
+    ],
+    "order_in_flow": 10,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": "Unloading",
+    "can_transition_from": [
+      "in_transit"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.213Z",
+    "updated_at": "2025-10-12T21:15:56.244Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 12,
+  "fields": {
+    "name": "unloading_in_progress",
+    "display_name": "Unloading Started",
+    "display_name_driver": "Start Unloading",
+    "description": "Cargo is currently being unloaded",
+    "category": "task",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver"
+    ],
+    "order_in_flow": 11,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": "Unloading",
+    "can_transition_from": [
+      "arrived_for_unloading"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.215Z",
+    "updated_at": "2025-10-12T21:15:56.245Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 13,
+  "fields": {
+    "name": "unloading_completed",
+    "display_name": "Unloading Completed",
+    "display_name_driver": "Finish Unloading",
+    "description": "Cargo unloading has been completed",
+    "category": "task",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver"
+    ],
+    "order_in_flow": 12,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": "Unloading",
+    "can_transition_from": [
+      "unloading_in_progress"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.216Z",
+    "updated_at": "2025-10-12T21:15:56.252Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 14,
+  "fields": {
+    "name": "delivery_completed",
+    "display_name": "Delivery Completed",
+    "display_name_driver": "Finish Delivery",
+    "description": "All cargo has been delivered successfully",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver",
+      "system"
+    ],
+    "order_in_flow": 13,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "unloading_completed"
+    ],
+    "auto_transition_to": "documents_pending",
+    "created_at": "2025-10-12T13:43:41.218Z",
+    "updated_at": "2025-10-12T21:15:56.253Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 15,
+  "fields": {
+    "name": "documents_pending",
+    "display_name": "Documents Pending",
+    "display_name_driver": "Upload Documents",
+    "description": "Waiting for delivery documents to be uploaded",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "system"
+    ],
+    "order_in_flow": 14,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "delivery_completed"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.219Z",
+    "updated_at": "2025-10-12T21:15:56.255Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 16,
+  "fields": {
+    "name": "documents_uploaded",
+    "display_name": "Documents Uploaded",
+    "display_name_driver": "Documents Uploaded",
+    "description": "All required documents have been uploaded",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver",
+      "system"
+    ],
+    "order_in_flow": 15,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "documents_pending",
+      "delivery_completed"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.221Z",
+    "updated_at": "2025-10-12T21:15:56.257Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 17,
+  "fields": {
+    "name": "completed",
+    "display_name": "Order Completed",
+    "display_name_driver": "Job Completed",
+    "description": "Order has been fully completed and verified",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "logist",
+      "admin"
+    ],
+    "order_in_flow": 16,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "documents_uploaded"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.222Z",
+    "updated_at": "2025-10-12T21:15:56.258Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 18,
+  "fields": {
+    "name": "invoiced",
+    "display_name": "Invoice Sent",
+    "display_name_driver": "Invoiced",
+    "description": "Invoice has been sent to customer",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin"
+    ],
+    "actionable_by_roles": [
+      "logist",
+      "admin"
+    ],
+    "order_in_flow": 17,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "completed"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.224Z",
+    "updated_at": "2025-10-12T21:15:56.259Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 19,
+  "fields": {
+    "name": "paid",
+    "display_name": "Payment Received",
+    "display_name_driver": "Payment Received",
+    "description": "Payment for the order has been received",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin"
+    ],
+    "actionable_by_roles": [
+      "logist",
+      "admin"
+    ],
+    "order_in_flow": 18,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "invoiced",
+      "completed"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.225Z",
+    "updated_at": "2025-10-12T21:15:56.260Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 20,
+  "fields": {
+    "name": "delayed",
+    "display_name": "Delayed",
+    "display_name_driver": "Report Delay",
+    "description": "Order or task is delayed beyond scheduled time",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver",
+      "logist"
+    ],
+    "order_in_flow": 100,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "driver_accepted",
+      "en_route_to_loading",
+      "loading_in_progress",
+      "in_transit",
+      "unloading_in_progress"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.227Z",
+    "updated_at": "2025-10-12T21:15:56.262Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 21,
+  "fields": {
+    "name": "cancelled",
+    "display_name": "Cancelled",
+    "display_name_driver": "Order Cancelled",
+    "description": "Order has been cancelled",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "logist",
+      "admin"
+    ],
+    "order_in_flow": 101,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "created",
+      "planned",
+      "assigned_to_driver",
+      "driver_rejected"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.230Z",
+    "updated_at": "2025-10-12T21:15:56.264Z"
+  }
+},
+{
+  "model": "base.orderstatusflow",
+  "pk": 22,
+  "fields": {
+    "name": "problem_reported",
+    "display_name": "Problem Reported",
+    "display_name_driver": "Report Problem",
+    "description": "Driver or logist has reported an issue with the order",
+    "category": "order",
+    "visible_to_roles": [
+      "logist",
+      "admin",
+      "driver"
+    ],
+    "actionable_by_roles": [
+      "driver",
+      "logist"
+    ],
+    "order_in_flow": 102,
+    "is_active": true,
+    "requires_task_completion": false,
+    "task_type_filter": null,
+    "can_transition_from": [
+      "driver_accepted",
+      "loading_in_progress",
+      "in_transit",
+      "unloading_in_progress"
+    ],
+    "auto_transition_to": null,
+    "created_at": "2025-10-12T13:43:41.231Z",
+    "updated_at": "2025-10-12T21:15:56.266Z"
+  }
+}
+]

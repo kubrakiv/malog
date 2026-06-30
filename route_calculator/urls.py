@@ -21,4 +21,8 @@ urlpatterns = [
     
     # Truck parameters
     path('truck-parameters/', views.list_truck_parameters, name='truck-parameters'),
+
+    # Cost configuration
+    path('fuel-prices/current/', views.current_fuel_prices, name='fuel-prices-current'),
+    path('cost-config/', views.cost_config, name='cost-config'),
 ]

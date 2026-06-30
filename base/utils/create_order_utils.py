@@ -1,25 +1,26 @@
-from base.models import Customer, CustomerManager, Order, Task, Point, Currency, Country, PointCompany
+from base.models import (
+    Customer, CustomerManager, Order, Task, TaskType,
+    Point, Currency, Country, PointCompany, Platform, Truck, DriverProfile,
+)
 from base.utils.task_utils import compute_task_title
 
-def create_objects_from_parsed_data(parsed_data):
-    """
-    Creates necessary database objects from parsed data.
-    """
+
+def create_objects_from_parsed_data(parsed_data, user=None, truck_plates=None, driver_name=None):
     try:
-        # Create or update Customer
+        # Customer
         customer_data = parsed_data["customer_data"]
         customer, _ = Customer.objects.get_or_create(
-            name=customer_data["name"],
+            name=customer_data["name"] or "Unknown",
             defaults={
                 "nip_number": customer_data["nip_number"],
                 "email": customer_data["email"],
             },
         )
 
-        # Create or update Customer Manager
+        # Customer Manager
         manager_data = parsed_data["customer_manager_data"]
         manager, _ = CustomerManager.objects.get_or_create(
-            full_name=manager_data["full_name"],
+            full_name=manager_data["full_name"] or "Unknown",
             defaults={
                 "phone": manager_data["phone"],
                 "email": manager_data["email"],
@@ -27,57 +28,91 @@ def create_objects_from_parsed_data(parsed_data):
             },
         )
 
-        # Create Order
+        # Currency — create on first use if table is empty
         order_data = parsed_data["order_data"]
-        currency = Currency.objects.filter(short_name=order_data["currency"]).first()
-        if not currency:
-            currency = Currency.objects.get(short_name="EUR")  # Fallback
+        currency_code = (order_data.get("currency") or "UAH").upper()
+        currency, _ = Currency.objects.get_or_create(
+            short_name=currency_code,
+            defaults={"name": currency_code},
+        )
+
+        # Platform — create "Sovtes" entry if not present yet
+        platform, _ = Platform.objects.get_or_create(
+            name="Sovtes",
+            defaults={"name": "Sovtes"},
+        )
+
+        # Truck / Driver — look up by plates / name within the user's tenant
+        client = user.client if user else None
+        truck = None
+        driver = None
+        if truck_plates and client:
+            truck = Truck.objects.filter(plates=truck_plates, client=client).first()
+        if driver_name and client:
+            driver = DriverProfile.objects.filter(full_name=driver_name, profile__client=client).first()
 
         order = Order.objects.create(
             order_number=order_data["order_number"],
-            price=order_data["price"],
+            price=order_data["price"] or 0,
             customer=customer,
             customer_manager=manager,
-            distance=order_data["distance"],
-            cargo_name=order_data["cargo_name"],
-            cargo_weight=order_data["cargo_weight"],
-            payment_type_id=order_data["payment_type_id"],
-            trailer_type=order_data["trailer_type"],
-            vat=order_data["vat"],
+            distance=order_data["distance"] or 0,
+            cargo_name=order_data["cargo_name"] or "",
+            cargo_weight=order_data["cargo_weight"] or "",
+            # payment_type_id from Sovtes is their internal ID, not our DB FK
+            payment_type=None,
+            trailer_type=order_data["trailer_type"] or "",
+            vat=order_data["vat"] or False,
             currency=currency,
-            platform_id=7,  # Sovtes platform ID
-            user_id=3,      # default user ID
+            platform=platform,
+            user=user,
+            truck=truck,
+            driver=driver,
         )
 
-        # Create Points and Tasks
+        task_type_loading = TaskType.objects.get(name="Loading")
+        task_type_unloading = TaskType.objects.get(name="Unloading")
+
+        # Points and Tasks
         for part in parsed_data["route_parts"]:
             point_data = part["point_data"]
-            country = Country.objects.filter(short_name=point_data["country_short_name"]).first()
-            if not country:
-                raise ValueError(f"Country '{point_data['country_short_name']}' not found.")
 
-            company, _ = PointCompany.objects.get_or_create(name=point_data["company_name"])
+            # Country — create on first use if table is empty
+            country_code = (point_data.get("country_short_name") or "").lower()
+            if country_code:
+                country, _ = Country.objects.get_or_create(
+                    short_name=country_code,
+                    defaults={"name": country_code.upper()},
+                )
+            else:
+                country = None
+
+            company_name = point_data.get("company_name") or "Unknown"
+            company, _ = PointCompany.objects.get_or_create(name=company_name)
 
             point, _ = Point.objects.get_or_create(
                 country=country,
-                postal_code=point_data["postal_code"],
-                city=point_data["city"],
-                street=point_data["street"],
-                gps_latitude=point_data["latitude"],
-                gps_longitude=point_data["longitude"],
+                postal_code=point_data.get("postal_code") or "",
+                city=point_data.get("city") or "",
+                street=point_data.get("street") or "",
+                street_number="",
+                gps_latitude=point_data.get("latitude") or "0.0",
+                gps_longitude=point_data.get("longitude") or "0.0",
                 customer=customer,
                 company_name=company,
             )
 
-            task_type = 1 if part["workaction"] == 1 else 2
+            task_type = task_type_loading if part["workaction"] == 1 else task_type_unloading
             Task.objects.create(
                 title=compute_task_title(point),
                 point=point,
                 start_date=part["date"],
                 start_time=part["time"],
                 order=order,
-                type_id=task_type,
+                type=task_type,
                 external_id=part.get("id"),
+                truck=truck,
+                driver=driver,
             )
 
         return order

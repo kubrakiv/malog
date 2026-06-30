@@ -8,11 +8,14 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework import status
 
+from django.db.models import Count
+
 from base.models import (
     Task,
     DriverProfile,
     Truck,
     Order,
+    OrderStatus,
     Customer,
     CustomerManager,
     Platform,
@@ -43,6 +46,8 @@ def getOrders(request):
     driver = request.GET.get("driver")
     truck = request.GET.get("truck")
     customer = request.GET.get("customer")
+    status_name = request.GET.get("status")
+    category = request.GET.get("category")
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
 
@@ -52,6 +57,10 @@ def getOrders(request):
         orders = orders.filter(truck__plates__icontains=truck)
     if customer:
         orders = orders.filter(customer__name__icontains=customer)
+    if status_name:
+        orders = orders.filter(current_status__name__iexact=status_name)
+    if category:
+        orders = orders.filter(category_id=category)
 
     # if start_date:
     #     orders = orders.filter(loading_start_date__gte=start_date)
@@ -129,8 +138,14 @@ def searchOrderByNumber(request):
 
 @api_view(["GET"])
 def getOrder(request, pk):
-    # Fetch order with prefetch_related for optimization
-    order = Order.objects.prefetch_related("tasks").get(id=pk, client=request.user.client)
+    # `pk` may be the numeric order id or the human-readable route number (e.g. "1-06-26")
+    lookup = {"id": pk} if str(pk).isdigit() else {"number": pk}
+    try:
+        order = Order.objects.prefetch_related("tasks").get(
+            **lookup, client=request.user.client
+        )
+    except Order.DoesNotExist:
+        return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
     # Sorting tasks within the order; parse strings to datetime if necessary
     sorted_tasks = sorted(
@@ -216,6 +231,48 @@ def editOrder(request, pk):
     else:
         print("Serializer Errors: ", serializer.errors)
         return Response(serializer.errors, status=400)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def orderStats(request):
+    """Return status counts and top-10 customers for the current client's orders."""
+    qs = Order.objects.filter(client=request.user.client)
+
+    status_counts = (
+        qs.values("current_status__name")
+        .annotate(count=Count("id"))
+        .order_by("current_status__name")
+    )
+
+    top_customers = (
+        qs.exclude(customer__isnull=True)
+        .values("customer__name")
+        .annotate(count=Count("id"))
+        .order_by("-count")[:10]
+    )
+
+    category_counts = (
+        qs.exclude(category__isnull=True)
+        .values("category_id", "category__ukr")
+        .annotate(count=Count("id"))
+        .order_by("-count")
+    )
+
+    return Response({
+        "statuses": [
+            {"name": s["current_status__name"] or "unknown", "count": s["count"]}
+            for s in status_counts
+        ],
+        "top_customers": [
+            {"name": c["customer__name"], "count": c["count"]}
+            for c in top_customers
+        ],
+        "categories": [
+            {"id": c["category_id"], "name": c["category__ukr"], "count": c["count"]}
+            for c in category_counts
+        ],
+    })
 
 
 @api_view(["DELETE"])

@@ -3,7 +3,7 @@ export const getRouteTitle = (tasks) => {
     return tasks
       .map(
         (task) =>
-          `${task.point_details.country_short}-${task.point_details.postal_code} ${task.point_details.city}`
+          `${task.point_details.country_short?.toUpperCase()}${task.point_details.postal_code ? `-${task.point_details.postal_code}` : ""} ${task.point_details.city}`
       )
       .join(" - ");
   }

@@ -3,13 +3,16 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-from .models import RouteCalculation, RouteToll, RoutePoint, TruckParameters
+from .models import RouteCalculation, RouteToll, RoutePoint, TruckParameters, FuelPrices
+from base.models import CostCenter, Truck, TruckUnit, TruckUnitAssignment
+from base.serializers import CostCenterSerializer
 from .serializers import (
-    RouteCalculationSerializer, 
+    RouteCalculationSerializer,
     RouteCalculationCreateSerializer,
     RouteTollSerializer,
     RoutePointSerializer,
-    TruckParametersSerializer
+    TruckParametersSerializer,
+    FuelPricesSerializer,
 )
 
 
@@ -176,9 +179,90 @@ def list_route_calculations(request):
 
 
 @api_view(['GET'])
-@permission_classes([])  # No authentication required for now
+@permission_classes([])
 def list_truck_parameters(request):
     """Get list of available truck parameters"""
     truck_params = TruckParameters.objects.all().order_by('weight_capacity', 'truck_type')
     serializer = TruckParametersSerializer(truck_params, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def current_fuel_prices(request):
+    """Return the currently active fuel prices for the current client."""
+    client = request.user.client
+    prices = FuelPrices.all_objects.filter(client=client, is_current=True).first()
+    if not prices:
+        return Response({'detail': 'No current fuel prices configured.'}, status=status.HTTP_404_NOT_FOUND)
+    return Response(FuelPricesSerializer(prices).data)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def cost_config(request):
+    """Return fuel prices + cost center breakdown for the current client."""
+    client = request.user.client
+
+    fuel_prices = (
+        FuelPrices.all_objects.filter(client=client, is_current=True).first()
+        or FuelPrices.all_objects.filter(client=client).order_by('-effective_date').first()
+    )
+
+    # Cost centers (all, including inactive, so frontend can group them)
+    cost_centers = CostCenter.objects.filter(client=client)  # bypass TenantManager for explicit filter
+
+    # Per-unit settings stored in client.settings["unit_settings"]
+    unit_settings_map = client.settings.get('unit_settings', {})
+    default_km = 10000
+
+    EUR_RATES = {'EUR': 1, 'UAH': 1 / 42, 'USD': 1 / 1.08}
+
+    # Build truck unit list
+    truck_units = TruckUnit.objects.all()  # TenantManager filters by client
+    truck_unit_data = []
+    total_trucks_km = 0
+
+    for unit in truck_units:
+        actual_count = TruckUnitAssignment.objects.filter(
+            unit=unit, is_active=True, truck__is_removed=False
+        ).count()
+        unit_cfg = unit_settings_map.get(str(unit.id), {})
+        assumed_km = int(unit_cfg.get('assumed_km', default_km))
+        planned_trucks = int(unit_cfg.get('planned_trucks', actual_count or 1))
+
+        # Per-unit EUR/month from active cost centers for this unit
+        unit_centers = [cc for cc in cost_centers if cc.truck_unit_id == unit.id and cc.is_active]
+        unit_eur = sum(float(cc.monthly_amount) * EUR_RATES.get(cc.currency, 1 / 42) for cc in unit_centers)
+        unit_divisor = planned_trucks * assumed_km
+        unit_fixed_per_km = unit_eur / unit_divisor if unit_divisor else 0
+
+        total_trucks_km += unit_divisor
+
+        truck_unit_data.append({
+            'id': unit.id,
+            'name': unit.name,
+            'actual_truck_count': actual_count,
+            'planned_trucks': planned_trucks,
+            'assumed_km': assumed_km,
+            'total_eur_per_month': round(unit_eur, 2),
+            'fixed_cost_per_km_eur': round(unit_fixed_per_km, 4),
+        })
+
+    # Global fixed_cost_per_km_eur = weighted average across all units
+    active_centers = [cc for cc in cost_centers if cc.is_active]
+    total_eur_per_month = sum(
+        float(cc.monthly_amount) * EUR_RATES.get(cc.currency, 1 / 42)
+        for cc in active_centers
+    )
+    if not total_trucks_km:
+        active_trucks = Truck.objects.filter(is_removed=False).count()
+        total_trucks_km = max(active_trucks, 1) * default_km
+    fixed_cost_per_km_eur = total_eur_per_month / total_trucks_km if total_trucks_km else 0
+
+    return Response({
+        'fuel_prices': FuelPricesSerializer(fuel_prices).data if fuel_prices else None,
+        'cost_centers': CostCenterSerializer(cost_centers, many=True).data,
+        'truck_units': truck_unit_data,
+        'fixed_cost_per_km_eur': round(fixed_cost_per_km_eur, 4),
+    })

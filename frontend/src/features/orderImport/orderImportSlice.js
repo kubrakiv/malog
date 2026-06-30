@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-import { getRoute, getAllRoutes, getFreeOrders } from "./orderImportOperations";
+import { getRoute, getBookedTenderRoutes, getFreeOrders } from "./orderImportOperations";
 
 export const sovtesSlice = createSlice({
   name: "sovtes",
@@ -21,7 +21,7 @@ export const sovtesSlice = createSlice({
       .addCase(getRoute.fulfilled, (state, action) => {
         state.route = action.payload;
       })
-      .addCase(getAllRoutes.fulfilled, (state, action) => {
+      .addCase(getBookedTenderRoutes.fulfilled, (state, action) => {
         state.routes.data = action.payload;
       })
       .addCase(getFreeOrders.pending, (state) => {

@@ -1,15 +1,18 @@
-@import "../../../styles/utils/vars";
+﻿@import "../../../styles/utils/vars";
 
 .order-actions {
   display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  position: relative;
   background-color: $tableHeaderColor;
   border-radius: 4px;
-  margin: 5px auto;
+  margin: 5px 0;
 
   &__date-filter {
     display: flex;
     align-items: center;
-    gap: 10px; // Space between date pickers
+    gap: 10px;
 
     .styled-date-picker {
       padding: 5px 10px;
@@ -17,17 +20,17 @@
       border: 1px solid #ccc;
       border-radius: 5px;
       width: 150px;
-      background-color: #f8f9fa; // Light background color for better visual
+      background-color: #f8f9fa;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       transition: all 0.2s ease-in-out;
 
       &:focus {
         outline: none;
-        border-color: #007bff; // Highlight border on focus
+        border-color: #007bff;
       }
 
       &::placeholder {
-        color: #6c757d; // Darker placeholder text for better readability
+        color: #6c757d;
         font-style: italic;
       }
     }
@@ -38,7 +41,7 @@
     position: relative;
 
     .styled-select-component {
-      padding-right: 30px; // Add padding to prevent overlap with the clear button
+      padding-right: 30px;
     }
   }
   &__find-customer-select {
@@ -48,7 +51,7 @@
     width: 200px;
 
     .styled-select-component {
-      padding-right: 30px; // Add padding to prevent overlap with the clear button
+      padding-right: 30px;
     }
   }
   &__add-order-btn {
@@ -61,19 +64,6 @@
     border: none;
     &:hover {
       background-color: rgb(20, 179, 20);
-      cursor: pointer;
-    }
-  }
-  &__copy-order-btn {
-    background-color: rgba(6, 22, 67, 0.8);
-    font-size: 16px;
-    border-radius: 4px;
-    padding: 5px;
-    margin: 5px;
-    color: white;
-    border: none;
-    &:hover {
-      background-color: rgba(23, 58, 184, 0.5);
       cursor: pointer;
     }
   }
@@ -90,6 +80,29 @@
       cursor: pointer;
     }
   }
+  &__refresh-btn {
+    background-color: rgba(22, 101, 216, 0.8);
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 5px;
+    margin: 5px;
+    color: white;
+    border: none;
+    cursor: pointer;
+    &:hover:not(:disabled) {
+      background-color: rgba(22, 101, 216, 0.5);
+    }
+    &:disabled { opacity: 0.7; cursor: default; }
+    &--spinning svg {
+      animation: spin 0.6s linear infinite;
+    }
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+
   &__find-driver-btn {
     background-color: rgba(89, 80, 9, 0.7);
     font-size: 16px;
@@ -149,7 +162,6 @@
     font-size: 14px;
     border-radius: 4px;
     padding: 4px;
-    // margin: 5px;
     color: white;
     border: none;
     &:hover {
@@ -172,28 +184,7 @@
     }
   }
 
-  &__sovtes-routes-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    background-color: rgba(15, 118, 128, 0.85);
-    font-size: 13px;
-    font-weight: 600;
-    border-radius: 4px;
-    padding: 5px 10px;
-    margin: 5px;
-    color: white;
-    border: none;
-    white-space: nowrap;
-    &:hover {
-      background-color: rgba(15, 118, 128, 1);
-      cursor: pointer;
-    }
-  }
-
   &__delete-order-btn {
-    position: absolute;
-    right: 10px;
     background-color: rgba(233, 43, 43, 0.8);
     font-size: 16px;
     border-radius: 4px;

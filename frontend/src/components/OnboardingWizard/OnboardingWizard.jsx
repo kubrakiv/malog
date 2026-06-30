@@ -92,7 +92,7 @@ const OnboardingWizard = () => {
       action: onboardingStatus?.has_trucks
         ? "Далі: Водії"
         : "Додати вантажівки",
-      route: "/trucks",
+      route: "/fleet",
       completed: onboardingStatus?.has_trucks,
       badge: onboardingStatus?.truck_count
         ? `${onboardingStatus.truck_count} вантажівк${
@@ -286,18 +286,14 @@ const OnboardingWizard = () => {
                       : "default",
                 }}
               >
-                <div className="step-number">
-                  {step.icon}
-                </div>
+                <div className="step-number">{step.icon}</div>
                 <div className="step-label">{step.title}</div>
               </div>
             ))}
           </div>
         )}
 
-        <div className="step-hero-icon">
-          {currentStepData.icon}
-        </div>
+        <div className="step-hero-icon">{currentStepData.icon}</div>
 
         {currentStep === 0 ? (
           <h1 className="welcome-title">
@@ -339,9 +335,7 @@ const OnboardingWizard = () => {
                       : "default",
                 }}
               >
-                <div className="step-number">
-                  {step.icon}
-                </div>
+                <div className="step-number">{step.icon}</div>
                 <div className="step-label">{step.title}</div>
               </div>
             ))}

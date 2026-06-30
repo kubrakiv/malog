@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
-  FaCalendar,
-  FaClock,
   FaFlagCheckered,
   FaMapMarkerAlt,
   FaPencilAlt,
   FaRegTrashAlt,
 } from "react-icons/fa";
+import { FiCalendar, FiClock } from "react-icons/fi";
 import {
   PiArrowFatDownBold,
   PiArrowFatUpBold,
@@ -27,7 +26,6 @@ import "./TaskOrder.scss";
 function TaskOrder({ task, handleDeleteTask, onEditMode }) {
   const dispatch = useDispatch();
 
-  const [isHovered, setHovered] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState(false);
   const [unloadingStatus, setUnloadingStatus] = useState(false);
 
@@ -69,14 +67,6 @@ function TaskOrder({ task, handleDeleteTask, onEditMode }) {
     }
   };
 
-  const handleMouseEnter = () => {
-    setHovered(true);
-  };
-
-  const handleMouseLeave = () => {
-    setHovered(false);
-  };
-
   const getIconComponent = () => {
     switch (task.type) {
       case LOADING:
@@ -104,19 +94,19 @@ function TaskOrder({ task, handleDeleteTask, onEditMode }) {
         return !loadingStatus ? (
           <>
             <div className="task-order__date">
-              <FaCalendar /> {transformDate(task.start_date)}
+              <FiCalendar /> {transformDate(task.start_date)}
             </div>
             <div className="task-order__time">
-              <FaClock /> {formattedTime(task.start_time)}
+              <FiClock /> {formattedTime(task.start_time)}
             </div>
           </>
         ) : (
           <>
             <div className="task-order__date">
-              <FaCalendar /> {transformDate(task.end_date)}
+              <FiCalendar /> {transformDate(task.end_date)}
             </div>
             <div className="task-order__time">
-              <FaClock /> {formattedTime(task.end_time)}
+              <FiClock /> {formattedTime(task.end_time)}
             </div>
           </>
         );
@@ -124,19 +114,19 @@ function TaskOrder({ task, handleDeleteTask, onEditMode }) {
         return !unloadingStatus ? (
           <>
             <div className="task-order__date">
-              <FaCalendar /> {transformDate(task.start_date)}
+              <FiCalendar /> {transformDate(task.start_date)}
             </div>
             <div className="task-order__time">
-              <FaClock /> {formattedTime(task.start_time)}
+              <FiClock /> {formattedTime(task.start_time)}
             </div>
           </>
         ) : (
           <>
             <div className="task-order__date">
-              <FaCalendar /> {transformDate(task.end_date)}
+              <FiCalendar /> {transformDate(task.end_date)}
             </div>
             <div className="task-order__time">
-              <FaClock /> {formattedTime(task.end_time)}
+              <FiClock /> {formattedTime(task.end_time)}
             </div>
           </>
         );
@@ -144,10 +134,10 @@ function TaskOrder({ task, handleDeleteTask, onEditMode }) {
         return (
           <>
             <div className="task-order__date">
-              <FaCalendar /> {transformDate(task.start_date)}
+              <FiCalendar /> {transformDate(task.start_date)}
             </div>
             <div className="task-order__time">
-              <FaClock /> {formattedTime(task.start_time)}
+              <FiClock /> {formattedTime(task.start_time)}
             </div>
           </>
         );
@@ -204,17 +194,10 @@ function TaskOrder({ task, handleDeleteTask, onEditMode }) {
   };
 
   const taskStyle = {
-    backgroundColor: isHovered
-      ? task.type === LOADING
-        ? "rgba(63, 177, 40, 0.6)"
-        : task.type === UNLOADING
-        ? "rgba(226, 97, 85, 0.6)"
-        : task.type === START
-        ? "rgba(140, 177, 186, 0.6)"
-        : "rgba(140, 146, 186, 0.9)"
+    backgroundColor:
+      task.type === LOADING ? "rgba(63, 177, 40, 0.3)"
+      : task.type === UNLOADING ? "rgba(226, 97, 85, 0.3)"
       : "rgba(140, 170, 186, 0.3)",
-
-    // color: getTextColor(task.type, task.end_date, task.end_time),
     color: "black",
   };
 
@@ -223,48 +206,56 @@ function TaskOrder({ task, handleDeleteTask, onEditMode }) {
       {task && (
         <div
           className="task-order"
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
           style={taskStyle}
         >
           <div className="task-order__icon">{getIconComponent()}</div>
-          <div className="task-order__info">
+          <div className="task-order__address-col">
             <div className="task-order__address">
               {task.title || getTaskTitle(task)}
             </div>
-            <div className="task-order__company">
-              {task.point_details?.company_name || "No company name"}
-            </div>
-            <div className="task-order__date-time">{getTimeComponent()}</div>
+            {(task.point_details?.street || task.point_details?.street_number) && (
+              <div className="task-order__full-address">
+                {[task.point_details.street, task.point_details.street_number]
+                  .filter(Boolean)
+                  .join(" ")}
+              </div>
+            )}
+            {task.point_details?.company_name &&
+              task.point_details.company_name !== "Unknown" && (
+                <div className="task-order__company">
+                  {task.point_details.company_name}
+                </div>
+              )}
           </div>
-          {isHovered && (
-            <div className="task-order__actions">
-              <button
-                type="button"
-                title="Edit task"
-                className="task-order__btn task-order__btn_edit"
-                onClick={(e) => onEditMode(e, task)}
-              >
-                <FaPencilAlt />
-              </button>
-              <button
-                type="button"
-                title="Delete task"
-                className="task-order__btn task-order__btn_delete"
-                onClick={(e) => handleDeleteTask(e, task.id)}
-              >
-                <FaRegTrashAlt />
-              </button>
-              <button
-                type="button"
-                title="Show on map"
-                className="task-order__btn task-order__btn_map"
-                onClick={() => handleShowPointOnMap(task)}
-              >
-                <FaMapMarkerAlt />
-              </button>
-            </div>
-          )}
+          <div className="task-order__datetime-col">
+            {getTimeComponent()}
+          </div>
+          <div className="task-order__actions">
+            <button
+              type="button"
+              title="Edit task"
+              className="task-order__btn task-order__btn_edit"
+              onClick={(e) => onEditMode(e, task)}
+            >
+              <FaPencilAlt />
+            </button>
+            <button
+              type="button"
+              title="Delete task"
+              className="task-order__btn task-order__btn_delete"
+              onClick={(e) => handleDeleteTask(e, task.id)}
+            >
+              <FaRegTrashAlt />
+            </button>
+            <button
+              type="button"
+              title="Show on map"
+              className="task-order__btn task-order__btn_map"
+              onClick={() => handleShowPointOnMap(task)}
+            >
+              <FaMapMarkerAlt />
+            </button>
+          </div>
         </div>
       )}
     </>

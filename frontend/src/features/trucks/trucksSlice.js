@@ -19,6 +19,7 @@ export const truckSlice = createSlice({
     createdTruck: {
       data: {},
     },
+    loading: false,
     editModeTruck: false,
     showTruckModal: false,
     showAddTruckModal: false,
@@ -38,8 +39,15 @@ export const truckSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
+    builder.addCase(listTrucks.pending, (state) => {
+      state.loading = true;
+    });
     builder.addCase(listTrucks.fulfilled, (state, action) => {
+      state.loading = false;
       state.trucks.data = action.payload;
+    });
+    builder.addCase(listTrucks.rejected, (state) => {
+      state.loading = false;
     });
     builder.addCase(updateTruck.fulfilled, (state, action) => {
       const index = state.trucks.data.findIndex(

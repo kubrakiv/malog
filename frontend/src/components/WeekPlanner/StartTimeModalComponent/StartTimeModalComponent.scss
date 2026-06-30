@@ -1,0 +1,15 @@
+.generic-modal.planner-task-time-modal {
+  width: min(760px, calc(100vw - 32px));
+}
+
+@media (max-width: 900px) {
+  .generic-modal.planner-task-time-modal {
+    width: calc(100vw - 20px);
+  }
+}
+
+@media (max-width: 600px) {
+  .generic-modal.planner-task-time-modal {
+    width: 100%;
+  }
+}

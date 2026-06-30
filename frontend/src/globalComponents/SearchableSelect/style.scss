@@ -73,13 +73,9 @@ $radius: 0.375rem;
     }
   }
 
-  // ── Dropdown ─────────────────────────────────────────────
+  // ── Dropdown — rendered at fixed viewport coords (set via inline style) ───────
   &__menu {
-    position: absolute;
-    top: calc(100% + 4px);
-    left: 0;
-    z-index: 300;
-    min-width: 100%;
+    // position/top/left/width/z-index come from inline style (position: fixed)
     background: #fff;
     border: 1.5px solid $teal-border;
     border-radius: 10px;
