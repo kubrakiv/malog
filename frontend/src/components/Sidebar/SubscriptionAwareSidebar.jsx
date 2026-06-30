@@ -131,7 +131,7 @@ const SubscriptionAwareSidebar = ({ children }) => {
           className="sidebar sidebar-loading"
         />
         <main className="page__main">
-          {children}
+          <div className="page__content">{children}</div>
           <Footer />
         </main>
       </div>
@@ -155,7 +155,7 @@ const SubscriptionAwareSidebar = ({ children }) => {
           )}
         </div>
         <main className="page__main">
-          {children}
+          <div className="page__content">{children}</div>
           <Footer />
         </main>
       </div>
@@ -181,7 +181,7 @@ const SubscriptionAwareSidebar = ({ children }) => {
         )}
       </div>
       <main className="page__main">
-        {children}
+        <div className="page__content">{children}</div>
         <Footer />
       </main>
     </div>
