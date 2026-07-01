@@ -3,6 +3,7 @@ from base.models import (
     Point, Currency, Country, PointCompany, Platform, Truck, DriverProfile,
 )
 from base.utils.task_utils import compute_task_title
+from base.utils.route_category_utils import assign_route_category
 
 
 SOVTES_WORKACTION_TASK_TYPES = {
@@ -173,6 +174,8 @@ def create_objects_from_parsed_data(
                 truck=truck,
                 driver=driver,
             )
+
+        assign_route_category(order)
 
         return order
     except Exception as e:

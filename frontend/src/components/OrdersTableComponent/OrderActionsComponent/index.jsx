@@ -35,6 +35,8 @@ import {
   Plus,
   Route,
   RouteIcon,
+  Truck,
+  User,
   Wallet,
   Weight,
   X,
@@ -158,6 +160,30 @@ const InfoGrid = ({ items }) => {
           label={item.label}
           value={item.value}
         />
+      ))}
+    </div>
+  );
+};
+
+const TransportInfo = ({ truck, trailer, trailerType, driver }) => {
+  const items = [
+    { label: "Тягач", value: truck, icon: Truck },
+    { label: "Причіп", value: trailer || trailerType, icon: Package },
+    { label: "Водій", value: driver, icon: User },
+  ];
+
+  return (
+    <div className="order-actions__transport-grid">
+      {items.map(({ label, value, icon: Icon }) => (
+        <div key={label} className="order-actions__transport-card">
+          <div className="order-actions__transport-icon" aria-hidden="true">
+            <Icon size={18} strokeWidth={2} />
+          </div>
+          <div className="order-actions__transport-copy">
+            <p className="order-actions__transport-label">{label}</p>
+            <p className="order-actions__transport-value">{value || "—"}</p>
+          </div>
+        </div>
       ))}
     </div>
   );
@@ -571,6 +597,12 @@ const OrderActionsComponent = ({
           <RoutePreview
             origin={routeFromTitle.origin}
             destination={routeFromTitle.destination}
+          />
+          <TransportInfo
+            truck={summary.truck_plates}
+            trailer={summary.trailer_plates || summary.trailer_sovtes_id}
+            trailerType={summary.trailer_type}
+            driver={summary.driver_name}
           />
           <InfoGrid items={infoCards} />
           <RouteTimeline

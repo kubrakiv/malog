@@ -445,10 +445,10 @@ class Order(BaseTenantModel):
         "Tender parent number", max_length=20, null=True, blank=True
     )  # Sovtes tender number this order was booked from, if any
     price = models.DecimalField(
-        "Order price", max_digits=7, decimal_places=2, null=True, blank=True
+        "Order price", max_digits=10, decimal_places=2, null=True, blank=True
     )
     market_price = models.DecimalField(
-        "Market price", max_digits=7, decimal_places=2, null=True, blank=True
+        "Market price", max_digits=10, decimal_places=2, null=True, blank=True
     )
     payment_type = models.ForeignKey(
         PaymentType,

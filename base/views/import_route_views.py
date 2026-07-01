@@ -149,14 +149,20 @@ def preview_route(request):
         route = route_response.get("data", {}).get("route", {})
         route_parts = route.get("routeparts") or []
         load_points, unload_points, route_title = _extract_route_points_for_summary(route_parts)
+        order_data = parsed_data.get("order_data") or {}
         summary = {
             "periodic": route.get("periodic"),
             "payor": (route.get("payorcompany") or {}).get("title"),
             "distance": route.get("distance"),
             "budget": route.get("budget"),
             "currency": (route.get("defaultcurrency") or "UAH").upper(),
-            "cargo": (parsed_data.get("order_data") or {}).get("cargo_name"),
-            "weight": (parsed_data.get("order_data") or {}).get("cargo_weight"),
+            "cargo": order_data.get("cargo_name"),
+            "weight": order_data.get("cargo_weight"),
+            "truck_plates": order_data.get("truck_plates"),
+            "trailer_plates": order_data.get("trailer_plates"),
+            "trailer_sovtes_id": order_data.get("trailer_sovtes_id"),
+            "trailer_type": order_data.get("trailer_type"),
+            "driver_name": order_data.get("driver_name"),
             "points_count": len(route_parts),
             "route_title": route_title,
             "loading_points": load_points,
@@ -263,8 +269,8 @@ def create_route(request):
         order = create_objects_from_parsed_data(
             parsed_data,
             user=request.user,
-            truck_plates=truck_plates,
-            driver_name=driver_name,
+            truck_plates=truck_plates or (parsed_data.get("order_data") or {}).get("truck_plates"),
+            driver_name=driver_name or (parsed_data.get("order_data") or {}).get("driver_name"),
             driver_sovtes_id=driver_sovtes_id or (parsed_data.get("order_data") or {}).get("driver_sovtes_id"),
         )
 
@@ -318,4 +324,3 @@ def get_booked_tender_routes(request):
         print("ERROR:", e)
         return Response({"error": str(e)}, status=500)
     
-

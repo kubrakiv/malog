@@ -18,6 +18,7 @@ from base.models import (
 from base.serializers import (
     TaskSerializer,
 )
+from base.utils.route_category_utils import assign_route_category
 
 import isoweek
 
@@ -114,6 +115,8 @@ def createTask(request):
             point=point,
             client=request.user.client,
         )
+        if order:
+            assign_route_category(order)
         serializer = TaskSerializer(task, many=False, context={'request': request})
         return Response(serializer.data)
     except Exception as e:
@@ -132,7 +135,12 @@ def editTask(request, pk):
 
     serializer = TaskSerializer(instance=task, data=data, partial=True, context={'request': request})
     if serializer.is_valid():
+        previous_order = task.order
         serializer.save()
+        if previous_order:
+            assign_route_category(previous_order)
+        if task.order and task.order_id != getattr(previous_order, "id", None):
+            assign_route_category(task.order)
         return Response(serializer.data)
     return Response(serializer.errors, status=400)
 
@@ -146,7 +154,9 @@ def deleteTask(request, pk):
         return Response({"error": "Task not found"}, status=status.HTTP_404_NOT_FOUND)
 
     serializer = TaskSerializer(task, many=False, context={'request': request})
+    order = task.order
     task.delete()
+    if order:
+        assign_route_category(order)
 
     return Response({"message": "Task deleted successfully", "data": serializer.data})
-

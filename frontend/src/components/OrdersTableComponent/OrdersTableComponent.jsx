@@ -23,10 +23,38 @@ import OrderActionsComponent from "./OrderActionsComponent";
 import InvoiceStatusComponent from "./InvoiceStatusComponent";
 import PaginationComponent from "../PaginationComponent";
 
-import { FaCheck, FaChevronDown } from "react-icons/fa";
+import { FaCheck, FaChevronDown, FaExclamationTriangle } from "react-icons/fa";
 import { formatPrice, currencySymbol, formatAmount, fromEUR, toEUR } from "../../utils/formatCurrency";
 
 import "./OrdersTableComponent.scss";
+
+const isPresent = (value) => {
+  if (value === 0) return true;
+  if (value === null || value === undefined) return false;
+  return String(value).trim() !== "";
+};
+
+const getMissingOrderFields = (order) => {
+  const checks = [
+    { label: "водій", missing: !isPresent(order.driver) },
+    { label: "авто", missing: !isPresent(order.truck) },
+    {
+      label: "завдання",
+      missing: !Array.isArray(order.tasks) || order.tasks.length === 0,
+    },
+    { label: "термін оплати", missing: !isPresent(order.payment_period) },
+    { label: "тип оплати", missing: !isPresent(order.payment_type) },
+    { label: "менеджер клієнта", missing: !isPresent(order.customer_manager) },
+    { label: "валюта", missing: !isPresent(order.currency) },
+    { label: "замовник", missing: !isPresent(order.customer) },
+    {
+      label: "тариф",
+      missing: !Number.isFinite(parseFloat(order.price)) || parseFloat(order.price) <= 0,
+    },
+  ];
+
+  return checks.filter((field) => field.missing).map((field) => field.label);
+};
 
 function OrdersTableComponent() {
   const dispatch = useDispatch();
@@ -316,7 +344,11 @@ function OrdersTableComponent() {
             <h4>{error}</h4>
           ) : (
             <div className="oc-list">
-              {ordersData.map((order) => (
+              {ordersData.map((order) => {
+                const missingFields = getMissingOrderFields(order);
+                const visibleMissing = missingFields.slice(0, 3).join(", ");
+
+                return (
               <div
                 key={order.id}
                 className={`oc${selectedOrders.includes(order.id) ? " oc--selected" : ""}`}
@@ -353,6 +385,20 @@ function OrdersTableComponent() {
                         </span>
                       ) : null;
                     })()}
+                    {missingFields.length > 0 && (
+                      <span
+                        className="oc__status-chip oc__status-chip--missing"
+                        title={`Не заповнено: ${missingFields.join(", ")}`}
+                      >
+                        <FaExclamationTriangle className="oc__missing-icon" />
+                        <span>Немає: {visibleMissing}</span>
+                        {missingFields.length > 3 && (
+                          <span className="oc__missing-more">
+                            +{missingFields.length - 3}
+                          </span>
+                        )}
+                      </span>
+                    )}
                   </div>
                   <div className="oc__header-right">
                     <span className="oc__order-num">{order.number}</span>
@@ -779,7 +825,8 @@ function OrdersTableComponent() {
                   );
                 })()}
               </div>
-              ))}
+                );
+              })}
             </div>
           )}
           {count > pageSize && (

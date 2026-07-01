@@ -160,26 +160,29 @@ def _extract_assignment(route_data):
     """
     responses = route_data.get("response")
     if not isinstance(responses, dict) or not responses:
-        return None, None, None
+        return None, None, None, None, None
 
     key = route_data.get("routeresponse")
     resp = responses.get(str(key)) if key is not None else None
     if resp is None:
         resp = next(iter(responses.values()), None)
     if not isinstance(resp, dict):
-        return None, None, None
+        return None, None, None, None, None
 
     car = resp.get("car") or {}
     driver = resp.get("driver") or {}
+    trailer = resp.get("trailer") or {}
 
     truck_plates = car.get("number") or None
+    trailer_plates = trailer.get("number") or car.get("trailer") or None
+    trailer_sovtes_id = trailer.get("id") or car.get("trailer") or None
     driver_name = " ".join(
         part for part in (driver.get("firstname"), driver.get("lastname")) if part
     ).strip() or None
     raw_driver_id = driver.get("id")
     driver_sovtes_id = str(raw_driver_id).strip() if raw_driver_id not in (None, "") else None
 
-    return truck_plates, driver_name, driver_sovtes_id
+    return truck_plates, trailer_plates, trailer_sovtes_id, driver_name, driver_sovtes_id
 
 
 def parse_route_json(route_data):
@@ -206,7 +209,13 @@ def parse_route_json(route_data):
         # Extract order data
         payment_type = route_data.get("paymenttype") or {}
         cartype = route_data.get("cartype")
-        truck_plates, driver_name, driver_sovtes_id = _extract_assignment(route_data)
+        (
+            truck_plates,
+            trailer_plates,
+            trailer_sovtes_id,
+            driver_name,
+            driver_sovtes_id,
+        ) = _extract_assignment(route_data)
         order_data = {
             "order_number": route_data.get("periodic", "Unknown Order"),
             "tender_parent": route_data.get("tenderparent") or "",
@@ -221,6 +230,8 @@ def parse_route_json(route_data):
             "vat": route_data.get("nds", False),
             # Already-assigned vehicle on the tender, if any — see _extract_assignment
             "truck_plates": truck_plates,
+            "trailer_plates": trailer_plates,
+            "trailer_sovtes_id": trailer_sovtes_id,
             "driver_name": driver_name,
             "driver_sovtes_id": driver_sovtes_id,
         }
