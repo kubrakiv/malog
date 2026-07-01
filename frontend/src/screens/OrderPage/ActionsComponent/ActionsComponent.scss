@@ -63,6 +63,12 @@
     &:hover { background-color: rgba(23, 58, 184, 0.7); filter: none; }
   }
 
+  &__action-open-map-btn {
+    @extend %action-btn;
+    background-color: #2563eb;
+    &:hover { background-color: #1d4ed8; filter: none; }
+  }
+
   &__action-open-invoice-btn {
     @extend %action-btn;
     width: auto;

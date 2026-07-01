@@ -109,6 +109,12 @@ const OrderHereMapComponent = ({ enableFactual, readOnly = false }) => {
     emptyDistance: null,
   });
   const factualRef = useRef({ distance: null });
+  const orderMissingEssentialData =
+    !order.distance ||
+    order.empty_distance === null ||
+    order.empty_distance === undefined ||
+    order.tolls === null ||
+    order.tolls === undefined;
 
   useEffect(() => {
     console.log("=== ORDER UPDATE EFFECT TRIGGERED ===");
@@ -126,13 +132,6 @@ const OrderHereMapComponent = ({ enableFactual, readOnly = false }) => {
     });
 
     // Allow updates for missing essential data even in readOnly mode
-    const orderMissingEssentialData =
-      !order.distance ||
-      order.empty_distance === null ||
-      order.empty_distance === undefined ||
-      order.tolls === null ||
-      order.tolls === undefined;
-
     if (readOnly && !orderMissingEssentialData) {
       console.log(
         "📖 ReadOnly mode: Order has all essential data, skipping update"
@@ -497,6 +496,7 @@ const OrderHereMapComponent = ({ enableFactual, readOnly = false }) => {
         isOrderActualNow={isOrderActualNow}
         ruptelaTrips={ruptelaTrips}
         truckOverlay={truckOverlay}
+        enableTolls={orderMissingEssentialData}
       />
     </div>
   );

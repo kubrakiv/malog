@@ -18,12 +18,12 @@ import CarrierManagerComponent from "./CarrierManagerComponent/CarrierManagerCom
 import FooterComponent from "./FooterComponent/FooterComponent";
 import AddTaskModalComponent from "../../components/AddTask/AddTaskModalComponent/AddTaskModalComponent";
 import MarketPriceComponent from "./MarketPriceComponent/MarketPriceComponent";
-import OrderMapComponent from "./OrderMapComponent";
 import OrderHereMapComponent from "./OrderHereMapComponent";
 import UploadDocumentsComponent from "../../components/UploadDocumentsComponent/UploadDocumentsComponent";
 import TruckLocationComponent from "./TruckLocationComponent";
 import AssignTruckAndDriverCompoonent from "./AssignTruckAndDriverComponent";
 import OrderNoticeComponent from "./OrderNoticeComponent/OrderNoticeComponent";
+import { FaMapMarkedAlt, FaTimes } from "react-icons/fa";
 
 import { listDocuments } from "../../actions/documentActions";
 
@@ -42,6 +42,8 @@ import {
 const OrderPage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
+  const [isMapDrawerOpen, setIsMapDrawerOpen] = useState(false);
+  const [hasOpenedMapDrawer, setHasOpenedMapDrawer] = useState(false);
 
   const order = useSelector((state) => state.ordersInfo.orderDetails.data);
 
@@ -72,6 +74,11 @@ const OrderPage = () => {
     return <div>Loading...</div>; // or a spinner
   }
 
+  const openMapDrawer = () => {
+    setHasOpenedMapDrawer(true);
+    setIsMapDrawerOpen(true);
+  };
+
   return (
     <>
       <AddTaskModalComponent />
@@ -79,7 +86,7 @@ const OrderPage = () => {
       <div className="order-container">
         <div className="order-details">
           <HeaderComponent />
-          <ActionsComponent />
+          <ActionsComponent onOpenMap={openMapDrawer} />
           <div className="order-details__content">
             <div className="order-details__content-block">
               <div className="order-details__content-row">
@@ -117,15 +124,44 @@ const OrderPage = () => {
               <div className="order-details__content-row">
                 <OrderNoticeComponent />
               </div>
-              {/* <OrderMapComponent /> */}
-              <div className="order-details__content-row">
-                <OrderHereMapComponent enableFactual readOnly />
-              </div>
             </div>
           </div>
           <FooterComponent />
         </div>
       </div>
+      <div
+        className={`order-map-drawer${
+          isMapDrawerOpen ? " order-map-drawer_open" : ""
+        }`}
+        aria-hidden={!isMapDrawerOpen}
+      >
+        <div className="order-map-drawer__header">
+          <div className="order-map-drawer__title">
+            <FaMapMarkedAlt />
+            <span>Карта маршруту</span>
+          </div>
+          <button
+            type="button"
+            className="order-map-drawer__close"
+            onClick={() => setIsMapDrawerOpen(false)}
+            aria-label="Закрити карту"
+            title="Закрити карту"
+          >
+            <FaTimes />
+          </button>
+        </div>
+        <div className="order-map-drawer__body">
+          {hasOpenedMapDrawer && <OrderHereMapComponent enableFactual readOnly />}
+        </div>
+      </div>
+      {isMapDrawerOpen && (
+        <button
+          type="button"
+          className="order-map-drawer__backdrop"
+          onClick={() => setIsMapDrawerOpen(false)}
+          aria-label="Закрити карту"
+        />
+      )}
     </>
   );
 };

@@ -7,6 +7,7 @@ import { buildFactualCoordsFromRuptela } from "../../services/buildFactualCoords
 const { START, LOADING, UNLOADING, CUSTOMS, BORDER_CROSSING } = DELIVERY_CONSTANTS;
 
 const ROUTE_POINT_TYPES = [LOADING, CUSTOMS, BORDER_CROSSING, UNLOADING];
+const plannedRouteCache = new Map();
 
 // Check if HERE Maps API is loaded
 const isHereMapsLoaded = () => {
@@ -27,8 +28,8 @@ const TruckRouteMapComponent = ({
   isOrderActualNow,
   ruptelaTrips = [],
   truckOverlay = null,
+  enableTolls = true,
 }) => {
-  console.log("RUPTELA TRIPS", ruptelaTrips);
   // Track if HERE Maps is loaded
   const [hereMapsReady, setHereMapsReady] = useState(isHereMapsLoaded());
 
@@ -114,6 +115,31 @@ const TruckRouteMapComponent = ({
           '<path fill="#6c757d" d="M12 2C8.13 2 5 5.13 5 9c0 4.97 7 13 7 13s7-8.03 7-13c0-3.87-3.13-7-7-7z"/>' +
           '<circle cx="12" cy="9" r="4" fill="#FFFFFF"/></svg>'
         );
+    }
+  };
+
+  const renderMarkers = (map) => {
+    markersGroupRef.current.removeAll();
+
+    points.forEach((point, idx) => {
+      const icon = new window.H.map.Icon(iconSvg(point));
+      const marker = new window.H.map.Marker(
+        { lat: point.lat, lng: point.lng },
+        { icon },
+      );
+      marker.setData(point.label || `${idx + 1}: ${point.type}`);
+      marker.addEventListener("tap", (evt) => {
+        const bubble = new window.H.ui.InfoBubble(evt.target.getGeometry(), {
+          content: evt.target.getData(),
+        });
+        uiRef.current?.addBubble(bubble);
+      });
+      markersGroupRef.current.addObject(marker);
+    });
+
+    const bounds = markersGroupRef.current.getBoundingBox();
+    if (bounds) {
+      map.getViewModel().setLookAtData({ bounds, padding: 150 });
     }
   };
 
@@ -233,7 +259,7 @@ const TruckRouteMapComponent = ({
       el.__ro__?.disconnect();
       el.__cleanup__?.();
     };
-  }, []);
+  }, [hereMapsReady]);
 
   // -------- planned route + markers -----------------------------------------
   useEffect(() => {
@@ -249,18 +275,22 @@ const TruckRouteMapComponent = ({
     // clear previous
     routeGroupRef.current.removeAll();
     markersGroupRef.current.removeAll();
+    renderMarkers(map);
 
     const origin = `${points[0].lat},${points[0].lng}`;
     const destination = `${points.at(-1).lat},${points.at(-1).lng}`;
     const via = points.slice(1, -1).map((p) => `${p.lat},${p.lng}`);
+    const plannedRouteCacheKey = JSON.stringify({
+      points: points.map((p) => [p.lat, p.lng, p.type]),
+      enableTolls,
+    });
 
     const params = {
       origin,
       destination,
       transportMode: "truck",
       routingMode: "fast", // prefer highways — this is likely the main fix
-      alternatives: 3, // return up to 3 route options
-      return: "polyline,summary,tolls",
+      return: enableTolls ? "polyline,summary,tolls" : "polyline,summary",
       currency: "EUR",
       "vehicle[emissionType]": "euro_6",
       "vehicle[height]": "3800", // mm
@@ -277,32 +307,40 @@ const TruckRouteMapComponent = ({
       params.via = new window.H.service.Url.MultiValueQueryParameter(via);
     }
 
+    const cachedPlannedRoute = plannedRouteCache.get(plannedRouteCacheKey);
+    if (cachedPlannedRoute) {
+      routeGroupRef.current.removeAll();
+      drawPlannedRoute(cachedPlannedRoute);
+      return;
+    }
+
     router.calculateRoute(
       params,
       (result) => {
+        plannedRouteCache.set(plannedRouteCacheKey, result);
+        drawPlannedRoute(result);
+      },
+      (err) => console.error("Route error", err),
+    );
+
+    function drawPlannedRoute(result) {
         if (!result?.routes?.length) return;
 
-        // alternative colors: primary blue, then lighter alternatives
-        const altColors = ["#2D6AC4", "#6FA8DC", "#A4C2F4"];
-
-        result.routes.forEach((route, routeIdx) => {
-          route.sections.forEach((section) => {
-            const line = window.H.geo.LineString.fromFlexiblePolyline(
-              section.polyline,
-            );
-            const poly = new window.H.map.Polyline(line, {
-              style: {
-                lineWidth: routeIdx === 0 ? 6 : 4,
-                strokeColor: altColors[routeIdx] ?? "#A4C2F4",
-                lineDash: routeIdx === 0 ? [] : [8, 4],
-              },
-            });
-            poly.setZIndex(routeIdx === 0 ? 2 : 1);
-            routeGroupRef.current.addObject(poly);
+        const route = result.routes[0];
+        route.sections.forEach((section) => {
+          const line = window.H.geo.LineString.fromFlexiblePolyline(
+            section.polyline,
+          );
+          const poly = new window.H.map.Polyline(line, {
+            style: {
+              lineWidth: 6,
+              strokeColor: "#2D6AC4",
+            },
           });
+          poly.setZIndex(2);
+          routeGroupRef.current.addObject(poly);
         });
 
-        const route = result.routes[0];
         let totalLength = 0;
         let totalDuration = 0;
         let emptyDistance = 0;
@@ -326,6 +364,7 @@ const TruckRouteMapComponent = ({
         });
 
         // markers
+        markersGroupRef.current.removeAll();
         const ui = uiRef.current;
         points.forEach((point, idx) => {
           const icon = new window.H.map.Icon(iconSvg(point));
@@ -354,22 +393,7 @@ const TruckRouteMapComponent = ({
         }
 
         // tolls aggregation - improved logic to handle currency conversion properly
-        const tolls = route.sections.flatMap((s) => s.tolls || []);
-
-        // DEBUG: Log raw HERE API tolls response
-        console.log("=== RAW HERE API TOLLS RESPONSE ===");
-        console.log("Raw tolls array:", tolls);
-        tolls.forEach((toll, index) => {
-          console.log(`Toll ${index}:`, {
-            countryCode: toll.countryCode,
-            fares: toll.fares?.map((fare) => ({
-              price: fare.price,
-              convertedPrice: fare.convertedPrice,
-              currency: fare.price?.currency,
-              value: fare.price?.value,
-            })),
-          });
-        });
+        const tolls = enableTolls ? route.sections.flatMap((s) => s.tolls || []) : [];
 
         const tollByCountry = {};
         let totalTollEUR = 0;
@@ -382,11 +406,7 @@ const TruckRouteMapComponent = ({
             const { value = 0, currency = "UNKNOWN" } = price;
 
             // DEBUG: Log each fare processing
-            console.log(
-              `Processing fare: Country=${country}, Value=${value}, Currency=${currency}`,
-            );
-            console.log(`Original price:`, fare.price);
-            console.log(`Converted price:`, fare.convertedPrice);
+            
 
             // Check if we're using EUR
             if (currency !== "EUR") {
@@ -400,11 +420,6 @@ const TruckRouteMapComponent = ({
           });
         });
 
-        // DEBUG: Log processed tolls
-        console.log("=== PROCESSED TOLLS ===");
-        console.log("Toll by country:", tollByCountry);
-        console.log("Total toll EUR:", totalTollEUR);
-
         const plannedKm = (totalLength / 1000).toFixed(0);
         const plannedHr = (totalDuration / 3600).toFixed(2);
         const emptyKm = (emptyDistance / 1000).toFixed(0);
@@ -413,24 +428,23 @@ const TruckRouteMapComponent = ({
           distance: plannedKm,
           duration: plannedHr,
           emptyDistance: emptyKm,
-          tollData: {
-            byCountry: Object.entries(tollByCountry).map(
-              ([country, value]) => ({
-                country,
-                value: value.toFixed(2),
-              }),
-            ),
-            totalEUR: totalTollEUR.toFixed(2),
-            // Keep legacy format for compatibility
-            totalByCurrency: [
-              { currency: "EUR", value: totalTollEUR.toFixed(2) },
-            ],
-          },
+          ...(enableTolls && {
+            tollData: {
+              byCountry: Object.entries(tollByCountry).map(
+                ([country, value]) => ({
+                  country,
+                  value: value.toFixed(2),
+                }),
+              ),
+              totalEUR: totalTollEUR.toFixed(2),
+              totalByCurrency: [
+                { currency: "EUR", value: totalTollEUR.toFixed(2) },
+              ],
+            },
+          }),
         });
-      },
-      (err) => console.error("Route error", err),
-    );
-  }, [JSON.stringify(points)]);
+    }
+  }, [JSON.stringify(points), enableTolls]);
 
   // -------- truck -> next leg (live) ----------------------------------------
   useEffect(() => {

@@ -56,6 +56,61 @@ const getMissingOrderFields = (order) => {
   return checks.filter((field) => field.missing).map((field) => field.label);
 };
 
+const OrdersLoadingSkeleton = () => (
+  <div className="orders-skeleton" aria-label="Завантаження замовлень">
+    {Array.from({ length: 6 }).map((_, index) => (
+      <div className="orders-skeleton__card" key={index}>
+        <div className="orders-skeleton__header">
+          <span className="orders-skeleton__checkbox" />
+          <span className="orders-skeleton__chip orders-skeleton__chip--wide" />
+          <span className="orders-skeleton__chip" />
+          <span className="orders-skeleton__chip" />
+          <span className="orders-skeleton__line orders-skeleton__line--number" />
+        </div>
+        <div className="orders-skeleton__body">
+          <div className="orders-skeleton__col orders-skeleton__col--route">
+            <span className="orders-skeleton__title" />
+            <div className="orders-skeleton__route-grid">
+              <div>
+                <span className="orders-skeleton__pill" />
+                <span className="orders-skeleton__line orders-skeleton__line--long" />
+                <span className="orders-skeleton__line orders-skeleton__line--medium" />
+              </div>
+              <div>
+                <span className="orders-skeleton__pill" />
+                <span className="orders-skeleton__line orders-skeleton__line--long" />
+                <span className="orders-skeleton__line orders-skeleton__line--short" />
+              </div>
+            </div>
+          </div>
+          <div className="orders-skeleton__col">
+            <span className="orders-skeleton__title" />
+            <span className="orders-skeleton__line orders-skeleton__line--medium" />
+            <span className="orders-skeleton__line orders-skeleton__line--long" />
+            <span className="orders-skeleton__line orders-skeleton__line--short" />
+          </div>
+          <div className="orders-skeleton__col">
+            <span className="orders-skeleton__title" />
+            <span className="orders-skeleton__line orders-skeleton__line--long" />
+            <span className="orders-skeleton__line orders-skeleton__line--medium" />
+            <span className="orders-skeleton__line orders-skeleton__line--short" />
+          </div>
+          <div className="orders-skeleton__col">
+            <span className="orders-skeleton__title" />
+            <span className="orders-skeleton__line orders-skeleton__line--medium" />
+            <span className="orders-skeleton__line orders-skeleton__line--short" />
+          </div>
+        </div>
+        <div className="orders-skeleton__footer">
+          <span className="orders-skeleton__line orders-skeleton__line--date" />
+          <span className="orders-skeleton__line orders-skeleton__line--date" />
+          <span className="orders-skeleton__line orders-skeleton__line--button" />
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
 function OrdersTableComponent() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -339,7 +394,7 @@ function OrdersTableComponent() {
         />
         <div className="orders-table-scroll">
           {loading ? (
-            <h3>Loading</h3>
+            <OrdersLoadingSkeleton />
           ) : error ? (
             <h4>{error}</h4>
           ) : (

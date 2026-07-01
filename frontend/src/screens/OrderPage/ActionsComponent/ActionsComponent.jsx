@@ -7,7 +7,14 @@ import {
   setShowTaskModal,
 } from "../../../features/orders/ordersSlicers";
 import { listOrderDetails } from "../../../features/orders/ordersOperations";
-import { FaFileInvoiceDollar, FaTruck, FaUserAlt, FaPlus, FaFolder } from "react-icons/fa";
+import {
+  FaFileInvoiceDollar,
+  FaTruck,
+  FaUserAlt,
+  FaPlus,
+  FaFolder,
+  FaMapMarkedAlt,
+} from "react-icons/fa";
 import EmailSenderComponent from "../../../components/EmailSenderComponent";
 import OrderNumberComponent from "../OrderNumberComponent/OrderNumberComponent";
 import cn from "classnames";
@@ -23,7 +30,7 @@ import {
   TRUCK_SOVTES_CONSTANTS,
 } from "../../../constants/global";
 
-const ActionsComponent = () => {
+const ActionsComponent = ({ onOpenMap }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const confirm = useConfirm();
@@ -123,6 +130,14 @@ const ActionsComponent = () => {
           <FaFolder />
         </button>
         <EmailSenderComponent />
+        <button
+          className="order-details__action-open-map-btn"
+          onClick={onOpenMap}
+          data-tooltip="Карта"
+          type="button"
+        >
+          <FaMapMarkedAlt />
+        </button>
         {!order.invoice && (
           <button
             className="order-details__action-create-invoice-btn"
