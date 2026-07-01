@@ -5,9 +5,7 @@ import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 import driverImagePlaceholder from "../../img/driver_placeholder.jpg";
 import cn from "classnames";
 
-import {
-  setShowAddDriverModal,
-} from "../../features/drivers/driversSlice";
+import { setShowAddDriverModal } from "../../features/drivers/driversSlice";
 import {
   listDrivers,
   deleteDriver,
@@ -29,6 +27,7 @@ import SearchComponent from "../../globalComponents/SearchComponent";
 import {
   FaChevronDown,
   FaChevronRight,
+  FaLink,
   FaLayerGroup,
   FaPencilAlt,
   FaPlus,
@@ -100,15 +99,19 @@ const DriversComponent = ({ embedded = false }) => {
   const filteredDrivers = useMemo(() => {
     const q = search.toLowerCase();
     return (drivers ?? []).filter(
-      (d) => !q || (d.full_name || "").toLowerCase().includes(q)
+      (d) => !q || (d.full_name || "").toLowerCase().includes(q),
     );
   }, [drivers, search]);
 
   const groups = useMemo(() => {
     const map = {};
     filteredDrivers.forEach((driver) => {
-      const key = driver.current_unit ? String(driver.current_unit.id) : UNGROUPED_KEY;
-      const label = driver.current_unit ? driver.current_unit.name : "Без колони";
+      const key = driver.current_unit
+        ? String(driver.current_unit.id)
+        : UNGROUPED_KEY;
+      const label = driver.current_unit
+        ? driver.current_unit.name
+        : "Без колони";
       if (!map[key]) map[key] = { label, drivers: [] };
       map[key].drivers.push(driver);
     });
@@ -124,13 +127,17 @@ const DriversComponent = ({ embedded = false }) => {
 
   const handleCheckboxChange = (driverID) => {
     setSelectedDrivers((prev) =>
-      prev.includes(driverID) ? prev.filter((id) => id !== driverID) : [...prev, driverID]
+      prev.includes(driverID)
+        ? prev.filter((id) => id !== driverID)
+        : [...prev, driverID],
     );
   };
 
   const handleEditProfileMode = () => {
     if (selectedDrivers.length !== 1) return;
-    setLocalSelectedDriver(drivers.find((d) => d.profile === selectedDrivers[0]));
+    setLocalSelectedDriver(
+      drivers.find((d) => d.profile === selectedDrivers[0]),
+    );
     setEditDriverProfileMode(true);
     setShowDriverModal(true);
   };
@@ -148,15 +155,17 @@ const DriversComponent = ({ embedded = false }) => {
 
   const handleDeleteSelectedDrivers = async () => {
     if (selectedDrivers.length === 0) return;
-    if (!await confirm("Видалити вибраних водіїв?")) return;
+    if (!(await confirm("Видалити вибраних водіїв?"))) return;
     for (const driverId of selectedDrivers) dispatch(deleteDriver(driverId));
     setSelectedDrivers([]);
   };
 
   const handleDriverUpdate = (driverId, driverData) =>
-    dispatch(updateDriver({ driverId, dataToUpdate: driverData })).then((result) => {
-      if (result.meta.requestStatus === "fulfilled") dispatch(listDrivers());
-    });
+    dispatch(updateDriver({ driverId, dataToUpdate: driverData })).then(
+      (result) => {
+        if (result.meta.requestStatus === "fulfilled") dispatch(listDrivers());
+      },
+    );
 
   const handleModalClose = () => setShowDriverModal(false);
 
@@ -170,9 +179,10 @@ const DriversComponent = ({ embedded = false }) => {
 
   const handleSaveAssignUnit = async () => {
     const driver_id = selectedDrivers[0];
-    const unit_id = selectedUnit === "__clear__" || selectedUnit === ""
-      ? null
-      : Number(selectedUnit);
+    const unit_id =
+      selectedUnit === "__clear__" || selectedUnit === ""
+        ? null
+        : Number(selectedUnit);
     await dispatch(assignDriverUnit({ driver_id, unit_id }));
     dispatch(listDrivers());
     setAssignUnitMode(false);
@@ -223,7 +233,11 @@ const DriversComponent = ({ embedded = false }) => {
             </div>
             <button
               className="drivers-page__banner-btn"
-              onClick={() => navigate("/onboarding", { state: { fromDrivers: true, currentStep: 2 } })}
+              onClick={() =>
+                navigate("/onboarding", {
+                  state: { fromDrivers: true, currentStep: 2 },
+                })
+              }
               type="button"
             >
               Продовжити онбординг
@@ -252,7 +266,11 @@ const DriversComponent = ({ embedded = false }) => {
 
         <div className="fleet-toolbar">
           <div className="fleet-toolbar__search">
-            <SearchComponent search={search} setSearch={setSearch} placeholder="пошук водія" />
+            <SearchComponent
+              search={search}
+              setSearch={setSearch}
+              placeholder="пошук водія"
+            />
           </div>
           <div className="fleet-toolbar__sep" />
 
@@ -287,6 +305,17 @@ const DriversComponent = ({ embedded = false }) => {
               type="button"
             >
               <FaPencilAlt />
+            </button>
+            <button
+              className="fleet-toolbar__btn fleet-toolbar__btn--assign"
+              title="Зв'язати водія з Sovtes"
+              onClick={() =>
+                dispatch(setShowSovtesSyncModal({ show: true, tab: "drivers" }))
+              }
+              disabled={selectedDrivers.length !== 1}
+              type="button"
+            >
+              <FaLink />
             </button>
 
             {!assignUnitMode ? (
@@ -327,7 +356,9 @@ const DriversComponent = ({ embedded = false }) => {
             <button
               className="fleet-toolbar__btn fleet-toolbar__btn--sovtes"
               title="Синхронізація зі Sovtes"
-              onClick={() => dispatch(setShowSovtesSyncModal({ show: true, tab: "drivers" }))}
+              onClick={() =>
+                dispatch(setShowSovtesSyncModal({ show: true, tab: "drivers" }))
+              }
               type="button"
             >
               <FaSync />
@@ -335,14 +366,18 @@ const DriversComponent = ({ embedded = false }) => {
           </div>
 
           {selectedDrivers.length > 0 && (
-            <span className="fleet-toolbar__badge">{selectedDrivers.length} обрано</span>
+            <span className="fleet-toolbar__badge">
+              {selectedDrivers.length} обрано
+            </span>
           )}
         </div>
 
         {/* Unit assign bar */}
         {assignUnitMode && (
           <div className="drivers-assign-bar">
-            <span className="drivers-assign-bar__title">Прив'язати до колони:</span>
+            <span className="drivers-assign-bar__title">
+              Прив'язати до колони:
+            </span>
             <div className="drivers-assign-bar__select">
               <SearchableSelect
                 value={selectedUnit}
@@ -368,6 +403,7 @@ const DriversComponent = ({ embedded = false }) => {
                   <th className="drivers-table__head-th">Вік</th>
                   <th className="drivers-table__head-th">Стаж</th>
                   <th className="drivers-table__head-th">Автомобіль</th>
+                  <th className="drivers-table__head-th">Sovtes ID</th>
                   <th className="drivers-table__head-th">Колона</th>
                   <th className="drivers-table__head-th"></th>
                 </tr>
@@ -378,76 +414,130 @@ const DriversComponent = ({ embedded = false }) => {
                     className="drivers-table__group-row"
                     onClick={() => toggleGroup(groupKey)}
                   >
-                    <td className="drivers-table__group-cell" colSpan={10}>
+                    <td className="drivers-table__group-cell" colSpan={11}>
                       <span className="drivers-table__group-icon">
-                        {collapsedGroups[groupKey] ? <FaChevronRight /> : <FaChevronDown />}
+                        {collapsedGroups[groupKey] ? (
+                          <FaChevronRight />
+                        ) : (
+                          <FaChevronDown />
+                        )}
                       </span>
-                      <span className="drivers-table__group-label">{label}</span>
-                      <span className="drivers-table__group-count">{groupDrivers.length}</span>
+                      <span className="drivers-table__group-label">
+                        {label}
+                      </span>
+                      <span className="drivers-table__group-count">
+                        {groupDrivers.length}
+                      </span>
                     </td>
                   </tr>
 
-                  {!collapsedGroups[groupKey] && groupDrivers.map((driver, index) => {
-                    const isSelected = selectedDrivers.includes(driver.profile);
-                    const isAssigning = assignUnitMode && isSelected;
-                    return (
-                      <tr
-                        key={driver.profile}
-                        className={cn("drivers-table__body-row", {
-                          "drivers-table__body-row_active": isSelected,
-                        })}
-                        onDoubleClick={(e) => handleRowDoubleClick(e, driver)}
-                        onClick={() => handleCheckboxChange(driver.profile)}
-                      >
-                        <td className="drivers-table__body-td">{index + 1}</td>
-                        <td className="drivers-table__body-td drivers-table__body-td_image">
-                          <img src={driver.image || driverImagePlaceholder} alt="" />
-                        </td>
-                        <td className="drivers-table__body-td">{driver.full_name}</td>
-                        <td className="drivers-table__body-td">{driver.phone_number}</td>
-                        <td className="drivers-table__body-td">{driver.position}</td>
-                        <td className="drivers-table__body-td drivers-table__body-td--meta">
-                          {calcAge(driver.birth_date) != null
-                            ? <span className="drivers-table__meta-chip">{calcAge(driver.birth_date)} р.</span>
-                            : <span className="drivers-table__unit-empty">—</span>}
-                        </td>
-                        <td className="drivers-table__body-td drivers-table__body-td--meta">
-                          {calcTenure(driver.started_work) != null
-                            ? <span className="drivers-table__meta-chip">{calcTenure(driver.started_work)}</span>
-                            : <span className="drivers-table__unit-empty">—</span>}
-                        </td>
-                        <td className="drivers-table__body-td">{driver.trucks?.[0]?.plates}</td>
-                        <td className="drivers-table__body-td">
-                          {isAssigning ? (
-                            <div style={{ minWidth: 180 }} onClick={(e) => e.stopPropagation()}>
-                              <SearchableSelect
-                                value={selectedUnit}
-                                onChange={setSelectedUnit}
-                                options={unitOptions}
-                                placeholder="Виберіть колону…"
-                                clearLabel="Без колони"
-                              />
-                            </div>
-                          ) : driver.current_unit ? (
-                            <span className="drivers-table__unit-badge">
-                              {driver.current_unit.name}
-                            </span>
-                          ) : (
-                            <span className="drivers-table__unit-empty">—</span>
-                          )}
-                        </td>
-                        <td className="drivers-table__body-td">
-                          <input
-                            type="checkbox"
-                            className="drivers-table__checkbox"
-                            checked={isSelected}
-                            onChange={() => handleCheckboxChange(driver.profile)}
-                            onClick={(e) => e.stopPropagation()}
-                          />
-                        </td>
-                      </tr>
-                    );
-                  })}
+                  {!collapsedGroups[groupKey] &&
+                    groupDrivers.map((driver, index) => {
+                      const isSelected = selectedDrivers.includes(
+                        driver.profile,
+                      );
+                      const isAssigning = assignUnitMode && isSelected;
+                      return (
+                        <tr
+                          key={driver.profile}
+                          className={cn("drivers-table__body-row", {
+                            "drivers-table__body-row_active": isSelected,
+                          })}
+                          onDoubleClick={(e) => handleRowDoubleClick(e, driver)}
+                          onClick={() => handleCheckboxChange(driver.profile)}
+                        >
+                          <td className="drivers-table__body-td">
+                            {index + 1}
+                          </td>
+                          <td className="drivers-table__body-td drivers-table__body-td_image">
+                            <img
+                              src={driver.image || driverImagePlaceholder}
+                              alt=""
+                            />
+                          </td>
+                          <td className="drivers-table__body-td">
+                            {driver.full_name}
+                          </td>
+                          <td className="drivers-table__body-td">
+                            {driver.phone_number}
+                          </td>
+                          <td className="drivers-table__body-td">
+                            {driver.position}
+                          </td>
+                          <td className="drivers-table__body-td drivers-table__body-td--meta">
+                            {calcAge(driver.birth_date) != null ? (
+                              <span className="drivers-table__meta-chip">
+                                {calcAge(driver.birth_date)} р.
+                              </span>
+                            ) : (
+                              <span className="drivers-table__unit-empty">
+                                —
+                              </span>
+                            )}
+                          </td>
+                          <td className="drivers-table__body-td drivers-table__body-td--meta">
+                            {calcTenure(driver.started_work) != null ? (
+                              <span className="drivers-table__meta-chip">
+                                {calcTenure(driver.started_work)}
+                              </span>
+                            ) : (
+                              <span className="drivers-table__unit-empty">
+                                —
+                              </span>
+                            )}
+                          </td>
+                          <td className="drivers-table__body-td">
+                            {driver.trucks?.[0]?.plates}
+                          </td>
+                          <td className="drivers-table__body-td">
+                            {driver.sovtes_id ? (
+                              <span className="drivers-table__unit-badge">
+                                #{driver.sovtes_id}
+                              </span>
+                            ) : (
+                              <span className="drivers-table__unit-empty">
+                                —
+                              </span>
+                            )}
+                          </td>
+                          <td className="drivers-table__body-td">
+                            {isAssigning ? (
+                              <div
+                                style={{ minWidth: 180 }}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <SearchableSelect
+                                  value={selectedUnit}
+                                  onChange={setSelectedUnit}
+                                  options={unitOptions}
+                                  placeholder="Виберіть колону…"
+                                  clearLabel="Без колони"
+                                />
+                              </div>
+                            ) : driver.current_unit ? (
+                              <span className="drivers-table__unit-badge">
+                                {driver.current_unit.name}
+                              </span>
+                            ) : (
+                              <span className="drivers-table__unit-empty">
+                                —
+                              </span>
+                            )}
+                          </td>
+                          <td className="drivers-table__body-td">
+                            <input
+                              type="checkbox"
+                              className="drivers-table__checkbox"
+                              checked={isSelected}
+                              onChange={() =>
+                                handleCheckboxChange(driver.profile)
+                              }
+                              onClick={(e) => e.stopPropagation()}
+                            />
+                          </td>
+                        </tr>
+                      );
+                    })}
                 </tbody>
               ))}
             </table>

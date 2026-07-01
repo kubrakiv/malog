@@ -8,7 +8,7 @@ export const parseTenders = (tenders) => {
 
       if (routeParts.length < 2) {
         console.warn(
-          `Skipping tender ${tender.id} due to incomplete route data.`
+          `Skipping tender ${tender.id} due to incomplete route data.`,
         );
         return null;
       }
@@ -18,7 +18,7 @@ export const parseTenders = (tenders) => {
       const paymentType = details.paymenttype || {};
       const expirationDate = details.tenderavailableunillmoment || "";
       const quoteStep = details.step || 0;
-      const currency = details.defaultcurrency || "UAH";
+      const currency = (details.defaultcurrency || "UAH").toUpperCase();
 
       // payor
       const payor = details.companydata || {};
@@ -82,7 +82,8 @@ export const parseTenders = (tenders) => {
 
       const price = details.budget || details.maxquotewithcommission || 0;
 
-      const loadPart = routeParts.find((p) => p.workaction === 1) || routeParts[0] || {};
+      const loadPart =
+        routeParts.find((p) => p.workaction === 1) || routeParts[0] || {};
       const cargo =
         loadPart.cargo ||
         loadPart.cargoname ||
@@ -97,8 +98,10 @@ export const parseTenders = (tenders) => {
         "";
       const rawWeight =
         loadPart.weight ?? loadPart.cargoweight ?? details.totalweight ?? null;
-      const weightNum = rawWeight != null ? parseFloat(rawWeight) || null : null;
-      const weightStr = weightNum != null ? `${weightNum} т` : `${details.totalweight || 0} т`;
+      const weightNum =
+        rawWeight != null ? parseFloat(rawWeight) || null : null;
+      const weightStr =
+        weightNum != null ? `${weightNum} т` : `${details.totalweight || 0} т`;
 
       // Extracting other relevant fields
       return {
@@ -123,7 +126,7 @@ export const parseTenders = (tenders) => {
         paymentType,
         expirationDate,
         quoteStep,
-        currency: currency === null ? "UAH" : currency,
+        currency,
         response,
         amount,
         routeParts,

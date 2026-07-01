@@ -25,7 +25,13 @@ def _get_task_type_for_sovtes_workaction(workaction):
     return task_type
 
 
-def create_objects_from_parsed_data(parsed_data, user=None, truck_plates=None, driver_name=None):
+def create_objects_from_parsed_data(
+    parsed_data,
+    user=None,
+    truck_plates=None,
+    driver_name=None,
+    driver_sovtes_id=None,
+):
     try:
         # Customer
         customer_data = parsed_data["customer_data"]
@@ -68,7 +74,12 @@ def create_objects_from_parsed_data(parsed_data, user=None, truck_plates=None, d
         driver = None
         if truck_plates and client:
             truck = Truck.objects.filter(plates=truck_plates, client=client).first()
-        if driver_name and client:
+        if driver_sovtes_id and client:
+            driver = DriverProfile.objects.filter(
+                sovtes_id=str(driver_sovtes_id),
+                profile__client=client,
+            ).first()
+        if not driver and driver_name and client:
             driver = DriverProfile.objects.filter(full_name=driver_name, profile__client=client).first()
 
         order = Order.objects.create(

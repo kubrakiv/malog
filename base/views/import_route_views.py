@@ -13,6 +13,26 @@ import os
 BASE_URL = os.getenv("SOVTES_BASE_URL", "https://sovtes.ua")
 
 
+TOKEN_ERROR_MESSAGES = {
+    "Token is required",
+    "Token is invalid",
+    "Ваша сесія не є дійсна",
+}
+
+NO_ROUTE_MESSAGES = {
+    "No such route",
+    "Ми не знайшли такого маршруту",
+}
+
+
+def _is_token_error(payload):
+    return (
+        isinstance(payload, dict)
+        and payload.get("status") == "error"
+        and payload.get("message") in TOKEN_ERROR_MESSAGES
+    )
+
+
 async def _fetch_single_tender(session, periodic, token):
     headers = {"Authorization": token, "Language": "en"}
     url = f"{BASE_URL}/a/v2/rest/public/singleRoute?route={periodic}"
@@ -53,23 +73,36 @@ def fetch_and_create_orders(request):
         response = requests.get(route_url, headers=headers)
         route_response = response.json()
 
-        # Refresh token if invalid
-        if route_response.get("status") == "error" and route_response.get("message") == "Token is invalid":
+        # Refresh token for any known Sovtes auth/session error
+        if _is_token_error(route_response):
             token = get_api_token(force_refresh=True)
             headers = {"Authorization": f"{token}", "Language": "en"}
             response = requests.get(route_url, headers=headers)
             route_response = response.json()
 
-        # Handle case: No such route
-        if route_response.get("status") == "error" and route_response.get("message") == "No such route":
+        # Handle case: No such route (English/Ukrainian API variants)
+        if (
+            isinstance(route_response, dict)
+            and route_response.get("status") == "error"
+            and route_response.get("message") in NO_ROUTE_MESSAGES
+        ):
             return Response(
-                {"error": f"No such route found for routeId {route_id}."},
+                {
+                    "error": f"No such route found for routeId {route_id}.",
+                    "upstream_message": route_response.get("message"),
+                },
                 status=404,
             )
         
         # Handle case: Failed to fetch route data
         if route_response.get("status") != "success":
-            return Response({"error": "Failed to fetch route data"}, status=400)
+            return Response(
+                {
+                    "error": "Failed to fetch route data",
+                    "upstream_message": route_response.get("message", "Unknown error"),
+                },
+                status=400,
+            )
 
         # Step 3: Parse JSON based on platform
         if platform == "sovtes":
@@ -86,6 +119,7 @@ def fetch_and_create_orders(request):
             user=request.user,
             truck_plates=order_data.get("truck_plates"),
             driver_name=order_data.get("driver_name"),
+            driver_sovtes_id=order_data.get("driver_sovtes_id"),
         )
 
         return Response(
@@ -104,6 +138,7 @@ def create_route(request):
         platform = request.data.get("platform")
         truck_plates = request.data.get("truck_plates")
         driver_name = request.data.get("driver_name")
+        driver_sovtes_id = request.data.get("driver_sovtes_id")
 
         if not order or not platform:
             return Response({"error": "order and platform are required."}, status=400)
@@ -120,6 +155,7 @@ def create_route(request):
             user=request.user,
             truck_plates=truck_plates,
             driver_name=driver_name,
+            driver_sovtes_id=driver_sovtes_id or (parsed_data.get("order_data") or {}).get("driver_sovtes_id"),
         )
 
         return Response(
@@ -141,8 +177,8 @@ def get_booked_tender_routes(request):
         response = requests.get(all_routes_url, headers=headers)
         data = response.json()
 
-        # Refresh token if invalid
-        if data.get("status") and data.get("message") == "Token is invalid":
+        # Refresh token for any known Sovtes auth/session error
+        if _is_token_error(data):
             token = get_api_token(force_refresh=True)
             headers = {"Authorization": f"{token}", "Language": "en"}
             response = requests.get(all_routes_url, headers=headers)

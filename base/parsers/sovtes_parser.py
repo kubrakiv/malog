@@ -153,21 +153,21 @@ def _fill_missing_routepart_dates(route_parts):
 
 def _extract_assignment(route_data):
     """
-    Pull the assigned truck plates + driver full name off a Sovtes singleRoute
+    Pull the assigned truck plates + driver identifiers off a Sovtes singleRoute
     payload. The accepted carrier response lives at route["response"][<id>],
     keyed by route["routeresponse"]; fall back to the first response present
     if that key is missing (e.g. response dict has a single entry).
     """
     responses = route_data.get("response")
     if not isinstance(responses, dict) or not responses:
-        return None, None
+        return None, None, None
 
     key = route_data.get("routeresponse")
     resp = responses.get(str(key)) if key is not None else None
     if resp is None:
         resp = next(iter(responses.values()), None)
     if not isinstance(resp, dict):
-        return None, None
+        return None, None, None
 
     car = resp.get("car") or {}
     driver = resp.get("driver") or {}
@@ -176,8 +176,10 @@ def _extract_assignment(route_data):
     driver_name = " ".join(
         part for part in (driver.get("firstname"), driver.get("lastname")) if part
     ).strip() or None
+    raw_driver_id = driver.get("id")
+    driver_sovtes_id = str(raw_driver_id).strip() if raw_driver_id not in (None, "") else None
 
-    return truck_plates, driver_name
+    return truck_plates, driver_name, driver_sovtes_id
 
 
 def parse_route_json(route_data):
@@ -204,7 +206,7 @@ def parse_route_json(route_data):
         # Extract order data
         payment_type = route_data.get("paymenttype") or {}
         cartype = route_data.get("cartype")
-        truck_plates, driver_name = _extract_assignment(route_data)
+        truck_plates, driver_name, driver_sovtes_id = _extract_assignment(route_data)
         order_data = {
             "order_number": route_data.get("periodic", "Unknown Order"),
             "price": route_data.get("budget", 0.0),
@@ -214,11 +216,12 @@ def parse_route_json(route_data):
             "payment_type_id": payment_type.get("id"),
             "trailer_type": cartype[0] if isinstance(cartype, list) and cartype else "Unknown",
             # defaultcurrency can be null in the API response
-            "currency": (route_data.get("defaultcurrency") or "EUR").upper(),
+            "currency": (route_data.get("defaultcurrency") or "UAH").upper(),
             "vat": route_data.get("nds", False),
             # Already-assigned vehicle on the tender, if any — see _extract_assignment
             "truck_plates": truck_plates,
             "driver_name": driver_name,
+            "driver_sovtes_id": driver_sovtes_id,
         }
 
         # Extract points and tasks

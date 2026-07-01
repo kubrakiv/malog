@@ -29,7 +29,7 @@ const DocumentsTableComponent = () => {
   const confirm = useConfirm();
   const order = useSelector((state) => state.ordersInfo.orderDetails.data);
   const documents = useSelector(
-    (state) => state.documentsInfo.documents.data.documents
+    (state) => state.documentsInfo.documents.data.documents,
   );
   const editModeDocument = useSelector((state) => state.documentsInfo.editMode);
 
@@ -57,7 +57,7 @@ const DocumentsTableComponent = () => {
 
   const deleteDocument = async (documentId) => {
     const isConfirmed = await confirm(
-      "Ви впевнені, що хочете видалити документ?"
+      "Ви впевнені, що хочете видалити документ?",
     );
 
     if (!isConfirmed) {
@@ -102,7 +102,7 @@ const DocumentsTableComponent = () => {
                       {
                         hour: "2-digit",
                         minute: "2-digit",
-                      }
+                      },
                     );
                     return (
                       <tr
