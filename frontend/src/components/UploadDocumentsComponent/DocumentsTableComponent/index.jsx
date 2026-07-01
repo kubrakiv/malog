@@ -5,6 +5,25 @@ import { listDocuments } from "../../../actions/documentActions";
 import { FaFolderOpen, FaTrash } from "react-icons/fa";
 import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 
+const buildDocumentUrl = (fileUrl, baseUrl) => {
+  if (!fileUrl) {
+    return "";
+  }
+
+  const normalizedFileUrl = fileUrl.replace(/^(https?)\/\//i, "$1://");
+
+  if (/^https?:\/\//i.test(normalizedFileUrl)) {
+    return normalizedFileUrl;
+  }
+
+  const normalizedBaseUrl = (baseUrl || "").replace(/\/+$/, "");
+  const normalizedPath = normalizedFileUrl.startsWith("/")
+    ? normalizedFileUrl
+    : `/${normalizedFileUrl}`;
+
+  return `${normalizedBaseUrl}${normalizedPath}`;
+};
+
 const DocumentsTableComponent = () => {
   const dispatch = useDispatch();
   const confirm = useConfirm();
@@ -26,7 +45,11 @@ const DocumentsTableComponent = () => {
   const openDocument = async (documentId) => {
     try {
       const response = await axios.get(`/api/documents/${documentId}/`);
-      window.open(`${BASE_URL}${response.data.file}`);
+      const documentUrl = buildDocumentUrl(response.data.file, BASE_URL);
+
+      if (documentUrl) {
+        window.open(documentUrl, "_blank", "noopener,noreferrer");
+      }
     } catch (error) {
       console.error("Error opening document:", error);
     }
