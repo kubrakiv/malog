@@ -122,10 +122,6 @@ const menuItems = [
         path: "/platforms/sovtes",
         title: "СОВТЕС",
       },
-      {
-        path: "/platforms/lardi",
-        title: "ЛАРДІ",
-      },
     ],
   },
 ];
