@@ -33,6 +33,37 @@ def _is_token_error(payload):
     )
 
 
+def _extract_route_points_for_summary(route_parts):
+    """Build loading/unloading point labels and short title for preview modal."""
+    def _city(part):
+        checkpoint = part.get("checkpoint") or {}
+        town = checkpoint.get("town") or {}
+        return (town.get("title_ru") or "").strip()
+
+    load_points = []
+    unload_points = []
+
+    for part in route_parts:
+        if not isinstance(part, dict):
+            continue
+        workaction = part.get("workaction")
+        city = _city(part)
+        if not city:
+            continue
+        if workaction == 1 and city not in load_points:
+            load_points.append(city)
+        if workaction == 2 and city not in unload_points:
+            unload_points.append(city)
+
+    route_title = None
+    if load_points or unload_points:
+        left = load_points[0] if load_points else "—"
+        right = unload_points[-1] if unload_points else "—"
+        route_title = f"{left} - {right}"
+
+    return load_points, unload_points, route_title
+
+
 async def _fetch_single_tender(session, periodic, token):
     headers = {"Authorization": token, "Language": "en"}
     url = f"{BASE_URL}/a/v2/rest/public/singleRoute?route={periodic}"
@@ -55,6 +86,97 @@ async def fetch_all_tender_details(tenders, token):
         tender["details"] = detail
     return tenders
 
+
+def _fetch_route_response(route_id):
+    """Fetch singleRoute payload from Sovtes with token refresh handling."""
+    token = get_api_token()
+    headers = {"Authorization": f"{token}", "Language": "en"}
+    route_url = f"{BASE_URL}/a/v2/rest/public/singleRoute?route={route_id}"
+
+    response = requests.get(route_url, headers=headers)
+    route_response = response.json()
+
+    if _is_token_error(route_response):
+        token = get_api_token(force_refresh=True)
+        headers = {"Authorization": f"{token}", "Language": "en"}
+        response = requests.get(route_url, headers=headers)
+        route_response = response.json()
+
+    return route_response
+
+
+@api_view(["POST"])
+def preview_route(request):
+    """Fetch and parse route details, but do not create any DB objects yet."""
+    try:
+        route_id = request.data.get("routeId")
+        platform = request.data.get("platform")
+
+        if not route_id or not platform:
+            return Response({"error": "routeId and platform are required."}, status=400)
+
+        route_response = _fetch_route_response(route_id)
+
+        if (
+            isinstance(route_response, dict)
+            and route_response.get("status") == "error"
+            and route_response.get("message") in NO_ROUTE_MESSAGES
+        ):
+            return Response(
+                {
+                    "error": f"No such route found for routeId {route_id}.",
+                    "upstream_message": route_response.get("message"),
+                },
+                status=404,
+            )
+
+        if route_response.get("status") != "success":
+            return Response(
+                {
+                    "error": "Failed to fetch route data",
+                    "upstream_message": route_response.get("message", "Unknown error"),
+                },
+                status=400,
+            )
+
+        if platform == "sovtes":
+            parsed_data = parse_sovtes(route_response["data"]["route"])
+        elif platform == "lkw":
+            parsed_data = parse_lkw(route_response["data"]["route"])
+        else:
+            return Response({"error": "Unsupported platform"}, status=400)
+
+        route = route_response.get("data", {}).get("route", {})
+        route_parts = route.get("routeparts") or []
+        load_points, unload_points, route_title = _extract_route_points_for_summary(route_parts)
+        summary = {
+            "periodic": route.get("periodic"),
+            "payor": (route.get("payorcompany") or {}).get("title"),
+            "distance": route.get("distance"),
+            "budget": route.get("budget"),
+            "currency": (route.get("defaultcurrency") or "UAH").upper(),
+            "cargo": (parsed_data.get("order_data") or {}).get("cargo_name"),
+            "weight": (parsed_data.get("order_data") or {}).get("cargo_weight"),
+            "points_count": len(route_parts),
+            "route_title": route_title,
+            "loading_points": load_points,
+            "unloading_points": unload_points,
+            "start_date": route_parts[0].get("date1") if route_parts else None,
+            "end_date": route_parts[-1].get("date1") if route_parts else None,
+        }
+
+        return Response(
+            {
+                "message": "Route fetched successfully",
+                "summary": summary,
+                "order": route_response,
+            },
+            status=200,
+        )
+    except Exception as e:
+        print("ERROR:", e)
+        return Response({"error": str(e)}, status=500)
+
 @api_view(["POST"])
 def fetch_and_create_orders(request):
     try:
@@ -66,19 +188,7 @@ def fetch_and_create_orders(request):
             return Response({"error": "routeId and platform are required."}, status=400)
 
         # Step 2: Authenticate and fetch route data
-        token = get_api_token()
-        headers = {"Authorization": f"{token}", "Language": "en"}
-        route_url = f"{BASE_URL}/a/v2/rest/public/singleRoute?route={route_id}"
-
-        response = requests.get(route_url, headers=headers)
-        route_response = response.json()
-
-        # Refresh token for any known Sovtes auth/session error
-        if _is_token_error(route_response):
-            token = get_api_token(force_refresh=True)
-            headers = {"Authorization": f"{token}", "Language": "en"}
-            response = requests.get(route_url, headers=headers)
-            route_response = response.json()
+        route_response = _fetch_route_response(route_id)
 
         # Handle case: No such route (English/Ukrainian API variants)
         if (

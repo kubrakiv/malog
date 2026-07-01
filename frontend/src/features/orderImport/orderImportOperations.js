@@ -19,7 +19,25 @@ export const getRoute = createAsyncThunk(
         return thunkAPI.rejectWithValue({ error: error.message });
       }
     }
-  }
+  },
+);
+
+export const previewRoute = createAsyncThunk(
+  "route/previewRoute",
+  async ({ routeId, platform }, thunkAPI) => {
+    try {
+      const { data } = await axios.post(`/api/import/route-preview/`, {
+        routeId,
+        platform,
+      });
+      return data;
+    } catch (error) {
+      if (error.response && error.response.data) {
+        return thunkAPI.rejectWithValue(error.response.data);
+      }
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  },
 );
 
 export const getBookedTenderRoutes = createAsyncThunk(
@@ -31,7 +49,7 @@ export const getBookedTenderRoutes = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  }
+  },
 );
 
 export const createRoute = createAsyncThunk(
@@ -49,7 +67,7 @@ export const createRoute = createAsyncThunk(
         return thunkAPI.rejectWithValue({ error: error.message });
       }
     }
-  }
+  },
 );
 
 export const getFreeOrders = createAsyncThunk(
@@ -61,5 +79,5 @@ export const getFreeOrders = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  }
+  },
 );

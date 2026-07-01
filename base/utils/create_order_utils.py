@@ -13,6 +13,39 @@ SOVTES_WORKACTION_TASK_TYPES = {
 }
 
 
+def _fit_char(value, max_len):
+    """Return a string that fits a DB CharField(max_length=max_len)."""
+    if value is None:
+        return ""
+    text = str(value)
+    return text[:max_len]
+
+
+def _find_driver_by_sovtes_id(client, driver_sovtes_id):
+    """Find local DriverProfile by Sovtes ID with a normalized comparison."""
+    if not client or driver_sovtes_id in (None, ""):
+        return None
+
+    target = str(driver_sovtes_id).strip()
+    # Fast path: exact DB match
+    driver = DriverProfile.objects.filter(
+        sovtes_id=target,
+        profile__client=client,
+    ).first()
+    if driver:
+        return driver
+
+    # Fallback: compare normalized strings in case of stored whitespace/noise
+    for candidate in DriverProfile.objects.filter(
+        profile__client=client,
+        sovtes_id__isnull=False,
+    ).exclude(sovtes_id=""):
+        if str(candidate.sovtes_id).strip() == target:
+            return candidate
+
+    return None
+
+
 def _get_task_type_for_sovtes_workaction(workaction):
     task_type_name, task_type_name_uk = SOVTES_WORKACTION_TASK_TYPES.get(
         workaction,
@@ -75,24 +108,21 @@ def create_objects_from_parsed_data(
         if truck_plates and client:
             truck = Truck.objects.filter(plates=truck_plates, client=client).first()
         if driver_sovtes_id and client:
-            driver = DriverProfile.objects.filter(
-                sovtes_id=str(driver_sovtes_id),
-                profile__client=client,
-            ).first()
+            driver = _find_driver_by_sovtes_id(client, driver_sovtes_id)
         if not driver and driver_name and client:
             driver = DriverProfile.objects.filter(full_name=driver_name, profile__client=client).first()
 
         order = Order.objects.create(
-            order_number=order_data["order_number"],
+            order_number=_fit_char(order_data["order_number"], 20),
             price=order_data["price"] or 0,
             customer=customer,
             customer_manager=manager,
             distance=order_data["distance"] or 0,
-            cargo_name=order_data["cargo_name"] or "",
-            cargo_weight=order_data["cargo_weight"] or "",
+            cargo_name=_fit_char(order_data["cargo_name"], 50),
+            cargo_weight=_fit_char(order_data["cargo_weight"], 50),
             # payment_type_id from Sovtes is their internal ID, not our DB FK
             payment_type=None,
-            trailer_type=order_data["trailer_type"] or "",
+            trailer_type=_fit_char(order_data["trailer_type"], 50),
             vat=order_data["vat"] or False,
             currency=currency,
             platform=platform,
