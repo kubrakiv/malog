@@ -6,37 +6,56 @@
   // align-items: stretch;
   // flex-grow: 1;
 
-  min-height: 70px;
-  margin: 4px 0 4px 0;
+  min-height: 44px;
+  margin: 2px 0;
   background-color: rgb(193, 200, 166);
-  border-radius: 4px;
+  border-radius: 5px;
 
-  font-size: 14px;
+  font-size: 11px;
   overflow: hidden;
 
   transition: height 0.3s;
 
   &__container {
     overflow-wrap: break-word;
+    width: 100%;
   }
   &-details {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    padding: 4px 2px;
+    align-items: center;
+    gap: 1px;
+    padding: 3px 4px;
+    line-height: 1.15;
     &__order {
       display: block; // Ensure they are displayed in separate lines
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     &__driver {
       display: block; // Ensure they are displayed in separate lines
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
     &__customer {
       display: block; // Ensure they are displayed in separate lines
+      max-width: 100%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
   &:hover {
     background-color: rgb(160, 237, 101);
     cursor: pointer;
+  }
+
+  &[draggable="true"] {
+    cursor: copy;
   }
 
   &--placeholder {
@@ -50,19 +69,38 @@
   }
   &__time {
     text-align: center;
-    padding: 2px;
+    padding: 0;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.15;
   }
   &__type {
     text-align: center;
-    padding: 2px;
+    padding: 0;
   }
   &__title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 100%;
+    padding: 0;
     text-align: center;
-    padding: 2px;
+  }
+  &__title-text,
+  &__address {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    overflow-wrap: anywhere;
+    white-space: normal;
+  }
+  &__address {
+    font-size: 10px;
+    opacity: 0.9;
   }
   &__truck {
     text-align: center;
-    padding: 2px;
+    padding: 0;
   }
 }
 
@@ -79,8 +117,8 @@
   transition: top 0.3s; /* Smooth transition for top change */
 
   &_first {
-    margin: 2px;
-    padding: 2px 5px;
+    margin: 1px;
+    padding: 1px 4px;
     border-radius: 4px;
     border: none;
     text-align: center;
@@ -92,8 +130,8 @@
     }
   }
   &_second {
-    margin: 2px;
-    padding: 2px 5px;
+    margin: 1px;
+    padding: 1px 4px;
     border-radius: 4px;
     border: none;
     text-align: center;
@@ -108,8 +146,8 @@
   }
 
   &_third {
-    margin: 2px;
-    padding: 2px 5px;
+    margin: 1px;
+    padding: 1px 4px;
     border-radius: 4px;
     border: none;
     text-align: center;
@@ -123,8 +161,8 @@
     }
   }
   &_map {
-    margin: 2px;
-    padding: 2px 5px;
+    margin: 1px;
+    padding: 1px 4px;
     border-radius: 4px;
     border: none;
     text-align: center;
@@ -139,8 +177,8 @@
     }
   }
   &_delete {
-    margin: 2px;
-    padding: 2px 5px;
+    margin: 1px;
+    padding: 1px 4px;
     border-radius: 4px;
     border: none;
     text-align: center;
@@ -155,8 +193,8 @@
     }
   }
   &_edit {
-    margin: 2px;
-    padding: 2px 5px;
+    margin: 1px;
+    padding: 1px 4px;
     border-radius: 4px;
     border: none;
     text-align: center;

@@ -3,17 +3,19 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
 
-import { getISOWeek, parseISO, getYear } from "date-fns";
+import { getISOWeek, getISOWeekYear, parseISO } from "date-fns";
 import { generateDatesArray } from "./dateFunctions";
 
 import {
   FaAngleDown,
   FaAngleRight,
   FaAngleUp,
+  FaCheck,
+  FaCopy,
   FaFileAlt,
-  FaTrailer,
-  FaTruck,
+  FaSyncAlt,
 } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 import {
   setSwitchers,
@@ -32,6 +34,7 @@ import { selectSwitchers } from "../../features/planner/plannerSelectors";
 import { listDrivers } from "../../features/drivers/driversOperations";
 import { listTaskTypes } from "../../actions/taskTypeActions";
 import {
+  createTask,
   deleteTask,
   listTasks,
   listTasksByWeek,
@@ -53,8 +56,14 @@ import ServiceTaskModalComponent from "./ServiceTaskModalComponent/ServiceTaskMo
 import SwitchComponent from "../SwitchComponent/SwitchComponent";
 import TruckOnMapModalComponent from "./TruckOnMapModalComponent";
 import PlannerFilterDropdown from "./PlannerFilterDropdown";
+import { DELIVERY_CONSTANTS } from "../../constants/global";
 
 import "./WeekPlanner.scss";
+
+const TASK_COPY_EXCLUDED_TYPES = new Set([
+  DELIVERY_CONSTANTS.LOADING,
+  DELIVERY_CONSTANTS.UNLOADING,
+]);
 
 export const WeekPlanner = () => {
   const dispatch = useDispatch();
@@ -63,14 +72,17 @@ export const WeekPlanner = () => {
   const confirm = useConfirm();
 
   const searchParams = new URLSearchParams(location.search);
-  const currentYear = parseInt(searchParams.get("year")) || getYear(new Date());
-  const currentWeek =
-    parseInt(searchParams.get("week")) || getISOWeek(new Date());
+  const yearParam = Number.parseInt(searchParams.get("year"), 10);
+  const weekParam = Number.parseInt(searchParams.get("week"), 10);
+  const hasValidYear = Number.isInteger(yearParam);
+  const hasValidWeek = Number.isInteger(weekParam);
+  const currentYear = hasValidYear ? yearParam : getISOWeekYear(new Date());
+  const currentWeek = hasValidWeek ? weekParam : getISOWeek(new Date());
 
   const [week, setWeek] = useState(currentWeek);
   const [year, setYear] = useState(currentYear);
 
-  const { showDriver, showOrderNumber, showCustomer, showTaskType } =
+  const { showDriver, showOrderNumber, showCustomer, showAddress, showTaskType } =
     useSelector(selectSwitchers);
 
   const trucks = useSelector(selectTrucks);
@@ -245,6 +257,14 @@ export const WeekPlanner = () => {
 
   const [expandedTruckId, setExpandedTruckId] = useState(null);
   const [collapsedUnits, setCollapsedUnits] = useState(new Set());
+  const [copiedTruckId, setCopiedTruckId] = useState(null);
+  const [copyDragTask, setCopyDragTask] = useState(null);
+  const [copyDropTarget, setCopyDropTarget] = useState(null);
+  const [isRefreshingTasks, setIsRefreshingTasks] = useState(false);
+  const [weekTransition, setWeekTransition] = useState({
+    direction: null,
+    key: 0,
+  });
 
   const toggleUnit = (unitId) => {
     setCollapsedUnits((prev) => {
@@ -294,8 +314,15 @@ export const WeekPlanner = () => {
   const [isToggledDriver, setIsToggledDriver] = useState(false);
   const [isToggledOrderNumber, setIsToggledOrderNumber] = useState(false);
   const [isToggledCustomer, setIsToggledCustomer] = useState(false);
+  const [isToggledAddress, setIsToggledAddress] = useState(false);
   const [isToggledTaskType, setIsToggledTaskType] = useState(false);
   console.log("DATES ARRAY", datesArray);
+
+  useEffect(() => {
+    if (!hasValidYear || !hasValidWeek) {
+      navigate(`/planner?year=${year}&week=${week}`, { replace: true });
+    }
+  }, [hasValidYear, hasValidWeek, navigate, week, year]);
 
   useEffect(() => {
     dispatch(listTrucks());
@@ -343,15 +370,40 @@ export const WeekPlanner = () => {
     navigate("/drivers");
   };
 
-  const handleWeekChange = (newWeek) => {
+  const handleWeekChange = (newWeek, newYear = year) => {
+    if (newWeek === week && newYear === year) {
+      return;
+    }
+
+    setWeekTransition((prev) => ({
+      direction:
+        newYear > year || (newYear === year && newWeek > week)
+          ? "left"
+          : "right",
+      key: prev.key + 1,
+    }));
     setWeek(newWeek);
-    navigate(`/planner?year=${year}&week=${newWeek}`);
-    setDatesArray(generateDatesArray(date, newWeek, year));
+    setYear(newYear);
+    navigate(`/planner?year=${newYear}&week=${newWeek}`);
+    setDatesArray(generateDatesArray(date, newWeek, newYear));
   };
 
   const handleYearChange = (newYear) => {
     setYear(newYear);
     navigate(`/planner?year=${newYear}&week=${week}`);
+  };
+
+  const handleRefreshTasks = async () => {
+    setIsRefreshingTasks(true);
+
+    try {
+      await dispatch(listTasksByWeek({ year, week })).unwrap();
+      toast.success("Дані завдань оновлено", { position: "top-right" });
+    } catch (error) {
+      toast.error("Не вдалося оновити завдання", { position: "top-right" });
+    } finally {
+      setIsRefreshingTasks(false);
+    }
   };
 
   const handleTruckDateSelect = ({ truckId, dayNumber }) => {
@@ -409,6 +461,143 @@ export const WeekPlanner = () => {
     );
   };
 
+  const getShortDriverName = (fullName = "") => {
+    const [lastName, firstName] = fullName.trim().split(/\s+/);
+    return [lastName, firstName].filter(Boolean).join(" ");
+  };
+
+  const getTruckUnitLabel = (truck) => {
+    return [truck?.plates, truck?.trailer].filter(Boolean).join(" | ");
+  };
+
+  const getTruckContactText = (truck) => {
+    const unitLine = [truck?.plates, truck?.trailer].filter(Boolean).join(" / ");
+    return [
+      unitLine,
+      truck?.driver_details?.full_name,
+      truck?.driver_details?.phone_number,
+    ]
+      .filter(Boolean)
+      .join("\n");
+  };
+
+  const handleCopyTruckDetails = async (event, truck) => {
+    event.stopPropagation();
+
+    const contactText = getTruckContactText(truck);
+    if (!contactText) {
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(contactText);
+      setCopiedTruckId(truck.id);
+      toast.success("Дані авто скопійовано", { position: "top-right" });
+      window.setTimeout(() => setCopiedTruckId(null), 1200);
+    } catch (error) {
+      toast.error("Не вдалося скопіювати дані авто", {
+        position: "top-right",
+      });
+    }
+  };
+
+  const canCopyTask = (task) => {
+    return (
+      !task?.isPlaceholder &&
+      task?.id &&
+      !task?.order &&
+      !task?.order_id &&
+      !TASK_COPY_EXCLUDED_TYPES.has(task.type)
+    );
+  };
+
+  const handleTaskCopyDragStart = (event, task) => {
+    if (!event.ctrlKey || !canCopyTask(task)) {
+      event.preventDefault();
+      toast.error("Для копіювання затисніть Ctrl і перетягніть завдання", {
+        position: "top-right",
+      });
+      return;
+    }
+
+    setCopyDragTask(task);
+    event.dataTransfer.effectAllowed = "copy";
+    event.dataTransfer.setData("text/plain", String(task.id));
+  };
+
+  const handleTaskCopyDragEnd = () => {
+    setCopyDragTask(null);
+    setCopyDropTarget(null);
+  };
+
+  const isSameCopyDropTarget = (target) => {
+    return (
+      copyDropTarget?.truckPlates === target.truckPlates &&
+      copyDropTarget?.dayNumber === target.dayNumber
+    );
+  };
+
+  const canDropCopiedTask = ({ truckPlates }) => {
+    return copyDragTask && copyDragTask.truck === truckPlates;
+  };
+
+  const handleTaskCopyDragOver = (event, target) => {
+    if (!canDropCopiedTask(target)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "copy";
+
+    if (!isSameCopyDropTarget(target)) {
+      setCopyDropTarget(target);
+    }
+  };
+
+  const buildCopiedTask = (task, targetDate) => {
+    const {
+      id,
+      created_at,
+      updated_at,
+      point_details,
+      driver_details,
+      type_uk,
+      ...taskPayload
+    } = task;
+
+    return {
+      ...taskPayload,
+      start_date: targetDate,
+      end_date: task.end_date ? targetDate : task.end_date,
+    };
+  };
+
+  const handleTaskCopyDrop = async (event, target) => {
+    if (!canDropCopiedTask(target)) {
+      return;
+    }
+
+    event.preventDefault();
+    const targetDate = datesArray[target.dayNumber]?.[1];
+
+    if (!targetDate) {
+      return;
+    }
+
+    try {
+      await dispatch(createTask(buildCopiedTask(copyDragTask, targetDate))).unwrap();
+      toast.success("Завдання скопійовано", {
+        position: "top-right",
+      });
+    } catch (error) {
+      toast.error("Не вдалося скопіювати завдання", {
+        position: "top-right",
+      });
+    } finally {
+      handleTaskCopyDragEnd();
+    }
+  };
+
   const handleShowDriver = () => {
     dispatch(setSwitchers({ showDriver: !showDriver }));
     setIsToggledDriver(!isToggledDriver);
@@ -422,6 +611,11 @@ export const WeekPlanner = () => {
   const handleShowCustomer = () => {
     dispatch(setSwitchers({ showCustomer: !showCustomer }));
     setIsToggledCustomer(!isToggledCustomer);
+  };
+
+  const handleShowAddress = () => {
+    dispatch(setSwitchers({ showAddress: !showAddress }));
+    setIsToggledAddress(!isToggledAddress);
   };
 
   const handleShowTaskType = () => {
@@ -460,6 +654,22 @@ export const WeekPlanner = () => {
                 onChange={setFilterLogists}
                 multi
               />
+              <button
+                type="button"
+                className="planner-refresh-button"
+                onClick={handleRefreshTasks}
+                disabled={isRefreshingTasks}
+                title="Оновити завдання"
+              >
+                <FaSyncAlt
+                  className={
+                    isRefreshingTasks
+                      ? "planner-refresh-button__icon--spinning"
+                      : ""
+                  }
+                />
+                <span>{isRefreshingTasks ? "Оновлення" : "Оновити"}</span>
+              </button>
             </div>
           </div>
           <div className="week-number__switcher">
@@ -487,6 +697,11 @@ export const WeekPlanner = () => {
               onToggle={handleShowCustomer}
             />
             <SwitchComponent
+              title="Адреса"
+              isToggled={isToggledAddress}
+              onToggle={handleShowAddress}
+            />
+            <SwitchComponent
               title="Завдання"
               isToggled={isToggledTaskType}
               onToggle={handleShowTaskType}
@@ -496,13 +711,20 @@ export const WeekPlanner = () => {
 
         <hr className="divide-block" />
         <div className="table-body-container">
-          <div className="week">
+          <div
+            key={weekTransition.key}
+            className={`week ${
+              weekTransition.direction
+                ? `week--slide-${weekTransition.direction}`
+                : ""
+            }`}
+          >
             <div className="week__day-list">
               <div className="week-header__row">
                 <div className="week-header__day-container">
                   <div className="week-header__day-container_date-item">
                     <div className="week-header__day-container_truck">
-                      Truck Plates
+                      Номери ТЗ
                     </div>
                   </div>
                 </div>
@@ -586,22 +808,13 @@ export const WeekPlanner = () => {
                               title={
                                 truck.isPlaceholder
                                   ? "Click to add trucks"
-                                  : undefined
+                                  : getTruckUnitLabel(truck)
                               }
                             >
-                              <span className="week-truck__truck-plates_icon">
-                                <FaTruck />
+                              <span className="week-truck__plates-text">
+                                {getTruckUnitLabel(truck)}
                               </span>
-                              <span>{truck.plates}</span>
                             </div>
-                            {truck.trailer && (
-                              <div className="week-truck__trailer-plates">
-                                <span className="week-truck__trailer-plates_icon">
-                                  <FaTrailer />
-                                </span>
-                                <span>{truck.trailer}</span>
-                              </div>
-                            )}
                             {truck?.driver_details && (
                               <div
                                 className={`week-truck__driver-details ${truck.isPlaceholder ? "week-truck__driver-details--clickable" : ""}`}
@@ -613,19 +826,40 @@ export const WeekPlanner = () => {
                                 title={
                                   truck.isPlaceholder
                                     ? "Click to add drivers"
-                                    : undefined
+                                    : truck?.driver_details?.full_name
                                 }
                               >
                                 <div className="week-truck__driver-details_title">
                                   <span className="week-truck__driver-details_name">
-                                    {truck?.driver_details?.full_name}
-                                  </span>
-                                  <span className="week-truck__driver-details_arrow">
-                                    {expandedTruckId === truck.id ? (
-                                      <FaAngleUp />
-                                    ) : (
-                                      <FaAngleDown />
+                                    {getShortDriverName(
+                                      truck?.driver_details?.full_name,
                                     )}
+                                  </span>
+                                  <span className="week-truck__driver-details_actions">
+                                    {!truck.isPlaceholder && (
+                                      <button
+                                        type="button"
+                                        className="week-truck__copy-button"
+                                        onClick={(event) =>
+                                          handleCopyTruckDetails(event, truck)
+                                        }
+                                        title="Скопіювати авто, причіп, водія і телефон"
+                                        aria-label="Скопіювати дані авто"
+                                      >
+                                        {copiedTruckId === truck.id ? (
+                                          <FaCheck />
+                                        ) : (
+                                          <FaCopy />
+                                        )}
+                                      </button>
+                                    )}
+                                    <span className="week-truck__driver-details_arrow">
+                                      {expandedTruckId === truck.id ? (
+                                        <FaAngleUp />
+                                      ) : (
+                                        <FaAngleDown />
+                                      )}
+                                    </span>
                                   </span>
                                 </div>
                               </div>
@@ -646,6 +880,7 @@ export const WeekPlanner = () => {
                             <DayTasks
                               tasks={dayTasks}
                               truckId={truck.id}
+                              truckPlates={truck.plates}
                               dayNumber={dayNumber}
                               onTruckDateSelect={handleTruckDateSelect}
                               handleEndTime={handleEndTime}
@@ -653,6 +888,15 @@ export const WeekPlanner = () => {
                               handleDeleteTask={handleDeleteTask}
                               handleEditModeTask={handleEditModeTask}
                               showTaskType={showTaskType}
+                              canCopyTask={canCopyTask}
+                              handleTaskCopyDragStart={handleTaskCopyDragStart}
+                              handleTaskCopyDragEnd={handleTaskCopyDragEnd}
+                              handleTaskCopyDragOver={handleTaskCopyDragOver}
+                              handleTaskCopyDrop={handleTaskCopyDrop}
+                              isCopyDropActive={
+                                copyDropTarget?.truckPlates === truck.plates &&
+                                copyDropTarget?.dayNumber === dayNumber
+                              }
                             />
                           </div>
                         ))}

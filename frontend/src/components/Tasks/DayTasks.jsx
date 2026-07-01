@@ -8,18 +8,33 @@ function DayTasks({
   tasks,
   dayNumber,
   truckId,
+  truckPlates,
   onTruckDateSelect,
   handleEndTime,
   handleStartTime,
   handleDeleteTask,
   handleEditModeTask,
   showTaskType,
+  canCopyTask,
+  handleTaskCopyDragStart,
+  handleTaskCopyDragEnd,
+  handleTaskCopyDragOver,
+  handleTaskCopyDrop,
+  isCopyDropActive,
 }) {
   const hasTasks = tasks.length > 0;
   const week = true;
 
   return (
-    <>
+    <div
+      className={`day-tasks${isCopyDropActive ? " day-tasks--copy-active" : ""}`}
+      onDragOver={(event) =>
+        handleTaskCopyDragOver?.(event, { truckPlates, dayNumber })
+      }
+      onDrop={(event) =>
+        handleTaskCopyDrop?.(event, { truckPlates, dayNumber })
+      }
+    >
       {hasTasks &&
         tasks.map((task) => (
           <div key={task.id} style={{ width: "100%" }}>
@@ -30,6 +45,9 @@ function DayTasks({
               handleDeleteTask={handleDeleteTask}
               handleEditModeTask={handleEditModeTask}
               showTaskType={showTaskType}
+              canCopyTask={canCopyTask}
+              handleTaskCopyDragStart={handleTaskCopyDragStart}
+              handleTaskCopyDragEnd={handleTaskCopyDragEnd}
             />
           </div>
         ))}
@@ -42,7 +60,7 @@ function DayTasks({
         />
         <TachoCardComponent truckId={truckId} />
       </div>
-    </>
+    </div>
   );
 }
 

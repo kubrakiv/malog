@@ -67,3 +67,113 @@
     }
   }
 }
+
+.service-task-select {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  margin: 5px;
+
+  &__label {
+    width: 100%;
+    margin-bottom: 5px;
+    font-size: 14px;
+    font-weight: 700;
+  }
+
+  &__control {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    min-height: 38px;
+    padding: 6px 12px;
+    border: 1px solid #cbd5dc;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #ffffff 0%, #f8fafb 100%);
+    color: #1f2933;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    transition:
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      background-color 0.15s ease;
+
+    &:hover {
+      border-color: #8cb1ba;
+      background: #fff;
+    }
+
+    &:focus-visible,
+    &--open {
+      border-color: #228be6;
+      outline: 0;
+      box-shadow: 0 0 0 3px rgba(34, 139, 230, 0.18);
+    }
+  }
+
+  &__value {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    &--placeholder {
+      color: #6b7280;
+    }
+  }
+
+  &__chevron {
+    width: 9px;
+    height: 9px;
+    margin-left: 10px;
+    border-right: 2px solid #344955;
+    border-bottom: 2px solid #344955;
+    transform: rotate(45deg) translateY(-2px);
+    flex-shrink: 0;
+  }
+
+  &__menu {
+    position: absolute;
+    z-index: 30;
+    top: calc(100% + 5px);
+    left: 0;
+    right: 0;
+    max-height: 190px;
+    overflow-y: auto;
+    padding: 4px;
+    border: 1px solid #cbd5dc;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 14px 30px rgba(15, 23, 42, 0.18);
+  }
+
+  &__option {
+    display: block;
+    width: 100%;
+    min-height: 36px;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: #111827;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover {
+      background: #edf7f9;
+    }
+
+    &--active {
+      background: #087c89;
+      color: #fff;
+
+      &:hover {
+        background: #087c89;
+      }
+    }
+  }
+}

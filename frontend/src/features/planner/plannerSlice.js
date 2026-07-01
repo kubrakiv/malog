@@ -26,6 +26,7 @@ export const plannerSlice = createSlice({
       showOrderNumber: false,
       showDriver: false,
       showCustomer: false,
+      showAddress: false,
     },
 
     editModeServiceTask: false,

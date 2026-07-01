@@ -44,12 +44,15 @@ function Task({
   handleDeleteTask,
   handleEditModeTask,
   showTaskType,
+  canCopyTask,
+  handleTaskCopyDragStart,
+  handleTaskCopyDragEnd,
 }) {
   const dispatch = useDispatch();
 
   const showTruckOnMapModal = useSelector(selectShowTruckOnMapModal);
   const trucks = useSelector(selectTrucks);
-  const { showDriver, showOrderNumber, showCustomer } =
+  const { showDriver, showOrderNumber, showCustomer, showAddress } =
     useSelector(selectSwitchers);
 
   const [isHovered, setHovered] = useState(false);
@@ -223,6 +226,15 @@ function Task({
     }
   };
 
+  const getTaskAddress = () => {
+    const point = task.point_details || {};
+    const streetAddress = [point.street, point.street_number]
+      .filter(Boolean)
+      .join(" ");
+
+    return streetAddress || point.address || point.full_address || "";
+  };
+
   const taskStyle = {
     backgroundColor:
       task.isPlaceholder && task.color
@@ -240,6 +252,9 @@ function Task({
       <div className="task__container">
         <div
           className={`task ${task.isPlaceholder ? "task--placeholder" : ""}`}
+          draggable={canCopyTask?.(task) ?? false}
+          onDragStart={(event) => handleTaskCopyDragStart?.(event, task)}
+          onDragEnd={handleTaskCopyDragEnd}
           // onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={handleMouseClick}
@@ -326,14 +341,14 @@ function Task({
                     className="task-details__type"
                     style={{
                       color: "white",
-                      fontSize: "11px",
+                      fontSize: "10px",
                       fontStyle: "italic",
                     }}
                   >
                     {task.type_uk || task.type}
                   </div>
                 )}
-                <span style={{ color: "white", fontSize: "12px" }}>
+                <span style={{ color: "white", fontSize: "11px" }}>
                   {task.start_time}
                 </span>
                 <div
@@ -355,7 +370,7 @@ function Task({
               // Regular task display
               <>
                 {showTaskType && (
-                  <div className="task-details__type" style={{ fontSize: "11px", fontStyle: "italic" }}>
+                  <div className="task-details__type" style={{ fontSize: "10px", fontStyle: "italic" }}>
                     {task.type_uk || task.type}
                   </div>
                 )}
@@ -372,7 +387,12 @@ function Task({
                   {getTimeComponent(task.type, task.end_date, task.end_time)}
                 </span>
                 <div className="task__title">
-                  <span>{task.title}</span>
+                  <span className="task__title-text">{task.title}</span>
+                  {showAddress && getTaskAddress() && (
+                    <span className="task__address" title={getTaskAddress()}>
+                      {getTaskAddress()}
+                    </span>
+                  )}
                 </div>
               </>
             )}

@@ -18,6 +18,53 @@ hr.divide-block {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: wrap;
+}
+
+.planner-refresh-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 30px;
+  padding: 0 11px;
+  border: 1px solid rgba(0, 109, 119, 0.28);
+  border-radius: 16px;
+  background: #eef6f6;
+  color: #006d77;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
+
+  &:hover:not(:disabled) {
+    background: #dceff0;
+    border-color: rgba(0, 109, 119, 0.45);
+    color: #00565e;
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(1px);
+  }
+
+  &:disabled {
+    cursor: progress;
+    opacity: 0.72;
+  }
+
+  &__icon--spinning {
+    animation: planner-refresh-spin 0.85s linear infinite;
+  }
+}
+
+@keyframes planner-refresh-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .week-number {
@@ -26,7 +73,7 @@ hr.divide-block {
   align-items: center;
   width: 100%;
   gap: 8px;
-  padding: 4px 0;
+  padding: 2px 0;
 
   &__left {
     display: flex;
@@ -44,8 +91,9 @@ hr.divide-block {
   &__right {
     display: flex;
     align-items: center;
-    gap: 4px;
+    gap: 10px;
     justify-content: flex-end;
+    flex-wrap: wrap;
   }
 
   &__btn-add-route {
@@ -104,6 +152,84 @@ hr.divide-block {
   }
 }
 
+.week-number {
+  .week-switcher {
+    gap: 5px;
+    border-radius: 14px;
+    padding: 4px 6px;
+
+    &__button {
+      min-width: 46px;
+      height: 32px;
+      border-radius: 10px;
+      font-size: 12px;
+      padding: 0 5px;
+
+      &--month {
+        min-width: 52px;
+      }
+    }
+
+    &__display {
+      min-width: 86px;
+      padding: 0 5px;
+    }
+
+    &__year {
+      font-size: 19px;
+      font-weight: 650;
+    }
+
+    &__week {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    &__button-week {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    &__button-label {
+      font-size: 8px;
+    }
+  }
+
+  .switch__container {
+    flex-direction: row;
+    gap: 6px;
+    padding: 0;
+    font-size: 12px;
+    line-height: 1;
+  }
+
+  .switch__title {
+    white-space: nowrap;
+  }
+
+  .switch {
+    width: 34px;
+    height: 18px;
+
+    &__input:checked + .slider:before {
+      transform: translateX(16px);
+    }
+  }
+
+  .slider {
+    width: 34px;
+    height: 18px;
+    border-radius: 18px;
+
+    &:before {
+      width: 14px;
+      height: 14px;
+      left: 2px;
+      bottom: 2px;
+    }
+  }
+}
+
 .week-header {
   &__row {
     display: flex;
@@ -116,7 +242,7 @@ hr.divide-block {
   }
   &__day-container {
     width: 100%;
-    padding: 5px 5px;
+    padding: 3px 4px;
     margin: 2px 2px;
     border-radius: 4px;
     transition: background-color 0.5s ease;
@@ -126,28 +252,81 @@ hr.divide-block {
     }
     &_date-item {
       display: flex;
-      flex-direction: column;
+      flex-direction: row;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 0px 4px;
+      padding: 0 4px;
       background-color: $colorGray;
       border-radius: 4px;
       color: #fff;
       width: 100%;
       height: 100%;
       text-transform: uppercase;
+      min-height: 34px;
+      white-space: nowrap;
+      font-size: 0.82rem;
+      font-weight: 700;
       &__name {
-        margin-top: 5px;
+        margin-top: 0;
       }
       &__date {
-        margin-bottom: 5px;
+        margin-bottom: 0;
+      }
+      &__compact {
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
     &_truck {
-      margin: 5px;
+      margin: 0;
       // width: 100%;
     }
+  }
+}
+
+.table-body-container {
+  overflow-x: hidden;
+}
+
+.week {
+  &--slide-left {
+    animation: week-slide-left 220ms ease-out;
+  }
+
+  &--slide-right {
+    animation: week-slide-right 220ms ease-out;
+  }
+}
+
+@keyframes week-slide-left {
+  from {
+    opacity: 0.75;
+    transform: translateX(28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes week-slide-right {
+  from {
+    opacity: 0.75;
+    transform: translateX(-28px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .week--slide-left,
+  .week--slide-right {
+    animation: none;
   }
 }
 
@@ -205,7 +384,7 @@ hr.divide-block {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 4px 5px;
+    padding: 3px 4px;
     margin: 0 2px;
     text-align: center;
   }
@@ -217,24 +396,23 @@ hr.divide-block {
     color: blue;
     height: 100%;
     width: 100%;
-    padding: 4px 4px;
+    padding: 3px;
     background-color: rgba(169, 197, 133, 0.6);
     color: rgb(255, 255, 255);
     border-radius: 4px;
-    gap: 2px;
-    font-size: 14px;
+    gap: 3px;
+    font-size: 12px;
+    min-width: 0;
   }
   &__truck-plates {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    padding: 4px 4px;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    padding: 3px 4px;
     text-align: center;
     background-color: rgb(58, 138, 32, 0.7);
     border-radius: 4px;
-    &_icon {
-      transform: scale(1.3);
-    }
 
     &--clickable {
       cursor: pointer;
@@ -247,34 +425,51 @@ hr.divide-block {
       }
     }
   }
-  &__trailer-plates {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around;
-    padding: 4px 4px;
-    text-align: center;
-    background-color: rgb(58, 138, 32, 0.7);
-    border-radius: 4px;
-    &_icon {
-      transform: scale(1.3);
-    }
+  &__plates-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   &__driver-details {
     // display: flex;
-    padding: 4px 4px;
+    padding: 3px 5px;
     text-align: left;
     // white-space: nowrap;
     background-color: rgb(58, 138, 32, 0.7);
     border-radius: 4px;
     color: #fff;
+    min-width: 0;
     &_title {
       display: flex;
       justify-content: space-between;
       flex-direction: row;
+      align-items: center;
+      gap: 4px;
+      min-width: 0;
+    }
+    &_name {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    &_actions {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    &_arrow {
+      display: inline-flex;
+      align-items: center;
+      flex-shrink: 0;
+      font-size: 0.72rem;
     }
     &_phone-number {
-      font-size: 14px;
+      font-size: 11px;
       color: black;
+      line-height: 1.2;
     }
 
     &--clickable {
@@ -286,6 +481,34 @@ hr.divide-block {
         transform: scale(1.02);
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
+    }
+  }
+  &__copy-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: 0;
+    border-radius: 4px;
+    color: #fff;
+    background: rgba(255, 255, 255, 0.16);
+    font-size: 0.7rem;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      transform 0.15s ease;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.28);
+      transform: translateY(-1px);
+    }
+
+    &:focus-visible {
+      outline: 2px solid rgba(255, 255, 255, 0.8);
+      outline-offset: 1px;
     }
   }
 }

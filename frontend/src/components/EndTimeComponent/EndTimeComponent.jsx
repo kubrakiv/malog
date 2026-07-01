@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { FaTimes } from "react-icons/fa";
 
 import { selectSelectedTask } from "../../features/planner/plannerSelectors";
 import { setShowEndTimeModal } from "../../features/planner/plannerSlice";
@@ -19,8 +20,8 @@ const EndTimeComponent = () => {
   const [endTime, setEndTime] = useState("");
 
   useEffect(() => {
-    setEndDate(selectedTask?.end_date);
-    setEndTime(selectedTask?.end_time);
+    setEndDate(selectedTask?.end_date || "");
+    setEndTime(selectedTask?.end_time || "");
   }, [selectedTask]);
 
   const getTaskTypeLabel = (task) => {
@@ -46,8 +47,8 @@ const EndTimeComponent = () => {
     // }
 
     const data = {
-      end_date: endDate,
-      end_time: endTime,
+      end_date: endDate || null,
+      end_time: endTime || null,
     };
 
     if (data) {
@@ -67,28 +68,50 @@ const EndTimeComponent = () => {
                 <div className="end-time__row">
                   <div className="end-time__content-row-block">
                     <div className="end-time__row-block">
-                      <InputComponent
-                        label={`Дата завершення ${taskTypeLabel}`}
-                        required
-                        type="date"
-                        placeholder="Оберіть дату"
-                        value={endDate}
-                        className="add-task-form__input"
-                        onChange={(e) => setEndDate(e.target.value)}
-                      />
+                      <div className="end-time__field-control">
+                        <InputComponent
+                          label={`Дата завершення ${taskTypeLabel}`}
+                          type="date"
+                          placeholder="Оберіть дату"
+                          value={endDate}
+                          className="add-task-form__input"
+                          onChange={(e) => setEndDate(e.target.value)}
+                        />
+                        <button
+                          type="button"
+                          className="end-time__clear-btn"
+                          title="Очистити дату"
+                          aria-label="Очистити дату завершення"
+                          onClick={() => setEndDate("")}
+                          disabled={!endDate}
+                        >
+                          <FaTimes />
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div className="end-time__content-row-block">
                     <div className="end-time__row-block">
-                      <InputComponent
-                        label={`Час завершення ${taskTypeLabel}`}
-                        required
-                        type="time"
-                        placeholder="Оберіть час"
-                        value={endTime}
-                        className="add-task-form__input"
-                        onChange={(e) => setEndTime(e.target.value)}
-                      />
+                      <div className="end-time__field-control">
+                        <InputComponent
+                          label={`Час завершення ${taskTypeLabel}`}
+                          type="time"
+                          placeholder="Оберіть час"
+                          value={endTime}
+                          className="add-task-form__input"
+                          onChange={(e) => setEndTime(e.target.value)}
+                        />
+                        <button
+                          type="button"
+                          className="end-time__clear-btn"
+                          title="Очистити час"
+                          aria-label="Очистити час завершення"
+                          onClick={() => setEndTime("")}
+                          disabled={!endTime}
+                        >
+                          <FaTimes />
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>

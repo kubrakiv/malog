@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { transformSelectOptions } from "../../utils/transformers";
 import cn from "classnames";
@@ -26,6 +26,77 @@ import "./AddServiceTaskComponent.scss";
 import { selectTrucks } from "../../features/trucks/trucksSelectors";
 import { formatDateForInput } from "../../utils/formatDate";
 import { formFields } from "./taskFormFields";
+
+const SERVICE_TASK_EXCLUDED_TYPES = new Set(["Loading", "Unloading"]);
+
+const TaskTypeSelect = ({ id, label, title, value, options, onChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const selectRef = useRef(null);
+  const selectedOption = options.find((option) => option.value === value);
+
+  useEffect(() => {
+    const handlePointerDown = (event) => {
+      if (selectRef.current && !selectRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handlePointerDown);
+    return () => document.removeEventListener("mousedown", handlePointerDown);
+  }, []);
+
+  const handleOptionSelect = (optionValue) => {
+    onChange(optionValue);
+    setIsOpen(false);
+  };
+
+  return (
+    <div className="service-task-select" ref={selectRef}>
+      {label && (
+        <label className="service-task-select__label" htmlFor={id}>
+          {label}
+        </label>
+      )}
+      <button
+        id={id}
+        type="button"
+        className={`service-task-select__control ${
+          isOpen ? "service-task-select__control--open" : ""
+        }`}
+        onClick={() => setIsOpen((prev) => !prev)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+      >
+        <span
+          className={`service-task-select__value ${
+            !selectedOption ? "service-task-select__value--placeholder" : ""
+          }`}
+        >
+          {selectedOption?.label || title}
+        </span>
+        <span className="service-task-select__chevron" />
+      </button>
+      {isOpen && (
+        <div className="service-task-select__menu" role="listbox">
+          {options.map((option) => (
+            <button
+              type="button"
+              key={option.value}
+              className={`service-task-select__option ${
+                option.value === value ? "service-task-select__option--active" : ""
+              }`}
+              onClick={() => handleOptionSelect(option.value)}
+              role="option"
+              aria-selected={option.value === value}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 const AddServiceTaskComponent = ({ onCloseModal, initialTaskData = null }) => {
   const dispatch = useDispatch();
@@ -56,13 +127,15 @@ const AddServiceTaskComponent = ({ onCloseModal, initialTaskData = null }) => {
   };
   const taskTypesOptions = useMemo(
     () =>
-      taskTypes.map((taskType) => ({
-        value: taskType.name,
-        label:
-          taskType.name_uk ||
-          taskTypeUkFallbackMap[taskType.name] ||
-          taskType.name,
-      })),
+      taskTypes
+        .filter((taskType) => !SERVICE_TASK_EXCLUDED_TYPES.has(taskType.name))
+        .map((taskType) => ({
+          value: taskType.name,
+          label:
+            taskType.name_uk ||
+            taskTypeUkFallbackMap[taskType.name] ||
+            taskType.name,
+        })),
     [taskTypes],
   );
 
@@ -175,6 +248,26 @@ const AddServiceTaskComponent = ({ onCloseModal, initialTaskData = null }) => {
                         options = trucksOptions;
                       } else if (id === TASK_CONSTANTS.TASK_DRIVER) {
                         options = driversOptions;
+                      }
+
+                      if (component === "select" && id === TASK_CONSTANTS.TASK_TYPE) {
+                        return (
+                          <div
+                            className="add-task-details__content-row-block"
+                            key={id}
+                          >
+                            <div className="add-task-details__row-block">
+                              <TaskTypeSelect
+                                label={title}
+                                id={id}
+                                title={title}
+                                value={taskFields[id]}
+                                options={options}
+                                onChange={(value) => handleInputChange(id, value)}
+                              />
+                            </div>
+                          </div>
+                        );
                       }
 
                       return component === "select" ? (
