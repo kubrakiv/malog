@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useRef, useEffect } from "react";
+import React, { useCallback, useRef, useEffect } from "react";
 import { GoogleMap, Marker, DirectionsRenderer } from "@react-google-maps/api";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 import { DELIVERY_CONSTANTS } from "../../constants/global";
 const { LOADING, UNLOADING } = DELIVERY_CONSTANTS;
@@ -11,6 +11,7 @@ const { LOADING, UNLOADING } = DELIVERY_CONSTANTS;
 const containerStyle = {
   width: "100%",
   height: "100%",
+  minHeight: "220px",
 };
 
 const defaultOptions = {
@@ -22,36 +23,70 @@ const defaultOptions = {
   //   styles: defaultTheme,
 };
 
-const Map = ({ tasks, directionsResponse, truckDirectionsResponse, truck }) => {
+const isValidCoordinates = (value) => {
+  if (!value) return false;
+
+  const lat = Number(value.lat);
+  const lng = Number(value.lng);
+
+  return Number.isFinite(lat) && Number.isFinite(lng);
+};
+
+const toCoordinates = (value) => ({
+  lat: Number(value.lat),
+  lng: Number(value.lng),
+});
+
+const resolveCenter = (propCenter, currentLocation, defaultCenter) => {
+  if (isValidCoordinates(propCenter)) return toCoordinates(propCenter);
+  if (isValidCoordinates(currentLocation))
+    return toCoordinates(currentLocation);
+  if (isValidCoordinates(defaultCenter)) return toCoordinates(defaultCenter);
+  return null;
+};
+
+const Map = ({
+  tasks,
+  directionsResponse,
+  truckDirectionsResponse,
+  truck,
+  center: propCenter,
+}) => {
   console.log("Truck", truck);
-  const dispatch = useDispatch();
   const mapRef = useRef(undefined);
   const currentLocation = useSelector((state) => state.map.currentLocation);
   const defaultCenter = useSelector((state) => state.map.defaultCenter);
   const truckLocation = useSelector((state) => state.map.truckLocation);
-  const [center, setCenter] = useState(null);
-
-  useEffect(() => {
-    if (currentLocation) {
-      setCenter(currentLocation);
-    }
-    if (!currentLocation && defaultCenter) {
-      setCenter(defaultCenter);
-    }
-  }, [currentLocation, defaultCenter]);
+  const center = resolveCenter(propCenter, currentLocation, defaultCenter);
 
   const loadingIcon = "http://maps.google.com/mapfiles/ms/icons/green-dot.png"; // Green icon for loading
   const unloadingIcon = "http://maps.google.com/mapfiles/ms/icons/red-dot.png"; // Red icon for unloading
   // const truckIcon = "http://maps.google.com/mapfiles/ms/icons/truck.png"; // Icon for truck marker
   const truckIcon = "https://maps.gstatic.com/mapfiles/ms2/micons/truck.png"; // Icon for truck marker
 
-  const onLoad = useCallback(function callback(map) {
-    mapRef.current = map;
-  }, []);
+  const onLoad = useCallback(
+    function callback(map) {
+      mapRef.current = map;
+      if (center) {
+        map.panTo(center);
+      }
+    },
+    [center],
+  );
 
   const onUnmount = useCallback(function callback(map) {
     mapRef.current = undefined;
   }, []);
+
+  useEffect(() => {
+    if (mapRef.current && center) {
+      mapRef.current.panTo(center);
+    }
+  }, [center]);
+
+  if (!center) {
+    return null;
+  }
 
   return (
     <GoogleMap
@@ -73,8 +108,8 @@ const Map = ({ tasks, directionsResponse, truckDirectionsResponse, truck }) => {
             task.type === LOADING
               ? loadingIcon
               : task.type === UNLOADING
-              ? unloadingIcon
-              : loadingIcon;
+                ? unloadingIcon
+                : loadingIcon;
 
           const title =
             (task && task.point_details.company_name + ": " + task.title) ||
@@ -96,9 +131,9 @@ const Map = ({ tasks, directionsResponse, truckDirectionsResponse, truck }) => {
             />
           );
         })
-      ) : (
+      ) : center ? (
         <Marker position={center} />
-      )}
+      ) : null}
       {/* Add truck marker */}
       {truckLocation && (
         <Marker

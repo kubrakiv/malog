@@ -43,7 +43,7 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
   const task = useSelector((state) => state.ordersInfo.task.data);
 
   const editModeTask = useSelector(
-    (state) => state.ordersInfo.task.editModeTask
+    (state) => state.ordersInfo.task.editModeTask,
   );
   const addTaskMode = useSelector((state) => state.ordersInfo.addTaskMode);
   const trucks = useSelector((state) => state.trucksInfo.trucks.data);
@@ -56,10 +56,8 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
   const driversOptions = transformSelectOptions(drivers, "full_name");
   const taskTypesOptions = useMemo(
     () => taskTypes.map((t) => ({ value: t.name, label: t.name_uk || t.name })),
-    [taskTypes]
+    [taskTypes],
   );
-
-  const [center, setCenter] = useState({ lat: 0, lng: 0 });
 
   const [title, setTitle] = useState("");
   const [taskType, setTaskType] = useState({});
@@ -98,8 +96,11 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
       const taskTypeOption = taskTypes.find((type) => type.name === data?.type);
       setTaskType(
         taskTypeOption
-          ? { value: taskTypeOption.name, label: taskTypeOption.name_uk || taskTypeOption.name }
-          : {}
+          ? {
+              value: taskTypeOption.name,
+              label: taskTypeOption.name_uk || taskTypeOption.name,
+            }
+          : {},
       );
       dispatch(setSelectedPoint(selectedOptions));
     }
@@ -126,7 +127,7 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
         setMapCurrentLocation({
           lat: parseFloat(selectedPoint.gps_latitude),
           lng: parseFloat(selectedPoint.gps_longitude),
-        })
+        }),
       );
       setTitle(selectedPoint.title);
     } else {
@@ -134,7 +135,7 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
         setMapCurrentLocation({
           lat: parseFloat(defaultCenter.lat),
           lng: parseFloat(defaultCenter.lng),
-        })
+        }),
       );
     }
   }, [selectedPoint, defaultCenter, dispatch]);
@@ -286,9 +287,13 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
                 </div>
                 <div className="add-task-details__row">
                   <div className="add-task-details__content-row-block">
-                    <label className="add-task-details__form-title">Автомобіль</label>
+                    <label className="add-task-details__form-title">
+                      Автомобіль
+                    </label>
                     <Select
-                      value={trucksOptions.find((o) => o.value === truck) || null}
+                      value={
+                        trucksOptions.find((o) => o.value === truck) || null
+                      }
                       onChange={(selected) => setTruck(selected?.value || "")}
                       options={trucksOptions}
                       isSearchable
@@ -296,13 +301,19 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
                       placeholder="Виберіть авто"
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
-                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 13000 }) }}
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 13000 }),
+                      }}
                     />
                   </div>
                   <div className="add-task-details__content-row-block">
-                    <label className="add-task-details__form-title">Водій</label>
+                    <label className="add-task-details__form-title">
+                      Водій
+                    </label>
                     <Select
-                      value={driversOptions.find((o) => o.value === driver) || null}
+                      value={
+                        driversOptions.find((o) => o.value === driver) || null
+                      }
                       onChange={(selected) => setDriver(selected?.value || "")}
                       options={driversOptions}
                       isSearchable
@@ -310,7 +321,9 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
                       placeholder="Виберіть водія"
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
-                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 13000 }) }}
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 13000 }),
+                      }}
                     />
                   </div>
                 </div>
@@ -336,11 +349,13 @@ function AddTaskComponent({ onCloseModal, initialTaskData = null }) {
                     />
                   </div>
                 </div>
-                <div className="add-task-details__row">
-                  <div className="add-task-details__row-block">
-                    <div className="add-task-details__content-row-block add-task-details__content-row-block-map">
-                      {isLoaded ? <Map center={center} /> : <h2>Loading...</h2>}
-                    </div>
+                <div className="add-task-details__content-row add-task-details__content-row_map">
+                  <div className="add-task-details__content-row-block add-task-details__content-row-block-map">
+                    {isLoaded ? (
+                      <Map center={currentLocation || defaultCenter} />
+                    ) : (
+                      <h2>Loading...</h2>
+                    )}
                   </div>
                 </div>
               </div>

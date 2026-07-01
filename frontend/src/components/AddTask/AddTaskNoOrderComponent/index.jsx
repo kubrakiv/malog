@@ -34,7 +34,11 @@ import "../AddTaskComponent.scss";
 
 const { REACT_APP_API_KEY: API_KEY } = import.meta.env;
 
-function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDriver = "" }) {
+function AddTaskNoOrderComponent({
+  onCloseModal,
+  defaultTruck = "",
+  defaultDriver = "",
+}) {
   const dispatch = useDispatch();
 
   const map = useSelector((state) => state.map);
@@ -43,11 +47,11 @@ function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDrive
   const order = useSelector((state) => state.ordersInfo.orderDetails.data);
   const task = useSelector((state) => state.ordersInfo.task.data);
   const editModeTask = useSelector(
-    (state) => state.ordersInfo.task.editModeTask
+    (state) => state.ordersInfo.task.editModeTask,
   );
   const addTaskMode = useSelector((state) => state.ordersInfo.addTaskMode);
   const addTaskNoOrderMode = useSelector(
-    (state) => state.ordersInfo.addTaskNoOrderMode
+    (state) => state.ordersInfo.addTaskNoOrderMode,
   );
   const trucks = useSelector((state) => state.trucksInfo.trucks.data);
   const drivers = useSelector((state) => state.driversInfo.drivers.data);
@@ -57,12 +61,14 @@ function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDrive
 
   const trucksOptions = transformSelectOptions(trucks, "plates");
   const driversOptions = transformSelectOptions(drivers, "full_name");
-  const taskTypesOptions = taskTypes.map((t) => ({ label: t.name_uk || t.name, value: t.name }));
+  const taskTypesOptions = taskTypes.map((t) => ({
+    label: t.name_uk || t.name,
+    value: t.name,
+  }));
 
   const [tasks, setTasks] = useState(order.tasks || []);
   const [selectedTask, setSelectedTask] = useState(task);
 
-  const [center, setCenter] = useState({});
   const [title, setTitle] = useState("");
   const [startDate, setStartDate] = useState("");
   const [startTime, setStartTime] = useState("");
@@ -88,7 +94,6 @@ function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDrive
   // Set task data if in edit mode
   useEffect(() => {
     if (editModeTask) {
-      setCenter(currentLocation);
       setTitle(task ? task.title : "");
       setStartDate(task ? task.start_date : "");
       setStartTime(task ? task.start_time : "");
@@ -103,7 +108,6 @@ function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDrive
 
   useEffect(() => {
     if (addTaskMode) {
-      setCenter("");
       setTitle("");
       setStartDate("");
       setStartTime("");
@@ -118,7 +122,6 @@ function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDrive
 
   useEffect(() => {
     if (addTaskNoOrderMode) {
-      setCenter("");
       setTitle("");
       setStartDate("");
       setStartTime("");
@@ -138,7 +141,7 @@ function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDrive
         setMapCurrentLocation({
           lat: parseFloat(selectedPoint.gps_latitude),
           lng: parseFloat(selectedPoint.gps_longitude),
-        })
+        }),
       );
       setTitle(selectedPoint.title);
     } else {
@@ -209,7 +212,7 @@ function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDrive
         const updatedTask = { ...task, ...data, order: order.number };
         const response = await axios.put(
           `/api/tasks/edit/${selectedTask.id}/`,
-          updatedTask
+          updatedTask,
         );
 
         handleTaskUpdate(selectedTask.id, response.data);
@@ -250,7 +253,9 @@ function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDrive
                       isClearable
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
-                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 13000 }) }}
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 13000 }),
+                      }}
                     />
                   </div>
                 </div>
@@ -306,29 +311,41 @@ function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDrive
                 </div>
                 <div className="add-task-details__row">
                   <div className="add-task-details__content-row-block">
-                    <label className="add-task-details__form-title">Автомобіль</label>
+                    <label className="add-task-details__form-title">
+                      Автомобіль
+                    </label>
                     <Select
-                      value={trucksOptions.find((o) => o.value === truck) || null}
+                      value={
+                        trucksOptions.find((o) => o.value === truck) || null
+                      }
                       onChange={(selected) => setTruck(selected?.value || "")}
                       options={trucksOptions}
                       placeholder="Виберіть авто"
                       isClearable
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
-                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 13000 }) }}
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 13000 }),
+                      }}
                     />
                   </div>
                   <div className="add-task-details__content-row-block">
-                    <label className="add-task-details__form-title">Водій</label>
+                    <label className="add-task-details__form-title">
+                      Водій
+                    </label>
                     <Select
-                      value={driversOptions.find((o) => o.value === driver) || null}
+                      value={
+                        driversOptions.find((o) => o.value === driver) || null
+                      }
                       onChange={(selected) => setDriver(selected?.value || "")}
                       options={driversOptions}
                       placeholder="Виберіть водія"
                       isClearable
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
-                      styles={{ menuPortal: (base) => ({ ...base, zIndex: 13000 }) }}
+                      styles={{
+                        menuPortal: (base) => ({ ...base, zIndex: 13000 }),
+                      }}
                     />
                   </div>
                 </div>
@@ -355,7 +372,11 @@ function AddTaskNoOrderComponent({ onCloseModal, defaultTruck = "", defaultDrive
                 </div>
                 <div className="add-task-details__content-row add-task-details__content-row_map">
                   <div className="add-task-details__content-row-block add-task-details__content-row-block-map">
-                    {isLoaded ? <Map center={center} /> : <h2>Loading...</h2>}
+                    {isLoaded ? (
+                      <Map center={currentLocation || defaultCenter} />
+                    ) : (
+                      <h2>Loading...</h2>
+                    )}
                   </div>
                 </div>
               </div>

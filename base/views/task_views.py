@@ -95,9 +95,9 @@ def createTask(request):
         if end_date == "":
             end_date = None
 
-        driver = DriverProfile.objects.filter(full_name=driver_name, client=request.user.client).first()
+        driver = DriverProfile.objects.filter(full_name=driver_name, profile__client=request.user.client).first()
         truck = Truck.objects.filter(plates=truck_plate, client=request.user.client).first()
-        task_type = TaskType.objects.filter(name=task_type_name, client=request.user.client).first()
+        task_type = TaskType.objects.filter(name=task_type_name).first()
         order = Order.objects.filter(number=order_number, client=request.user.client).first()
         point = Point.objects.filter(id=data.get("point_details", {}).get("id"), client=request.user.client).first()
 
