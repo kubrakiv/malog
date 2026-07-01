@@ -209,6 +209,7 @@ def parse_route_json(route_data):
         truck_plates, driver_name, driver_sovtes_id = _extract_assignment(route_data)
         order_data = {
             "order_number": route_data.get("periodic", "Unknown Order"),
+            "tender_parent": route_data.get("tenderparent") or "",
             "price": route_data.get("budget", 0.0),
             "distance": route_data.get("distance", 0),
             "cargo_name": (route_data.get("routeparts") or [{}])[0].get("cargo", ""),

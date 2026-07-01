@@ -85,14 +85,23 @@
   &__action-send-documents-btn {
     @extend %action-btn;
     background-color: rgba(118, 107, 8, 0.75);
-    margin-left: auto;
     &:hover { background-color: rgba(118, 107, 8, 0.55); filter: none; }
-    &::after { left: auto; right: 0; transform: none; }
   }
 
   &__action-delete-order-btn {
     @extend %action-btn;
     background-color: rgba(220, 38, 38, 0.85);
     &:hover { background-color: rgba(220, 38, 38, 0.65); filter: none; }
+  }
+
+  &__action-tender-ref-link {
+    display: inline-flex;
+    align-items: center;
+    margin: 5px 3px;
+    font-size: 12px;
+    color: #2563eb;
+    text-decoration: none;
+    white-space: nowrap;
+    &:hover { text-decoration: underline; }
   }
 }

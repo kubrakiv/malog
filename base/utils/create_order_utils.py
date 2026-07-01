@@ -114,6 +114,7 @@ def create_objects_from_parsed_data(
 
         order = Order.objects.create(
             order_number=_fit_char(order_data["order_number"], 20),
+            tender_parent=_fit_char(order_data.get("tender_parent"), 20),
             price=order_data["price"] or 0,
             customer=customer,
             customer_manager=manager,

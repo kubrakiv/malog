@@ -369,48 +369,54 @@ function OrdersTableComponent() {
                 <div className="oc__body">
                   <div className="oc__col oc__col--route">
                       <div className="oc__col-title">Маршрут</div>
-                      {order.tasks
-                        ?.filter((t) => t.type === "Loading")
-                        .map((t) => (
-                          <div key={t.id} className="oc__loc">
-                            <span className="oc__dot oc__dot--load" />
-                            <span className="oc__city">
-                              {t.point_details?.country_short?.toUpperCase()}
-                              {t.point_details?.postal_code
-                                ? `-${t.point_details.postal_code}`
-                                : ""}{" "}
-                              {t.point_details?.city}
-                            </span>
-                          </div>
-                        ))}
-                      {order.tasks
-                        ?.filter((t) => t.type === "Border Crossing")
-                        .map((t) => (
-                          <div key={t.id} className="oc__loc">
-                            <span className="oc__dot oc__dot--border" />
-                            <span className="oc__city">
-                              {t.point_details?.country_short?.toUpperCase()}
-                              {t.point_details?.postal_code
-                                ? `-${t.point_details.postal_code}`
-                                : ""}{" "}
-                              {t.point_details?.city}
-                            </span>
-                          </div>
-                        ))}
-                      {order.tasks
-                        ?.filter((t) => t.type === "Unloading")
-                        .map((t) => (
-                          <div key={t.id} className="oc__loc">
-                            <span className="oc__dot oc__dot--unload" />
-                            <span className="oc__city">
-                              {t.point_details?.country_short?.toUpperCase()}
-                              {t.point_details?.postal_code
-                                ? `-${t.point_details.postal_code}`
-                                : ""}{" "}
-                              {t.point_details?.city}
-                            </span>
-                          </div>
-                        ))}
+                      <div className="oc__route-cols">
+                        <div className="oc__route-col">
+                          {order.tasks
+                            ?.filter((t) => t.type === "Loading")
+                            .map((t) => (
+                              <div key={t.id} className="oc__loc">
+                                <span className="oc__dot oc__dot--load" />
+                                <span className="oc__city">
+                                  {t.point_details?.country_short?.toUpperCase()}
+                                  {t.point_details?.postal_code
+                                    ? `-${t.point_details.postal_code}`
+                                    : ""}{" "}
+                                  {t.point_details?.city}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                        <div className="oc__route-col">
+                          {order.tasks
+                            ?.filter((t) => t.type === "Border Crossing")
+                            .map((t) => (
+                              <div key={t.id} className="oc__loc">
+                                <span className="oc__dot oc__dot--border" />
+                                <span className="oc__city">
+                                  {t.point_details?.country_short?.toUpperCase()}
+                                  {t.point_details?.postal_code
+                                    ? `-${t.point_details.postal_code}`
+                                    : ""}{" "}
+                                  {t.point_details?.city}
+                                </span>
+                              </div>
+                            ))}
+                          {order.tasks
+                            ?.filter((t) => t.type === "Unloading")
+                            .map((t) => (
+                              <div key={t.id} className="oc__loc">
+                                <span className="oc__dot oc__dot--unload" />
+                                <span className="oc__city">
+                                  {t.point_details?.country_short?.toUpperCase()}
+                                  {t.point_details?.postal_code
+                                    ? `-${t.point_details.postal_code}`
+                                    : ""}{" "}
+                                  {t.point_details?.city}
+                                </span>
+                              </div>
+                            ))}
+                        </div>
+                      </div>
                       {extractRoute(order) && (
                         <div className="oc__route-summary">{extractRoute(order)}</div>
                       )}

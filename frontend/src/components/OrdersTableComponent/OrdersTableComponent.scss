@@ -280,9 +280,9 @@
       border-right: none;
     }
 
-    &--route  { flex: 1.2; min-width: 140px; }
-    &--order  { flex: 1.6; min-width: 160px; }
-    &--vehicle { flex: 1; min-width: 130px; }
+    &--route  { flex: 2.2; min-width: 220px; }
+    &--order  { flex: 1.2; min-width: 140px; }
+    &--vehicle { flex: 0.8; min-width: 110px; }
     &--finance { flex: 1.4; min-width: 150px; }
   }
 
@@ -371,6 +371,21 @@
   }
 
   // Route column
+
+  &__route-cols {
+    display: flex;
+    gap: 12px;
+  }
+
+  &__route-col {
+    flex: 1;
+    min-width: 0;
+
+    &:last-child {
+      padding-left: 12px;
+      border-left: 1px dashed #d8dce3;
+    }
+  }
 
   &__loc {
     display: flex;

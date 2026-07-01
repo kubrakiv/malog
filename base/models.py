@@ -441,6 +441,9 @@ class Order(BaseTenantModel):
     order_number = models.CharField(
         "Order number", max_length=20, null=True, blank=True
     )  # manual order number
+    tender_parent = models.CharField(
+        "Tender parent number", max_length=20, null=True, blank=True
+    )  # Sovtes tender number this order was booked from, if any
     price = models.DecimalField(
         "Order price", max_digits=7, decimal_places=2, null=True, blank=True
     )

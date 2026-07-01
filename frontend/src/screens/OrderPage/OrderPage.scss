@@ -37,11 +37,37 @@
       margin: 5px 5px;
       padding: 5px 5px;
       min-height: 35px;
+      flex-shrink: 0;
       &:last-child {
         display: flex;
         gap: 10px;
         margin-left: auto;
       }
+
+      &--number {
+        font-size: 17px;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        color: #fff;
+      }
+
+      &--route {
+        flex: 1;
+        min-width: 0;
+        font-size: 14px;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.82);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    // Header shows plain text instead of pill badges (Заявка pill in the actions bar keeps its background)
+    .order-details__header-block {
+      background-color: transparent;
+      border-radius: 0;
+      padding: 5px 4px;
     }
   }
   &__platform {

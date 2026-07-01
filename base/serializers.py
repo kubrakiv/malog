@@ -645,6 +645,7 @@ class OrderSerializer(serializers.ModelSerializer):
             "user",
             "number",
             "order_number",
+            "tender_parent",
             "platform",
             "price",
             "currency",

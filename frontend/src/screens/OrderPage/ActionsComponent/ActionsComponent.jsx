@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useConfirm } from "../../../globalComponents/ConfirmModal/useConfirm";
 import { setEditModeDocument } from "../../../reducers/documentReducers";
 import {
@@ -9,6 +9,7 @@ import {
 import { listOrderDetails } from "../../../features/orders/ordersOperations";
 import { FaFileInvoiceDollar, FaTruck, FaUserAlt, FaPlus, FaFolder } from "react-icons/fa";
 import EmailSenderComponent from "../../../components/EmailSenderComponent";
+import OrderNumberComponent from "../OrderNumberComponent/OrderNumberComponent";
 import cn from "classnames";
 
 import "./ActionsComponent.scss";
@@ -121,6 +122,7 @@ const ActionsComponent = () => {
         >
           <FaFolder />
         </button>
+        <EmailSenderComponent />
         {!order.invoice && (
           <button
             className="order-details__action-create-invoice-btn"
@@ -157,7 +159,15 @@ const ActionsComponent = () => {
             <FaTruck /> SOVTES <FaUserAlt />
           </button>
         )}
-        <EmailSenderComponent />
+        {order.tender_parent && (
+          <Link
+            className="order-details__action-tender-ref-link"
+            to={`/platforms/sovtes/${order.tender_parent}`}
+          >
+            ↑↓ Для вас згідно тендера №{order.tender_parent}
+          </Link>
+        )}
+        <OrderNumberComponent />
       </div>
     </>
   );

@@ -33,7 +33,9 @@ function OrderNumberComponent() {
         style={{ userSelect: "none" }}
         onDoubleClick={() => setEditModeOrderNumber((prev) => !prev)}
       >
-        {!editModeOrderNumber ? `Заявка ${order.order_number}` : "Заявка"}
+        {!editModeOrderNumber
+          ? `№ Замовлення клієнта ${order.order_number}`
+          : "№ Замовлення клієнта"}
         {editModeOrderNumber && (
           <form>
             <div className="order-details__order-number-form">
