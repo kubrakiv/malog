@@ -317,6 +317,24 @@
     &--order  { flex: 1.2; min-width: 140px; }
     &--vehicle { flex: 0.8; min-width: 110px; }
     &--finance { flex: 1.4; min-width: 150px; }
+
+    &--vehicle {
+      .oc__row {
+        display: block;
+      }
+
+      .oc__label,
+      .oc__value {
+        display: inline;
+      }
+
+      .oc__value {
+        white-space: normal;
+        overflow: visible;
+        text-overflow: clip;
+        overflow-wrap: anywhere;
+      }
+    }
   }
 
   &__col-title {
@@ -363,6 +381,14 @@
       border-radius: 3px;
       letter-spacing: 0.4px;
     }
+
+    &--driver {
+      white-space: normal;
+      overflow: visible;
+      text-overflow: clip;
+      overflow-wrap: anywhere;
+      line-height: 1.25;
+    }
   }
 
   // Finance column
@@ -405,12 +431,39 @@
 
   // Route column
 
+  &__route-count {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin: 0 0 6px;
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    line-height: 1.2;
+    white-space: nowrap;
+
+    &--load {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    &--unload {
+      background: #ffedd5;
+      color: #9a3412;
+    }
+  }
+
   &__route-cols {
     display: flex;
+    align-items: flex-start;
     gap: 12px;
   }
 
   &__route-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     flex: 1;
     min-width: 0;
 

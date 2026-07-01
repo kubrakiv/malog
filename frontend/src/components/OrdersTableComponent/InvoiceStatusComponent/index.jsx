@@ -36,10 +36,14 @@ const InvoiceStatusComponent = ({ order }) => {
         }
       }
     }
-    return { status: "No Invoice", color: "gray" };
+    return null;
   };
 
-  const { status, color } = getStatus();
+  const invoiceStatus = getStatus();
+
+  if (!invoiceStatus) return null;
+
+  const { status, color } = invoiceStatus;
 
   return <span className={`status-badge ${color}`}>{status}</span>;
 };

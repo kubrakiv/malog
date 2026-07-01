@@ -347,6 +347,9 @@ function OrdersTableComponent() {
               {ordersData.map((order) => {
                 const missingFields = getMissingOrderFields(order);
                 const visibleMissing = missingFields.slice(0, 3).join(", ");
+                const loadingTasks = order.tasks?.filter((t) => t.type === "Loading") || [];
+                const borderTasks = order.tasks?.filter((t) => t.type === "Border Crossing") || [];
+                const unloadingTasks = order.tasks?.filter((t) => t.type === "Unloading") || [];
 
                 return (
               <div
@@ -417,9 +420,10 @@ function OrdersTableComponent() {
                       <div className="oc__col-title">Маршрут</div>
                       <div className="oc__route-cols">
                         <div className="oc__route-col">
-                          {order.tasks
-                            ?.filter((t) => t.type === "Loading")
-                            .map((t) => (
+                          <span className="oc__route-count oc__route-count--load">
+                            Завантажень: {loadingTasks.length}
+                          </span>
+                          {loadingTasks.map((t) => (
                               <div key={t.id} className="oc__loc">
                                 <span className="oc__dot oc__dot--load" />
                                 <span className="oc__city">
@@ -433,9 +437,10 @@ function OrdersTableComponent() {
                             ))}
                         </div>
                         <div className="oc__route-col">
-                          {order.tasks
-                            ?.filter((t) => t.type === "Border Crossing")
-                            .map((t) => (
+                          <span className="oc__route-count oc__route-count--unload">
+                            Розвантажень: {unloadingTasks.length}
+                          </span>
+                          {borderTasks.map((t) => (
                               <div key={t.id} className="oc__loc">
                                 <span className="oc__dot oc__dot--border" />
                                 <span className="oc__city">
@@ -447,9 +452,7 @@ function OrdersTableComponent() {
                                 </span>
                               </div>
                             ))}
-                          {order.tasks
-                            ?.filter((t) => t.type === "Unloading")
-                            .map((t) => (
+                          {unloadingTasks.map((t) => (
                               <div key={t.id} className="oc__loc">
                                 <span className="oc__dot oc__dot--unload" />
                                 <span className="oc__city">
@@ -506,7 +509,7 @@ function OrdersTableComponent() {
                     <div className="oc__col-title">Транспорт</div>
                     <div className="oc__row">
                       <span className="oc__label">Водій:</span>
-                      <span className="oc__value">{order.driver}</span>
+                      <span className="oc__value oc__value--driver">{order.driver}</span>
                     </div>
                     <div className="oc__row">
                       <span className="oc__label">Авто:</span>

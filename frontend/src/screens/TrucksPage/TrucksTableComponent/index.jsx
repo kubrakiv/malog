@@ -420,9 +420,7 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                   <th className="trucks-table__head-th">Причіп</th>
                   <th className="trucks-table__head-th">Водій</th>
                   <th className="trucks-table__head-th">Логіст</th>
-                  <th className="trucks-table__head-th">Колона</th>
                   <th className="trucks-table__head-th">Рік випуску</th>
-                  <th className="trucks-table__head-th">VIN</th>
                   <th className="trucks-table__head-th">GPS ID</th>
                   <th className="trucks-table__head-th">Джерело</th>
                   <th className="trucks-table__head-th"></th>
@@ -439,7 +437,7 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                     >
                       <td
                         className="trucks-table__group-cell"
-                        colSpan={12}
+                        colSpan={10}
                       >
                         <span className="trucks-table__group-icon">
                           {isCollapsed ? <FaChevronRight /> : <FaChevronDown />}
@@ -473,6 +471,8 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                                     options={trailerOptions}
                                     value={selectedTrailer || ""}
                                     onChange={setSelectedTrailer}
+                                    menuPlacement="auto"
+                                    maxMenuHeight={260}
                                     placeholder="Виберіть причіп"
                                     clearLabel="Без причіпу"
                                   />
@@ -486,6 +486,8 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                                     options={driverOptions}
                                     value={selectedDriver || ""}
                                     onChange={setSelectedDriver}
+                                    menuPlacement="auto"
+                                    maxMenuHeight={260}
                                     placeholder="Виберіть водія"
                                     clearLabel="Без водія"
                                   />
@@ -513,17 +515,7 @@ const TrucksTableComponent = ({ trucks, trailers, drivers }) => {
                                   <span className="trucks-table__unit-empty">—</span>
                                 )}
                               </td>
-                              <td className="trucks-table__body-td">
-                                {truck.current_unit ? (
-                                  <span className="trucks-table__unit-badge">
-                                    {truck.current_unit.name.replace(/\s*колона\s*/i, "").trim()}
-                                  </span>
-                                ) : (
-                                  <span className="trucks-table__unit-empty">—</span>
-                                )}
-                              </td>
                               <td className="trucks-table__body-td">{truck.year}</td>
-                              <td className="trucks-table__body-td">{truck.vin_code}</td>
                               <td className="trucks-table__body-td">
                                 {truck.gps_id ? (
                                   <FaCheck style={{ color: "green" }} />

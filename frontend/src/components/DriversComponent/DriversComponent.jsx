@@ -223,7 +223,7 @@ const DriversComponent = ({ embedded = false }) => {
         header
       />
 
-      <div className={embedded ? undefined : "drivers-page"}>
+      <div className={embedded ? "drivers-page drivers-page--embedded" : "drivers-page"}>
         {!embedded && showContinueOnboarding && (
           <div className="drivers-page__onboarding-banner">
             <div>

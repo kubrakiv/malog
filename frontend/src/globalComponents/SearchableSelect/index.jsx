@@ -15,6 +15,8 @@ const SearchableSelect = ({
   value = "",
   onChange,
   options = [],
+  menuPlacement = "auto",
+  maxMenuHeight = 260,
   placeholder = "Виберіть…",
   clearLabel = "Без вибору",
 }) => {
@@ -28,11 +30,25 @@ const SearchableSelect = ({
   const calcMenuStyle = () => {
     if (!triggerRef.current) return;
     const r = triggerRef.current.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const gap = 4;
+    const viewportPadding = 8;
+    const spaceBelow = viewportHeight - r.bottom - gap - viewportPadding;
+    const spaceAbove = r.top - gap - viewportPadding;
+    const shouldOpenUp =
+      menuPlacement === "top" ||
+      (menuPlacement === "auto" && spaceBelow < maxMenuHeight && spaceAbove > spaceBelow);
+    const availableSpace = shouldOpenUp ? spaceAbove : spaceBelow;
+    const height = Math.max(120, Math.min(maxMenuHeight, availableSpace));
+
     setMenuStyle({
       position: "fixed",
-      top: r.bottom + 4,
+      top: shouldOpenUp
+        ? Math.max(viewportPadding, r.top - gap - height)
+        : r.bottom + gap,
       left: r.left,
       width: r.width,
+      maxHeight: height,
       zIndex: 9999,
     });
   };
@@ -54,17 +70,17 @@ const SearchableSelect = ({
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Close on scroll so fixed menu doesn't drift from trigger
+  // Keep the fixed menu attached to the trigger while tables/page scroll.
   useEffect(() => {
     if (!open) return;
-    const close = () => { setOpen(false); setSearch(""); };
-    window.addEventListener("scroll", close, true);
-    window.addEventListener("resize", close);
+    const reposition = () => calcMenuStyle();
+    window.addEventListener("scroll", reposition, true);
+    window.addEventListener("resize", reposition);
     return () => {
-      window.removeEventListener("scroll", close, true);
-      window.removeEventListener("resize", close);
+      window.removeEventListener("scroll", reposition, true);
+      window.removeEventListener("resize", reposition);
     };
-  }, [open]);
+  }, [open, menuPlacement, maxMenuHeight]);
 
   useEffect(() => {
     if (open && inputRef.current) inputRef.current.focus();

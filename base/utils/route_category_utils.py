@@ -4,10 +4,22 @@ from base.models import RouteCategory
 
 
 ROUTE_CATEGORY_BY_DIRECTION = {
-    ("EU", "UA"): "Імпорт",
-    ("UA", "EU"): "Експорт",
-    ("EU", "EU"): "Перевезення по Європі",
-    ("UA", "UA"): "Перевезення по Україні",
+    ("EU", "UA"): {
+        "ukr": "\u0406\u043c\u043f\u043e\u0440\u0442",
+        "eng": "Import",
+    },
+    ("UA", "EU"): {
+        "ukr": "\u0415\u043a\u0441\u043f\u043e\u0440\u0442",
+        "eng": "Export",
+    },
+    ("EU", "EU"): {
+        "ukr": "\u041f\u0435\u0440\u0435\u0432\u0435\u0437\u0435\u043d\u043d\u044f \u043f\u043e \u0404\u0432\u0440\u043e\u043f\u0456",
+        "eng": "European Transport",
+    },
+    ("UA", "UA"): {
+        "ukr": "\u041f\u0435\u0440\u0435\u0432\u0435\u0437\u0435\u043d\u043d\u044f \u043f\u043e \u0423\u043a\u0440\u0430\u0457\u043d\u0456",
+        "eng": "Ukraine Transport",
+    },
 }
 
 
@@ -38,19 +50,20 @@ def _country_bucket(task):
     return "UA" if country_short == "UA" else "EU"
 
 
-def _find_category(client, category_name):
-    if not client or not category_name:
+def _find_category(client, category_names):
+    if not client or not category_names:
         return None
 
-    return (
-        RouteCategory.all_objects.filter(
-            client=client,
-            is_active=True,
-            ukr__iexact=category_name,
-        )
-        .order_by("id")
-        .first()
-    )
+    base_qs = RouteCategory.all_objects.filter(
+        client=client,
+        is_active=True,
+    ).order_by("id")
+
+    category = base_qs.filter(ukr__iexact=category_names["ukr"]).first()
+    if category:
+        return category
+
+    return base_qs.filter(eng__iexact=category_names["eng"]).first()
 
 
 def infer_route_category(order):
@@ -73,9 +86,9 @@ def infer_route_category(order):
 
     start_bucket = _country_bucket(loading_tasks[0])
     finish_bucket = _country_bucket(unloading_tasks[-1])
-    category_name = ROUTE_CATEGORY_BY_DIRECTION.get((start_bucket, finish_bucket))
+    category_names = ROUTE_CATEGORY_BY_DIRECTION.get((start_bucket, finish_bucket))
 
-    return _find_category(order.client, category_name)
+    return _find_category(order.client, category_names)
 
 
 def assign_route_category(order, save=True):
