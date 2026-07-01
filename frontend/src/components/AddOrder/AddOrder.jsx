@@ -455,12 +455,17 @@ function AddOrder() {
                 </div>
                 <div className="add-order-details__content-row add-order-details__content-row_tasks">
                   <div className="add-order-details__content-row-block">
-                    {taskListNoOrder.length > 0 && (
+                    {taskListNoOrder.length > 0 ? (
                       <AddOrderTaskComponent
                         handleShowPointOnMap={handleShowPointOnMap}
                         handleEditModeTask={handleEditModeTask}
                         handleDeleteTask={handleDeleteTask}
                       />
+                    ) : (
+                      <div className="add-order-details__placeholder">
+                        <div className="add-order-details__placeholder-title">Завдання відсутні</div>
+                        <div className="add-order-details__placeholder-text">Натисніть «Додати завдання» щоб створити маршрут</div>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -638,9 +643,9 @@ function AddOrder() {
                     customerManagersList={customerManagersList}
                   />
                 </div>
-                <div className="add-order-details__content-row">
-                  {taskListNoOrder.length > 0 && (
-                    <div className="order-details__content-row-block order-details__content-row-block-map">
+                <div className="add-order-details__content-row add-order-details__content-row_map">
+                  {taskListNoOrder.length > 0 ? (
+                    <div className="add-order-details__content-row-block add-order-details__content-row-block-map">
                       {isLoaded ? (
                         <>
                           {directionsServiceOptions && (
@@ -658,6 +663,11 @@ function AddOrder() {
                       ) : (
                         <h2>Loading...</h2>
                       )}
+                    </div>
+                  ) : (
+                    <div className="add-order-details__content-row-block add-order-details__placeholder add-order-details__placeholder_map">
+                      <div className="add-order-details__placeholder-title">Карта маршруту</div>
+                      <div className="add-order-details__placeholder-text">З'явиться після додавання завдань</div>
                     </div>
                   )}
                 </div>

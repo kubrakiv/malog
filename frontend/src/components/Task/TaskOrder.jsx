@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import {
+  FaExchangeAlt,
   FaFlagCheckered,
   FaMapMarkerAlt,
   FaPencilAlt,
   FaRegTrashAlt,
+  FaUniversity,
 } from "react-icons/fa";
 import { FiCalendar, FiClock } from "react-icons/fi";
 import {
@@ -19,7 +21,7 @@ import { setMapCurrentLocation } from "../../actions/mapActions";
 import { transformDate } from "../../utils/formatDate";
 
 import { DELIVERY_CONSTANTS } from "../../constants/global";
-const { LOADING, UNLOADING, START } = DELIVERY_CONSTANTS;
+const { LOADING, UNLOADING, START, CUSTOMS, BORDER_CROSSING } = DELIVERY_CONSTANTS;
 
 import "./TaskOrder.scss";
 
@@ -83,6 +85,10 @@ function TaskOrder({ task, handleDeleteTask, onEditMode }) {
         );
       case START:
         return <FaFlagCheckered style={iconStyle()} />;
+      case CUSTOMS:
+        return <FaUniversity style={iconStyle()} />;
+      case BORDER_CROSSING:
+        return <FaExchangeAlt style={iconStyle()} />;
       default:
         return null;
     }
@@ -131,6 +137,8 @@ function TaskOrder({ task, handleDeleteTask, onEditMode }) {
           </>
         );
       case START:
+      case CUSTOMS:
+      case BORDER_CROSSING:
         return (
           <>
             <div className="task-order__date">
@@ -154,6 +162,10 @@ function TaskOrder({ task, handleDeleteTask, onEditMode }) {
         return { color: "red" };
       case START:
         return { color: "blue" };
+      case CUSTOMS:
+        return { color: "#0284c7" };
+      case BORDER_CROSSING:
+        return { color: "#7c3aed" };
       default:
         return { color: "black" };
     }
@@ -197,6 +209,8 @@ function TaskOrder({ task, handleDeleteTask, onEditMode }) {
     backgroundColor:
       task.type === LOADING ? "rgba(63, 177, 40, 0.3)"
       : task.type === UNLOADING ? "rgba(226, 97, 85, 0.3)"
+      : task.type === CUSTOMS ? "rgba(14, 165, 233, 0.25)"
+      : task.type === BORDER_CROSSING ? "rgba(168, 85, 247, 0.25)"
       : "rgba(140, 170, 186, 0.3)",
     color: "black",
   };

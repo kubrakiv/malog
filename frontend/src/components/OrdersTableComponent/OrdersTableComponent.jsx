@@ -309,13 +309,14 @@ function OrdersTableComponent() {
             setFilters((prev) => ({ ...prev, end_date: date }))
           }
         />
-        {loading ? (
-          <h3>Loading</h3>
-        ) : error ? (
-          <h4>{error}</h4>
-        ) : (
-          <div className="oc-list">
-            {ordersData.map((order) => (
+        <div className="orders-table-scroll">
+          {loading ? (
+            <h3>Loading</h3>
+          ) : error ? (
+            <h4>{error}</h4>
+          ) : (
+            <div className="oc-list">
+              {ordersData.map((order) => (
               <div
                 key={order.id}
                 className={`oc${selectedOrders.includes(order.id) ? " oc--selected" : ""}`}
@@ -373,6 +374,20 @@ function OrdersTableComponent() {
                         .map((t) => (
                           <div key={t.id} className="oc__loc">
                             <span className="oc__dot oc__dot--load" />
+                            <span className="oc__city">
+                              {t.point_details?.country_short?.toUpperCase()}
+                              {t.point_details?.postal_code
+                                ? `-${t.point_details.postal_code}`
+                                : ""}{" "}
+                              {t.point_details?.city}
+                            </span>
+                          </div>
+                        ))}
+                      {order.tasks
+                        ?.filter((t) => t.type === "Border Crossing")
+                        .map((t) => (
+                          <div key={t.id} className="oc__loc">
+                            <span className="oc__dot oc__dot--border" />
                             <span className="oc__city">
                               {t.point_details?.country_short?.toUpperCase()}
                               {t.point_details?.postal_code
@@ -758,16 +773,17 @@ function OrdersTableComponent() {
                   );
                 })()}
               </div>
-            ))}
-          </div>
-        )}
-        {count > pageSize && (
-          <PaginationComponent
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={(page) => dispatch(setPage(page))}
-          />
-        )}
+              ))}
+            </div>
+          )}
+          {count > pageSize && (
+            <PaginationComponent
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={(page) => dispatch(setPage(page))}
+            />
+          )}
+        </div>
       </div>
     </>
   );

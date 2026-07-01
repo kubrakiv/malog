@@ -17,7 +17,9 @@ import { selectShowTruckOnMapModal } from "../../../features/planner/plannerSele
 
 import { DELIVERY_CONSTANTS } from "../../../constants/global";
 import { setOrderFactData } from "../../../features/orders/ordersSlicers";
-const { LOADING, UNLOADING } = DELIVERY_CONSTANTS;
+const { LOADING, UNLOADING, CUSTOMS, BORDER_CROSSING } = DELIVERY_CONSTANTS;
+
+const ROUTE_POINT_TYPES = [LOADING, CUSTOMS, BORDER_CROSSING, UNLOADING];
 
 const OrderHereMapComponent = ({ enableFactual, readOnly = false }) => {
   const [truckLocationLoaded, setTruckLocationLoaded] = useState(false); // Track if truck location is loaded
@@ -41,7 +43,7 @@ const OrderHereMapComponent = ({ enableFactual, readOnly = false }) => {
   const pendingTask = useMemo(
     () => tasks?.find(
       (t) =>
-        ((t.type === LOADING || t.type === UNLOADING) && !(t.end_date && t.end_time))
+        (ROUTE_POINT_TYPES.includes(t.type) && !(t.end_date && t.end_time))
     ),
     [JSON.stringify(tasks)]
   );

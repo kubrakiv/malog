@@ -7,7 +7,7 @@ def compute_task_title(point):
     if not point:
         return "Unknown Location"
 
-    country = (point.country.short_name if point.country else "").strip()
+    country = (point.country.short_name if point.country else "").strip().upper()
     postal = (point.postal_code or "").strip()
     city = (point.city or "").strip()
 

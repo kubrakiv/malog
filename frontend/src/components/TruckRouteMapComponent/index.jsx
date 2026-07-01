@@ -4,7 +4,9 @@ import "./style.scss";
 
 import { buildFactualCoordsFromRuptela } from "../../services/buildFactualCoordsFromRuptela";
 
-const { START, LOADING, UNLOADING } = DELIVERY_CONSTANTS;
+const { START, LOADING, UNLOADING, CUSTOMS, BORDER_CROSSING } = DELIVERY_CONSTANTS;
+
+const ROUTE_POINT_TYPES = [LOADING, CUSTOMS, BORDER_CROSSING, UNLOADING];
 
 // Check if HERE Maps API is loaded
 const isHereMapsLoaded = () => {
@@ -64,8 +66,7 @@ const TruckRouteMapComponent = ({
     () =>
       points.find(
         (p) =>
-          (p.type === LOADING && !(p.end_date && p.end_time)) ||
-          (p.type === UNLOADING && !(p.end_date && p.end_time)),
+          ROUTE_POINT_TYPES.includes(p.type) && !(p.end_date && p.end_time),
       ),
     [JSON.stringify(points)],
   );
@@ -94,6 +95,18 @@ const TruckRouteMapComponent = ({
           '<svg width="36" height="36" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
           '<path fill="#2D6AC4" d="M12 2C8.13 2 5 5.13 5 9c0 4.97 7 13 7 13s7-8.03 7-13c0-3.87-3.13-7-7-7z"/>' +
           '<circle cx="12" cy="9" r="4" fill="#FFFFFF"/></svg>'
+        );
+      case CUSTOMS:
+        return (
+          '<svg width="36" height="36" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+          '<path fill="#0284c7" d="M12 2C8.13 2 5 5.13 5 9c0 4.97 7 13 7 13s7-8.03 7-13c0-3.87-3.13-7-7-7z"/>' +
+          '<path fill="#FFFFFF" d="M7 10.25h10v1.25H7zM8 12h1.5v3H8zm3.25 0h1.5v3h-1.5zM14.5 12H16v3h-1.5zM7.25 15.5h9.5V17h-9.5zM12 5.25l5.5 3H6.5z"/></svg>'
+        );
+      case BORDER_CROSSING:
+        return (
+          '<svg width="36" height="36" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">' +
+          '<path fill="#7c3aed" d="M12 2C8.13 2 5 5.13 5 9c0 4.97 7 13 7 13s7-8.03 7-13c0-3.87-3.13-7-7-7z"/>' +
+          '<path fill="#FFFFFF" d="M8 7.25h5.5l-1.7-1.7.9-.9L16 7.95l-3.3 3.3-.9-.9 1.7-1.7H8zm8 3.5h-5.5l1.7 1.7-.9.9L8 10.05l3.3-3.3.9.9-1.7 1.7H16z"/></svg>'
         );
       default:
         return (

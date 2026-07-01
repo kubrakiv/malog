@@ -68,6 +68,11 @@
 
 
 import re
+from datetime import date, datetime, timedelta
+
+
+INVALID_SOVTES_DATES = {"", None, "0000-00-00"}
+INVALID_SOVTES_TIMES = {"", None}
 
 
 def _split_town_title(title_ru):
@@ -81,6 +86,69 @@ def _split_town_title(title_ru):
     if m:
         return m.group(1), m.group(2)
     return "", title_ru.strip()
+
+
+def _clean_sovtes_date(value):
+    if value in INVALID_SOVTES_DATES:
+        return None
+    return value
+
+
+def _clean_sovtes_time(value):
+    if value in INVALID_SOVTES_TIMES:
+        return None
+    return value
+
+
+def _parse_date(value):
+    if not value:
+        return None
+    try:
+        return datetime.strptime(value, "%Y-%m-%d").date()
+    except ValueError:
+        return None
+
+
+def _format_date(value):
+    if isinstance(value, date):
+        return value.isoformat()
+    return value
+
+
+def _fill_missing_routepart_dates(route_parts):
+    """
+    Sovtes customs/border routeparts often arrive without explicit dates
+    (0000-00-00). Give them an estimated date between neighbouring dated
+    routeparts so they remain visible in chronological views and the planner.
+    """
+    dated = [
+        (idx, _parse_date(part.get("date")))
+        for idx, part in enumerate(route_parts)
+        if _parse_date(part.get("date"))
+    ]
+    if not dated:
+        return route_parts
+
+    for idx, part in enumerate(route_parts):
+        if _parse_date(part.get("date")):
+            continue
+
+        previous = next(((i, d) for i, d in reversed(dated) if i < idx), None)
+        following = next(((i, d) for i, d in dated if i > idx), None)
+
+        if previous and following:
+            prev_idx, prev_date = previous
+            next_idx, next_date = following
+            span_days = max((next_date - prev_date).days, 0)
+            span_parts = max(next_idx - prev_idx, 1)
+            offset = round(span_days * ((idx - prev_idx) / span_parts))
+            part["date"] = _format_date(prev_date + timedelta(days=offset))
+        elif previous:
+            part["date"] = _format_date(previous[1])
+        elif following:
+            part["date"] = _format_date(following[1])
+
+    return route_parts
 
 
 def _extract_assignment(route_data):
@@ -180,8 +248,10 @@ def parse_route_json(route_data):
             route_parts.append({
                 "id": part.get("id"),
                 "workaction": part.get("workaction"),
-                "date": part.get("date1"),
-                "time": part.get("time1"),
+                "workaction_title": (part.get("workaction_data") or {}).get("title"),
+                "workaction_title_ua": (part.get("workaction_data") or {}).get("title_ua"),
+                "date": _clean_sovtes_date(part.get("date1")),
+                "time": _clean_sovtes_time(part.get("time1")),
                 "point_data": {
                     "country_short_name": country_obj.get("domainname", ""),
                     "city": city,
@@ -192,6 +262,8 @@ def parse_route_json(route_data):
                     "company_name": company_obj.get("title_ru", "") or "",
                 },
             })
+
+        route_parts = _fill_missing_routepart_dates(route_parts)
 
         return {
             "customer_data": customer_data,

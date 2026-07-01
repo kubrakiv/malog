@@ -1,6 +1,7 @@
 ﻿import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
@@ -9,10 +10,12 @@ import {
   setSelectedTruck,
   setSelectedCustomer,
 } from "../../../features/orders/ordersSlicers";
+import { getRoute } from "../../../features/orderImport/orderImportOperations";
 
 import {
   FaCalendarAlt,
   FaFileAlt,
+  FaPlus,
   FaSyncAlt,
   FaTimes,
   FaTrash,
@@ -54,6 +57,8 @@ const OrderActionsComponent = ({
   const [isTruckShow, setIsTruckShow] = useState(false);
   const [isCustomerShow, setIsCustomerShow] = useState(false);
   const [isCalendarShow, setIsCalendarShow] = useState(false);
+  const [sovtesRouteNumber, setSovtesRouteNumber] = useState("");
+  const [isCreatingSovtesRoute, setIsCreatingSovtesRoute] = useState(false);
 
   const handleDriverSelect = () => {
     setIsDriverShow(!isDriverShow);
@@ -94,9 +99,53 @@ const OrderActionsComponent = ({
     navigate("/orders/add/");
   };
 
+  const handleCreateSovtesRoute = async (event) => {
+    event.preventDefault();
+    const routeId = sovtesRouteNumber.trim();
+
+    if (!routeId) {
+      toast.error("Вкажіть номер маршруту Sovtes");
+      return;
+    }
+
+    setIsCreatingSovtesRoute(true);
+    try {
+      const response = await dispatch(getRoute({ routeId, platform: "sovtes" })).unwrap();
+      toast.success(response.message || "Маршрут створено");
+      setSovtesRouteNumber("");
+      if (onRefresh) await onRefresh();
+    } catch (error) {
+      toast.error(error?.error || "Не вдалося створити маршрут");
+    } finally {
+      setIsCreatingSovtesRoute(false);
+    }
+  };
+
   return (
     <>
       <div className="order-actions">
+        <form
+          className="order-actions__sovtes-route-form"
+          onSubmit={handleCreateSovtesRoute}
+        >
+          <input
+            className="order-actions__sovtes-route-input"
+            type="text"
+            value={sovtesRouteNumber}
+            onChange={(event) => setSovtesRouteNumber(event.target.value)}
+            placeholder="18359-06-26"
+            aria-label="Номер маршруту Sovtes"
+          />
+          <button
+            className="order-actions__create-sovtes-route-btn"
+            type="submit"
+            title="+створити маршрут"
+            disabled={isCreatingSovtesRoute}
+          >
+            <FaPlus />
+            <span>{isCreatingSovtesRoute ? "Створення..." : "створити маршрут"}</span>
+          </button>
+        </form>
         <button
           className="order-actions__add-order-btn"
           onClick={handleAddOrderButtonClick}

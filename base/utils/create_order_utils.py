@@ -5,6 +5,26 @@ from base.models import (
 from base.utils.task_utils import compute_task_title
 
 
+SOVTES_WORKACTION_TASK_TYPES = {
+    1: ("Loading", "Завантаження"),
+    2: ("Unloading", "Розвантаження"),
+    3: ("Customs", "Митниця"),
+    4: ("Border Crossing", "Прикордонний перехід"),
+}
+
+
+def _get_task_type_for_sovtes_workaction(workaction):
+    task_type_name, task_type_name_uk = SOVTES_WORKACTION_TASK_TYPES.get(
+        workaction,
+        ("Extra Task", "Додаткове завдання"),
+    )
+    task_type, _ = TaskType.objects.get_or_create(
+        name=task_type_name,
+        defaults={"name_uk": task_type_name_uk},
+    )
+    return task_type
+
+
 def create_objects_from_parsed_data(parsed_data, user=None, truck_plates=None, driver_name=None):
     try:
         # Customer
@@ -70,15 +90,12 @@ def create_objects_from_parsed_data(parsed_data, user=None, truck_plates=None, d
             driver=driver,
         )
 
-        task_type_loading = TaskType.objects.get(name="Loading")
-        task_type_unloading = TaskType.objects.get(name="Unloading")
-
         # Points and Tasks
         for part in parsed_data["route_parts"]:
             point_data = part["point_data"]
 
             # Country — create on first use if table is empty
-            country_code = (point_data.get("country_short_name") or "").lower()
+            country_code = (point_data.get("country_short_name") or "").upper()
             if country_code:
                 country, _ = Country.objects.get_or_create(
                     short_name=country_code,
@@ -102,7 +119,7 @@ def create_objects_from_parsed_data(parsed_data, user=None, truck_plates=None, d
                 company_name=company,
             )
 
-            task_type = task_type_loading if part["workaction"] == 1 else task_type_unloading
+            task_type = _get_task_type_for_sovtes_workaction(part.get("workaction"))
             Task.objects.create(
                 title=compute_task_title(point),
                 point=point,

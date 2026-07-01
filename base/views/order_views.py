@@ -31,6 +31,20 @@ from base.serializers import (
 from datetime import datetime
 
 
+def _task_sort_key(task):
+    start_date = task.start_date
+    start_time = task.start_time
+    return (
+        datetime.strptime(start_date, "%Y-%m-%d").date()
+        if isinstance(start_date, str) and start_date
+        else start_date or datetime.max.date(),
+        datetime.strptime(start_time, "%H:%M:%S").time()
+        if isinstance(start_time, str) and start_time
+        else start_time or datetime.min.time(),
+        task.id or 0,
+    )
+
+
 # ORDERS VIEWS
 
 class OrderPagination(PageNumberPagination):
@@ -74,14 +88,7 @@ def getOrders(request):
     for order in page:
         sorted_tasks = sorted(
             order.tasks.all(),
-            key=lambda task: (
-                datetime.strptime(task.start_date, "%Y-%m-%d")
-                if isinstance(task.start_date, str)
-                else task.start_date,
-                datetime.strptime(task.start_time, "%H:%M:%S")
-                if isinstance(task.start_time, str)
-                else task.start_time,
-            ),
+            key=_task_sort_key,
         )
         order_data = OrderSerializer(order, context={'request': request}).data
         order_data["tasks"] = TaskSerializer(sorted_tasks, many=True, context={'request': request}).data
@@ -150,14 +157,7 @@ def getOrder(request, pk):
     # Sorting tasks within the order; parse strings to datetime if necessary
     sorted_tasks = sorted(
         order.tasks.all(),
-        key=lambda task: (
-            datetime.strptime(task.start_date, "%Y-%m-%d")
-            if isinstance(task.start_date, str)
-            else task.start_date,
-            datetime.strptime(task.start_time, "%H:%M:%S")
-            if isinstance(task.start_time, str)
-            else task.start_time,
-        ),
+        key=_task_sort_key,
     )
 
     # Serialize order and manually insert serialized, sorted tasks
@@ -291,4 +291,3 @@ def deleteOrder(request, pk):
     # Optionally return the data of the deleted order
     message = {"detail": "Order deleted successfully", "data": orderData}
     return Response(message)
-

@@ -20,6 +20,8 @@ import { DELIVERY_CONSTANTS } from "../../constants/global";
 const {
   LOADING,
   UNLOADING,
+  CUSTOMS,
+  BORDER_CROSSING,
   SERVICE,
   DRIVING,
   WEEKEND,
@@ -53,6 +55,7 @@ function Task({
   const [isHovered, setHovered] = useState(false);
   const [loadingStatus, setLoadingStatus] = useState(false);
   const [unloadingStatus, setUnloadingStatus] = useState(false);
+  const routeTaskTypes = [LOADING, UNLOADING, CUSTOMS, BORDER_CROSSING];
 
   // Set loading and unloading statuses
   useEffect(() => {
@@ -132,6 +135,10 @@ function Task({
         } else {
           return "rgba(0, 255, 0, 0.8)"; //green color
         }
+      case CUSTOMS:
+        return "rgba(14, 165, 233, 0.35)";
+      case BORDER_CROSSING:
+        return "rgba(168, 85, 247, 0.35)";
       case SERVICE:
         return "rgba(255, 0, 0, 1)"; //red color
       case DRIVING:
@@ -202,6 +209,15 @@ function Task({
             <div className="task__time">{task?.end_time?.substring(0, 5)}</div>
           </>
         );
+      case CUSTOMS:
+      case BORDER_CROSSING:
+        return (
+          <>
+            <div className="task__time">
+              {task?.start_time?.substring(0, 5)}
+            </div>
+          </>
+        );
       default:
         return null;
     }
@@ -236,7 +252,7 @@ function Task({
         >
           {isHovered && !task.isPlaceholder && (
             <div className="task-actions">
-              {task.type === LOADING || task.type === UNLOADING ? (
+              {routeTaskTypes.includes(task.type) ? (
                 <>
                   <Link to={`/orders/${task.order || task.order_id}`}>
                     <button

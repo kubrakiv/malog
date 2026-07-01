@@ -1,106 +1,122 @@
 [
-{
-  "model": "base.tasktype",
-  "pk": 1,
-  "fields": {
-    "name": "Loading",
-    "name_uk": "Завантаження"
+  {
+    "model": "base.tasktype",
+    "pk": 1,
+    "fields": {
+      "name": "Loading",
+      "name_uk": "Завантаження"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 2,
+    "fields": {
+      "name": "Unloading",
+      "name_uk": "Розвантаження"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 3,
+    "fields": {
+      "name": "Service",
+      "name_uk": "Сервіс"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 4,
+    "fields": {
+      "name": "Driving",
+      "name_uk": "Їзда"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 6,
+    "fields": {
+      "name": "Reserve",
+      "name_uk": "Резерв"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 7,
+    "fields": {
+      "name": "Weekend",
+      "name_uk": "Вихідний"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 8,
+    "fields": {
+      "name": "Start",
+      "name_uk": "Початок"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 9,
+    "fields": {
+      "name": "Waiting",
+      "name_uk": "Очікування"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 10,
+    "fields": {
+      "name": "Extra Task",
+      "name_uk": "Додаткове завдання"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 11,
+    "fields": {
+      "name": "Penalty",
+      "name_uk": "Штраф"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 12,
+    "fields": {
+      "name": "Sick Leave",
+      "name_uk": "Лікарняний"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 13,
+    "fields": {
+      "name": "Vacation",
+      "name_uk": "Відпустка"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 14,
+    "fields": {
+      "name": "No driver",
+      "name_uk": "Без водія"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 15,
+    "fields": {
+      "name": "Customs",
+      "name_uk": "Митниця"
+    }
+  },
+  {
+    "model": "base.tasktype",
+    "pk": 16,
+    "fields": {
+      "name": "Border Crossing",
+      "name_uk": "Прикордонний перехід"
+    }
   }
-},
-{
-  "model": "base.tasktype",
-  "pk": 2,
-  "fields": {
-    "name": "Unloading",
-    "name_uk": "Розвантаження"
-  }
-},
-{
-  "model": "base.tasktype",
-  "pk": 3,
-  "fields": {
-    "name": "Service",
-    "name_uk": "Сервіс"
-  }
-},
-{
-  "model": "base.tasktype",
-  "pk": 4,
-  "fields": {
-    "name": "Driving",
-    "name_uk": "Їзда"
-  }
-},
-{
-  "model": "base.tasktype",
-  "pk": 6,
-  "fields": {
-    "name": "Reserve",
-    "name_uk": "Резерв"
-  }
-},
-{
-  "model": "base.tasktype",
-  "pk": 7,
-  "fields": {
-    "name": "Weekend",
-    "name_uk": "Вихідний"
-  }
-},
-{
-  "model": "base.tasktype",
-  "pk": 8,
-  "fields": {
-    "name": "Start",
-    "name_uk": "Початок"
-  }
-},
-{
-  "model": "base.tasktype",
-  "pk": 9,
-  "fields": {
-    "name": "Waiting",
-    "name_uk": "Очікування"
-  }
-},
-{
-  "model": "base.tasktype",
-  "pk": 10,
-  "fields": {
-    "name": "Extra Task",
-    "name_uk": "Додаткове завдання"
-  }
-},
-{
-  "model": "base.tasktype",
-  "pk": 11,
-  "fields": {
-    "name": "Penalty",
-    "name_uk": "Штраф"
-  }
-},
-{
-  "model": "base.tasktype",
-  "pk": 12,
-  "fields": {
-    "name": "Sick Leave",
-    "name_uk": "Лікарняний"
-  }
-},
-{
-  "model": "base.tasktype",
-  "pk": 13,
-  "fields": {
-    "name": "Vacation",
-    "name_uk": "Відпустка"
-  }
-},
-{
-  "model": "base.tasktype",
-  "pk": 14,
-  "fields": {
-    "name": "No driver",
-    "name_uk": "Без водія"
-  }
-}
 ]

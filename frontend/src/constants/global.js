@@ -2,6 +2,8 @@ export const DELIVERY_CONSTANTS = {
   START: "Start",
   UNLOADING: "Unloading",
   LOADING: "Loading",
+  CUSTOMS: "Customs",
+  BORDER_CROSSING: "Border Crossing",
   SERVICE: "Service",
   DRIVING: "Driving",
   WEEKEND: "Weekend",

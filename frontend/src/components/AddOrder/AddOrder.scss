@@ -1,8 +1,7 @@
 @import "../../styles/utils/vars";
+@import "../../globalComponents/SelectComponent/style";
 
 .add-order-details {
-  padding-right: 0px;
-  margin-bottom: 20px;
   flex: 1;
   min-height: 0;
   display: flex;
@@ -125,7 +124,7 @@
     justify-content: space-between;
     flex: 1;
     min-height: 0;
-    overflow-y: auto;
+    overflow: hidden;
     gap: 10px;
   }
   &__content-block {
@@ -135,6 +134,8 @@
     background-color: $tableHeaderColor;
     border-radius: 4px;
     width: calc(100% - 20px);
+    min-height: 0;
+    overflow: hidden;
   }
   &__content-row {
     display: flex;
@@ -148,6 +149,45 @@
       min-height: 0;
       flex-shrink: 1;
       overflow-y: auto;
+    }
+
+    &_map {
+      flex: 1;
+      min-height: 0;
+      flex-shrink: 1;
+      overflow: hidden;
+    }
+  }
+
+  &__content-row-block-map {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    padding: 0;
+  }
+
+  &__placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 100px;
+    gap: 6px;
+
+    &-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #4a6872;
+    }
+
+    &-text {
+      font-size: 12px;
+      color: #8aabb3;
+    }
+
+    &_map {
+      min-height: 200px;
     }
   }
   &__content-row-block {

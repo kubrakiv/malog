@@ -9,6 +9,54 @@
   border-radius: 4px;
   margin: 5px 0;
 
+  &__sovtes-route-form {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin: 5px;
+  }
+
+  &__sovtes-route-input {
+    width: 135px;
+    height: 31px;
+    padding: 4px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    background-color: #fff;
+    color: #111827;
+    font-size: 14px;
+
+    &:focus {
+      outline: none;
+      border-color: #15803d;
+      box-shadow: 0 0 0 2px rgba(21, 128, 61, 0.15);
+    }
+  }
+
+  &__create-sovtes-route-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    min-height: 31px;
+    background-color: #15803d;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 4px;
+    padding: 5px 9px;
+    color: white;
+    border: none;
+
+    &:hover:not(:disabled) {
+      background-color: #16a34a;
+      cursor: pointer;
+    }
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: default;
+    }
+  }
+
   &__date-filter {
     display: flex;
     align-items: center;

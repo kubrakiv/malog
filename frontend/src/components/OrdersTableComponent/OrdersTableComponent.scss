@@ -1,5 +1,23 @@
 ﻿@import "../../styles/utils/vars";
 
+.orders-table-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.orders-table-scroll {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 12px;
+}
+
 .orders-header-block {
   display: flex;
   align-items: center;
@@ -368,6 +386,7 @@
     flex-shrink: 0;
 
     &--load   { background: #22c55e; }
+    &--border { background: #2563eb; }
     &--unload { background: #f97316; }
   }
 
