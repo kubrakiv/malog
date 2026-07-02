@@ -1,4 +1,5 @@
 from django.utils import timezone
+from django.db import transaction
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAdminUser, IsAuthenticated
@@ -6,7 +7,7 @@ from rest_framework.permissions import IsAdminUser, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework import status
 
-from base.models import Truck, Trailer, DriverProfile
+from base.models import Truck, Trailer, DriverProfile, TruckLogistOrder
 from user.models import LogistProfile, Profile
 from base.serializers import TruckSerializer
 from base.subscription_models import ClientSubscription
@@ -19,10 +20,125 @@ from base.views.sovtes_fleet_views import (
 # TRUCK VIEWS
 
 
+def _get_user_logist_profile(user):
+    try:
+        return user.logistprofile
+    except Exception:
+        role_name = getattr(getattr(user, "role", None), "name", "")
+        if role_name == "client_admin":
+            return LogistProfile.objects.get_or_create(profile=user)[0]
+        return None
+
+
+def _sort_trucks_for_logist(trucks_qs, logist_profile):
+    trucks = list(trucks_qs)
+    if not logist_profile:
+        return sorted(trucks, key=lambda t: t.id)
+
+    order_map = {
+        row[0]: row[1]
+        for row in TruckLogistOrder.objects.filter(
+            client=logist_profile.profile.client,
+            logist=logist_profile,
+            truck__in=trucks,
+        ).values_list("truck_id", "order_index")
+    }
+
+    def _key(truck):
+        # Trucks without explicit manual order stay after manually ordered ones.
+        return (order_map.get(truck.id, 10**9), truck.id)
+
+    return sorted(trucks, key=_key)
+
+
+def _get_active_unit_id(truck):
+    assignment = truck.unit_assignments.filter(is_active=True).first()
+    return assignment.unit_id if assignment else None
+
+
 @api_view(["GET"])
 def getTrucks(request):
-    trucks = Truck.objects.filter(client=request.user.client, is_removed=False).order_by('id')
+    trucks_qs = Truck.objects.filter(client=request.user.client, is_removed=False)
+    logist_profile = _get_user_logist_profile(request.user)
+    trucks = _sort_trucks_for_logist(trucks_qs, logist_profile)
     serializer = TruckSerializer(trucks, many=True, context={'request': request})
+    return Response(serializer.data)
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def reorderTrucks(request):
+    logist_profile = _get_user_logist_profile(request.user)
+    if not logist_profile:
+        return Response(
+            {"error": "Only logist users can reorder trucks"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    ordered_ids = request.data.get("ordered_truck_ids")
+    raw_unit_id = request.data.get("unit_id", None)
+    if not isinstance(ordered_ids, list) or not ordered_ids:
+        return Response(
+            {"error": "ordered_truck_ids must be a non-empty list"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    selected_unit_id = None
+    if raw_unit_id not in (None, "", "unassigned", "__ungrouped__"):
+        try:
+            selected_unit_id = int(raw_unit_id)
+        except (TypeError, ValueError):
+            return Response(
+                {"error": "unit_id must be integer or null for unassigned"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    # Keep only trucks from this client and preserve provided order.
+    trucks_map = {
+        truck.id: truck
+        for truck in Truck.objects.filter(
+            client=request.user.client,
+            is_removed=False,
+            id__in=ordered_ids,
+        )
+    }
+    normalized_ids = []
+    for truck_id in ordered_ids:
+        try:
+            tid = int(truck_id)
+        except (TypeError, ValueError):
+            continue
+        if tid not in trucks_map or tid in normalized_ids:
+            continue
+
+        if _get_active_unit_id(trucks_map[tid]) != selected_unit_id:
+            return Response(
+                {"error": "All trucks must belong to the selected business unit"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        if tid in trucks_map:
+            normalized_ids.append(tid)
+
+    if not normalized_ids:
+        return Response(
+            {"error": "No valid trucks to reorder"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    with transaction.atomic():
+        # Persist order only for the selected business unit.
+        for index, truck_id in enumerate(normalized_ids):
+            TruckLogistOrder.objects.update_or_create(
+                client=request.user.client,
+                logist=logist_profile,
+                truck_id=truck_id,
+                defaults={"order_index": index},
+            )
+
+    trucks_qs = Truck.objects.filter(client=request.user.client, is_removed=False)
+    trucks = _sort_trucks_for_logist(trucks_qs, logist_profile)
+    serializer = TruckSerializer(trucks, many=True, context={"request": request})
     return Response(serializer.data)
 
 

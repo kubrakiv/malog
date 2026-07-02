@@ -215,7 +215,7 @@ const AddServiceTaskComponent = ({ onCloseModal, initialTaskData = null }) => {
 
   return (
     <>
-      <div className="add-task-container">
+      <div className="add-task-container add-service-task">
         <div className="add-task-details">
           <form onSubmit={handleFormSubmit} className="add-task-form">
             <div className="add-task-details__content">

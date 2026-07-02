@@ -122,8 +122,13 @@ export const WeekPlanner = () => {
   const [week, setWeek] = useState(currentWeek);
   const [year, setYear] = useState(currentYear);
 
-  const { showDriver, showOrderNumber, showCustomer, showAddress, showTaskType } =
-    useSelector(selectSwitchers);
+  const {
+    showDriver,
+    showOrderNumber,
+    showCustomer,
+    showAddress,
+    showTaskType,
+  } = useSelector(selectSwitchers);
 
   const trucks = useSelector(selectTrucks);
   const trucksLoading = useSelector(selectTrucksLoading);
@@ -609,7 +614,9 @@ export const WeekPlanner = () => {
   };
 
   const getTruckContactText = (truck) => {
-    const unitLine = [truck?.plates, truck?.trailer].filter(Boolean).join(" / ");
+    const unitLine = [truck?.plates, truck?.trailer]
+      .filter(Boolean)
+      .join(" / ");
     return [
       unitLine,
       truck?.driver_details?.full_name,
@@ -723,7 +730,9 @@ export const WeekPlanner = () => {
     }
 
     try {
-      await dispatch(createTask(buildCopiedTask(copyDragTask, targetDate))).unwrap();
+      await dispatch(
+        createTask(buildCopiedTask(copyDragTask, targetDate)),
+      ).unwrap();
       toast.success("Завдання скопійовано", {
         position: "top-right",
       });
@@ -897,7 +906,21 @@ export const WeekPlanner = () => {
                     }
                     groupMap.get(unitId).trucks.push(truck);
                   });
-                  const groups = Array.from(groupMap.values());
+                  const sortByManualOrder = (a, b) => {
+                    const aOrder = Number.isInteger(a.manual_order)
+                      ? a.manual_order
+                      : Number.MAX_SAFE_INTEGER;
+                    const bOrder = Number.isInteger(b.manual_order)
+                      ? b.manual_order
+                      : Number.MAX_SAFE_INTEGER;
+                    if (aOrder !== bOrder) return aOrder - bOrder;
+                    return a.id - b.id;
+                  };
+
+                  const groups = Array.from(groupMap.values()).map((group) => ({
+                    ...group,
+                    trucks: [...group.trucks].sort(sortByManualOrder),
+                  }));
 
                   const renderTruckRow = (truck) => {
                     const weeklyTasks = truck.isPlaceholder

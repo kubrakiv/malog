@@ -261,6 +261,29 @@ class Truck(BaseTenantModel):
         return f"Truck plates: {self.plates}"
 
 
+class TruckLogistOrder(BaseTenantModel):
+    """Stores manual truck ordering preferences per logist."""
+
+    truck = models.ForeignKey(
+        Truck,
+        on_delete=models.CASCADE,
+        related_name="logist_orders",
+    )
+    logist = models.ForeignKey(
+        LogistProfile,
+        on_delete=models.CASCADE,
+        related_name="truck_orders",
+    )
+    order_index = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ("truck", "logist")
+        ordering = ["order_index", "truck_id"]
+
+    def __str__(self):
+        return f"{self.logist} -> {self.truck.plates} ({self.order_index})"
+
+
 class DriverAssignment(BaseTenantModel):
     truck = models.ForeignKey(Truck, on_delete=models.CASCADE)
     driver_profile = models.ForeignKey(DriverProfile, on_delete=models.CASCADE)

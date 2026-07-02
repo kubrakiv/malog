@@ -20,7 +20,7 @@ export const listTrucks = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  }
+  },
 );
 
 export const updateTruck = createAsyncThunk(
@@ -40,13 +40,13 @@ export const updateTruck = createAsyncThunk(
       const { data } = await axios.put(
         `/api/trucks/update/${dataToUpdate.id}/`,
         dataToUpdate,
-        config
+        config,
       );
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  }
+  },
 );
 
 export const updateTruckTrailerAndDriver = createAsyncThunk(
@@ -66,13 +66,13 @@ export const updateTruckTrailerAndDriver = createAsyncThunk(
       const { data } = await axios.put(
         `/api/trucks/update-trailer-driver/${dataToUpdate.id}/`,
         dataToUpdate,
-        config
+        config,
       );
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  }
+  },
 );
 
 export const createTruck = createAsyncThunk(
@@ -92,13 +92,13 @@ export const createTruck = createAsyncThunk(
       const { data } = await axios.post(
         "/api/trucks/create/",
         dataToCreate,
-        config
+        config,
       );
       return data;
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  }
+  },
 );
 
 export const deleteTruck = createAsyncThunk(
@@ -120,5 +120,31 @@ export const deleteTruck = createAsyncThunk(
     } catch (error) {
       return thunkAPI.rejectWithValue({ error: error.message });
     }
-  }
+  },
+);
+
+export const reorderTrucks = createAsyncThunk(
+  "truck/reorderTrucks",
+  async ({ orderedTruckIds, unitId }, thunkAPI) => {
+    try {
+      const state = thunkAPI.getState();
+      const token = state.userLogin?.userInfo?.token;
+
+      const config = {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      const { data } = await axios.put(
+        "/api/trucks/reorder/",
+        { ordered_truck_ids: orderedTruckIds, unit_id: unitId ?? null },
+        config,
+      );
+      return data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue({ error: error.message });
+    }
+  },
 );

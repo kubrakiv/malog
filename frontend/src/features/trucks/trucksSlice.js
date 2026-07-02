@@ -5,6 +5,7 @@ import {
   updateTruck,
   deleteTruck,
   updateTruckTrailerAndDriver,
+  reorderTrucks,
 } from "./trucksOperations";
 
 export const truckSlice = createSlice({
@@ -51,13 +52,13 @@ export const truckSlice = createSlice({
     });
     builder.addCase(updateTruck.fulfilled, (state, action) => {
       const index = state.trucks.data.findIndex(
-        (truck) => truck.id === action.payload.id
+        (truck) => truck.id === action.payload.id,
       );
       state.trucks.data[index] = action.payload;
     });
     builder.addCase(updateTruckTrailerAndDriver.fulfilled, (state, action) => {
       const index = state.trucks.data.findIndex(
-        (truck) => truck.id === action.payload.id
+        (truck) => truck.id === action.payload.id,
       );
       state.trucks.data[index] = action.payload;
     });
@@ -67,8 +68,11 @@ export const truckSlice = createSlice({
     });
     builder.addCase(deleteTruck.fulfilled, (state, action) => {
       state.trucks.data = state.trucks.data.filter(
-        (truck) => truck.id !== action.payload
+        (truck) => truck.id !== action.payload,
       );
+    });
+    builder.addCase(reorderTrucks.fulfilled, (state, action) => {
+      state.trucks.data = action.payload;
     });
   },
 });

@@ -27,6 +27,7 @@ from .models import (
     TruckUnit,
     TruckUnitAssignment,
     DriverUnitAssignment,
+    TruckLogistOrder,
     CostCenter,
     RouteCategory,
 )
@@ -149,6 +150,7 @@ class TruckSerializer(serializers.ModelSerializer):
     # Returns Profile IDs (consistent with /api/users/logists/ endpoint)
     logist = serializers.SerializerMethodField()
     current_unit = serializers.SerializerMethodField()
+    manual_order = serializers.SerializerMethodField()
 
     def get_logist(self, obj):
         return list(obj.logist.values_list("profile_id", flat=True))
@@ -158,6 +160,22 @@ class TruckSerializer(serializers.ModelSerializer):
         if assignment:
             return {"id": assignment.unit.id, "name": assignment.unit.name}
         return None
+
+    def get_manual_order(self, obj):
+        request = self.context.get("request")
+        if not request or not getattr(request, "user", None):
+            return None
+
+        profile = getattr(request.user, "logistprofile", None)
+        if not profile:
+            return None
+
+        manual = TruckLogistOrder.objects.filter(
+            truck=obj,
+            logist=profile,
+            client=request.user.client,
+        ).values_list("order_index", flat=True).first()
+        return manual
 
     class Meta:
         model = Truck
@@ -184,6 +202,7 @@ class TruckSerializer(serializers.ModelSerializer):
             "logist_details",
             "sovtes_id",
             "current_unit",
+            "manual_order",
         ]
 
     
