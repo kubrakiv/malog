@@ -83,7 +83,9 @@ const TaskTypeSelect = ({ id, label, title, value, options, onChange }) => {
               type="button"
               key={option.value}
               className={`service-task-select__option ${
-                option.value === value ? "service-task-select__option--active" : ""
+                option.value === value
+                  ? "service-task-select__option--active"
+                  : ""
               }`}
               onClick={() => handleOptionSelect(option.value)}
               role="option"
@@ -250,7 +252,10 @@ const AddServiceTaskComponent = ({ onCloseModal, initialTaskData = null }) => {
                         options = driversOptions;
                       }
 
-                      if (component === "select" && id === TASK_CONSTANTS.TASK_TYPE) {
+                      if (
+                        component === "select" &&
+                        id === TASK_CONSTANTS.TASK_TYPE
+                      ) {
                         return (
                           <div
                             className="add-task-details__content-row-block"
@@ -263,7 +268,9 @@ const AddServiceTaskComponent = ({ onCloseModal, initialTaskData = null }) => {
                                 title={title}
                                 value={taskFields[id]}
                                 options={options}
-                                onChange={(value) => handleInputChange(id, value)}
+                                onChange={(value) =>
+                                  handleInputChange(id, value)
+                                }
                               />
                             </div>
                           </div>
