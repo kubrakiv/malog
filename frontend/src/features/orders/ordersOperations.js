@@ -76,8 +76,9 @@ export const searchOrderByNumber = createAsyncThunk(
   "order/searchOrderByNumber",
   async (orderNumber, thunkAPI) => {
     try {
+      const encodedOrderNumber = encodeURIComponent(orderNumber);
       const { data } = await axios.get(
-        `/api/orders/search/?order_number=${orderNumber}`
+        `/api/orders/search/?order_number=${encodedOrderNumber}&mode=list&limit=10`
       );
       return data;
     } catch (error) {

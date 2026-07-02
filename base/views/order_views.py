@@ -75,6 +75,34 @@ def _apply_business_unit_filters(orders, request):
     return orders
 
 
+def _to_search_result_item(order):
+    loading_task = (
+        order.tasks.filter(type__name__iexact="loading")
+        .order_by("start_date", "start_time", "id")
+        .first()
+    )
+    unloading_task = (
+        order.tasks.filter(type__name__iexact="unloading")
+        .order_by("-end_date", "-end_time", "-id")
+        .first()
+    )
+
+    return {
+        "id": order.id,
+        "number": order.number,
+        "order_number": order.order_number,
+        "truck": order.truck.plates if order.truck else None,
+        "driver": order.driver.full_name if order.driver else None,
+        "route": order.route,
+        "loading_start_date": loading_task.start_date if loading_task else None,
+        "unloading_end_date": (
+            unloading_task.end_date if unloading_task and unloading_task.end_date
+            else unloading_task.start_date if unloading_task
+            else None
+        ),
+    }
+
+
 @api_view(["GET"])
 def getOrders(request):
     orders = Order.objects.filter(client=request.user.client).prefetch_related("tasks").all().order_by("-id")
@@ -124,17 +152,42 @@ def getOrders(request):
 
 @api_view(['GET'])
 def searchOrderByNumber(request):
-    order_number = request.query_params.get('order_number')
-    print("Order Number", order_number)
+    order_number = (request.query_params.get('order_number') or "").strip()
+    mode = (request.query_params.get('mode') or "single").strip().lower()
+    limit_param = request.query_params.get('limit')
     if not order_number:
         return Response({"error": "Missing order_number parameter"}, status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        order = Order.objects.get(order_number=order_number, client=request.user.client)
-        serializer = OrderSerializer(order, context={'request': request})
-        return Response(serializer.data)
-    except Order.DoesNotExist:
+    if mode == "list":
+        try:
+            limit = int(limit_param) if limit_param else 10
+        except (TypeError, ValueError):
+            limit = 10
+        limit = max(1, min(limit, 20))
+
+        queryset = (
+            Order.objects
+            .filter(order_number__icontains=order_number, client=request.user.client)
+            .select_related("truck", "driver")
+            .prefetch_related("tasks__type")
+            .order_by('-id')
+        )
+        results = [_to_search_result_item(order) for order in queryset[:limit]]
+        return Response({"results": results, "count": queryset.count()})
+
+    # order_number is not unique in practice; return the latest matching order.
+    order = (
+        Order.objects
+        .filter(order_number=order_number, client=request.user.client)
+        .order_by('-id')
+        .first()
+    )
+
+    if not order:
         return Response({"error": "Order not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = OrderSerializer(order, context={'request': request})
+    return Response(serializer.data)
 
 # @api_view(["GET"])
 # def getOrders(request):

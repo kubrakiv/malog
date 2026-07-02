@@ -20,6 +20,8 @@ function Header() {
   const dispatch = useDispatch();
 
   const [orderNumber, setOrderNumber] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [showSearchResults, setShowSearchResults] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -69,13 +71,25 @@ function Header() {
       const resultAction = await dispatch(
         searchOrderByNumber(orderNumber),
       ).unwrap();
-      console.log("Result", resultAction);
-      const order = resultAction;
-      navigate(`/orders/${order.number || order.id}`);
-      setOrderNumber("");
+      const results = resultAction?.results || [];
+      setSearchResults(results);
+      setShowSearchResults(true);
     } catch {
-      alert("Something went wrong");
+      setSearchResults([]);
+      setShowSearchResults(true);
     }
+  };
+
+  const handleSelectOrder = (order) => {
+    if (!order) {
+      setShowSearchResults(false);
+      return;
+    }
+
+    navigate(`/orders/${order.number || order.id}`);
+    setOrderNumber("");
+    setSearchResults([]);
+    setShowSearchResults(false);
   };
 
   return (
@@ -94,8 +108,14 @@ function Header() {
         <div className="header-navbar__search-wrapper">
           <SearchOrderComponent
             orderNumber={orderNumber}
-            setOrderNumber={setOrderNumber}
+            setOrderNumber={(value) => {
+              setOrderNumber(value);
+              setShowSearchResults(false);
+            }}
             onSearch={handleSearch}
+            searchResults={searchResults}
+            showResults={showSearchResults}
+            onSelectOrder={handleSelectOrder}
           />
         </div>
 

@@ -13,7 +13,7 @@ import { setPage } from "../../features/orders/ordersSlicers";
 import { formattedTime } from "../../utils/formattedTime";
 import { listTrucks } from "../../features/trucks/trucksOperations";
 import { listTruckUnits } from "../../features/truckUnits/truckUnitsOperations";
-import { listDrivers } from "../../actions/driverActions";
+import { listDrivers } from "../../features/drivers/driversOperations";
 import { listCustomers } from "../../features/customers/customersOperations";
 import { transformDate, dayOfWeek } from "../../utils/formatDate";
 import { findTrailer } from "../../utils/getTrailer";

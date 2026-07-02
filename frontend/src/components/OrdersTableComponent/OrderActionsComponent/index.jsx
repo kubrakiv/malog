@@ -44,7 +44,7 @@ import {
 import { selectTrucks } from "../../../features/trucks/trucksSelectors";
 import { transformSelectOptions } from "../../../utils/transformers";
 
-import SelectComponent from "../../../globalComponents/SelectComponent";
+import SearchableSelect from "../../../globalComponents/SearchableSelect";
 
 import "./style.scss";
 
@@ -499,12 +499,12 @@ const OrderActionsComponent = ({
         </button>
         {isDriverShow && (
           <div className="order-actions__find-driver-select">
-            <SelectComponent
-              title="Виберіть водія"
-              type="text"
+            <SearchableSelect
               value={selectedDriver || ""}
-              onChange={(e) => dispatch(setSelectedDriver(e.target.value))}
+              onChange={(value) => dispatch(setSelectedDriver(value))}
               options={driverOptions}
+              placeholder="Виберіть водія"
+              clearLabel="Без водія"
             />
           </div>
         )}
@@ -517,13 +517,12 @@ const OrderActionsComponent = ({
         </button>
         {isTruckShow && (
           <div className="order-actions__find-driver-select">
-            <SelectComponent
-              title="Виберіть тягач"
-              type="text"
+            <SearchableSelect
               value={selectedTruck || ""}
-              onChange={(e) => dispatch(setSelectedTruck(e.target.value))}
+              onChange={(value) => dispatch(setSelectedTruck(value))}
               options={truckOptions}
-              className="styled-select-component"
+              placeholder="Виберіть тягач"
+              clearLabel="Без тягача"
             />
           </div>
         )}
@@ -572,13 +571,12 @@ const OrderActionsComponent = ({
         </button>
         {isCustomerShow && (
           <div className="order-actions__find-customer-select">
-            <SelectComponent
-              title="Виберіть замовника"
-              type="text"
+            <SearchableSelect
               value={selectedCustomer || ""}
-              onChange={(e) => dispatch(setSelectedCustomer(e.target.value))}
+              onChange={(value) => dispatch(setSelectedCustomer(value))}
               options={customerOptions}
-              className="styled-select-component"
+              placeholder="Виберіть замовника"
+              clearLabel="Без замовника"
             />
           </div>
         )}

@@ -1,5 +1,5 @@
 import { addDriver } from "../features/drivers/driversSlice";
-import { listDrivers } from "./driverActions";
+import { listDrivers } from "../features/drivers/driversOperations";
 
 /**
  * Create a driver using the user registration system

@@ -1,5 +1,5 @@
 import axios from "axios";
-import { listDrivers } from "./driverActions";
+import { listDrivers } from "../features/drivers/driversOperations";
 
 export const USER_LOGIN_REQUEST = "USER_LOGIN_REQUEST";
 export const USER_LOGIN_SUCCESS = "USER_LOGIN_SUCCESS";
