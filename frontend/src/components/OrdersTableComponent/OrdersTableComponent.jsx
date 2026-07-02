@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from "react";
 
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
@@ -11,6 +12,7 @@ import {
 import { setPage } from "../../features/orders/ordersSlicers";
 import { formattedTime } from "../../utils/formattedTime";
 import { listTrucks } from "../../features/trucks/trucksOperations";
+import { listTruckUnits } from "../../features/truckUnits/truckUnitsOperations";
 import { listDrivers } from "../../actions/driverActions";
 import { listCustomers } from "../../features/customers/customersOperations";
 import { transformDate, dayOfWeek } from "../../utils/formatDate";
@@ -126,6 +128,7 @@ function OrdersTableComponent() {
   } = useSelector((state) => state.ordersInfo.orders);
 
   const trucks = useSelector((state) => state.trucksInfo.trucks.data);
+  const units = useSelector((state) => state.truckUnitsInfo.units);
 
   const selectedDriver = useSelector(
     (state) => state.ordersInfo.selectedDriver
@@ -135,7 +138,8 @@ function OrdersTableComponent() {
     (state) => state.ordersInfo.selectedCustomer
   );
 
-  const token = useSelector((state) => state.userLogin?.userInfo?.token);
+  const userInfo = useSelector((state) => state.userLogin?.userInfo);
+  const token = userInfo?.token;
 
   const [filters, setFilters] = useState({
     driver: "",
@@ -155,7 +159,54 @@ function OrdersTableComponent() {
   const [activeStatus, setActiveStatus] = useState(null);
   const [activeCustomer, setActiveCustomer] = useState(null);
   const [activeCategory, setActiveCategory] = useState(null);
+  const [activeBusinessUnit, setActiveBusinessUnit] = useState("all");
+  const [businessUnitInitialized, setBusinessUnitInitialized] = useState(false);
   const [stats, setStats] = useState({ statuses: [], top_customers: [], categories: [] });
+
+  const isLogistUser = userInfo?.role === "logist";
+  const myTruckCount = useMemo(() => {
+    if (!userInfo?.id || !Array.isArray(trucks)) return 0;
+    const userId = String(userInfo.id);
+    return trucks.filter((truck) =>
+      Array.isArray(truck.logist) && truck.logist.map(String).includes(userId)
+    ).length;
+  }, [trucks, userInfo?.id]);
+
+  const unitChips = useMemo(() => {
+    if (!Array.isArray(units)) return [];
+    return units.map((unit) => ({
+      ...unit,
+      count: Array.isArray(trucks)
+        ? trucks.filter((truck) => String(truck.current_unit?.id) === String(unit.id)).length
+        : 0,
+    }));
+  }, [trucks, units]);
+
+  const buildOrderFilters = () => {
+    const queryFilters = {};
+    if (selectedDriver) queryFilters.driver = selectedDriver;
+    if (selectedTruck) queryFilters.truck = selectedTruck;
+    if (selectedCustomer) queryFilters.customer = selectedCustomer;
+    if (activeStatus) queryFilters.status = activeStatus;
+    if (activeCustomer) queryFilters.customer = activeCustomer;
+    if (activeCategory) queryFilters.category = activeCategory;
+    if (activeBusinessUnit === "mine") queryFilters.my_trucks = "1";
+    if (activeBusinessUnit !== "all" && activeBusinessUnit !== "mine") {
+      queryFilters.business_unit = activeBusinessUnit;
+    }
+    if (filters.start_date) {
+      queryFilters.start_date = filters.start_date.toISOString().split("T")[0];
+    }
+    if (filters.end_date) {
+      queryFilters.end_date = filters.end_date.toISOString().split("T")[0];
+    }
+    return queryFilters;
+  };
+
+  const handleBusinessUnitChange = (value) => {
+    setActiveBusinessUnit(value);
+    dispatch(setPage(1));
+  };
 
   const toggleExpand = (e, orderId) => {
     e.stopPropagation();
@@ -169,6 +220,7 @@ function OrdersTableComponent() {
 
   useEffect(() => {
     dispatch(listTrucks());
+    dispatch(listTruckUnits());
     dispatch(listDrivers());
     dispatch(listCustomers());
     const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
@@ -176,27 +228,41 @@ function OrdersTableComponent() {
       .then((r) => r.ok ? r.json() : null)
       .then((data) => { if (data) setCostConfig(data); })
       .catch(() => {});
-    fetch("/api/orders/stats/", { headers: authHeaders })
+  }, [dispatch, token]);
+
+  useEffect(() => {
+    if (!businessUnitInitialized && isLogistUser) {
+      setActiveBusinessUnit("mine");
+      setBusinessUnitInitialized(true);
+    } else if (!businessUnitInitialized && userInfo?.role) {
+      setBusinessUnitInitialized(true);
+    }
+  }, [businessUnitInitialized, isLogistUser, userInfo?.role]);
+
+  useEffect(() => {
+    if (isLogistUser && !businessUnitInitialized) return;
+
+    const authHeaders = token ? { Authorization: `Bearer ${token}` } : {};
+    const params = new URLSearchParams();
+    if (activeBusinessUnit === "mine") params.set("my_trucks", "1");
+    if (activeBusinessUnit !== "all" && activeBusinessUnit !== "mine") {
+      params.set("business_unit", activeBusinessUnit);
+    }
+    const statsUrl = params.toString()
+      ? `/api/orders/stats/?${params.toString()}`
+      : "/api/orders/stats/";
+
+    fetch(statsUrl, { headers: authHeaders })
       .then((r) => r.ok ? r.json() : null)
       .then((data) => { if (data) setStats(data); })
       .catch(() => {});
-  }, [token]);
+  }, [activeBusinessUnit, businessUnitInitialized, isLogistUser, token]);
 
   useEffect(() => {
-    const queryFilters = {};
-    if (selectedDriver) queryFilters.driver = selectedDriver;
-    if (selectedTruck) queryFilters.truck = selectedTruck;
-    if (selectedCustomer) queryFilters.customer = selectedCustomer;
-    if (activeStatus) queryFilters.status = activeStatus;
-    if (activeCustomer) queryFilters.customer = activeCustomer;
-    if (activeCategory) queryFilters.category = activeCategory;
-    if (filters.start_date)
-      queryFilters.start_date = filters.start_date.toISOString().split("T")[0];
-    if (filters.end_date)
-      queryFilters.end_date = filters.end_date.toISOString().split("T")[0];
+    if (isLogistUser && !businessUnitInitialized) return;
 
     dispatch(
-      listOrders({ page: currentPage, pageSize, filters: queryFilters })
+      listOrders({ page: currentPage, pageSize, filters: buildOrderFilters() })
     );
   }, [
     dispatch,
@@ -208,6 +274,9 @@ function OrdersTableComponent() {
     activeStatus,
     activeCustomer,
     activeCategory,
+    activeBusinessUnit,
+    businessUnitInitialized,
+    isLogistUser,
     filters,
   ]);
 
@@ -256,14 +325,7 @@ function OrdersTableComponent() {
         headers: authHeaders,
       });
       if (res.ok) {
-        const queryFilters = {};
-        if (selectedDriver) queryFilters.driver = selectedDriver;
-        if (selectedTruck) queryFilters.truck = selectedTruck;
-        if (selectedCustomer) queryFilters.customer = selectedCustomer;
-        if (activeStatus) queryFilters.status = activeStatus;
-        if (activeCustomer) queryFilters.customer = activeCustomer;
-    if (activeCategory) queryFilters.category = activeCategory;
-        dispatch(listOrders({ page: currentPage, pageSize, filters: queryFilters }));
+        dispatch(listOrders({ page: currentPage, pageSize, filters: buildOrderFilters() }));
       }
     } catch (err) {
       console.error("Recalculate failed:", err);
@@ -315,6 +377,37 @@ function OrdersTableComponent() {
   return (
     <>
       <div className="orders-table-container">
+        {(isLogistUser || unitChips.length > 0) && (
+          <div className="ord-business-units">
+            {isLogistUser && (
+              <button
+                className={`ord-business-chip${activeBusinessUnit === "mine" ? " ord-business-chip--active" : ""}`}
+                onClick={() => handleBusinessUnitChange("mine")}
+              >
+                Мої авто
+                <span className="ord-business-chip__count">{myTruckCount}</span>
+              </button>
+            )}
+            <button
+              className={`ord-business-chip${activeBusinessUnit === "all" ? " ord-business-chip--active" : ""}`}
+              onClick={() => handleBusinessUnitChange("all")}
+            >
+              Всі підрозділи
+              <span className="ord-business-chip__count">{Array.isArray(trucks) ? trucks.length : 0}</span>
+            </button>
+            {unitChips.map((unit) => (
+              <button
+                key={unit.id}
+                className={`ord-business-chip${String(activeBusinessUnit) === String(unit.id) ? " ord-business-chip--active" : ""}`}
+                onClick={() => handleBusinessUnitChange(String(unit.id))}
+              >
+                {unit.name}
+                <span className="ord-business-chip__count">{unit.count}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* ── Status tabs ─────────────────────────────────────────────────── */}
         {stats.statuses.length > 0 && (
           <div className="ord-tabs">
@@ -371,14 +464,7 @@ function OrdersTableComponent() {
         <OrderActionsComponent
           onDelete={handleDeleteSelectedOrders}
           onRefresh={() => {
-            const queryFilters = {};
-            if (selectedDriver) queryFilters.driver = selectedDriver;
-            if (selectedTruck) queryFilters.truck = selectedTruck;
-            if (selectedCustomer) queryFilters.customer = selectedCustomer;
-            if (activeStatus) queryFilters.status = activeStatus;
-            if (activeCustomer) queryFilters.customer = activeCustomer;
-    if (activeCategory) queryFilters.category = activeCategory;
-            return dispatch(listOrders({ page: currentPage, pageSize, filters: queryFilters }));
+            return dispatch(listOrders({ page: currentPage, pageSize, filters: buildOrderFilters() }));
           }}
           selectedDriver={selectedDriver}
           selectedTruck={selectedTruck}

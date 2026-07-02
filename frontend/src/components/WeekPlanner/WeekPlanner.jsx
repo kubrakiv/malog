@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, Fragment } from "react";
+import { useEffect, useState, useMemo, useRef, Fragment } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useConfirm } from "../../globalComponents/ConfirmModal/useConfirm";
@@ -65,19 +65,59 @@ const TASK_COPY_EXCLUDED_TYPES = new Set([
   DELIVERY_CONSTANTS.UNLOADING,
 ]);
 
+const PLANNER_VIEW_STORAGE_KEY = "malog.weekPlanner.viewState";
+
+const readPlannerViewState = () => {
+  try {
+    const raw = sessionStorage.getItem(PLANNER_VIEW_STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (_) {
+    return null;
+  }
+};
+
+const getPlannerScrollState = () => {
+  const table = document.querySelector(".table-body-container");
+  return {
+    windowScrollX: window.scrollX || 0,
+    windowScrollY: window.scrollY || 0,
+    tableScrollLeft: table?.scrollLeft || 0,
+    tableScrollTop: table?.scrollTop || 0,
+  };
+};
+
+const writePlannerViewState = (viewState) => {
+  try {
+    sessionStorage.setItem(
+      PLANNER_VIEW_STORAGE_KEY,
+      JSON.stringify({
+        ...viewState,
+        ...getPlannerScrollState(),
+      }),
+    );
+  } catch (_) {}
+};
+
 export const WeekPlanner = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const confirm = useConfirm();
+  const restoredPlannerView = useMemo(() => readPlannerViewState(), []);
+  const restoredScrollAppliedRef = useRef(false);
+  const plannerViewSnapshotRef = useRef(null);
 
   const searchParams = new URLSearchParams(location.search);
   const yearParam = Number.parseInt(searchParams.get("year"), 10);
   const weekParam = Number.parseInt(searchParams.get("week"), 10);
   const hasValidYear = Number.isInteger(yearParam);
   const hasValidWeek = Number.isInteger(weekParam);
-  const currentYear = hasValidYear ? yearParam : getISOWeekYear(new Date());
-  const currentWeek = hasValidWeek ? weekParam : getISOWeek(new Date());
+  const currentYear = hasValidYear
+    ? yearParam
+    : restoredPlannerView?.year || getISOWeekYear(new Date());
+  const currentWeek = hasValidWeek
+    ? weekParam
+    : restoredPlannerView?.week || getISOWeek(new Date());
 
   const [week, setWeek] = useState(currentWeek);
   const [year, setYear] = useState(currentYear);
@@ -90,9 +130,15 @@ export const WeekPlanner = () => {
   const units = useSelector((state) => state.truckUnitsInfo.units);
   const userInfo = useSelector((state) => state.userLogin.userInfo);
 
-  const [filterUnit, setFilterUnit] = useState(null);
+  const [filterUnit, setFilterUnit] = useState(
+    () => restoredPlannerView?.filterUnit ?? null,
+  );
   const [filterLogists, setFilterLogists] = useState(() =>
-    userInfo?.role === "logist" ? new Set([String(userInfo.id)]) : new Set(),
+    Array.isArray(restoredPlannerView?.filterLogists)
+      ? new Set(restoredPlannerView.filterLogists.map(String))
+      : userInfo?.role === "logist"
+        ? new Set([String(userInfo.id)])
+        : new Set(),
   );
   const [logists, setLogists] = useState([]);
 
@@ -255,8 +301,12 @@ export const WeekPlanner = () => {
 
   const date = new Date();
 
-  const [expandedTruckId, setExpandedTruckId] = useState(null);
-  const [collapsedUnits, setCollapsedUnits] = useState(new Set());
+  const [expandedTruckId, setExpandedTruckId] = useState(
+    () => restoredPlannerView?.expandedTruckId ?? null,
+  );
+  const [collapsedUnits, setCollapsedUnits] = useState(
+    () => new Set(restoredPlannerView?.collapsedUnits || []),
+  );
   const [copiedTruckId, setCopiedTruckId] = useState(null);
   const [copyDragTask, setCopyDragTask] = useState(null);
   const [copyDropTarget, setCopyDropTarget] = useState(null);
@@ -311,11 +361,21 @@ export const WeekPlanner = () => {
   console.log("tasks", tasks);
   console.log("tasksByWeek", tasksByWeek);
   console.log("placeholderTasks", placeholderTasks);
-  const [isToggledDriver, setIsToggledDriver] = useState(false);
-  const [isToggledOrderNumber, setIsToggledOrderNumber] = useState(false);
-  const [isToggledCustomer, setIsToggledCustomer] = useState(false);
-  const [isToggledAddress, setIsToggledAddress] = useState(false);
-  const [isToggledTaskType, setIsToggledTaskType] = useState(false);
+  const [isToggledDriver, setIsToggledDriver] = useState(
+    () => !!restoredPlannerView?.switchers?.showDriver,
+  );
+  const [isToggledOrderNumber, setIsToggledOrderNumber] = useState(
+    () => !!restoredPlannerView?.switchers?.showOrderNumber,
+  );
+  const [isToggledCustomer, setIsToggledCustomer] = useState(
+    () => !!restoredPlannerView?.switchers?.showCustomer,
+  );
+  const [isToggledAddress, setIsToggledAddress] = useState(
+    () => !!restoredPlannerView?.switchers?.showAddress,
+  );
+  const [isToggledTaskType, setIsToggledTaskType] = useState(
+    () => !!restoredPlannerView?.switchers?.showTaskType,
+  );
   console.log("DATES ARRAY", datesArray);
 
   useEffect(() => {
@@ -323,6 +383,84 @@ export const WeekPlanner = () => {
       navigate(`/planner?year=${year}&week=${week}`, { replace: true });
     }
   }, [hasValidYear, hasValidWeek, navigate, week, year]);
+
+  useEffect(() => {
+    if (restoredPlannerView?.switchers) {
+      dispatch(setSwitchers(restoredPlannerView.switchers));
+    }
+  }, [dispatch, restoredPlannerView]);
+
+  useEffect(() => {
+    plannerViewSnapshotRef.current = {
+      year,
+      week,
+      filterUnit,
+      filterLogists: Array.from(filterLogists),
+      expandedTruckId,
+      collapsedUnits: Array.from(collapsedUnits),
+      switchers: {
+        showDriver,
+        showOrderNumber,
+        showCustomer,
+        showAddress,
+        showTaskType,
+      },
+    };
+    writePlannerViewState(plannerViewSnapshotRef.current);
+  }, [
+    year,
+    week,
+    filterUnit,
+    filterLogists,
+    expandedTruckId,
+    collapsedUnits,
+    showDriver,
+    showOrderNumber,
+    showCustomer,
+    showAddress,
+    showTaskType,
+  ]);
+
+  useEffect(() => {
+    const saveCurrentView = () => {
+      if (plannerViewSnapshotRef.current) {
+        writePlannerViewState(plannerViewSnapshotRef.current);
+      }
+    };
+    const table = document.querySelector(".table-body-container");
+
+    window.addEventListener("scroll", saveCurrentView, { passive: true });
+    window.addEventListener("pagehide", saveCurrentView);
+    table?.addEventListener("scroll", saveCurrentView, { passive: true });
+
+    return () => {
+      saveCurrentView();
+      window.removeEventListener("scroll", saveCurrentView);
+      window.removeEventListener("pagehide", saveCurrentView);
+      table?.removeEventListener("scroll", saveCurrentView);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!restoredPlannerView || restoredScrollAppliedRef.current) {
+      return;
+    }
+
+    const frame = window.requestAnimationFrame(() => {
+      const table = document.querySelector(".table-body-container");
+      if (table) {
+        table.scrollLeft = restoredPlannerView.tableScrollLeft || 0;
+        table.scrollTop = restoredPlannerView.tableScrollTop || 0;
+      }
+      window.scrollTo(
+        restoredPlannerView.windowScrollX || 0,
+        restoredPlannerView.windowScrollY || 0,
+      );
+      restoredScrollAppliedRef.current = true;
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [displayTrucks.length, restoredPlannerView, tasks.length, trucksLoading]);
 
   useEffect(() => {
     dispatch(listTrucks());

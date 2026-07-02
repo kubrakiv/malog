@@ -14,6 +14,7 @@ from base.models import (
     Task,
     DriverProfile,
     Truck,
+    TruckUnitAssignment,
     Order,
     OrderStatus,
     Customer,
@@ -52,6 +53,28 @@ class OrderPagination(PageNumberPagination):
     page_size_query_param = 'page_size'
 
 
+def _is_truthy(value):
+    return str(value).lower() in ("1", "true", "yes", "on")
+
+
+def _apply_business_unit_filters(orders, request):
+    business_unit = request.GET.get("business_unit")
+    my_trucks = request.GET.get("my_trucks")
+
+    if business_unit:
+        truck_ids = TruckUnitAssignment.objects.filter(
+            client=request.user.client,
+            unit_id=business_unit,
+            is_active=True,
+        ).values_list("truck_id", flat=True)
+        orders = orders.filter(truck_id__in=truck_ids)
+
+    if _is_truthy(my_trucks):
+        orders = orders.filter(truck__logist__profile=request.user).distinct()
+
+    return orders
+
+
 @api_view(["GET"])
 def getOrders(request):
     orders = Order.objects.filter(client=request.user.client).prefetch_related("tasks").all().order_by("-id")
@@ -64,6 +87,8 @@ def getOrders(request):
     category = request.GET.get("category")
     start_date = request.GET.get("start_date")
     end_date = request.GET.get("end_date")
+
+    orders = _apply_business_unit_filters(orders, request)
 
     if driver:
         orders = orders.filter(driver__full_name__icontains=driver)
@@ -238,6 +263,7 @@ def editOrder(request, pk):
 def orderStats(request):
     """Return status counts and top-10 customers for the current client's orders."""
     qs = Order.objects.filter(client=request.user.client)
+    qs = _apply_business_unit_filters(qs, request)
 
     status_counts = (
         qs.values("current_status__name")
